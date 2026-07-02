@@ -1,0 +1,15 @@
+# Credenciales — NUNCA commitear
+api/.env
+**/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Outputs y datos crudos
+resultados/*.json
+estado/*.json
+logs/*.log

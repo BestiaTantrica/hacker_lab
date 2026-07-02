@@ -1,0 +1,581 @@
+================================================================================
+INFORME DE AUDITORÍA MAESTRA DEL LABORATORIO
+Fecha: 2026-06-29
+Hora: 23:23 ART (Argentina)
+Realizada por: Antigravity AI (asistente de desarrollo)
+================================================================================
+
+CONTEXTO
+--------
+El usuario solicitó una auditoría completa de su laboratorio personal de
+ciberseguridad antes de continuar desarrollando nuevas funcionalidades.
+El laboratorio tiene dos nodos:
+  - Nodo Local: PC de desarrollo (Linux, workspace en /home/tomas2/WORKSPACE/)
+  - Nodo Remoto: Oracle Cloud Infrastructure (OCI), instancia Always Free
+
+El objetivo fue documentar el estado real del sistema, detectar problemas,
+y generar la documentación maestra que permita a cualquier IA continuar el
+proyecto sin depender de conversaciones previas.
+
+
+================================================================================
+PARTE 1: AUDITORÍA DEL NODO LOCAL (PC)
+================================================================================
+
+WORKSPACE RAÍZ
+--------------
+Ruta: /home/tomas2/WORKSPACE/tomas2/WORKSPACE/
+
+Contenido:
+  - LAB/                         (directorio de documentación maestra)
+  - portafolio-ciberseguridad/   (repositorio Git principal)
+  - caso fuerza bruta btc/       (directorio SIN Git)
+  - informe_despliegue_oci.txt   (ficha técnica del servidor Oracle)
+  - api agente hackerone monitor (archivo con comandos y credenciales)
+  - códigos de respaldo h1       (códigos 2FA de HackerOne en texto plano)
+  - How to read a Wireshark TCP_HTTP log.md
+  - Cybersecurity incident report.docx
+  - Security incident report template.docx
+
+HALLAZGO DE SEGURIDAD #1 (ALTA):
+  El archivo "api agente hackerone monitor" contiene una GROQ_API_KEY
+  en texto plano en la línea 2. Si este archivo fue incluido en algún
+  commit de Git, la clave debe rotarse inmediatamente.
+
+HALLAZGO DE SEGURIDAD #2 (ALTA):
+  El archivo "códigos de respaldo h1" contiene los códigos de recuperación
+  2FA de HackerOne en texto plano dentro del workspace. Deben moverse
+  a un gestor de contraseñas o cifrarse con GPG.
+
+
+--------------------------------------------------------------------------------
+PROYECTO: portafolio-ciberseguridad
+--------------------------------------------------------------------------------
+Ruta: /home/tomas2/WORKSPACE/tomas2/WORKSPACE/portafolio-ciberseguridad/
+Git: Inicializado. Rama: main. Sincronizado con origin/main.
+
+Historial de commits (4 commits):
+  0a4b5ac - Inicializar estructura de portfolio y cimientos de aprendizaje
+  1e86855 - Refinar Career Identity Statement para Bug Bounty
+  258ac6e - Inicializar arquitectura core del network-toolkit
+  224bf17 - Agregar self-test, validación y módulo Health Check (HEAD)
+
+Estructura de directorios:
+  01_Identidad_Profesional/
+    career_identity.md          - Career Identity Statement orientado a Bug Bounty
+  02_Marcos_de_Referencia/
+    NIST_CSF.md                 - Resumen del NIST Cybersecurity Framework
+    RMF.md                      - Resumen del NIST Risk Management Framework
+    auditoria ficticia/         - Auditoría completa de "Botium Toys"
+      documento_1_alcance_y_evaluacion_de_riesgos.md
+      documento_2_categorias_de_control.md
+      documento_3_lista_de_controles_y_cumplimiento.md
+      (+ archivos .docx y .pdf originales de Coursera)
+    known_exploited_vulnerabilities.csv  (CISA KEV - SIN COMMIT, archivo grande)
+  03_Manuales_Forense/
+    preservacion_evidencias.md  - Guía de preservación y orden de volatilidad
+    plantilla_custodia.md       - Plantilla de cadena de custodia
+  04_Laboratorio_IA/
+    README.md                   - Documentación de uso de IA para SecOps
+  05_fichas_de_proceso/         - SIN COMMIT. Contiene evidencias forenses:
+    captura_red_01.pcap, escaneo_versiones.txt, evidencia_wtmp.bin,
+    mapa_hash.txt, registro_red_01.txt, reporte_auditoria_final_14_06.txt,
+    reporte_red_11_06.txt, syslog-2026-06-14.log
+  network-toolkit/              - Ver sección detallada abajo
+
+Archivos sin seguimiento (untracked, no committeados):
+  - 02_Marcos_de_Referencia/auditoria ficticia/
+  - 02_Marcos_de_Referencia/known_exploited_vulnerabilities.csv
+  - 05_fichas_de_proceso/
+  - Audit Scope and Goals.docx
+  - Control categories.docx
+  - SQL_FILTROS_CONSULTAS.txt
+  - _QCNTbVvT2S77nAV2...Audit-Scope-and-Goals.docx
+  - permisos_de_archivos_en_linux.txt
+  - physical-access-control.pdf
+  - puk2EvvXQNSP...Refine-your-professional-statement.docx
+  - ycHXR8sxR...Professional-statement-outline.docx
+
+HALLAZGO: Los archivos .docx de Coursera están sueltos en la raíz del repo
+generando ruido. Deberían moverse a _coursera_materials/ o excluirse con .gitignore.
+
+
+--------------------------------------------------------------------------------
+SUBPROYECTO: network-toolkit
+--------------------------------------------------------------------------------
+Ruta: portafolio-ciberseguridad/network-toolkit/
+Versión: 1.0.0
+Licencia: Incluida
+Estado: FUNCIONAL (13/14 tests OK)
+
+ARQUITECTURA (sistema de plugins modular en Bash):
+
+  bin/net-toolkit          - Entry point / orquestador principal
+  conf/toolkit.conf        - Variables globales (rutas, version, log level)
+  core/
+    logger.sh              - Sistema de logs estandarizado
+    error_handler.sh       - Intercepta señales y errores, limpia /tmp
+    validator.sh           - Pre-validación del entorno (dirs + curl + jq)
+    module_loader.sh       - Auto-descubrimiento de plugins en modules/*.sh
+    ui.sh                  - Menú interactivo con banner ASCII
+    reporter.sh            - Exporta reportes sanitizados (txt y json)
+    self_test.sh           - Suite de 14 pruebas de autodiagnóstico
+  modules/
+    00_template.sh         - Plantilla estándar para nuevos módulos
+    01_health_check.sh     - Módulo de diagnóstico integral de red (L2-L7)
+  logs/
+    toolkit_2026-06.log    - Log de sesiones del toolkit
+    toolkit_system.log     - Log del sistema
+  reports/
+    report_health_check_20260627_202205.txt   - Reporte del 27 jun
+    report_health_check_20260627_202205.json  - Reporte JSON del 27 jun
+  tests/     - VACÍO (directorio creado pero sin tests unitarios)
+  docs/      - VACÍO
+  lib/       - VACÍO
+  assets/    - VACÍO
+  tmp/       - Directorio temporal (se limpia automáticamente)
+  install.sh - Instalador de dependencias del sistema
+
+RESULTADO DEL SELF-TEST (ejecutado durante la auditoría):
+  [ OK ]  Estructura completa del proyecto
+  [ OK ]  Existencia de directorios
+  [ OK ]  Permisos de escritura del sistema
+  [ OK ]  Existencia del archivo de configuración
+  [ OK ]  Funcionamiento del logger
+  [ OK ]  Funcionamiento del reporter
+  [ OK ]  Funcionamiento del cargador de módulos
+  [ OK ]  Funcionamiento del menú
+  [ OK ]  Carga correcta de un módulo de prueba
+  [ OK ]  Escritura persistente en logs
+  [ OK ]  Escritura correcta en motor de reports
+  [FAIL]  Validación de dependencias externas (APT)   <-- BUG DOCUMENTADO
+  [ OK ]  Validación estricta de rutas y paths
+  [ OK ]  Permisos de ejecución de binarios
+  Total: 13/14 OK | 1 FAIL
+
+BUG DETECTADO en self_test.sh línea 133:
+  El test verifica si el comando "dnsutils" existe como ejecutable.
+  "dnsutils" es el nombre del PAQUETE APT, no el binario.
+  Los binarios reales (dig, nslookup) SÍ están presentes en /usr/bin/.
+  CORRECCIÓN: Cambiar "dnsutils" por "dig" en la línea 133.
+  IMPACTO: Solo afecta al self-test, no al funcionamiento real del toolkit.
+
+DEPENDENCIAS VERIFICADAS EN EL SISTEMA:
+  curl      -> /usr/bin/curl   OK
+  jq        -> /usr/bin/jq     OK
+  nmap      -> /usr/bin/nmap   OK
+  dig       -> /usr/bin/dig    OK
+  nslookup  -> /usr/bin/nslookup OK
+
+MÓDULO 01_health_check.sh - Análisis:
+  Arquitectura: separación limpia entre adquisición, procesamiento y presentación
+  Recopila: hostname, user, uptime, distro, kernel, interfaces, MAC, IPv4, IPv6,
+            gateway, DNS, MTU, tabla de rutas, paquetes RX/TX, errores, drops,
+            overruns, carrier, estado de servicios (NetworkManager, systemd-*)
+  Conectividad: ping al gateway, ping a 1.1.1.1 y 8.8.8.8, resolución DNS,
+                verificación HTTPS
+  Salida: pantalla formateada + reporte JSON + reporte TXT en reports/
+
+
+--------------------------------------------------------------------------------
+PROYECTO: caso fuerza bruta btc
+--------------------------------------------------------------------------------
+Ruta: /home/tomas2/WORKSPACE/tomas2/WORKSPACE/caso fuerza bruta btc/
+Git: NO inicializado
+
+Archivos:
+  generator.py           - Generador de micro-diccionario bayesiano (319 líneas)
+  generador_local.py     - Prototipo simplificado (primera versión, 17 líneas)
+  bitcoin2john.py        - Script estándar para extraer hash de wallet.dat
+  micro_diccionario.txt  - Diccionario generado (~100 KB)
+  hash.txt               - Hash Bitcoin Core modo 11300 extraído de wallet.dat
+  hash_real.txt          - VACÍO (debería contener el hash real del reto)
+  lote_01.txt            - Diccionario básico del generador_local.py
+  wallet.dat             - Cartera Bitcoin Core 2013 del reto @marcebit
+
+OBJETIVO DEL CASO:
+  Recuperar la contraseña de una wallet.dat de 2013 mediante hashcat.
+  El propietario (@marcebit) declaró no recordar la contraseña pero sabe que
+  contenía las palabras "wallet" o "billetera" (rioplatense).
+  Modo hashcat: 11300 (Bitcoin Core)
+
+LÓGICA DEL GENERADOR (generator.py):
+  10 tiers de probabilidad bayesiana:
+  TIER 1: Fricción cero (vacío, espacios, raíces puras sin transformación)
+  TIER 2: Raíces canónicas + sufijos temporales (sin conector)
+  TIER 3: Raíces canónicas + conectores + sufijos
+  TIER 4: Errores tipográficos QWERTY-LatAm puros
+  TIER 5: Variantes tipográficas + sufijos
+  TIER 6: Variantes tipográficas + conectores + sufijos
+  TIER 7: Leetspeak sobre raíces canónicas (w4ll3t, b1ll3t3r4)
+  TIER 8: Cross-contamination entre raíces
+  TIER 9: Secuencias de teclado puras (qwerty, bitcoin, admin, etc.)
+  TIER 10: Alta fricción - símbolos especiales (estadísticamente improbable)
+
+Estado: herramientas listas, sin resultado final aún.
+
+
+================================================================================
+PARTE 2: AUDITORÍA DEL NODO ORACLE CLOUD (OCI)
+================================================================================
+
+FICHA TÉCNICA DEL SERVIDOR
+---------------------------
+Nombre instancia: Lab-Cybersec-Micro
+Shape: VM.Standard.E2.1.Micro
+CPU: 1 OCPU AMD EPYC 7551 (2.0 GHz)
+RAM: 1 GB (954 MB visibles)
+SO: Ubuntu 24.04.4 LTS (Kernel 6.17.0-1011-oracle x86_64)
+IP Pública: 129.80.73.248
+IP Privada: 10.0.1.120
+Free Tier: Confirmado (free-tier-retained = true)
+VCN: VCN-Lab-Cybersec (10.0.0.0/16)
+Subred: Subnet-Publica-Lab (10.0.1.0/24)
+DNS VCN: vcnlab (nativo, habilitado)
+Acceso SSH: ssh -i ~/.ssh/id_rsa ubuntu@129.80.73.248
+
+RECURSOS DEL SISTEMA (verificados en la auditoría):
+  RAM total:     954 MB
+  RAM usada:     416 MB (en idle - margen reducido)
+  RAM libre:     99 MB
+  RAM disponible: 537 MB (con buff/cache)
+  SWAP:          2 GB total | 13 MB usados (SWAP activo y funcionando)
+
+NOTA SOBRE EL SWAP:
+  El archivo /swapfile de 2 GB fue creado por setup_micro.sh para proteger
+  contra el OOM Killer. Es el colchón de seguridad ante picos de RAM.
+
+
+--------------------------------------------------------------------------------
+ESTRUCTURA DEL SERVIDOR (verificada en vivo)
+--------------------------------------------------------------------------------
+
+~/
+  setup_micro.sh          - Script de bootstrap inicial (swap + venv)
+  .bash_history           - 741 bytes (historia del setup inicial)
+  plataforma_operativa/   - Plataforma principal de operaciones
+  workspace_lab/          - Entorno de trabajo y Python venv
+
+~/plataforma_operativa/  (última modificación: 2026-06-29 23:28)
+  CONTRATO_SUPERVISOR.md  - Reglas operativas del nodo (3355 bytes)
+  HOJA_DE_RUTA.md         - Copia de la hoja de ruta local (3528 bytes)
+  agentes/                - VACÍO (reservado para futuros agentes)
+  api/                    - VACÍO (reservado para wrappers de API)
+  config/
+    entorno.env           - Credenciales (600, solo ubuntu) - GROQ_API_KEY aquí
+    objetivos.txt         - Lista de dominios objetivo (contiene: starbucks.com)
+  estado/                 - VACÍO (falta previo.json para el comparador)
+  inventario/             - VACÍO
+  logs/                   - VACÍO (sin registro de ejecuciones)
+  monitores/
+    discovery_pasivo.py   - Script operativo (1648 bytes, ya ejecutado)
+  playbooks/              - VACÍO
+  resultados/
+    discovery_crudo.json  - Output del último discovery (92 bytes)
+
+~/workspace_lab/  (última modificación: 2026-06-27 23:37)
+  config/        - VACÍO
+  datos_crudos/  - VACÍO
+  herramientas/  - VACÍO
+  logs/          - VACÍO
+  scripts/       - VACÍO
+  venv/          - Python 3.12.3 + requests + groq (OPERATIVO)
+
+PYTHON VENV:
+  Intérprete: ~/workspace_lab/venv/bin/python
+  Versión: Python 3.12.3
+  Librerías instaladas: requests, groq (instaladas por setup_micro.sh)
+  Estado: OPERATIVO
+
+CRON: Sin crontab configurado (SIN_CRON)
+
+
+--------------------------------------------------------------------------------
+ANÁLISIS DE discovery_pasivo.py
+--------------------------------------------------------------------------------
+
+Código (1648 bytes, Python 3.12.3):
+  - Lee dominios de config/objetivos.txt
+  - Consulta crt.sh con URL: https://crt.sh/?q=%.DOMINIO&output=json
+  - Timeout: 15 segundos
+  - Deduplica subdominios con set()
+  - Elimina comodines (*.) de los resultados
+  - Guarda JSON en resultados/discovery_crudo.json
+
+LO QUE HACE BIEN:
+  - Diseño modular y legible
+  - Timeout rígido para evitar cuelgues
+  - Deduplicación de resultados
+  - Rutas absolutas mediante os.path.expanduser
+
+GAPS IDENTIFICADOS:
+  GAP 1: Fallo silencioso
+    El bloque except captura errores y retorna [].
+    El JSON resultante tiene arrays vacíos sin distinguir
+    "no hay subdominios" de "error de red o timeout".
+
+  GAP 2: Sin logging persistente
+    Todo va a stdout. Si se ejecuta vía cron, el output se pierde
+    a menos que se redirija (>> logs/discovery.log).
+
+  GAP 3: Nombre de archivo fijo
+    OUTPUT_FILE = "discovery_crudo.json" (siempre el mismo).
+    Cada ejecución sobreescribe la anterior sin historial.
+    El CONTRATO_SUPERVISOR menciona "actual.json" (inconsistencia).
+
+  GAP 4: Sin validación de body vacío
+    No verifica si response.text está vacío antes de parsear JSON.
+    Un body vacío genera una excepción no manejada del lado del caller.
+
+RESULTADO DEL ÚLTIMO RUN (2026-06-29T23:37:55 UTC):
+  {
+    "timestamp": "2026-06-29T23:37:55.476299",
+    "dominios": {
+      "starbucks.com": []
+    }
+  }
+  DIAGNÓSTICO: starbucks.com devolvió array vacío.
+  starbucks.com tiene miles de entradas en crt.sh — resultado anómalo.
+
+
+--------------------------------------------------------------------------------
+DIAGNÓSTICO: POR QUÉ starbucks.com DEVUELVE []
+--------------------------------------------------------------------------------
+
+PRUEBA 1 realizada:
+  curl -s "https://crt.sh/?q=%.starbucks.com&output=json" | python3 -c "..."
+  RESULTADO: JSONDecodeError (body vacío)
+
+PRUEBA 2 realizada:
+  curl -v "https://crt.sh/?q=%.starbucks.com&output=json" 2>&1 | head -40
+  RESULTADO: TLS handshake COMPLETADO. Conexión establecida.
+    - Host resuelto: 91.199.212.73 (IPv4)
+    - TLS 1.2 con ECDHE-RSA-CHACHA20-POLY1305
+    - Certificado verificado OK
+    - El output fue cortado por head -40 antes del HTTP response code
+
+CONCLUSIÓN:
+  La red de OCI SÍ tiene acceso a crt.sh (TLS funciona).
+  El body vacío NO es un bloqueo de IP.
+  HIPÓTESIS MÁS PROBABLE: timeout de query en el servidor de crt.sh.
+  crt.sh tiene límites propios de tiempo de ejecución de base de datos.
+  Las queries sobre dominios grandes (starbucks.com = miles de entradas)
+  pueden exceder ese límite y devolver body vacío con HTTP 200.
+
+PRUEBA PENDIENTE (para confirmar):
+  curl -s -o /dev/null -w "HTTP: %{http_code} | Size: %{size_download} bytes | Time: %{time_total}s\n" \
+    "https://crt.sh/?q=%.starbucks.com&output=json"
+
+  Si muestra: HTTP 200 | 0 bytes | ~15s -> confirma timeout de crt.sh
+  SOLUCIÓN: Usar dominios más pequeños en objetivos.txt, o agregar
+  reintentos con backoff al script. La arquitectura NO necesita cambio.
+
+
+================================================================================
+PARTE 3: DOCUMENTACIÓN GENERADA EN ESTA SESIÓN
+================================================================================
+
+Se creó la siguiente estructura en /home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/:
+
+  MASTER_PROJECT.md      - Portal maestro. Propósito, nodos, filosofía, estado.
+  ARQUITECTURA.md        - Diagrama ASCII del flujo completo + políticas de diseño.
+  INVENTARIO.md          - Catálogo técnico de TODOS los componentes del lab.
+  ROADMAP.md             - Plan de desarrollo por etapas funcionales verificables.
+  CHANGELOG.md           - Historial de cambios y eventos del laboratorio.
+  HOJA_DE_RUTA.md        - Preexistente (no modificado).
+  PRINCIPIOS_DE_INGENIERIA.md - Preexistente (no modificado).
+  DIAGRAMAS/             - Vacío, listo para diagramas futuros.
+  DECISIONES/            - Vacío, listo para registro de decisiones de arquitectura.
+  AUDITORIAS/            - Este archivo.
+
+FLUJO DE INFORMACIÓN DEL LABORATORIO (diagrama ASCII):
+
+  +------------------------------------------+
+  |         NODO LOCAL (PC)                   |
+  |  [network-toolkit] [caso btc] [portafolio]|
+  +--------------------+---------------------+
+                       | git push
+                       v
+  +------------------------------------------+
+  |              GIT / GITHUB                 |
+  +--------------------+---------------------+
+                       | git pull
+                       v
+  +------------------------------------------+
+  |         NODO ORACLE CLOUD (OCI)           |
+  |                                           |
+  |  [cron] -> discovery_pasivo.py            |
+  |              |                            |
+  |              v                            |
+  |        resultados/actual.json             |
+  |              |                            |
+  |              v                            |
+  |        comparador.py                      |
+  |         Δ = nuevo - previo                |
+  |              |                            |
+  |     [Δ=0] silencio  [Δ>0] -> Groq API    |
+  |                               |           |
+  |                               v           |
+  |                    estado/eventos.json    |
+  |                    logs/ejecuciones.log   |
+  +------------------------------------------+
+
+
+================================================================================
+PARTE 4: PROBLEMAS DETECTADOS (PRIORIZADOS)
+================================================================================
+
+CRÍTICOS / ALTA PRIORIDAD:
+  [1] SEGURIDAD: GROQ_API_KEY en texto plano en workspace local
+      Archivo: "api agente hackerone monitor"
+      Acción: Verificar si fue committeada a Git. Si sí -> rotar la clave.
+
+  [2] SEGURIDAD: Códigos 2FA de HackerOne en texto plano
+      Archivo: "códigos de respaldo h1"
+      Acción: Mover a gestor de contraseñas o cifrar con GPG.
+
+  [3] OCI discovery: starbucks.com retorna [] (vacío) en crt.sh
+      Causa probable: timeout de query server-side en crt.sh para dominios grandes.
+      El script no distingue "vacío" de "error".
+      Acción: Agregar validación de body vacío + logging a archivo.
+      Pendiente: confirmar con curl -w "%{http_code}..." el HTTP status y tiempo.
+
+MEDIA PRIORIDAD:
+  [4] OCI: Sin logging persistente en discovery_pasivo.py
+      Todo va a stdout. Si cron lo ejecuta, los errores se pierden.
+      Acción: Agregar módulo logging de Python con salida a logs/discovery.log.
+
+  [5] OCI: Nombre de archivo inconsistente
+      Script genera: discovery_crudo.json
+      CONTRATO_SUPERVISOR dice: actual.json
+      Acción: Estandarizar antes de implementar el comparador.
+
+  [6] OCI: estado/ vacío (falta previo.json)
+      Sin previo.json el comparador de Etapa 2 no puede funcionar.
+      Acción: Tras un discovery exitoso, copiar actual.json -> estado/previo.json.
+
+  [7] OCI: RAM en idle elevada (416 MB / 954 MB)
+      Margen libre real: 537 MB (con caché). SWAP de 2 GB activo.
+      Acción: Monitorear durante ejecución del discovery.
+
+  [8] Local: Bug en network-toolkit self_test.sh línea 133
+      Verifica "dnsutils" (nombre del paquete) en vez de "dig" (el binario).
+      Causa el único FAIL del self-test.
+      Corrección: cambiar "dnsutils" por "dig" en línea 133.
+
+  [9] Local: caso fuerza bruta btc sin Git
+      Directorio fuera de control de versiones.
+      Acción: Decidir si se incorpora al portafolio o queda privado.
+
+  [10] OCI: objetivos.txt contiene solo starbucks.com
+       Scope muy reducido para Bug Bounty útil.
+       Acción: Ampliar con dominios de programas HackerOne con wildcard scope.
+
+BAJA PRIORIDAD:
+  [11] portafolio: archivos .docx de Coursera sueltos en la raíz del repo
+  [12] portafolio: 10 archivos untracked sin gestionar
+  [13] network-toolkit: tests/, docs/, lib/, assets/ vacíos
+  [14] workspace_lab: 5 de 6 subdirectorios vacíos en OCI
+
+
+================================================================================
+PARTE 5: ROADMAP (ESTADO REAL)
+================================================================================
+
+ESTADO ACTUAL VERIFICADO:
+  - network-toolkit v1.0.0: FUNCIONAL (13/14 tests)
+  - portafolio-ciberseguridad: COMPLETO (docs académicas)
+  - caso fuerza bruta btc: herramientas listas, sin resultado
+  - OCI instancia: OPERATIVA (Python 3.12.3, venv, SWAP)
+  - discovery_pasivo.py: EXISTE y ejecutó (pero con resultado vacío)
+  - Comparador: NO EXISTE AÚN
+  - Cron: NO CONFIGURADO
+  - Logs OCI: VACÍOS
+
+ETAPA 0 - Saneamiento (1-2 días):
+  - Rotar/verificar GROQ_API_KEY expuesta
+  - Mover códigos 2FA a lugar seguro
+  - Corregir bug dnsutils -> dig en self_test.sh
+  - Gestionar archivos untracked del portafolio
+  - Confirmar diagnóstico de crt.sh con curl -w
+
+ETAPA 1 - Completar Discovery Pasivo (parcialmente hecha):
+  - Confirmar causa del body vacío de crt.sh
+  - Agregar logging a archivo en discovery_pasivo.py
+  - Agregar validación de body vacío antes de guardar JSON
+  - Estandarizar nombre del output (actual.json)
+  - Ejecutar con dominio de prueba más pequeño para verificar
+
+ETAPA 2 - Comparador de Deltas:
+  - Crear comparador.py
+  - Lee actual.json vs estado/previo.json
+  - Si Δ=0: salir silenciosamente
+  - Si Δ>0: generar estado/eventos.json
+
+ETAPA 3 - Histórico y Logging:
+  - Log estructurado de cada ejecución
+  - Registrar: fecha, dominios, subdominios encontrados, delta
+
+ETAPA 4 - Automatización con Cron:
+  - Script orquestador run_pipeline.sh
+  - Cron: ejecutar diariamente a las 6:00 AM UTC
+
+ETAPA 5 - Integración de IA (Groq):
+  - Solo cuando exista delta real
+  - Máximo 10 consultas/día (restricción del CONTRATO_SUPERVISOR)
+  - Analizar solo eventos nuevos, nunca la base completa
+
+
+================================================================================
+PARTE 6: FILOSOFÍA Y REGLAS DEL PROYECTO
+================================================================================
+
+Estas reglas aplican a cualquier IA o desarrollador que continúe el proyecto:
+
+1. LA REALIDAD TIENE PRIORIDAD
+   Nunca asumir que una conversación representa el estado actual.
+   Siempre verificar el sistema de archivos primero.
+
+2. ORDEN DE FUENTES DE VERDAD:
+   1. Estado real del sistema de archivos
+   2. Git (status, log)
+   3. Configuración efectiva del sistema
+   4. Logs y resultados generados
+   5. Documentación (.md)
+   6. Conversaciones con usuario u otras IAs
+
+3. COMPLEJIDAD INCREMENTAL:
+   No agregar componentes que todavía no sean necesarios.
+   Resolver primero el problema actual.
+
+4. UN ÚNICO OBJETIVO FUNCIONAL:
+   Cada etapa produce una mejora verificable.
+   No comenzar la siguiente hasta finalizar la actual.
+
+5. IA BAJO DEMANDA:
+   No usar Groq si un proceso determinístico puede resolver la tarea.
+   La IA solo participa cuando agrega valor real.
+
+6. OPTIMIZACIÓN DE RECURSOS (Oracle Free Tier):
+   CPU max: 10% por ciclo de discovery
+   RAM max: 120 MB por módulo de discovery
+   Tiempo max por ciclo: 5 minutos
+   Llamadas Groq max: 10 por día
+   Prohibido: fuerza bruta masiva, gobuster agresivo, nmap de puertos completos
+
+7. OPSEC:
+   Nunca subir credenciales reales a IAs públicas.
+   Siempre usar datos sintéticos para ejemplos.
+   Las credenciales viven únicamente en config/entorno.env (permisos 600).
+
+8. NO DESTRUIR INFORMACIÓN:
+   Nunca eliminar componentes automáticamente.
+   Ante dudas: documentar, informar, esperar confirmación.
+
+
+================================================================================
+FIN DEL INFORME
+================================================================================
+Próxima acción recomendada: Etapa 0 - Saneamiento
+Comenzar por: confirmar estado de GROQ_API_KEY y corregir bug dnsutils en self_test.sh
+================================================================================

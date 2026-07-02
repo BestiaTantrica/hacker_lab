@@ -1,0 +1,43 @@
+#!/bin/bash
+# Lanzador simple para interactuar con la cadena LLM local
+# Uso: 
+#   ./run "Tu prompt aquí"     -> Ejecuta el prompt a través de la cascada
+#   ./run --test               -> Ejecuta el test de las tres tareas individuales
+
+# Directorio del script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# 1. Cargar variables de entorno si existe .env
+if [ -f "$DIR/.env" ]; then
+    export $(grep -v '^#' "$DIR/.env" | xargs)
+fi
+
+# 2. Activar venv si existe en el laboratorio
+if [ -d "/home/tomas2/workspace_lab/venv" ]; then
+    source /home/tomas2/workspace_lab/venv/bin/activate
+elif [ -d "$DIR/../../venv" ]; then
+    source "$DIR/../../venv/bin/activate"
+fi
+
+# 3. Si se solicita --test, ejecutar el script de pruebas de las 3 tareas
+if [ "$1" == "--test" ]; then
+    python3 "$DIR/test_tres_tareas.py"
+    exit 0
+fi
+
+# 4. De lo contrario, ejecutar completado simple
+python3 -c "
+import sys
+sys.path.insert(0, '$DIR')
+from llm_client import completar, LLMError
+try:
+    prompt = ' '.join(sys.argv[1:])
+    if not prompt:
+        print('Uso: ./run \"Tu pregunta aquí\" o ./run --test')
+        sys.exit(1)
+    respuesta = completar(prompt)
+    print(respuesta)
+except LLMError as e:
+    print(f'\n[ERROR] {e}', file=sys.stderr)
+    sys.exit(1)
+" "$@"
