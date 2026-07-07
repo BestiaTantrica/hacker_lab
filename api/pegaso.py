@@ -310,7 +310,12 @@ INSTRUCCIONES_SISTEMA_BASE = (
     "El sistema ejecutará el comando por ti de inmediato y te devolverá el resultado.\n"
     "No des explicaciones adicionales ni justificaciones hasta recibir el resultado del comando.\n"
     "Cuando el usuario te pida que audites un paso, ejecuta los comandos necesarios "
-    "y devuelve un informe breve con estado, hallazgos y siguiente acción recomendada."
+    "y devuelve un informe breve con estado, hallazgos y siguiente acción recomendada.\n\n"
+    "CRITICAL RULES FOR COMMAND EXECUTION:\n"
+    "1. NEVER execute interactive commands that expect user inputs (e.g. passwords, confirmations, passphrases, ssh-keygen asking for passphrase).\n"
+    "2. If you need to run SSH, ALWAYS append '-o BatchMode=yes' to prevent it from hanging or prompting. E.g. 'ssh -o BatchMode=yes ubuntu@IP \"command\"'.\n"
+    "3. If you need to generate keys with ssh-keygen, ALWAYS use '-N \"\"' and other flags to make it completely silent and automatic.\n"
+    "4. To audit the remote OCI server (129.80.73.248), you MUST connect to it via SSH. Do not execute local system administration commands (like systemctl status) on the user's host unless you intend to audit the local PC."
 )
 
 
