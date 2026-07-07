@@ -135,6 +135,22 @@ def cargar_dotenv():
 # 3. HERRAMIENTA: EJECUCIÓN DE BASH
 # --------------------------------------------------------------------------
 
+def limitar_texto(texto: str, max_chars: int = 4000) -> str:
+    """Devuelve las últimas líneas del texto que entren dentro de max_chars."""
+    if not texto or len(texto) <= max_chars:
+        return texto or ""
+    lineas = texto.splitlines()
+    resultado = []
+    acumulado = 0
+    for linea in reversed(lineas):
+        if acumulado + len(linea) + 1 > max_chars:
+            resultado.append(f"... [SALIDA TRUNCADA: {len(lineas) - len(resultado)} LÍNEAS ANTERIORES OMITIDAS] ...")
+            break
+        resultado.append(linea)
+        acumulado += len(linea) + 1
+    return "\n".join(reversed(resultado))
+
+
 def ejecutar_comando_bash(comando: str) -> str:
     """Ejecuta un comando de shell en el sistema del usuario y devuelve el resultado.
 
@@ -158,10 +174,13 @@ def ejecutar_comando_bash(comando: str) -> str:
             text=True,
             timeout=60,
         )
+        stdout_filtrado = limitar_texto(resultado.stdout, max_chars=4000)
+        stderr_filtrado = limitar_texto(resultado.stderr, max_chars=2000)
+        
         partes = [
             f"[EXIT CODE]: {resultado.returncode}",
-            f"[STDOUT]:\n{resultado.stdout.strip() or '(vacío)'}",
-            f"[STDERR]:\n{resultado.stderr.strip() or '(vacío)'}",
+            f"[STDOUT]:\n{stdout_filtrado.strip() or '(vacío)'}",
+            f"[STDERR]:\n{stderr_filtrado.strip() or '(vacío)'}",
         ]
         return "\n".join(partes)
     except subprocess.TimeoutExpired:
