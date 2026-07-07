@@ -209,8 +209,13 @@ def guardar_memoria_persistente(texto):
     if len(texto) > MAX_MEMORY_CHARS:
         # Quedarse con la parte más reciente (ya viene ordenada cronológicamente)
         texto = texto[-MAX_MEMORY_CHARS:]
-    with open(MEMORY_FILE, "w", encoding="utf-8") as f:
-        f.write(texto)
+    temp_file = MEMORY_FILE + ".tmp"
+    try:
+        with open(temp_file, "w", encoding="utf-8") as f:
+            f.write(texto)
+        os.replace(temp_file, MEMORY_FILE)
+    except Exception as e:
+        print(f"[WARN] No se pudo guardar la memoria persistente de forma atómica: {e}", file=sys.stderr)
 
 
 def resumir_turnos_viejos(client, turnos_viejos, memoria_actual):
@@ -244,12 +249,10 @@ def resumir_turnos_viejos(client, turnos_viejos, memoria_actual):
     )
 
     try:
-        resp = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-        nuevo_resumen = resp.text.strip() if resp.text else memoria_actual
-        return nuevo_resumen or memoria_actual
+        import llm_client
+        # Usamos llm_client.completar que tiene fallback Groq -> Gemini y timeouts estrictos
+        nuevo_resumen = llm_client.completar(prompt, max_tokens=1024)
+        return nuevo_resumen.strip() if nuevo_resumen else memoria_actual
     except Exception as e:
         print(f"[WARN] No se pudo comprimir memoria: {e}", file=sys.stderr)
         return memoria_actual
@@ -275,8 +278,12 @@ def guardar_historial(client, chat):
             historial_recortado = historial
 
         data = [c.model_dump(mode="json", exclude_none=True) for c in historial_recortado]
-        with open(SESSION_FILE, "w", encoding="utf-8") as f:
+        temp_file = SESSION_FILE + ".tmp"
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(temp_file, SESSION_FILE)
+    except (KeyboardInterrupt, SystemExit):
+        print("\n[WARN] Guardado de historial interrumpido por el usuario.", file=sys.stderr)
     except Exception as e:
         print(f"[WARN] No se pudo guardar la sesión: {e}", file=sys.stderr)
 
@@ -328,7 +335,17 @@ def main():
         )
         sys.exit(1)
 
-    client = genai.Client(api_key=api_key)
+    # Configuración de timeout de 30 segundos y reintentos acotados (max 3 intentos)
+    # para evitar bloqueos infinitos de tenacity
+    http_opts = types.HttpOptions(
+        timeout=30000,  # 30 segundos
+        retry_options=types.HttpRetryOptions(
+            attempts=3,
+            initial_delay=1.0,
+            max_delay=5.0
+        )
+    )
+    client = genai.Client(api_key=api_key, http_options=http_opts)
 
     historial_previo = cargar_historial(types)
     memoria_persistente = cargar_memoria_persistente()
