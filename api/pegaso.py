@@ -327,13 +327,31 @@ def main():
     from google import genai
     from google.genai import types
 
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
+    keys_disponibles = []
+    # Clave primaria
+    key_primaria = os.environ.get("GEMINI_API_KEY")
+    if key_primaria:
+        keys_disponibles.append(key_primaria)
+    
+    # Buscar claves secundarias (GEMINI_API_KEY_2, GEMINI_API_KEY_3, etc.)
+    idx = 2
+    while True:
+        key_extra = os.environ.get(f"GEMINI_API_KEY_{idx}")
+        if key_extra:
+            keys_disponibles.append(key_extra)
+            idx += 1
+        else:
+            break
+
+    if not keys_disponibles:
         print(
             "[ERROR] No se encontró GEMINI_API_KEY (ni en el entorno ni en .env).",
             file=sys.stderr,
         )
         sys.exit(1)
+
+    key_index = 0
+    api_key = keys_disponibles[key_index]
 
     # Configuración de timeout de 30 segundos y reintentos acotados (max 3 intentos)
     # para evitar bloqueos infinitos de tenacity
@@ -391,7 +409,33 @@ def main():
             texto = respuesta.text if respuesta.text else "(sin texto de respuesta)"
             print(f"\n[PEGASO]> {texto}\n")
         except Exception as e:
-            print(f"[ERROR durante la ejecución]: {e}")
+            err_str = str(e)
+            if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
+                if len(keys_disponibles) > 1:
+                    print(f"\n[PEGASO] Cuota agotada en la clave {key_index + 1}. Rotando a clave de respaldo...", file=sys.stderr)
+                    key_index = (key_index + 1) % len(keys_disponibles)
+                    api_key = keys_disponibles[key_index]
+                    try:
+                        historial_actual = chat.get_history()
+                        client = genai.Client(api_key=api_key, http_options=http_opts)
+                        chat = client.chats.create(
+                            model=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
+                            history=historial_actual,
+                            config=types.GenerateContentConfig(
+                                system_instruction=construir_instrucciones(memoria_persistente),
+                                tools=[ejecutar_comando_bash],
+                            ),
+                        )
+                        print("[PEGASO] Clave de respaldo cargada con éxito. Reintentando tu mensaje...\n", file=sys.stderr)
+                        respuesta = chat.send_message(entrada)
+                        texto = respuesta.text if respuesta.text else "(sin texto de respuesta)"
+                        print(f"\n[PEGASO]> {texto}\n")
+                    except Exception as re_err:
+                        print(f"[ERROR tras rotación]: {re_err}")
+                else:
+                    print(f"[ERROR durante la ejecución]: {e}\n(Tip: Configura GEMINI_API_KEY_2 en tu .env para rotar claves automáticamente)")
+            else:
+                print(f"[ERROR durante la ejecución]: {e}")
         finally:
             guardar_historial(client, chat)
 
