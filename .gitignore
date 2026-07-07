@@ -2,6 +2,10 @@
 api/.env
 **/.env
 
+# Estado de sesión de PEGASO (local, no va al repo)
+api/.agent_session.json
+api/.agent_memoria.md
+
 # Python
 __pycache__/
 *.pyc
