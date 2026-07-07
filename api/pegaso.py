@@ -389,22 +389,29 @@ def main():
         if not entrada:
             continue
 
-        # Añadir la entrada del usuario al historial
-        historial.append({"role": "user", "parts": [{"text": entrada}]})
+        # Creamos una copia del historial para el bucle ReAct temporal
+        historial_trabajo = list(historial)
+        historial_trabajo.append({"role": "user", "parts": [{"text": entrada}]})
 
         intentos_loop = 0
-        max_loop = 5
+        max_loop = 3
+        comandos_ejecutados = []
+        respuesta_final = ""
+        ejecuto_herramientas = False
         
         while intentos_loop < max_loop:
             intentos_loop += 1
             
             prompt_sistema = construir_instrucciones(memoria_persistente)
-            # Pasamos todo el historial acumulado en la sesión
-            prompt_completo = formatear_prompt_con_historial(prompt_sistema, historial[:-1], historial[-1]["parts"][0]["text"])
+            prompt_completo = formatear_prompt_con_historial(
+                prompt_sistema,
+                historial_trabajo[:-1],
+                historial_trabajo[-1]["parts"][0]["text"]
+            )
 
             try:
                 # Obtenemos la respuesta usando la cascada robusta (Groq -> Gemini)
-                respuesta_texto = llm_client.completar(prompt_completo, max_tokens=1500)
+                respuesta_texto = llm_client.completar(prompt_completo, max_tokens=1200)
                 
                 # Buscar si el modelo solicitó ejecutar un comando bash
                 match = re.search(r"```bash_run\n(.*?)\n```", respuesta_texto, re.DOTALL)
@@ -415,24 +422,36 @@ def main():
                     
                     # Ejecutar en la shell del usuario
                     resultado_ejecucion = ejecutar_comando_bash(comando)
+                    comandos_ejecutados.append(comando)
+                    ejecuto_herramientas = True
                     
-                    # Añadir la respuesta intermedia del modelo al historial
-                    historial.append({"role": "model", "parts": [{"text": respuesta_texto}]})
-                    
-                    # Añadir el resultado de la ejecución al historial
+                    # Añadir al historial de trabajo temporal
+                    historial_trabajo.append({"role": "model", "parts": [{"text": respuesta_texto}]})
                     resultado_mensaje = f"[RESULTADO DEL COMANDO BASH]:\n{resultado_ejecucion}"
-                    historial.append({"role": "user", "parts": [{"text": resultado_mensaje}]})
+                    historial_trabajo.append({"role": "user", "parts": [{"text": resultado_mensaje}]})
                     
-                    # Continuar el bucle para que el modelo procese el resultado
+                    # Continuar el bucle
                     continue
                 else:
                     # No hay herramientas, es la respuesta final
+                    respuesta_final = respuesta_texto
                     print(f"\n[PEGASO]> {respuesta_texto}\n")
-                    historial.append({"role": "model", "parts": [{"text": respuesta_texto}]})
                     break
             except Exception as e:
                 print(f"[ERROR durante la ejecución]: {e}")
                 break
+        
+        # Al finalizar el turno, guardamos de forma ultra limpia en el historial persistente
+        # Conservamos únicamente: el prompt del usuario, un log compacto de comandos ejecutados, y la respuesta final.
+        if respuesta_final or ejecuto_herramientas:
+            historial.append({"role": "user", "parts": [{"text": entrada}]})
+            if comandos_ejecutados:
+                log_comandos = "Ejecuté localmente los siguientes comandos:\n" + "\n".join(f"- `{c}`" for c in comandos_ejecutados)
+                historial.append({"role": "model", "parts": [{"text": log_comandos}]})
+            if respuesta_final:
+                historial.append({"role": "model", "parts": [{"text": respuesta_final}]})
+            else:
+                historial.append({"role": "model", "parts": [{"text": "[El bucle finalizó sin una respuesta textual completa debido a rate-limits/timeouts.]"}]})
         
         # Guardar historial al final de cada turno interactivo
         guardar_historial(historial)
