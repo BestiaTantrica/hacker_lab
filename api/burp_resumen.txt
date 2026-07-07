@@ -1,0 +1,219 @@
+======================================================================
+  ANÁLISIS DE TRÁFICO BURP SUITE — MongoDB Bug Bounty Lab
+  Generado: 2026-07-07T03:26:32.696481
+======================================================================
+
+ESTADÍSTICAS GENERALES
+  Total items en XML          : 10007
+  Items en scope (*.mongodb.com): 10006
+  Items fuera de scope         : 1
+  Endpoints únicos             : 171
+
+──────────────────────────────────────────────────────────────────────
+HOSTS DESCUBIERTOS (en scope)
+  cloud.mongodb.com                         9964 requests
+  account.mongodb.com                         42 requests
+
+──────────────────────────────────────────────────────────────────────
+ENDPOINTS ÚNICOS (top 60 por hits)
+  [GET            ] [0,200               ] 6393x  cloud.mongodb.com/nds/{objectId}
+  [GET            ] [0,200               ] 1211x  cloud.mongodb.com/ui/layout/alerts/organization/{objectId}/count
+  [GET            ] [0,200               ] 1193x  cloud.mongodb.com/user/shared/alerts/project/{objectId}
+  [GET            ] [0,200               ]  587x  cloud.mongodb.com/automation/deploymentStatus/{objectId}
+  [GET            ] [200                 ]   40x  cloud.mongodb.com/nds/clusters/{objectId}
+  [GET            ] [200                 ]   17x  cloud.mongodb.com/ui/layout
+  [GET            ] [200                 ]   15x  cloud.mongodb.com/deployment/{objectId}
+  [GET            ] [200                 ]   14x  cloud.mongodb.com/orgs/{objectId}
+  [GET            ] [200                 ]   13x  cloud.mongodb.com/v2/assignment
+  [GET            ] [200                 ]   12x  cloud.mongodb.com/cloud/resources/tags/cloud/project/{objectId}
+  [POST           ] [0,200,303           ]   11x  cloud.mongodb.com/v2/automation/changes/{objectId}
+  [GET            ] [200                 ]   11x  cloud.mongodb.com/nds/{objectId}/privateIpMode
+  [GET            ] [200                 ]   11x  cloud.mongodb.com/nds/{objectId}/encryptionAtRest
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/uiMsgs
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/system/health
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/billing/hasEffectivePaymentMethod/{objectId}
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/{objectId}/ipWhitelist
+  [GET,POST       ] [200                 ]    9x  cloud.mongodb.com/nds/{objectId}/users
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/clusters/{objectId}/AWS/options
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/clusters/{objectId}/AZURE/options
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/clusters/{objectId}/GCP/options
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/clusters/{objectId}/FREE/options
+  [GET            ] [200                 ]    9x  cloud.mongodb.com/nds/clusters/{objectId}/FLEX/options
+  [GET            ] [200                 ]    8x  cloud.mongodb.com/goto
+  [GET            ] [200                 ]    8x  cloud.mongodb.com/billing/plan/{objectId}
+  [GET            ] [200                 ]    8x  cloud.mongodb.com/orgs/{objectId}/groups
+  [POST           ] [200                 ]    7x  cloud.mongodb.com/v2/assignByPoint
+  [GET            ] [404                 ]    7x  cloud.mongodb.com/user/federationSettings
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/peers/AWS
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/privateEndpoint/AWS/endpointService
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/privateEndpoint/AZURE/endpointService
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/privateEndpoint/GCP/endpointService
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/awsCustomDNS
+  [GET            ] [200                 ]    7x  cloud.mongodb.com/nds/{objectId}/peers
+  [GET            ] [200                 ]    6x  account.mongodb.com/uiMsgs
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/aiModelApi/{objectId}/apiKeys/project/{objectId}
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/organizationVoyageSettings/{objectId}/isHighVoyageIntent
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/sampleDatasetLoad/{objectId}
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/dismissedToolbarTip/{objectId}
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/{objectId}/userSecurity
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/{objectId}/privateNetworkSettings/endpointIds
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/{objectId}/containers
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/{objectId}/onlineArchives
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/dataLakes/{objectId}/v1/tenants
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/{objectId}/containers/aws/defaults
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/activity/alertConfigs/{objectId}
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/orgs/{objectId}/resourcePolicies
+  [GET            ] [200                 ]    6x  cloud.mongodb.com/nds/clusters/{objectId}/template/flex/costEstimate
+  [GET,POST       ] [200                 ]    5x  account.mongodb.com/account/mfa
+  [GET            ] [200                 ]    5x  account.mongodb.com/account/profile/userAuid
+  [GET            ] [200                 ]    5x  cloud.mongodb.com/nds/{objectId}/privateEndpoint/regionalMode
+  [DELETE,GET     ] [200                 ]    5x  cloud.mongodb.com/nds/clusterdrafts/6a4c0a54b388b65b11799a58
+  [GET            ] [200                 ]    4x  account.mongodb.com/account/profile/appUser
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/v2/{objectId}
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/host/list/currentAgents/{objectId}
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/backup/web/agents/{objectId}
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/automation/agent/{objectId}
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/explorer/v1/groups/{objectId}/clusters/connectionInfo
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/explorer/v1/groups/{objectId}/preferences
+  [GET            ] [200                 ]    4x  cloud.mongodb.com/nds/{objectId}/maintenanceWindow
+
+──────────────────────────────────────────────────────────────────────
+ITEMS CON STATUS ANÓMALO (18 total)
+
+  [400] — 5 requests
+    GET     cloud.mongodb.com/user/authCodeCreationTimestamp
+           Resp: HTTP/2 400 Bad Request Date: Mon, 06 Jul 2026 21:50:20 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Perm
+    GET     cloud.mongodb.com/cloud/resources/tags/cloud/cluster/6a4c7ef8aba09f5357176ccd
+           Resp: HTTP/2 400 Bad Request Date: Tue, 07 Jul 2026 04:22:18 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Perm
+    GET     cloud.mongodb.com/cloud/resources/tags/cloud/cluster/6a4c7ef8aba09f5357176ccd
+           Resp: HTTP/2 400 Bad Request Date: Tue, 07 Jul 2026 04:22:18 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Perm
+    GET     cloud.mongodb.com/cloud/resources/tags/cloud/cluster/6a4c7ef8aba09f5357176ccd
+           Resp: HTTP/2 400 Bad Request Date: Tue, 07 Jul 2026 04:27:30 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Perm
+    GET     cloud.mongodb.com/cloud/resources/tags/cloud/cluster/6a4c7ef8aba09f5357176ccd
+           Resp: HTTP/2 400 Bad Request Date: Tue, 07 Jul 2026 04:27:30 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Perm
+
+  [403] — 2 requests
+    GET     cloud.mongodb.com/settings/featureFlags/groups/6a4c0a54b388b65b11799a58
+           Resp: HTTP/2 403 Forbidden Date: Tue, 07 Jul 2026 04:21:24 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+    GET     cloud.mongodb.com/settings/featureFlags/groups/6a4c0a54b388b65b11799a58
+           Resp: HTTP/2 403 Forbidden Date: Tue, 07 Jul 2026 04:21:39 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+
+  [404] — 11 requests
+    GET     cloud.mongodb.com/user/federationSettings
+           Resp: HTTP/2 404 Not Found Date: Mon, 06 Jul 2026 21:50:52 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+    GET     cloud.mongodb.com/user/federationSettings
+           Resp: HTTP/2 404 Not Found Date: Tue, 07 Jul 2026 04:20:09 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+    GET     cloud.mongodb.com/orgs/6a4c0a54b388b65b11799a24/federationSettings
+           Resp: HTTP/2 404 Not Found Date: Tue, 07 Jul 2026 04:20:29 GMT Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permitted-Cross-Domain-Polic
+    GET     cloud.mongodb.com/user/federationSettings
+           Resp: HTTP/2 404 Not Found Date: Tue, 07 Jul 2026 04:21:04 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+    GET     cloud.mongodb.com/user/federationSettings
+           Resp: HTTP/2 404 Not Found Date: Tue, 07 Jul 2026 04:21:55 GMT Vary: Accept-Encoding Strict-Transport-Security: max-age=31536000; includeSubdomains; Referrer-Policy: strict-origin-when-cross-origin X-Permit
+    ... y 6 más (ver burp_analisis.json)
+
+──────────────────────────────────────────────────────────────────────
+PARÁMETROS SENSIBLES DETECTADOS (10 ocurrencias)
+  [URL  ] username             en account.mongodb.com/federation/discovery/idps?clientState=%7B%22n%22%3A%22https%3A%2F%2Fcloud.mongodb.com%2F%22%2C%22signedOut%22%3A%22true%22%7D&username=tomas244%40wearehackerone.com [200]
+  [BODY ] password             en account.mongodb.com/account/auth [200]
+  [URL  ] username             en cloud.mongodb.com/account/oauth?uId=00u13a97vdptgAQD7298&mfaStartTime=1783374350480&n=https%3A%2F%2Fcloud.mongodb.com%2F&needsMfa=false&uId=6a4c05bfa6cc86eba5a0d30e&csrfTime=1783374645574&username=tomas244%40wearehackerone.com&csrfToken=672a6fb2df247d1d0dabda3c3482b4af9b9faba5a46f5e8cd20b01d3c4e50954-effed9cf4100dc995e61c309442c69ef4d2ab7065b3669c56847b639c4b71d7eb60fedb83f6d22290a981edb983639e88d1a4c6ec3281e711e82096eb1b46e02&email=tomas244%40wearehackerone.com [303]
+  [URL  ] email                en cloud.mongodb.com/account/oauth?uId=00u13a97vdptgAQD7298&mfaStartTime=1783374350480&n=https%3A%2F%2Fcloud.mongodb.com%2F&needsMfa=false&uId=6a4c05bfa6cc86eba5a0d30e&csrfTime=1783374645574&username=tomas244%40wearehackerone.com&csrfToken=672a6fb2df247d1d0dabda3c3482b4af9b9faba5a46f5e8cd20b01d3c4e50954-effed9cf4100dc995e61c309442c69ef4d2ab7065b3669c56847b639c4b71d7eb60fedb83f6d22290a981edb983639e88d1a4c6ec3281e711e82096eb1b46e02&email=tomas244%40wearehackerone.com [303]
+  [URL  ] email                en account.mongodb.com/account/oauth?uId=00u13a97vdptgAQD7298&mfaStartTime=1783374350480&n=https%3A%2F%2Fcloud.mongodb.com%2F&needsMfa=false&uId=6a4c05bfa6cc86eba5a0d30e&csrfTime=1783374645574&username=tomas244%40wearehackerone.com&csrfToken=672a6fb2df247d1d0dabda3c3482b4af9b9faba5a46f5e8cd20b01d3c4e50954-effed9cf4100dc995e61c309442c69ef4d2ab7065b3669c56847b639c4b71d7eb60fedb83f6d22290a981edb983639e88d1a4c6ec3281e711e82096eb1b46e02&email=tomas244%40wearehackerone.com [200]
+  [BODY ] user                 en cloud.mongodb.com/nds/6a4c0a54b388b65b11799a58/users [200]
+  [BODY ] password             en cloud.mongodb.com/nds/6a4c0a54b388b65b11799a58/users [200]
+
+──────────────────────────────────────────────────────────────────────
+CONFIGURACIONES CORS INTERESANTES (10 hallazgos)
+  cloud.mongodb.com/user/logout
+    ACAO: https://account.mongodb.com  |  ACAC: true  |  [204]
+  cloud.mongodb.com/user/logout
+    ACAO: https://account.mongodb.com  |  ACAC: true  |  [200]
+  cloud.mongodb.com/user/authCodeCreationTimestamp
+    ACAO: https://account.mongodb.com  |  ACAC: true  |  [204]
+  cloud.mongodb.com/user/authCodeCreationTimestamp
+    ACAO: https://account.mongodb.com  |  ACAC: true  |  [400]
+  account.mongodb.com/account/profile/userAuid
+    ACAO: https://cloud.mongodb.com  |  ACAC: true  |  [200]
+  account.mongodb.com/account/profile/userAuid
+    ACAO: https://cloud.mongodb.com  |  ACAC: true  |  [200]
+  cloud.mongodb.com/user/shared
+    ACAO: https://www.mongodb.com  |  ACAC: true  |  [200]
+  account.mongodb.com/account/profile/userAuid
+    ACAO: https://cloud.mongodb.com  |  ACAC: true  |  [200]
+  cloud.mongodb.com/ui/layout
+    ACAO: https://account.mongodb.com  |  ACAC: true  |  [200]
+  account.mongodb.com/account/profile/userAuid
+    ACAO: https://cloud.mongodb.com  |  ACAC: true  |  [200]
+
+──────────────────────────────────────────────────────────────────────
+CABECERAS DE SEGURIDAD OBSERVADAS EN RESPONSES
+  access-control-allow-credentials         en 2 host(s): account.mongodb.com, cloud.mongodb.com
+  access-control-allow-methods             en 1 host(s): cloud.mongodb.com
+  access-control-allow-origin              en 2 host(s): account.mongodb.com, cloud.mongodb.com
+  set-cookie                               en 2 host(s): account.mongodb.com, cloud.mongodb.com
+  strict-transport-security                en 2 host(s): account.mongodb.com, cloud.mongodb.com
+  x-content-type-options                   en 2 host(s): account.mongodb.com, cloud.mongodb.com
+  x-frame-options                          en 2 host(s): account.mongodb.com, cloud.mongodb.com
+
+──────────────────────────────────────────────────────────────────────
+APIs JSON CON 200/201 (muestra de 20 de 8662)
+  GET     account.mongodb.com/uiMsgs (382 bytes)
+           []
+  GET     account.mongodb.com/federation/discovery/idps?clientState=%7B%22n%22%3A%22https%3A%2F%2Fcloud.mongodb.com%2F%22%2C%22signedOut%22%3A%22true%22%7D&username=tomas244%40wearehackerone.com (481 bytes)
+           {"errorCode":"NONE","loginRedirect":"","version":"1","status":"OK"}
+  POST    account.mongodb.com/account/auth (1127 bytes)
+           {"errorCode":"NONE","loginRedirect":"/account/security/mfa?signedOut=true&mfaStartTime=1783374350480&n=https%3A%2F%2Fcloud.mongodb.com%2F&uId=00u13a97vdptgAQD7298&stateToken=00H3aj
+  GET     account.mongodb.com/uiMsgs (382 bytes)
+           []
+  GET     account.mongodb.com/account/auth/mfa/00H3ajg3LHippvWrgLHGxNTBXb_Yhyi7-paXbi-RIB (666 bytes)
+           {"_embedded":{"factors":[{"factorType":"email","id":"emf13a9ha42G3WKRk298","profile":{"email":"t...4@wearehackerone.com"},"provider":"OKTA"}],"user":{"profile":{"login":"tomas244@w
+  POST    account.mongodb.com/account/auth/mfa/verify (691 bytes)
+           {"_embedded":{"factor":{"factorType":"email","id":"emf13a9ha42G3WKRk298","profile":{"email":"t...4@wearehackerone.com"},"provider":"OKTA"},"user":{"profile":{"login":"tomas244@wear
+  POST    account.mongodb.com/account/auth/mfa/verify (2248 bytes)
+           {"errorCode":"NONE","loginRedirect":"https://auth.mongodb.com/oauth2/default/v1/authorize?client_id=0oa2h8np9ryZR4Xat297&redirect_uri=https%3A%2F%2Faccount.mongodb.com%2Faccount%2F
+  GET     account.mongodb.com/account/mfa (520 bytes)
+           [{"factorType":"email","id":"emf13a9ha42G3WKRk298","profile":{"email":"tomas244@wearehackerone.com"},"provider":"OKTA","status":"ACTIVE"}]
+  GET     account.mongodb.com/account/params (65950 bytes)
+           {"accountCentralUrl":"https://account.mongodb.com","accountMultiFactorAuthEnabled":true,"accountUser":{"accountDeleted":false,"accountDeletedDate":null,"ciamIdentifiers":[{"iss":"h
+  GET     account.mongodb.com/account/profile/appUser (611 bytes)
+           {"accountMultiFactorAuthSetupRequired":false,"currentOrgId":"6a4c0a54b388b65b11799a24","isInMfaRequiredOrg":false,"orgIds":["6a4c0a54b388b65b11799a24"],"userId":"6a4c05bfa6cc86eba5
+  GET     account.mongodb.com/uiMsgs (382 bytes)
+           []
+  GET     account.mongodb.com/account/mfa (520 bytes)
+           [{"factorType":"email","id":"emf13a9ha42G3WKRk298","profile":{"email":"tomas244@wearehackerone.com"},"provider":"OKTA","status":"ACTIVE"}]
+  GET     account.mongodb.com/account/profile/appUser (611 bytes)
+           {"accountMultiFactorAuthSetupRequired":false,"currentOrgId":"6a4c0a54b388b65b11799a24","isInMfaRequiredOrg":false,"orgIds":["6a4c0a54b388b65b11799a24"],"userId":"6a4c05bfa6cc86eba5
+  GET     account.mongodb.com/uiMsgs (382 bytes)
+           []
+  GET     account.mongodb.com/account/params (65950 bytes)
+           {"accountCentralUrl":"https://account.mongodb.com","accountMultiFactorAuthEnabled":true,"accountUser":{"accountDeleted":false,"accountDeletedDate":null,"ciamIdentifiers":[{"iss":"h
+  GET     account.mongodb.com/account/mfa (520 bytes)
+           [{"factorType":"email","id":"emf13a9ha42G3WKRk298","profile":{"email":"tomas244@wearehackerone.com"},"provider":"OKTA","status":"ACTIVE"}]
+  GET     account.mongodb.com/account/profile/appUser (611 bytes)
+           {"accountMultiFactorAuthSetupRequired":false,"currentOrgId":"6a4c0a54b388b65b11799a24","isInMfaRequiredOrg":false,"orgIds":["6a4c0a54b388b65b11799a24"],"userId":"6a4c05bfa6cc86eba5
+  GET     account.mongodb.com/uiMsgs (382 bytes)
+           []
+  POST    account.mongodb.com/account/mfa (1102 bytes)
+           {"_embedded":{"activation":{"_links":{"qrcode":{"href":"https://auth.mongodb.com/api/v1/users/00u13a97vdptgAQD7298/factors/uft13aauupplsyTuA298/qr/20111RBJpnRPd6Qky_ixwpgUpUSYLED3y
+  POST    account.mongodb.com/account/mfa/activate (713 bytes)
+           {"userFactors":[{"provider":"OKTA","profile":{"email":"tomas244@wearehackerone.com"},"factorType":"EMAIL","id":"emf13a9ha42G3WKRk298","status":"ACTIVE"},{"provider":"GOOGLE","profi
+
+======================================================================
+VECTORES DE ATAQUE SUGERIDOS PARA REVISIÓN MANUAL:
+
+  [CORS] 10 endpoints con CORS permisivo detectados.
+         → Verificar si ACAO refleja el Origin del request (CORS bypass).
+         → Con ACAC: true, probar si incluye cookies de sesión.
+
+  [AuthZ] 2 requests con 403. Posible IDOR o escalada de privilegios.
+         → Probar con otro orgId/groupId/userId en la misma ruta.
+         → Cambiar método HTTP (GET→POST, DELETE→PUT).
+
+  [Params] Parámetros sensibles: user, password, username, email
+         → Verificar si el servidor valida/sanitiza estos valores.
+         → Probar manipulación de IDs (IDOR), open redirect (redirect/url).
+
+======================================================================
+Archivos de salida:
+  JSON completo : /home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/api/burp_analisis.json
+  Este resumen  : /home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/api/burp_resumen.txt
+======================================================================
