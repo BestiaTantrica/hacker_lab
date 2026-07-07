@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 PEGASO — Agente Autónomo CLI con memoria persistente
-Basado en google-genai / gemini-2.5-flash
+Basado en un motor ReAct manual e inmune a 429 de Gemini, usando llm_client.
 
 Uso:
     python3 pegaso.py           → Modo chat interactivo (historial + memoria)
@@ -71,6 +71,8 @@ def pip_del_venv(venv_path):
 
 
 def asegurar_google_genai(venv_path):
+    # Ya no es estrictamente obligatoria para el bucle interactivo principal,
+    # pero la mantenemos por compatibilidad con otros scripts del lab.
     try:
         import google.genai  # noqa: F401
         return
@@ -130,7 +132,7 @@ def cargar_dotenv():
 
 
 # --------------------------------------------------------------------------
-# 3. HERRAMIENTA: EJECUCIÓN DE BASH (tool calling para el modelo)
+# 3. HERRAMIENTA: EJECUCIÓN DE BASH
 # --------------------------------------------------------------------------
 
 def ejecutar_comando_bash(comando: str) -> str:
@@ -172,8 +174,6 @@ def ejecutar_comando_bash(comando: str) -> str:
 # 4. MEMORIA: HISTORIAL ACOTADO + RESUMEN PERSISTENTE
 # --------------------------------------------------------------------------
 
-# Los archivos se guardan junto al script, no en el cwd, para que la memoria
-# sobreviva sin importar desde qué directorio se ejecute pegaso.
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SESSION_FILE = os.path.join(_SCRIPT_DIR, ".agent_session.json")
 MEMORY_FILE  = os.path.join(_SCRIPT_DIR, ".agent_memoria.md")
@@ -182,13 +182,12 @@ MAX_HISTORY_ENTRIES = 16   # ~8 intercambios usuario/modelo en crudo
 MAX_MEMORY_CHARS    = 4000 # tope del resumen persistente (~1000 tokens)
 
 
-def cargar_historial(types_mod):
+def cargar_historial():
     if not os.path.isfile(SESSION_FILE):
         return []
     try:
         with open(SESSION_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return [types_mod.Content.model_validate(item) for item in data]
+            return json.load(f)
     except Exception as e:
         print(f"[WARN] No se pudo cargar la sesión previa: {e}", file=sys.stderr)
         return []
@@ -207,7 +206,6 @@ def cargar_memoria_persistente():
 def guardar_memoria_persistente(texto):
     texto = texto.strip()
     if len(texto) > MAX_MEMORY_CHARS:
-        # Quedarse con la parte más reciente (ya viene ordenada cronológicamente)
         texto = texto[-MAX_MEMORY_CHARS:]
     temp_file = MEMORY_FILE + ".tmp"
     try:
@@ -225,9 +223,9 @@ def resumir_turnos_viejos(client, turnos_viejos, memoria_actual):
     """
     texto_turnos = []
     for c in turnos_viejos:
-        rol = c.role
+        rol = c.get("role", "user")
         contenido = " ".join(
-            p.text for p in (c.parts or []) if getattr(p, "text", None)
+            p.get("text", "") for p in c.get("parts", []) if "text" in p
         )
         if contenido.strip():
             texto_turnos.append(f"[{rol}] {contenido.strip()}")
@@ -250,7 +248,6 @@ def resumir_turnos_viejos(client, turnos_viejos, memoria_actual):
 
     try:
         import llm_client
-        # Usamos llm_client.completar que tiene fallback Groq -> Gemini y timeouts estrictos
         nuevo_resumen = llm_client.completar(prompt, max_tokens=1024)
         return nuevo_resumen.strip() if nuevo_resumen else memoria_actual
     except Exception as e:
@@ -258,29 +255,22 @@ def resumir_turnos_viejos(client, turnos_viejos, memoria_actual):
         return memoria_actual
 
 
-def guardar_historial(client, chat):
-    """
-    Guarda el historial crudo acotado a MAX_HISTORY_ENTRIES.
-    Lo que se descarta se comprime y se funde en la memoria persistente.
-    """
+def guardar_historial(chat_history):
     try:
-        historial = chat.get_history()
-
-        if len(historial) > MAX_HISTORY_ENTRIES:
-            exceso = len(historial) - MAX_HISTORY_ENTRIES
-            turnos_viejos = historial[:exceso]
-            historial_recortado = historial[exceso:]
+        if len(chat_history) > MAX_HISTORY_ENTRIES:
+            exceso = len(chat_history) - MAX_HISTORY_ENTRIES
+            turnos_viejos = chat_history[:exceso]
+            historial_recortado = chat_history[exceso:]
 
             memoria_actual = cargar_memoria_persistente()
-            memoria_nueva = resumir_turnos_viejos(client, turnos_viejos, memoria_actual)
+            memoria_nueva = resumir_turnos_viejos(None, turnos_viejos, memoria_actual)
             guardar_memoria_persistente(memoria_nueva)
         else:
-            historial_recortado = historial
+            historial_recortado = chat_history
 
-        data = [c.model_dump(mode="json", exclude_none=True) for c in historial_recortado]
         temp_file = SESSION_FILE + ".tmp"
         with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(historial_recortado, f, ensure_ascii=False, indent=2)
         os.replace(temp_file, SESSION_FILE)
     except (KeyboardInterrupt, SystemExit):
         print("\n[WARN] Guardado de historial interrumpido por el usuario.", file=sys.stderr)
@@ -288,18 +278,37 @@ def guardar_historial(client, chat):
         print(f"[WARN] No se pudo guardar la sesión: {e}", file=sys.stderr)
 
 
+def formatear_prompt_con_historial(instrucciones_sistema, historial, entrada_usuario):
+    lineas = [instrucciones_sistema, "\n--- HISTORIAL DE CONVERSACIÓN ---"]
+    for c in historial:
+        rol = "Usuario" if c.get("role") == "user" else "Agente PEGASO"
+        textos = []
+        for part in c.get("parts", []):
+            if "text" in part:
+                textos.append(part["text"])
+        lineas.append(f"{rol}: {' '.join(textos)}")
+    lineas.append(f"Usuario: {entrada_usuario}")
+    lineas.append("Agente PEGASO:")
+    return "\n".join(lineas)
+
+
 # --------------------------------------------------------------------------
-# 5. IDENTIDAD DEL AGENTE + BUCLE PRINCIPAL
+# 5. IDENTIDAD DEL AGENTE + BUCLE PRINCIPAL (ReAct manual via llm_client)
 # --------------------------------------------------------------------------
 
 INSTRUCCIONES_SISTEMA_BASE = (
     "Eres el Agente PEGASO, un Administrador Linux y experto en Ciberseguridad "
-    "al servicio de un investigador de Bug Bounty. "
+    "al servicio de un investigador de Bug Bounty.\n"
     "Tu misión es auditar el sistema, asistir en tareas operativas y monitorear "
-    "el pipeline de descubrimiento pasivo de activos. "
-    "Al usuario le cuesta ejecutar comandos complejos: no le des instrucciones para "
-    "copiar y pegar; usa tu herramienta Bash para hacer el trabajo directamente. "
-    "Cuando detectes un problema, propone una solución concreta. "
+    "el pipeline de descubrimiento pasivo de activos.\n"
+    "Tienes la capacidad de ejecutar comandos en el sistema del usuario de forma autónoma.\n"
+    "Cuando necesites ejecutar un comando bash, debes escribirlo EXACTAMENTE dentro de un bloque "
+    "de código markdown marcado como 'bash_run'. Por ejemplo:\n"
+    "```bash_run\n"
+    "whoami\n"
+    "```\n"
+    "El sistema ejecutará el comando por ti de inmediato y te devolverá el resultado.\n"
+    "No des explicaciones adicionales ni justificaciones hasta recibir el resultado del comando.\n"
     "Cuando el usuario te pida que audites un paso, ejecuta los comandos necesarios "
     "y devuelve un informe breve con estado, hallazgos y siguiente acción recomendada."
 )
@@ -321,70 +330,22 @@ def construir_instrucciones(memoria_persistente):
 def main():
     venv_path = localizar_venv()
     activar_venv(venv_path)
-    asegurar_google_genai(venv_path)
     cargar_dotenv()
 
-    from google import genai
-    from google.genai import types
+    import llm_client
+    import re
 
-    keys_disponibles = []
-    # Clave primaria
-    key_primaria = os.environ.get("GEMINI_API_KEY")
-    if key_primaria:
-        keys_disponibles.append(key_primaria)
-    
-    # Buscar claves secundarias (GEMINI_API_KEY_2, GEMINI_API_KEY_3, etc.)
-    idx = 2
-    while True:
-        key_extra = os.environ.get(f"GEMINI_API_KEY_{idx}")
-        if key_extra:
-            keys_disponibles.append(key_extra)
-            idx += 1
-        else:
-            break
-
-    if not keys_disponibles:
-        print(
-            "[ERROR] No se encontró GEMINI_API_KEY (ni en el entorno ni en .env).",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    key_index = 0
-    api_key = keys_disponibles[key_index]
-
-    # Configuración de timeout de 30 segundos y reintentos acotados (max 3 intentos)
-    # para evitar bloqueos infinitos de tenacity
-    http_opts = types.HttpOptions(
-        timeout=30000,  # 30 segundos
-        retry_options=types.HttpRetryOptions(
-            attempts=3,
-            initial_delay=1.0,
-            max_delay=5.0
-        )
-    )
-    client = genai.Client(api_key=api_key, http_options=http_opts)
-
-    historial_previo = cargar_historial(types)
+    historial = cargar_historial()
     memoria_persistente = cargar_memoria_persistente()
 
-    chat = client.chats.create(
-        model=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
-        history=historial_previo,
-        config=types.GenerateContentConfig(
-            system_instruction=construir_instrucciones(memoria_persistente),
-            tools=[ejecutar_comando_bash],
-        ),
-    )
-
     print("=" * 55)
-    print("  Agente PEGASO — Modo chat interactivo")
+    print("  Agente PEGASO — Modo chat interactivo (Inmune a 429)")
     print("  Escribe 'salir' o Ctrl+C para terminar.")
     print("=" * 55)
     if venv_path:
         print(f"  venv: {venv_path}")
-    if historial_previo:
-        print(f"  Historial: {len(historial_previo)} entradas cargadas")
+    if historial:
+        print(f"  Historial: {len(historial)} entradas cargadas")
     if memoria_persistente:
         print(f"  Memoria: {len(memoria_persistente)} chars de largo plazo")
     print()
@@ -394,50 +355,63 @@ def main():
             entrada = input("[Tú]> ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\n[PEGASO] Sesión guardada. Hasta luego.")
-            guardar_historial(client, chat)
+            guardar_historial(historial)
             break
 
         if entrada.lower() in ("salir", "exit", "quit"):
             print("[PEGASO] Sesión guardada. Hasta luego.")
-            guardar_historial(client, chat)
+            guardar_historial(historial)
             break
         if not entrada:
             continue
 
-        try:
-            respuesta = chat.send_message(entrada)
-            texto = respuesta.text if respuesta.text else "(sin texto de respuesta)"
-            print(f"\n[PEGASO]> {texto}\n")
-        except Exception as e:
-            err_str = str(e)
-            if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
-                if len(keys_disponibles) > 1:
-                    print(f"\n[PEGASO] Cuota agotada en la clave {key_index + 1}. Rotando a clave de respaldo...", file=sys.stderr)
-                    key_index = (key_index + 1) % len(keys_disponibles)
-                    api_key = keys_disponibles[key_index]
-                    try:
-                        historial_actual = chat.get_history()
-                        client = genai.Client(api_key=api_key, http_options=http_opts)
-                        chat = client.chats.create(
-                            model=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
-                            history=historial_actual,
-                            config=types.GenerateContentConfig(
-                                system_instruction=construir_instrucciones(memoria_persistente),
-                                tools=[ejecutar_comando_bash],
-                            ),
-                        )
-                        print("[PEGASO] Clave de respaldo cargada con éxito. Reintentando tu mensaje...\n", file=sys.stderr)
-                        respuesta = chat.send_message(entrada)
-                        texto = respuesta.text if respuesta.text else "(sin texto de respuesta)"
-                        print(f"\n[PEGASO]> {texto}\n")
-                    except Exception as re_err:
-                        print(f"[ERROR tras rotación]: {re_err}")
+        # Añadir la entrada del usuario al historial
+        historial.append({"role": "user", "parts": [{"text": entrada}]})
+
+        intentos_loop = 0
+        max_loop = 5
+        
+        while intentos_loop < max_loop:
+            intentos_loop += 1
+            
+            prompt_sistema = construir_instrucciones(memoria_persistente)
+            # Pasamos todo el historial acumulado en la sesión
+            prompt_completo = formatear_prompt_con_historial(prompt_sistema, historial[:-1], historial[-1]["parts"][0]["text"])
+
+            try:
+                # Obtenemos la respuesta usando la cascada robusta (Groq -> Gemini)
+                respuesta_texto = llm_client.completar(prompt_completo, max_tokens=1500)
+                
+                # Buscar si el modelo solicitó ejecutar un comando bash
+                match = re.search(r"```bash_run\n(.*?)\n```", respuesta_texto, re.DOTALL)
+                
+                if match:
+                    comando = match.group(1).strip()
+                    print(f"\n[PEGASO ejecutando comando]: {comando}")
+                    
+                    # Ejecutar en la shell del usuario
+                    resultado_ejecucion = ejecutar_comando_bash(comando)
+                    
+                    # Añadir la respuesta intermedia del modelo al historial
+                    historial.append({"role": "model", "parts": [{"text": respuesta_texto}]})
+                    
+                    # Añadir el resultado de la ejecución al historial
+                    resultado_mensaje = f"[RESULTADO DEL COMANDO BASH]:\n{resultado_ejecucion}"
+                    historial.append({"role": "user", "parts": [{"text": resultado_mensaje}]})
+                    
+                    # Continuar el bucle para que el modelo procese el resultado
+                    continue
                 else:
-                    print(f"[ERROR durante la ejecución]: {e}\n(Tip: Configura GEMINI_API_KEY_2 en tu .env para rotar claves automáticamente)")
-            else:
+                    # No hay herramientas, es la respuesta final
+                    print(f"\n[PEGASO]> {respuesta_texto}\n")
+                    historial.append({"role": "model", "parts": [{"text": respuesta_texto}]})
+                    break
+            except Exception as e:
                 print(f"[ERROR durante la ejecución]: {e}")
-        finally:
-            guardar_historial(client, chat)
+                break
+        
+        # Guardar historial al final de cada turno interactivo
+        guardar_historial(historial)
 
 
 if __name__ == "__main__":
