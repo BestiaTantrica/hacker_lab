@@ -351,7 +351,7 @@ def main():
     memoria_persistente = cargar_memoria_persistente()
 
     chat = client.chats.create(
-        model="gemini-2.5-flash",
+        model=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
         history=historial_previo,
         config=types.GenerateContentConfig(
             system_instruction=construir_instrucciones(memoria_persistente),
