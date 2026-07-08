@@ -12,6 +12,7 @@ import os
 import sys
 import subprocess
 import argparse
+import base64
 
 # Configuración de conexión OCI
 KEY_PATH  = "/home/tomas2/WORKSPACE/tomas2/.ssh/id_rsa"
@@ -228,7 +229,8 @@ def instalar_cron():
             if "discovery_pasivo.py" not in l
         ]
         nuevo_cron = "\n".join(lineas)
-        cmd = f"echo '{nuevo_cron}' | crontab -"
+        encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
+        cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
         code, _, stderr = ejecutar_ssh(cmd)
         if code == 0:
             ok("Crontab reparado. Solo queda run_pipeline.sh (que ya incluye el discovery).")
@@ -248,7 +250,9 @@ def instalar_cron():
         if l.strip() and "discovery_pasivo.py" not in l and cron_actual != "__VACIO__"
     ]
     lineas_filtradas.append(linea_principal)
-    cmd = f"printf '%s\\n' {chr(39)}{'\\n'.join(lineas_filtradas)}{chr(39)} | crontab -"
+    nuevo_cron = "\n".join(lineas_filtradas)
+    encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
+    cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
     code, _, stderr = ejecutar_ssh(cmd)
     if code == 0:
         ok("Crontab instalado con run_pipeline.sh como orquestador principal.")
