@@ -90,10 +90,29 @@ def main():
         print("ℹ️ No se detectaron subdominios nuevos en el delta.")
         sys.exit(0)
 
-    print(f"🔍 Procesando {len(todos_subdominios)} subdominios con IA...")
+    # PALABRAS CLAVE CRÍTICAS PARA PRE-FILTRADO (Evita quemar tokens con miles de subdominios basura)
+    KEYWORDS = [
+        "admin", "api", "dev", "test", "staging", "secret", "vault", 
+        "jenkins", "internal", "ci", "auth", "login", "dashboard", 
+        "qa", "sandbox", "private", "portal", "status", "git"
+    ]
+    
+    subdominios_filtrados = [
+        sub for sub in todos_subdominios
+        if any(kw in sub.lower() for kw in KEYWORDS)
+    ]
+    
+    # Si el filtro es demasiado estricto y no queda nada, o si la lista es pequeña, 
+    # enviamos la lista original para no perder información
+    if not subdominios_filtrados or len(todos_subdominios) <= 20:
+        candidatos_ia = todos_subdominios[:100]  # Capamos a 100 max por seguridad de tokens
+    else:
+        candidatos_ia = subdominios_filtrados[:100]
+
+    print(f"🔍 Filtrados {len(candidatos_ia)} interesantes de {len(todos_subdominios)} totales. Procesando con IA...")
     
     # 1. Intentar el análisis con IA
-    analisis = analizar_con_ia(todos_subdominios)
+    analisis = analizar_con_ia(candidatos_ia)
     
     # 2. Formatear mensaje para Telegram
     fecha_hoy = datetime.datetime.now().strftime("%Y-%m-%d")
