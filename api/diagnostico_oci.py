@@ -228,7 +228,7 @@ def instalar_cron():
             l for l in cron_actual.splitlines()
             if "discovery_pasivo.py" not in l
         ]
-        nuevo_cron = "\n".join(lineas)
+        nuevo_cron = "\n".join(lineas) + "\n"
         encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
         cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
         code, _, stderr = ejecutar_ssh(cmd)
@@ -250,7 +250,7 @@ def instalar_cron():
         if l.strip() and "discovery_pasivo.py" not in l and cron_actual != "__VACIO__"
     ]
     lineas_filtradas.append(linea_principal)
-    nuevo_cron = "\n".join(lineas_filtradas)
+    nuevo_cron = "\n".join(lineas_filtradas) + "\n"
     encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
     cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
     code, _, stderr = ejecutar_ssh(cmd)
