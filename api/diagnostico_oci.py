@@ -203,61 +203,45 @@ def actualizar_objetivos(targets_raw):
 # ─────────────────────────────────────────────────────────────────────────────
 def instalar_cron():
     """
-    Verifica y repara el crontab del servidor OCI.
-    - Si ya existe run_pipeline.sh → no agrega nada (ya está completo).
-    - Si existe discovery_pasivo.py suelto sin run_pipeline → lo reemplaza por el pipeline.
-    - Si no hay nada → instala run_pipeline.sh.
-    Siempre elimina líneas duplicadas de discovery_pasivo.py standalone.
+    Instala o actualiza el crontab del servidor OCI para que corra a las 03:00 UTC.
+    - Remueve cualquier cron antiguo de discovery_pasivo.py o de run_pipeline.sh.
+    - Agrega la línea de run_pipeline.sh programada a las 03:00 UTC.
     """
-    print(f"{C_BOLD}⏰ Verificando y reparando crontab en OCI...{C_RESET}")
+    print(f"{C_BOLD}⏰ Configurando crontab en OCI para ejecutarse a las 03:00 UTC...{C_RESET}")
 
-    _, cron_actual, _ = ejecutar_ssh("crontab -l 2>/dev/null || echo '__VACIO__'")
+    _, cron_actual, _ = ejecutar_ssh("crontab -l 2>/dev/null || echo ''")
     cron_actual = cron_actual.strip()
 
-    tiene_pipeline  = "run_pipeline.sh" in cron_actual
-    tiene_discovery = "discovery_pasivo.py" in cron_actual
-
-    if tiene_pipeline and not tiene_discovery:
-        ok("Crontab correcto: run_pipeline.sh ya está configurado. Sin duplicados.")
-        return
-
-    if tiene_pipeline and tiene_discovery:
-        warn("Detectado crontab duplicado. Eliminando línea redundante de discovery_pasivo.py...")
-        # Conservar solo las líneas que NO sean la línea suelta del discovery
-        lineas = [
-            l for l in cron_actual.splitlines()
-            if "discovery_pasivo.py" not in l
-        ]
-        nuevo_cron = "\n".join(lineas) + "\n"
-        encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
-        cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
-        code, _, stderr = ejecutar_ssh(cmd)
-        if code == 0:
-            ok("Crontab reparado. Solo queda run_pipeline.sh (que ya incluye el discovery).")
-        else:
-            err(f"Error reparando cron: {stderr.strip()}")
-        return
-
-    # No hay nada → instalar run_pipeline.sh como orquestador principal
-    linea_principal = (
-        "0 6 * * * /home/ubuntu/plataforma_operativa/run_pipeline.sh "
+    linea_objetivo = (
+        "0 3 * * * /home/ubuntu/plataforma_operativa/run_pipeline.sh "
         ">> /home/ubuntu/plataforma_operativa/logs/cron_output.log 2>"
         "/home/ubuntu/plataforma_operativa/logs/cron_error.log"
     )
-    # Filtrar cualquier vestigio de discovery_pasivo.py suelto
-    lineas_filtradas = [
-        l for l in cron_actual.splitlines()
-        if l.strip() and "discovery_pasivo.py" not in l and cron_actual != "__VACIO__"
-    ]
-    lineas_filtradas.append(linea_principal)
-    nuevo_cron = "\n".join(lineas_filtradas) + "\n"
+
+    # Filtrar líneas anteriores relacionadas con monitoreo
+    lineas_nuevas = []
+    for linea in cron_actual.splitlines():
+        linea_clean = linea.strip()
+        if not linea_clean:
+            continue
+        # Excluir tareas anteriores de monitoreo para reemplazarlas
+        if "run_pipeline.sh" in linea_clean or "discovery_pasivo.py" in linea_clean:
+            continue
+        lineas_nuevas.append(linea_clean)
+
+    # Añadir nuestra línea objetivo
+    lineas_nuevas.append(linea_objetivo)
+
+    nuevo_cron = "\n".join(lineas_nuevas) + "\n"
     encoded_cron = base64.b64encode(nuevo_cron.encode('utf-8')).decode('utf-8')
     cmd = f"echo '{encoded_cron}' | base64 -d | crontab -"
+
     code, _, stderr = ejecutar_ssh(cmd)
     if code == 0:
-        ok("Crontab instalado con run_pipeline.sh como orquestador principal.")
+        ok("Crontab actualizado exitosamente a las 03:00 UTC.")
+        print(f"  Línea configurada: {linea_objetivo}")
     else:
-        err(f"Error instalando cron: {stderr.strip()}")
+        err(f"Error actualizando crontab: {stderr.strip()}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
