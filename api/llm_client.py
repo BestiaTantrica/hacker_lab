@@ -21,6 +21,32 @@ from abc import ABC, abstractmethod
 # Configuración del logger
 logger = logging.getLogger(__name__)
 
+def _cargar_dotenv():
+    """Carga variables de entorno desde múltiples rutas posibles."""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(script_dir, ".env"),
+        os.path.join(script_dir, "..", "config", "entorno.env"),
+        os.path.expanduser("~/plataforma_operativa/config/entorno.env"),
+    ]
+    for ruta in candidatos:
+        ruta = os.path.normpath(ruta)
+        if not os.path.isfile(ruta):
+            continue
+        with open(ruta, "r", encoding="utf-8") as f:
+            for linea in f:
+                linea = linea.strip()
+                if not linea or linea.startswith("#") or "=" not in linea:
+                    continue
+                clave, _, valor = linea.partition("=")
+                clave = clave.strip()
+                valor = valor.strip().strip('"').strip("'")
+                if clave and clave not in os.environ:
+                    os.environ[clave] = valor
+        return
+
+_cargar_dotenv()
+
 class LLMProvider(ABC):
     """Interfaz base común para todos los proveedores."""
     name: str = "base"
