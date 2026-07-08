@@ -24,20 +24,28 @@ logging.basicConfig(
 
 
 def _cargar_dotenv():
-    """Carga .env del directorio del script si existe."""
-    ruta = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    if not os.path.isfile(ruta):
-        return
-    with open(ruta, "r", encoding="utf-8") as f:
-        for linea in f:
-            linea = linea.strip()
-            if not linea or linea.startswith("#") or "=" not in linea:
-                continue
-            clave, _, valor = linea.partition("=")
-            clave = clave.strip()
-            valor = valor.strip().strip('"').strip("'")
-            if clave and clave not in os.environ:
-                os.environ[clave] = valor
+    """Carga variables de entorno desde múltiples rutas posibles."""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(script_dir, ".env"),                                         # Local: mismo dir del script
+        os.path.join(script_dir, "..", "config", "entorno.env"),                  # OCI: monitores/../config/
+        os.path.expanduser("~/plataforma_operativa/config/entorno.env"),          # OCI: ruta absoluta
+    ]
+    for ruta in candidatos:
+        ruta = os.path.normpath(ruta)
+        if not os.path.isfile(ruta):
+            continue
+        with open(ruta, "r", encoding="utf-8") as f:
+            for linea in f:
+                linea = linea.strip()
+                if not linea or linea.startswith("#") or "=" not in linea:
+                    continue
+                clave, _, valor = linea.partition("=")
+                clave = clave.strip()
+                valor = valor.strip().strip('"').strip("'")
+                if clave and clave not in os.environ:
+                    os.environ[clave] = valor
+        return  # Con el primer archivo encontrado alcanza
 
 
 def send_telegram(message: str) -> bool:
