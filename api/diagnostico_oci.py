@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 diagnostico_oci.py — Panel de control y diagnóstico para el Nodo OCI.
-Permite verificar el estado del servidor, optimizar memoria, actualizar objetivos 
-y ejecutar pruebas de descubrimiento pasivo desde la terminal local.
+Ejecutar sin argumentos: muestra el estado completo del servidor.
+  --add-targets "dominio1.com,dominio2.com"  — añade objetivos a objetivos.txt
+  --run-discovery                            — ejecuta discovery_pasivo.py manualmente
+  --install-cron                             — instala el cron de automatización diario
 """
 
 import os
@@ -12,212 +14,255 @@ import subprocess
 import argparse
 
 # Configuración de conexión OCI
-KEY_PATH = "/home/tomas2/WORKSPACE/tomas2/.ssh/id_rsa"
+KEY_PATH  = "/home/tomas2/WORKSPACE/tomas2/.ssh/id_rsa"
 SERVER_IP = "129.80.73.248"
-SSH_USER = "ubuntu"
+SSH_USER  = "ubuntu"
 
-# Estilos de consola (ANSI Colors)
-C_BLUE = "\033[36m"
-C_GREEN = "\033[32m"
+# Estilos de consola (ANSI)
+C_BLUE   = "\033[36m"
+C_GREEN  = "\033[32m"
 C_YELLOW = "\033[33m"
-C_RED = "\033[31m"
-C_MAGENTA = "\033[35m"
-C_BOLD = "\033[1m"
-C_RESET = "\033[0m"
+C_RED    = "\033[31m"
+C_BOLD   = "\033[1m"
+C_RESET  = "\033[0m"
 
-def print_banner():
-    print(f"{C_BLUE}{C_BOLD}" + "=" * 65)
-    print("  🛰️  SISTEMA DE CONTROL Y DIAGNÓSTICO DEL NODO OCI")
-    print("  Director Técnico Lab - Ciberseguridad & Bug Bounty")
-    print("=" * 65 + f"{C_RESET}\n")
 
-def ejecutar_ssh(comando_remoto):
-    """Ejecuta un comando en el servidor OCI via SSH."""
+def ejecutar_ssh(comando_remoto, timeout=90):
+    """Ejecuta un comando en el servidor OCI via SSH. Devuelve (code, stdout, stderr)."""
     cmd = [
         "ssh",
-        "-F", "/dev/null",  # Ignorar configs rotas del sandbox
+        "-F", "/dev/null",
         "-i", KEY_PATH,
         "-o", "BatchMode=yes",
         "-o", "StrictHostKeyChecking=no",
-        "-o", "ConnectTimeout=8",
+        "-o", "ConnectTimeout=10",
         f"{SSH_USER}@{SERVER_IP}",
-        comando_remoto
+        comando_remoto,
     ]
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=90)
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return res.returncode, res.stdout, res.stderr
     except subprocess.TimeoutExpired:
         return -1, "", "TIMEOUT: La conexión excedió el límite de tiempo."
     except Exception as e:
-        return -2, "", f"EXCEPCIÓN LOCAL: {str(e)}"
+        return -2, "", f"EXCEPCIÓN LOCAL: {type(e).__name__}: {e}"
 
+
+def seccion(titulo):
+    print(f"\n{C_BOLD}{titulo}{C_RESET}")
+    print("-" * 55)
+
+
+def ok(msg):   print(f"{C_GREEN}✅ {msg}{C_RESET}")
+def warn(msg): print(f"{C_YELLOW}⚠️  {msg}{C_RESET}")
+def err(msg):  print(f"{C_RED}❌ {msg}{C_RESET}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 def diagnosticar():
-    print(f"{C_BOLD}🔌 Conectando con {SSH_USER}@{SERVER_IP}...{C_RESET}")
-    
-    # Comando consolidado para obtener información en un solo viaje SSH
-    comando_consolidado = (
-        "echo '---MEMORIA---' && free -h && "
-        "echo '---CARGA---' && uptime && "
-        "echo '---PROCESOS---' && ps aux | grep -E 'python|discovery|comparador' | grep -v grep || echo 'Ninguno' && "
-        "echo '---CRON---' && crontab -l 2>/dev/null || echo 'Sin cron' && "
-        "echo '---OBJETIVOS---' && cat ~/plataforma_operativa/config/objetivos.txt 2>/dev/null || echo 'No existe' && "
-        "echo '---LOGS---' && ls -lh ~/plataforma_operativa/logs/ 2>/dev/null || echo 'Vacio' && "
-        "echo '---RESULTADOS---' && ls -lh ~/plataforma_operativa/resultados/ 2>/dev/null || echo 'Vacio'"
-    )
-    
-    code, stdout, stderr = ejecutar_ssh(comando_consolidado)
+    print(f"{C_BOLD}🔌 Conectando con {SSH_USER}@{SERVER_IP}...{C_RESET}", flush=True)
+
+    # ── Verificar conectividad primero ──────────────────────────────────────
+    code, _, stderr = ejecutar_ssh("true", timeout=12)
     if code != 0:
-        print(f"{C_RED}[ERROR] No se pudo conectar o ejecutar en el servidor OCI.{C_RESET}")
-        print(f"Detalle: {stderr}")
+        err(f"No se pudo conectar al servidor OCI.\n   Detalle: {stderr.strip()}")
         sys.exit(1)
-        
-    secciones = stdout.split("---")
-    datos = {}
-    
-    for sec in secciones:
-        if not sec.strip():
-            continue
-        lineas = sec.strip().split("\n")
-        titulo = lineas[0].strip()
-        contenido = "\n".join(lineas[1:])
-        datos[titulo] = contenido
-        
-    # --- RENDERIZADO DE RESULTADOS ---
-    print_banner()
-    
-    # 1. Estado de Recursos
-    print(f"{C_BOLD}📊 ESTADO DE MEMORIA & RECURSOS (free -h){C_RESET}")
-    print("-" * 50)
-    print(datos.get("MEMORIA", f"{C_RED}No se obtuvo información de memoria.{C_RESET}"))
-    print()
-    
-    # 2. Carga y Uptime
-    print(f"{C_BOLD}⚡ CARGA DEL SISTEMA & UPTIME{C_RESET}")
-    print("-" * 50)
-    print(datos.get("CARGA", "No disponible").strip())
-    print()
-    
-    # 3. Procesos Activos
-    print(f"{C_BOLD}🐍 PROCESOS DE MONITOREO ACTIVOS{C_RESET}")
-    print("-" * 50)
-    procesos = datos.get("PROCESOS", "Ninguno").strip()
-    if procesos == "Ninguno" or not procesos:
-        print(f"{C_GREEN}No hay scripts de monitoreo corriendo en este momento (Ideal para evitar consumo).{C_RESET}")
+
+    print(f"\n{C_BLUE}{C_BOLD}" + "=" * 65)
+    print("  🛰️  SISTEMA DE CONTROL Y DIAGNÓSTICO DEL NODO OCI")
+    print("  Director Técnico Lab — Ciberseguridad & Bug Bounty")
+    print("=" * 65 + C_RESET)
+
+    # ── 1. Memoria y carga ──────────────────────────────────────────────────
+    seccion("📊 MEMORIA & CARGA")
+    _, out, _ = ejecutar_ssh("free -h && echo '---' && uptime")
+    partes = out.split("---")
+    print(partes[0].strip() if partes else "(sin datos)")
+    if len(partes) > 1:
+        print(f"\n{C_BOLD}Uptime:{C_RESET} {partes[1].strip()}")
+
+    # ── 2. Procesos de monitoreo ────────────────────────────────────────────
+    seccion("🐍 PROCESOS DE MONITOREO ACTIVOS")
+    _, out, _ = ejecutar_ssh(
+        "ps aux | grep -E 'discovery_pasivo|comparador|run_pipeline' | grep -v grep || true"
+    )
+    if out.strip():
+        print(f"{C_YELLOW}{out.strip()}{C_RESET}")
     else:
-        print(f"{C_YELLOW}{procesos}{C_RESET}")
-    print()
-    
-    # 4. Configuración Cron
-    print(f"{C_BOLD}⏰ PLANIFICADOR CRON (crontab -l){C_RESET}")
-    print("-" * 50)
-    cron = datos.get("CRON", "Sin cron").strip()
-    if "run_pipeline" in cron:
-        print(f"{C_GREEN}✅ Automatización activa:{C_RESET}\n{cron}")
+        ok("Ningún script de monitoreo corriendo ahora (correcto fuera de horario cron).")
+
+    # ── 3. Crontab ──────────────────────────────────────────────────────────
+    seccion("⏰ PLANIFICADOR CRON")
+    _, out, _ = ejecutar_ssh("crontab -l 2>/dev/null || echo '__VACIO__'")
+    out = out.strip()
+    if out == "__VACIO__" or not out:
+        err("No hay crontab configurado — el pipeline NO se ejecuta automáticamente.")
+        warn("Usa  ./diagnostico_oci.py --install-cron  para configurarlo.")
+    elif "run_pipeline" in out:
+        ok("Automatización activa:")
+        print(out)
     else:
-        print(f"{C_RED}⚠️ No se detectó la automatización de run_pipeline.sh en el cron.{C_RESET}")
-        print(f"Contenido crudo del cron:\n{cron}")
-    print()
-    
-    # 5. Objetivos
-    print(f"{C_BOLD}🎯 OBJETIVOS MONITOREADOS (config/objetivos.txt){C_RESET}")
-    print("-" * 50)
-    objetivos = datos.get("OBJETIVOS", "").strip()
-    if objetivos == "No existe" or not objetivos:
-        print(f"{C_RED}⚠️ El archivo objetivos.txt no existe o está vacío.{C_RESET}")
+        warn("Hay crontab pero sin la tarea run_pipeline.sh:")
+        print(out)
+
+    # ── 4. Objetivos monitoreados ───────────────────────────────────────────
+    seccion("🎯 OBJETIVOS EN config/objetivos.txt")
+    _, out, _ = ejecutar_ssh(
+        "cat ~/plataforma_operativa/config/objetivos.txt 2>/dev/null || echo '__NO_EXISTE__'"
+    )
+    out = out.strip()
+    if out == "__NO_EXISTE__" or not out:
+        err("El archivo objetivos.txt no existe o está vacío.")
     else:
-        lista_obj = [o.strip() for o in objetivos.split("\n") if o.strip()]
-        for idx, obj in enumerate(lista_obj, 1):
-            color = C_GREEN if "mongodb" in obj else C_YELLOW
-            print(f"  {idx}. {color}{obj}{C_RESET}")
-        if "mongodb.com" not in objetivos:
-            print(f"\n{C_RED}❌ CRÍTICO: 'mongodb.com' NO está siendo monitoreado.{C_RESET}")
-            print(f"Por eso no te han llegado alertas de MongoDB. Usa el parámetro --add-targets para agregarlo.")
+        dominios = [d.strip() for d in out.splitlines() if d.strip()]
+        for i, d in enumerate(dominios, 1):
+            color = C_GREEN if "mongodb" in d else C_YELLOW
+            print(f"  {i}. {color}{d}{C_RESET}")
+        if not any("mongodb" in d for d in dominios):
+            err("'mongodb.com' NO está en la lista — agrega con --add-targets mongodb.com")
+
+    # ── 5. Estado del pipeline de resultados ───────────────────────────────
+    seccion("📁 LOGS & RESULTADOS")
+    _, out_logs, _ = ejecutar_ssh(
+        "ls -lh ~/plataforma_operativa/logs/ 2>/dev/null || echo '__VACIO__'"
+    )
+    _, out_res, _ = ejecutar_ssh(
+        "ls -lh ~/plataforma_operativa/resultados/ 2>/dev/null || echo '__VACIO__'"
+    )
+    print(f"{C_BOLD}[LOGS]:{C_RESET}")
+    logs = out_logs.strip()
+    print(logs if logs != "__VACIO__" and logs else f"{C_YELLOW}  (directorio vacío){C_RESET}")
+    print(f"\n{C_BOLD}[RESULTADOS]:{C_RESET}")
+    res = out_res.strip()
+    print(res if res != "__VACIO__" and res else f"{C_YELLOW}  (directorio vacío){C_RESET}")
+
+    # ── 6. Último JSON de resultados ────────────────────────────────────────
+    seccion("📄 ÚLTIMO RESULTADO DE DISCOVERY")
+    _, out, _ = ejecutar_ssh(
+        "cat ~/plataforma_operativa/resultados/actual.json 2>/dev/null || echo '__NO_EXISTE__'"
+    )
+    if out.strip() == "__NO_EXISTE__":
+        warn("No existe actual.json todavía.")
+    else:
+        print(out.strip())
+
+    # ── 7. Estado de crt.sh (fuente de datos) ──────────────────────────────
+    seccion("🌐 DISPONIBILIDAD DE crt.sh (fuente de subdominios)")
+    _, out, _ = ejecutar_ssh(
+        'curl -s -o /dev/null -w "%{http_code} | %{size_download}bytes | %{time_total}s" '
+        '"https://crt.sh/?q=%.mongodb.com&output=json" --max-time 15 2>/dev/null || echo "FALLO"'
+    )
+    out = out.strip()
+    if "FALLO" in out or not out:
+        err("crt.sh no respondió o el comando falló.")
+    elif out.startswith("200"):
+        ok(f"crt.sh responde correctamente: {out}")
+    elif out.startswith("502") or out.startswith("000"):
+        err(f"crt.sh está caído o sobrecargado: {out}")
+        warn("Esto explica por qué el discovery no encuentra subdominios.")
+        warn("Solución: esperar y volver a correr --run-discovery más tarde.")
+    else:
+        warn(f"crt.sh respondió con estado inusual: {out}")
+
     print()
 
-    # 6. Estructura de Salida
-    print(f"{C_BOLD}📁 ARCHIVOS DE LOGS Y RESULTADOS{C_RESET}")
-    print("-" * 50)
-    print(f"{C_BLUE}[LOGS]:{C_RESET}")
-    print(datos.get("LOGS", "Vacío").strip())
-    print(f"\n{C_BLUE}[RESULTADOS]:{C_RESET}")
-    print(datos.get("RESULTADOS", "Vacío").strip())
-    print()
 
+# ─────────────────────────────────────────────────────────────────────────────
 def actualizar_objetivos(targets_raw):
     nuevos = [t.strip().lower() for t in targets_raw.split(",") if t.strip()]
     if not nuevos:
-        print(f"{C_RED}[ERROR] Lista de objetivos vacía.{C_RESET}")
+        err("Lista de objetivos vacía.")
         return
-        
-    print(f"{C_BOLD}🔄 Leyendo objetivos actuales en el servidor...{C_RESET}")
-    code, stdout, stderr = ejecutar_ssh("cat ~/plataforma_operativa/config/objetivos.txt 2>/dev/null || echo ''")
-    
-    actuales = [line.strip().lower() for line in stdout.split("\n") if line.strip()]
-    
-    original_len = len(actuales)
-    agregados = []
-    for n in nuevos:
-        if n not in actuales:
-            actuales.append(n)
-            agregados.append(n)
-            
-    if not agregados:
-        print(f"{C_GREEN}Todos los objetivos indicados ya estaban en la lista. No se requieren cambios.{C_RESET}")
-        return
-        
-    print(f"Modificando objetivos. Agregando: {C_GREEN}{', '.join(agregados)}{C_RESET}")
-    
-    nuevo_contenido = "\n".join(actuales) + "\n"
-    # Escribir el nuevo archivo al servidor
-    code, stdout, stderr = ejecutar_ssh(f"cat << 'EOF' > ~/plataforma_operativa/config/objetivos.txt\n{nuevo_contenido}EOF")
-    
-    if code == 0:
-        print(f"{C_GREEN}✅ Lista de objetivos actualizada correctamente en el servidor.{C_RESET}")
-    else:
-        print(f"{C_RED}[ERROR] No se pudo guardar la lista en el servidor.{C_RESET}")
-        print(stderr)
 
+    print(f"{C_BOLD}🔄 Leyendo objetivos actuales en el servidor...{C_RESET}")
+    _, out, _ = ejecutar_ssh(
+        "cat ~/plataforma_operativa/config/objetivos.txt 2>/dev/null || true"
+    )
+    actuales = [l.strip().lower() for l in out.splitlines() if l.strip()]
+
+    agregados = [n for n in nuevos if n not in actuales]
+    if not agregados:
+        ok("Todos los objetivos indicados ya estaban en la lista. No se requieren cambios.")
+        print(f"  Lista actual: {', '.join(actuales)}")
+        return
+
+    print(f"  Agregando: {C_GREEN}{', '.join(agregados)}{C_RESET}")
+    actuales.extend(agregados)
+    nuevo_contenido = "\n".join(actuales)
+
+    # Escribir usando printf para evitar problemas de heredoc en SSH
+    cmd_write = f"printf '%s\\n' {' '.join(actuales)} > ~/plataforma_operativa/config/objetivos.txt"
+    code, _, stderr = ejecutar_ssh(cmd_write)
+    if code == 0:
+        ok(f"Lista actualizada: {', '.join(actuales)}")
+    else:
+        err(f"No se pudo guardar en el servidor: {stderr.strip()}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+def instalar_cron():
+    """Instala el crontab de automatización diaria en el servidor OCI."""
+    print(f"{C_BOLD}⏰ Instalando crontab de automatización diaria en OCI...{C_RESET}")
+
+    cron_line = "0 6 * * * cd /home/ubuntu/plataforma_operativa && /home/ubuntu/workspace_lab/venv/bin/python3 monitores/discovery_pasivo.py >> logs/discovery.log 2>&1"
+
+    cmd = (
+        f"(crontab -l 2>/dev/null | grep -v 'discovery_pasivo'; "
+        f"echo '{cron_line}') | crontab -"
+    )
+    code, _, stderr = ejecutar_ssh(cmd)
+    if code == 0:
+        ok("Cron instalado. El discovery correrá todos los días a las 06:00 UTC.")
+        print(f"  Tarea: {cron_line}")
+    else:
+        err(f"Error instalando cron: {stderr.strip()}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 def correr_discovery_manual():
-    print(f"{C_BOLD}🚀 Lanzando ejecución manual de Discovery Pasivo en OCI...{C_RESET}")
-    print("Esto puede tardar hasta 1 minuto. Por favor espera...")
-    
-    # Ejecuta el script de discovery usando el venv correcto del servidor
-    cmd_run = (
+    print(f"{C_BOLD}🚀 Lanzando Discovery Pasivo manualmente en OCI...{C_RESET}")
+    print("  (Esto puede tardar hasta 90 segundos)\n")
+
+    cmd = (
         "cd ~/plataforma_operativa && "
         "~/workspace_lab/venv/bin/python3 monitores/discovery_pasivo.py"
     )
-    code, stdout, stderr = ejecutar_ssh(cmd_run)
-    
-    print("\n" + "=" * 50)
-    print(f"{C_BOLD}RESULTADO DEL DISCOVERY (OCI STDOUT):{C_RESET}")
-    print("-" * 50)
-    print(stdout.strip() or "(Sin salida estándar)")
-    
-    if stderr.strip():
-        print("-" * 50)
-        print(f"{C_YELLOW}ALERTAS / ERRORES (OCI STDERR):{C_RESET}")
-        print(stderr.strip())
-    print("=" * 50)
-    
-    if code == 0:
-        print(f"\n{C_GREEN}✅ Discovery completado exitosamente en OCI.{C_RESET}")
-        # Mostrar el resultado final
-        _, show_stdout, _ = ejecutar_ssh("cat ~/plataforma_operativa/resultados/actual.json 2>/dev/null || cat ~/plataforma_operativa/resultados/discovery_crudo.json 2>/dev/null || echo 'No se encontró el JSON de salida.'")
-        print(f"\n{C_BOLD}Contenido del JSON de salida:{C_RESET}")
-        print(show_stdout.strip())
-    else:
-        print(f"\n{C_RED}❌ El script de Discovery falló con código de salida: {code}{C_RESET}")
+    code, stdout, stderr = ejecutar_ssh(cmd, timeout=120)
 
+    print("=" * 60)
+    print(f"{C_BOLD}STDOUT del servidor:{C_RESET}")
+    print(stdout.strip() or "(Sin salida)")
+    if stderr.strip():
+        print(f"\n{C_YELLOW}STDERR:{C_RESET}")
+        print(stderr.strip())
+    print("=" * 60)
+
+    if code == 0:
+        ok("Discovery completado. JSON de salida:")
+        _, json_out, _ = ejecutar_ssh(
+            "cat ~/plataforma_operativa/resultados/actual.json 2>/dev/null || echo 'No encontrado'"
+        )
+        print(json_out.strip())
+    else:
+        err(f"Discovery falló (código {code}).")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Herramienta de Diagnóstico y Gestión OCI.")
-    parser.add_argument("--add-targets", help="Lista de dominios separados por coma a añadir a objetivos.txt")
-    parser.add_argument("--run-discovery", action="store_true", help="Lanza manualmente el script de Discovery pasivo en el servidor")
-    
-    args = parser.parse_code = parser.parse_args()
-    
+    parser = argparse.ArgumentParser(description="Panel de Control del Nodo OCI.")
+    parser.add_argument("--add-targets", metavar="DOMINIOS",
+                        help="Dominios separados por coma a añadir a objetivos.txt")
+    parser.add_argument("--run-discovery", action="store_true",
+                        help="Ejecuta manualmente discovery_pasivo.py en OCI")
+    parser.add_argument("--install-cron", action="store_true",
+                        help="Instala el crontab de ejecución diaria en OCI")
+    args = parser.parse_args()
+
     if args.add_targets:
         actualizar_objetivos(args.add_targets)
     elif args.run_discovery:
         correr_discovery_manual()
+    elif args.install_cron:
+        instalar_cron()
     else:
         diagnosticar()
