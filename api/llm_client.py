@@ -179,22 +179,37 @@ def completar(prompt: str, max_tokens: int = 512, provider_name: str = None) -> 
 
     # Comportamiento por defecto: cascada/fallback
     errors = []
+    MAX_RETRIES = 3
+    
     for provider in PROVIDER_CHAIN:
         if not provider.is_available():
             logger.debug("[%s] omitido (sin API key configurada)", provider.name)
             continue
 
-        try:
-            logger.info("[%s] intentando completado...", provider.name)
-            respuesta = provider.completar(prompt, max_tokens=max_tokens)
-            logger.info("[%s] completado con éxito (%d caracteres)", provider.name, len(respuesta))
-            return respuesta
-        except Exception as exc:
-            err_msg = f"[{provider.name}] falló: {exc}"
-            logger.warning(err_msg)
-            errors.append(err_msg)
+        intentos = 0
+        while intentos < MAX_RETRIES:
+            try:
+                logger.info("[%s] intentando completado... (Intento %d/%d)", provider.name, intentos + 1, MAX_RETRIES)
+                respuesta = provider.completar(prompt, max_tokens=max_tokens)
+                logger.info("[%s] completado con éxito (%d caracteres)", provider.name, len(respuesta))
+                return respuesta
+            except Exception as exc:
+                err_msg = str(exc)
+                logger.warning("[%s] falló: %s", provider.name, err_msg)
+                
+                if "429" in err_msg or "rate limit" in err_msg.lower() or "RESOURCE_EXHAUSTED" in err_msg:
+                    intentos += 1
+                    if intentos < MAX_RETRIES:
+                        logger.info("⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...")
+                        import time
+                        time.sleep(20)
+                        continue
+                
+                errors.append(f"[{provider.name}] falló: {err_msg}")
+                break
 
     raise LLMError("Todos los proveedores en cascada fallaron:\n" + "\n".join(errors))
+
 
 
 class LLMError(Exception):
