@@ -386,12 +386,16 @@ Body: [{"username": "user_de_cuenta_b", ...}]
 - [x] Crear y ejecutar `parseador_burp.py` — 10.007 requests procesados
 - [x] Identificar 171 endpoints únicos y 5 vectores de ataque
 
-### Próxima sesión (hacer en orden)
+### Sesión de Pruebas (Completada ✅)
 - [x] **Paso 1:** Crear segunda cuenta MongoDB Atlas con tu segundo email
 - [x] **Paso 2:** Anotar OrgId y ProjectId de la segunda cuenta
-- [x] **Paso 3:** En Burp Repeater: probar Vector 1 (`/nds/{projectId}/users`) con el ProjectId de Cuenta B
-- [x] **Paso 4:** Documentar resultado (303 Redirección = Control Correcto. El IDOR en Vector 1 está mitigado).
-- [x] **Paso 5:** Si hay bug → pedirle a PEGASO que redacte el reporte para HackerOne (Saltado, no hay bug).
+- [x] **Paso 3:** En Burp Repeater: probar Vector 1 y Vector 3 (`/nds/{projectId}`) con el ProjectId de Cuenta B
+- [x] **Paso 4:** Documentar resultado IDOR (303 Redirección = Control Correcto. Mitigado).
+- [x] **Paso 5:** Probar Vector 2 (CORS Misconfiguration) inyectando `Origin: https://evil.mongodb.com` en `/ui/layout`.
+- [x] **Paso 6:** Documentar resultado CORS (El servidor no refleja el origen malicioso = Control Seguro. Mitigado).
+
+### Próxima sesión (Pendiente)
+- [ ] Mapear los vectores restantes (Vector 4, 5 y 6) capturando tráfico nuevo y repitiendo la metodología de Repeater.
 
 ### Regla de sesión
 **Una sesión = un vector probado = un resultado documentado.**
