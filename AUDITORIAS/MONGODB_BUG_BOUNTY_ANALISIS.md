@@ -62,10 +62,13 @@ Para probar IDOR (acceso no autorizado entre usuarios), necesitamos DOS cuentas.
 
 ```
 CUENTA B (segunda cuenta - víctima en las pruebas):
-  Email:        [tu segundo email]
-  OrgId:        [lo ves en la URL cuando estás en Settings > Organizations]
-  ProjectId:    [lo ves en la URL del proyecto, 24 caracteres hex]
-  ClusterId:    [opcional, si creas un cluster gratis]
+  Email:              tomasreis44@gmail.com
+  OrgId:              6a4d7d849d5dcab6abad6820
+  ProjectId:          6a4d7d849d5dcab6abad6845
+  DatabaseName:       sample_mflix
+  DatabaseUser:       victima
+  DatabasePassword:   1213
+  QueryFederationURL: mongodb://victima:1213@atlas-sql-6a4d7e55fb12fd51fb6d9572-5dxlth.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin
 ```
 
 **¿Cómo encontrar el OrgId y ProjectId?**
@@ -384,11 +387,11 @@ Body: [{"username": "user_de_cuenta_b", ...}]
 - [x] Identificar 171 endpoints únicos y 5 vectores de ataque
 
 ### Próxima sesión (hacer en orden)
-- [ ] **Paso 1:** Crear segunda cuenta MongoDB Atlas con tu segundo email
-- [ ] **Paso 2:** Anotar OrgId y ProjectId de la segunda cuenta
-- [ ] **Paso 3:** En Burp Repeater: probar Vector 1 (`/nds/{projectId}/users`) con el ProjectId de Cuenta B
-- [ ] **Paso 4:** Documentar resultado (403 = OK, 200 = bug)
-- [ ] **Paso 5:** Si hay bug → pedirle a PEGASO que redacte el reporte para HackerOne
+- [x] **Paso 1:** Crear segunda cuenta MongoDB Atlas con tu segundo email
+- [x] **Paso 2:** Anotar OrgId y ProjectId de la segunda cuenta
+- [x] **Paso 3:** En Burp Repeater: probar Vector 1 (`/nds/{projectId}/users`) con el ProjectId de Cuenta B
+- [x] **Paso 4:** Documentar resultado (303 Redirección = Control Correcto. El IDOR en Vector 1 está mitigado).
+- [x] **Paso 5:** Si hay bug → pedirle a PEGASO que redacte el reporte para HackerOne (Saltado, no hay bug).
 
 ### Regla de sesión
 **Una sesión = un vector probado = un resultado documentado.**
