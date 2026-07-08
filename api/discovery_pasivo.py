@@ -62,7 +62,8 @@ def descubrir_con_subfinder(dominio: str) -> list[str] | None:
     Ejecuta subfinder localmente. Devuelve lista de subdominios o None si falla.
     """
     ruta_subfinder = None
-    for candidato in ["/usr/local/bin/subfinder", "/usr/bin/subfinder",
+    for candidato in [os.path.expanduser("~/.local/bin/subfinder"),
+                      "/usr/local/bin/subfinder", "/usr/bin/subfinder",
                       os.path.expanduser("~/go/bin/subfinder")]:
         if os.path.isfile(candidato) and os.access(candidato, os.X_OK):
             ruta_subfinder = candidato
