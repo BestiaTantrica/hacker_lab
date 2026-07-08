@@ -199,6 +199,39 @@ def actualizar_objetivos(targets_raw):
     else:
         err(f"No se pudo guardar en el servidor: {stderr.strip()}")
 
+# ─────────────────────────────────────────────────────────────────────────────
+def remover_objetivos(targets_raw):
+    eliminar = [t.strip().lower() for t in targets_raw.split(",") if t.strip()]
+    if not eliminar:
+        err("Lista de objetivos a eliminar vacía.")
+        return
+
+    print(f"{C_BOLD}🔄 Leyendo objetivos actuales en el servidor...{C_RESET}")
+    _, out, _ = ejecutar_ssh(
+        "cat ~/plataforma_operativa/config/objetivos.txt 2>/dev/null || true"
+    )
+    actuales = [l.strip().lower() for l in out.splitlines() if l.strip()]
+
+    removidos = [n for n in eliminar if n in actuales]
+    if not removidos:
+        ok("Ninguno de los objetivos indicados estaba en la lista.")
+        print(f"  Lista actual: {', '.join(actuales)}")
+        return
+
+    print(f"  Eliminando: {C_RED}{', '.join(removidos)}{C_RESET}")
+    nuevos_actuales = [n for n in actuales if n not in removidos]
+    
+    if not nuevos_actuales:
+        cmd_write = "echo '' > ~/plataforma_operativa/config/objetivos.txt"
+    else:
+        cmd_write = f"printf '%s\\n' {' '.join(nuevos_actuales)} > ~/plataforma_operativa/config/objetivos.txt"
+        
+    code, _, stderr = ejecutar_ssh(cmd_write)
+    if code == 0:
+        ok(f"Lista actualizada: {', '.join(nuevos_actuales) if nuevos_actuales else '(vacía)'}")
+    else:
+        err(f"No se pudo guardar en el servidor: {stderr.strip()}")
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 def instalar_cron():
@@ -278,6 +311,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Panel de Control del Nodo OCI.")
     parser.add_argument("--add-targets", metavar="DOMINIOS",
                         help="Dominios separados por coma a añadir a objetivos.txt")
+    parser.add_argument("--remove-targets", metavar="DOMINIOS",
+                        help="Dominios separados por coma a eliminar de objetivos.txt")
     parser.add_argument("--run-discovery", action="store_true",
                         help="Ejecuta manualmente discovery_pasivo.py en OCI")
     parser.add_argument("--install-cron", action="store_true",
@@ -286,6 +321,8 @@ if __name__ == "__main__":
 
     if args.add_targets:
         actualizar_objetivos(args.add_targets)
+    elif args.remove_targets:
+        remover_objetivos(args.remove_targets)
     elif args.run_discovery:
         correr_discovery_manual()
     elif args.install_cron:
