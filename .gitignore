@@ -22,3 +22,5 @@ api/burp_analisis.json
 api/burp_config_mongodb.json
 api/scratch/
 fix_desktop.sh
+# Archivos de despliegue al servidor OCI (copias locales de staging)
+api/discovery_pasivo_nuevo.py
