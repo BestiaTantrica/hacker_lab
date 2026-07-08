@@ -17,3 +17,8 @@ venv/
 resultados/*.json
 estado/*.json
 logs/*.log
+api/trafico_burp.xml
+api/burp_analisis.json
+api/burp_config_mongodb.json
+api/scratch/
+fix_desktop.sh

@@ -75,10 +75,11 @@ Cada día 6AM:
 5. Todo debe acercar al primer ingreso real.
 
 ## Pendientes inmediatos
-- [ ] Revisar `delta_2026-07-05.json` en OCI — ¿qué subdominios nuevos aparecieron?
-- [ ] Verificar que los dominios en `objetivos.txt` sean programas activos de HackerOne con bounty
-- [ ] Conectar `notificador.py` al pipeline del OCI para alertas automáticas de delta
-- [ ] Primer reporte real a HackerOne (objetivo principal de la siguiente fase)
+- [ ] Ejecutar el script `diagnostico_oci.py` localmente para auditar el servidor OCI y su memoria.
+- [ ] Agregar `mongodb.com` a los objetivos usando `diagnostico_oci.py --add-targets mongodb.com`.
+- [ ] Correr discovery manual para verificar el pipeline: `diagnostico_oci.py --run-discovery`.
+- [ ] Conectar `notificador.py` al pipeline de OCI para alertas automáticas de delta.
+- [ ] Planificar la automatización de escaneos de vulnerabilidades diarias para MongoDB.
 
 ## Cómo usar PEGASO (agente CLI local)
 ```bash
