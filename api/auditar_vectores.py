@@ -148,6 +148,20 @@ def run_audit(cookies_raw, org_a, proj_a, org_b, proj_b):
     })
     print(f"    - AuthCode GET (Con Sesión): HTTP {status} | Code: {resp_headers.get('X-Error-Code', 'N/A')}")
     
+    # Test GET with session AND malicious Origin
+    headers_cors_get = headers.copy()
+    headers_cors_get["Origin"] = "https://evil.mongodb.com"
+    status_cors_get, resp_headers_cors_get, body_cors_get = send_request(url_v6, "GET", headers_cors_get)
+    results.append({
+        "vector": "Vector 6 (CORS GET authenticated)",
+        "name": "AuthCode GET (Con Sesión + Origin: evil.mongodb.com)",
+        "url": url_v6,
+        "status": status_cors_get,
+        "error_code": resp_headers_cors_get.get("X-Error-Code", "N/A"),
+        "body": f"ACAO: {resp_headers_cors_get.get('access-control-allow-origin', 'None')} | ACAC: {resp_headers_cors_get.get('access-control-allow-credentials', 'None')}"
+    })
+    print(f"    - AuthCode GET CORS authenticated: HTTP {status_cors_get} | ACAO: {resp_headers_cors_get.get('access-control-allow-origin', 'None')}")
+
     # Test OPTIONS preflight CORS
     cors_headers = {
         "Origin": "https://evil.mongodb.com",
