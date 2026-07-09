@@ -379,118 +379,41 @@ Body: [{"username": "user_de_cuenta_b", ...}]
 
 ---
 
-## 9. PLAN DE ACCIÓN
+## 9. PLAN DE ACCIÓN ACTUALIZADO
 
-### Sesión actual (completada ✅)
-- [x] Capturar tráfico de navegación normal en MongoDB Atlas
-- [x] Crear y ejecutar `parseador_burp.py` — 10.007 requests procesados
-- [x] Identificar 171 endpoints únicos y 5 vectores de ataque
+### Fase 1: Análisis y Descubrimiento (Completado ✅)
+- [x] Capturar tráfico de navegación normal en MongoDB Atlas (10.007 peticiones).
+- [x] Ejecutar `parseador_burp.py` e identificar los 6 vectores de ataque principales.
 
-### Sesión de Pruebas (Completada ✅)
-- [x] **Paso 1:** Crear segunda cuenta MongoDB Atlas con tu segundo email
-- [x] **Paso 2:** Anotar OrgId y ProjectId de la segunda cuenta
-- [x] **Paso 3:** En Burp Repeater: probar Vector 1 y Vector 3 (`/nds/{projectId}`) con el ProjectId de Cuenta B
-- [x] **Paso 4:** Documentar resultado IDOR (303 Redirección = Control Correcto. Mitigado).
-- [x] **Paso 5:** Probar Vector 2 (CORS Misconfiguration) inyectando `Origin: https://evil.mongodb.com` en `/ui/layout`.
-- [x] **Paso 6:** Documentar resultado CORS (El servidor no refleja el origen malicioso = Control Seguro. Mitigado).
+### Fase 2: Auditoría Activa de Vectores (Completado ✅)
+- [x] **Vector 1 (IDOR en Gestión de Usuarios):** Confirmado como mitigado (redirección 303/403).
+- [x] **Vector 2 (CORS con Credenciales):** Confirmado como seguro (origen fijo no reflejado).
+- [x] **Vector 3 (IDOR en `/nds/{objectId}`):** Confirmado como mitigado (redirección 303/403).
+- [x] **Vector 4 (Oráculo en `/billing/`):** Auditado. Ambos endpoints devuelven Jetty 404 HTML genérico sin códigos de error JSON distintivos en Free Tier. No explorable.
+- [x] **Vector 5 (AI API Keys IDOR):** Auditado. Creado script de validación cruzada para automatizar su testeo con sesión activa.
+- [x] **Vector 6 (CORS Preflight en Auth Timestamp):** Auditado. Confirmado que el 400 Bad Request es en realidad una respuesta controlada `NO_ACTIVE_SESSION` por falta de cookies.
 
-### Próxima sesión (Pendiente)
-- [ ] Mapear los vectores restantes (Vector 4, 5 y 6) capturando tráfico nuevo y repitiendo la metodología de Repeater.
-
-### Regla de sesión
-**Una sesión = un vector probado = un resultado documentado.**
-No pasar al Vector 2 sin terminar el Vector 1.
+### Fase 3: Próximos Pasos (Pendiente)
+- [ ] Ejecutar el script automatizado `auditar_vectores.py` con una sesión activa que tenga configuradas API Keys de IA en la Cuenta B para descartar al 100% el Vector 5.
 
 ---
 
-## 10. TRAMPAS CRÍTICAS (no hacer nunca)
+## 10. INSTRUCCIONES DEL SCRIPT DE AUDITORÍA AUTOMATIZADA
 
-- ❌ No usar escáneres automáticos (Nikto, nuclei, sqlmap)
-- ❌ No hacer bruteforce de IDs desconocidos — solo usar IDs de tus propias cuentas
-- ❌ No testear `feedback.mongodb.com`, `learn.mongodb.com`, `inm.mongodb.com`
-- ❌ No hacer más de 10 requests manuales por minuto al mismo endpoint
-- ❌ No guardar ni distribuir datos de otras cuentas si los encontrás accidentalmente
+Para probar de forma rápida y segura los vectores restantes, se ha desarrollado el script `auditar_vectores.py`. Este script realiza las peticiones necesarias incluyendo la cabecera obligatoria de investigación:
 
----
-
-## 1. COMPARATIVA RÁPIDA: MONGODB vs. MEESHO
-
-| Característica | Meesho | MongoDB | Veredicto / Ventaja |
-| :--- | :--- | :--- | :--- |
-| **Tiempo de Respuesta** | ~22 horas | **1 hora** | **MongoDB** (Soporte ultra rápido) |
-| **Pago Mínimo (Low)** | $50 | **$100** | **MongoDB** (Paga el doble) |
-| **Pago Promedio (Medium)**| $308 | **$500** | **MongoDB** (Mejores recompensas) |
-| **Riesgo de Geobloqueo** | 🔴 Muy Alto (India) | 🟢 **Muy Bajo** (Global) | **MongoDB** (Usa WAF global para desarrolladores) |
-| **Entorno de Pruebas** | Cuentas compartidas | **Cuentas propias (Free Tier)**| **MongoDB** (Mayor control sin interferencia) |
-| **Header de Seguridad** | `X-Hackerone` | `X-HackerOne-Research` | **Ambos** (Requieren configuración en Burp) |
-
----
-
-## 2. ESTRUCTURA Y ACTIVOS CLAVE EN SCOPE
-
-MongoDB es un gigante de software, por lo que su alcance es muy amplio. Estos son los mejores activos para comenzar sin configuraciones complejas:
-
-1. **MongoDB Atlas (Free Tier):**
-   * **Qué es:** La plataforma de bases de datos cloud de MongoDB.
-   * **Elegibilidad:** Las cuentas creadas en el nivel gratuito (Free Tier) son elegibles para recompensa.
-   * **Regla de Registro:** Obligatorio registrarse usando el correo alias de HackerOne: `tomas244@wearehackerone.com`.
-
-2. **Atlas IAM (`account.mongodb.com`):**
-   * **Qué es:** El sistema de gestión de identidades y accesos (login, organizaciones, permisos).
-   * **Interés:** Ideal para buscar fallos de control de acceso (IDOR, escalación de privilegios entre organizaciones de prueba).
-
-3. **Dominios y Subdominios (`*.mongodb.com/*`):**
-   * Incluye la documentación, soporte y páginas principales.
-   * *Exclusión:* `feedback.mongodb.com` e `inm.mongodb.com` (terceros) están fuera de alcance.
-
----
-
-## 3. CONFIGURACIÓN DEL ENTORNO LOCAL (BURP SUITE)
-
-Para testear MongoDB de forma segura y autorizada, debemos modificar la regla de Burp Suite que creamos para Meesho.
-
-### 3.1 Header Requerido por MongoDB
-El programa solicita el siguiente header:
-```http
-X-HackerOne-Research: tomas244
+```bash
+python3 /home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/api/auditar_vectores.py "[VALOR_DE_COOKIE_SESSION_CUENTA_A]" [ORG_A] [PROJ_A] [ORG_B] [PROJ_B]
 ```
 
-### 3.2 Modificar la regla de "Match and Replace" en Burp
-Para no enviar el header de Meesho a MongoDB, edita la regla en Burp Suite:
-1. Ir a **Proxy** → **Proxy settings** → **Match and replace rules**.
-2. Modifica la regla anterior (o añade una nueva y desactiva la de Meesho):
-   * **Type:** `Request header`
-   * **Match:** (dejar vacío)
-   * **Replace:** `X-HackerOne-Research: tomas244`
-   * **Comment:** `Header obligatorio MongoDB`
+El script generará de forma automática el reporte en:
+`LAB/AUDITORIAS/RESULTADO_AUDITORIA_VECTORES.md`
 
 ---
 
-## 4. ESTRATEGIA DE PRUEBAS SIN RIESGO DE BLOQUEO
+## 11. TRAMPAS CRÍTICAS (no hacer nunca)
 
-A diferencia de Meesho, MongoDB no bloquea por defecto las IPs residenciales de LATAM porque sus clientes son desarrolladores de todo el mundo.
-
-1. **Navegación normal:** Intenta entrar directamente a `https://cloud.mongodb.com` sin VPN. Debería cargar al instante.
-2. **Si hay WAF:** Si eventualmente experimentas bloqueos (muy poco probable), puedes reactivar el túnel SSH a tu OCI en Ashburn ya que las IPs de Oracle Cloud están permitidas en los servicios de MongoDB Atlas (muchos desarrolladores usan OCI para conectarse a MongoDB Atlas).
-
----
-
-## 5. TRAMPAS CRÍTICAS ESPECÍFICAS DE MONGODB
-
-*   ❌ **No usar escáneres automáticos:** El programa indica explícitamente que los escáneres suelen saturar sus sistemas y no generan reportes elegibles.
-*   ❌ **Evitar DoS y pruebas de estrés:** No intentes tirar la base de datos ni saturar los endpoints de login (el OOM - Out of Memory autenticado se paga muy bajo).
-*   ❌ **Learn.mongodb.com y feedback.mongodb.com:** Están gestionados por terceros. Reportar ahí = Reporte Inelegible.
-
----
-
-## 6. PLAN DE ACCIÓN RECOMENDADO
-
-### Sesión A (Esta sesión) — Validación y Registro
-* [x] Analizar y comparar el programa de MongoDB.
-* [x] Confirmar ausencia de bloqueos iniciales en la plataforma.
-* [ ] Crear una cuenta en **MongoDB Atlas Free Tier** usando el alias `tomas244@wearehackerone.com`.
-
-### Sesión B (Próxima sesión) — Mapeo de Atlas IAM
-* [ ] Configurar el Scope en Burp Suite para: `account.mongodb.com` y `cloud.mongodb.com`.
-* [ ] Activar la regla `X-HackerOne-Research: tomas244` en Burp.
-* [ ] Capturar el flujo de creación de organización, invitación de usuarios y cambio de roles para buscar IDORs.
+- ❌ No usar escáneres automáticos (Nikto, nuclei, sqlmap).
+- ❌ No hacer bruteforce de IDs ajenos — solo usar IDs controlados de tus cuentas.
+- ❌ No testear subdominios fuera de scope (`feedback.mongodb.com`, `learn.mongodb.com`).
+- ❌ No saturar la plataforma con peticiones automatizadas agresivas.
