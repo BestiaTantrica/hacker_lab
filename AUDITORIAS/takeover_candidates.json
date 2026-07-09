@@ -1,0 +1,202 @@
+[
+  {
+    "subdomain": "api.support.mongodb.com",
+    "cname": "mongodb.map.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "cloud-api-staging.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "cloud-api.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "cloud-heroku.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "cloud.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "content.elastic.co",
+    "cname": "d.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "content.mongodb.com",
+    "cname": "d.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "edee.mongodb.com",
+    "cname": "mongodb-developer.github.io.",
+    "fingerprint": "github.io"
+  },
+  {
+    "subdomain": "edeeb.mongodb.com",
+    "cname": "mongodb-developer.github.io.",
+    "fingerprint": "github.io"
+  },
+  {
+    "subdomain": "eden.elastic.co",
+    "cname": "eden.elastic.co.s3-website.us-east-2.amazonaws.com.",
+    "fingerprint": "s3-website"
+  },
+  {
+    "subdomain": "entsec.corp.mongodb.com",
+    "cname": "10gen.github.io.",
+    "fingerprint": "github.io"
+  },
+  {
+    "subdomain": "events.elastic.co",
+    "cname": "d.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "events.mongodb.com",
+    "cname": "d.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found-api-staging.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found-api.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found-heroku.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found-staging.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found-status.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "found.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "foundstatus.elastic.co",
+    "cname": "s.ssl.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "help-css.mongodb.com",
+    "cname": "mongodb-css.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-hr.mongodb.com",
+    "cname": "mongodb-hr.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-infosec.mongodb.com",
+    "cname": "mongodb-infosec.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-it.mongodb.com",
+    "cname": "mongodb-it.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-sales.mongodb.com",
+    "cname": "mongodb-sales.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-te.mongodb.com",
+    "cname": "mongodb-s2p.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-techops.mongodb.com",
+    "cname": "mongodb-techops.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help-workplace.mongodb.com",
+    "cname": "mongodb-workplace.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "help.mongodb.com",
+    "cname": "mongodb.zendesk.com.",
+    "fingerprint": "zendesk.com"
+  },
+  {
+    "subdomain": "landingzone-demo.mongodb.com",
+    "cname": "10gen.github.io.",
+    "fingerprint": "github.io"
+  },
+  {
+    "subdomain": "legacy.support.mongodb.com",
+    "cname": "mongodb.map.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "ottl.elastic.co",
+    "cname": "elastic.github.io.",
+    "fingerprint": "github.io"
+  },
+  {
+    "subdomain": "pre-prod-www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "qa-www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "stag-static-www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "stag-www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "static-www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "success.mongodb.com",
+    "cname": "mongodb.map.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "support.mongodb.com",
+    "cname": "mongodb.map.fastly.net.",
+    "fingerprint": "fastly.net"
+  },
+  {
+    "subdomain": "www.elastic.co",
+    "cname": "dualstack.j.sni.global.fastly.net.",
+    "fingerprint": "fastly.net"
+  }
+]
