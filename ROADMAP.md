@@ -107,18 +107,20 @@ Configurar un cronjob en el Nodo OCI para ejecutar el pipeline (discovery → co
 
 ---
 
-## 🤖 ETAPA 5 — Integración de IA (Solo cuando exista Delta)
-**Duración estimada:** 1 semana | **Prioridad:** Baja (requiere Etapas 1-4 completas)
+## 🤖 ETAPA 5 — Reorientación de IA a Asesor Paralelo 24/7
+**Duración estimada:** 3 días | **Prioridad:** Media-Alta
 
 ### Objetivo:
-Llamar a la API de Groq **únicamente** cuando el comparador detecte un Delta real. La IA analiza los nuevos activos y genera una alerta estructurada.
+Transformar la integración de IA en el servidor OCI para que funcione como un tutor/asesor interactivo 24/7 con contexto persistente del laboratorio. En lugar de gastar tokens analizando deltas automáticamente de forma ciega, la IA responderá a tus preguntas técnicas y te guiará para que aprendas en el proceso.
 
 ### Tareas:
-- [ ] Integrar llamada a Groq dentro del pipeline, condicionada a la existencia de `delta_*.json`.
-- [ ] Prompt diseñado para analizar un subdominio nuevo: ¿es interesante? ¿qué inspeccionar primero?
-- [ ] Guardar el análisis en `~/plataforma_operativa/resultados/analisis_YYYY-MM-DD.txt`.
+- [ ] Crear un script interactivo `consultar_asesor.py` en el servidor OCI.
+- [ ] Implementar un sistema de contexto local (que lea `actual.json` y `delta_*.json` bajo demanda) para que la IA sepa de qué activos le estás hablando.
+- [ ] Configurar un alias en la terminal de OCI (ej: `asesor "cómo verifico este puerto?"`) para tener respuesta inmediata.
+- [ ] Usar este asesor como mentor educativo de redes y comandos en tiempo real.
 
-**Criterio de éxito:** Cuando hay delta, existe un archivo de análisis de IA con observaciones concretas sobre los activos nuevos.
+**Criterio de éxito:** Puedes ejecutar un comando en OCI para hablar con la IA y esta reconoce qué subdominios están activos en tu base de datos actual.
+
 
 ---
 
