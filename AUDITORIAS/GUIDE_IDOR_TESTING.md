@@ -6,27 +6,27 @@ Esta guía te guiará paso a paso para extraer las cookies y IDs necesarios de t
 
 ## 📋 Requisitos Previos
 
-1. Tener dos navegadores diferentes abiertos (ej. **Firefox** para la Cuenta A y **Chrome/Brave** para la Cuenta B).
+1. **Configuración de Navegadores:**
+   *   **Cuenta A (Tester):** Utiliza el Chromium integrado en **Burp Suite** para aprovechar el monitoreo y las herramientas (tab de inspector/intruder) directamente.
+   *   **Cuenta B (Víctima):** Utiliza tu navegador habitual (ej. Chrome/Brave).
 2. Haber iniciado sesión en **MongoDB Atlas** en ambas cuentas.
-3. Haber completado la instalación del kit de herramientas (ya verificado).
+3. **Herramientas del Kit:** Confirmamos que `instalar_kit.sh` instaló **dos herramientas** independientes en `/LAB/herramientas/bin/`: `dnsx` (resolución DNS rápida) y `httpx` (análisis HTTP/CORS). El script local las utiliza automáticamente.
 
 ---
 
 ## 🔍 Paso 1: Obtener los IDs (OrgID y ProjectID)
 
-Los identificadores de organización y proyecto de MongoDB Atlas son públicos y se pueden ver directamente en la barra de direcciones de tu navegador web.
+Los identificadores de organización y proyecto de MongoDB Atlas se extraen directamente de la URL:
 
-1. Entra a tu panel de MongoDB Atlas.
+1. Entra al panel de MongoDB Atlas de cada cuenta.
 2. Mira la URL en el navegador:
-   `https://cloud.mongodb.com/v2#/org/6a4c0a54b388b65b11799a24/projects`
-   *   El texto después de `/org/` (ej. **`6a4c0a54b388b65b11799a24`**) es tu **OrgID**.
-3. Haz clic en tu proyecto principal. La URL cambiará a:
-   `https://cloud.mongodb.com/v2/6a4c0a54b388b65b11799a58#metrics/replicaSet/...`
-   *   El texto después de `/v2/` (ej. **`6a4c0a54b388b65b11799a58`**) es tu **ProjectID** (también llamado `groupId`).
+   *   **Cuenta A:** `https://cloud.mongodb.com/v2#/org/6a4c0a54b388b65b11799a24/projects` (OrgID: `6a4c0a54b388b65b11799a24`)
+   *   **Cuenta B (Víctima):** `https://cloud.mongodb.com/v2#/org/6a4d7d849d5dcab6abad6820/projects` (OrgID: `6a4d7d849d5dcab6abad6820`)
+3. Haz clic en el proyecto principal de cada cuenta para obtener el **ProjectID** (el ID que aparece después de `/v2/` en la URL, ej. `6a4c0a54b388b65b11799a58`).
 
 > 📝 **Anota estos 4 IDs:**
 > *   `ORG_A` (Cuenta A) y `PROJ_A` (Cuenta A)
-> *   `ORG_B` (Cuenta B) y `PROJ_B` (Cuenta B)
+> *   `ORG_B` (Cuenta B: `6a4d7d849d5dcab6abad6820`) y `PROJ_B` (Cuenta B)
 
 ---
 
