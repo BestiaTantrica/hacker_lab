@@ -1,0 +1,13 @@
+admin
+jenkins
+vault
+root
+administrator
+manager
+guest
+user
+elastic
+system
+api
+test
+setup
