@@ -13,32 +13,20 @@ Para optimizar el uso de tokens y cumplir con las políticas de seguridad:
 
 ## 👥 2. Configuración de Cuentas de Prueba (Atacante y Víctima)
 
-Para validar vulnerabilidades lógicas de aislamiento como **IDOR (Insecure Direct Object Reference)** o **CORS Misconfiguration**, necesitas simular un entorno multi-tenant real con dos identidades independientes.
+Para validar vulnerabilidades lógicas de aislamiento como **IDOR (Insecure Direct Object Reference)** o **CORS Misconfiguration**, simula un entorno multi-tenant real con tus dos identidades ya existentes:
 
-### Paso 1: Crear la Cuenta A (Perfil Atacante)
-1. Ve a [https://cloud.elastic.co/registration](https://cloud.elastic.co/registration).
-2. Regístrate usando tu dirección de correo de HackerOne (ej. `tu_usuario@wearehackerone.com`).
-3. Activa la cuenta mediante el correo de verificación.
-4. Crea una instancia de prueba (Deployment) y anota los siguientes datos en una nota local:
-   * **Organization ID** (ej: obtenido de la URL del panel de control).
-   * **Deployment ID** (UUID del cluster de Elasticsearch/Kibana creado).
-   * **Cookies de sesión** activas.
-
-### Paso 2: Crear la Cuenta B (Perfil Víctima)
-1. Abre una ventana de incógnito o utiliza un navegador secundario diferente.
-2. Ve a [https://cloud.elastic.co/registration](https://cloud.elastic.co/registration).
-3. Regístrate utilizando un alias diferente (ej. `tu_usuario+victima@wearehackerone.com`).
-4. Crea una instancia de prueba independiente en esta cuenta.
-5. Anota los datos de esta segunda cuenta:
-   * **Organization ID de la Víctima**.
-   * **Deployment ID de la Víctima**.
-   * **API Keys o identificadores de recursos**.
+*   **Cuenta A (Atacante):**
+    *   **Email/ID:** `tomas244` (HackerOne alias)
+    *   **Uso:** Tu cuenta principal para realizar las solicitudes e intentar acceder a recursos ajenos.
+*   **Cuenta B (Víctima):**
+    *   **Email:** `tomasreis44@gmail.com`
+    *   **Uso:** La cuenta objetivo cuyos recursos (como Organization ID, Deployment ID, API Keys) intentarás consultar/modificar desde la sesión de la Cuenta A.
 
 ---
 
 ## 🔌 3. Configuración de Burp Suite
 
-El programa de Elastic requiere que identifiques tu tráfico claramente para evitar bloqueos del WAF o reportes falsos de intrusion.
+El programa de Elastic requiere que identifiques tu tráfico claramente para evitar bloqueos del WAF o reportes falsos de intrusión.
 
 ### Paso 1: Añadir la Cabecera de Investigación Obligatoria
 1. Abre **Burp Suite**.
@@ -46,7 +34,7 @@ El programa de Elastic requiere que identifiques tu tráfico claramente para evi
 3. Haz clic en **Add** para añadir una nueva regla:
    * **Type:** `Request header`
    * **Match:** (deja en blanco)
-   * **Replace:** `X-HackerOne-Research: tu_usuario_h1`
+   * **Replace:** `X-HackerOne-Research: tomas244`
    * **Comment:** Identificador de Bug Bounty para Elastic.
 4. Asegúrate de que la regla esté activa (marcada con el check).
 
@@ -59,6 +47,31 @@ El programa de Elastic requiere que identifiques tu tráfico claramente para evi
 3. En "Exclude from scope" añade los dominios expresamente excluidos:
    * `discuss.elastic.co`
    * `community.elastic.co`
+
+### Paso 3: Configurar Burp Intruder para Pruebas de Login
+Para automatizar pruebas de diccionario, enumeración de usuarios o validación de credenciales (credential stuffing) sobre paneles de login como los de Jenkins o Portales de Administración utilizando Burp Intruder:
+
+1. **Capturar la Petición de Login:**
+   * En Firefox (configurado con el proxy de Burp), realiza un intento de inicio de sesión fallido en el portal objetivo.
+   * Ve a **Proxy** -> **HTTP History**, localiza la solicitud `POST` enviada al endpoint de login (ej: `/j_acegi_security_check` o `/api/auth/login`).
+   * Haz clic derecho sobre el request y selecciona **Send to Intruder** (o presiona `Ctrl+I`).
+
+2. **Configurar las Posiciones de los Payloads:**
+   * Ve a la pestaña **Intruder** -> **Positions**.
+   * Cambia el **Attack type** a:
+     * `Sniper` si vas a probar una lista de contraseñas contra un único usuario conocido.
+     * `Pitchfork` o `Cluster Bomb` si tienes listas independientes para usuario y contraseña.
+   * Selecciona las variables a probar (como el valor del campo `username` y `password` en el cuerpo del request) y haz clic en **Add §** para marcarlos como payloads.
+
+3. **Configurar los Payloads (Diccionario):**
+   * Ve a la pestaña **Intruder** -> **Payloads**.
+   * Selecciona el **Payload set** correspondiente a cada variable (1 para usuario, 2 para contraseña, etc.).
+   * En **Payload type**, selecciona `Simple list` y carga tu diccionario o lista personalizada.
+
+4. **Ejecutar y Analizar Resultados:**
+   * Haz clic en el botón **Start attack** en la esquina superior derecha.
+   * **Analiza los resultados:** Busca diferencias en las respuestas (e.g. cambios de código HTTP `200` vs `401`/`403`, diferencias de longitud/length de respuesta, o tiempos de respuesta) para identificar combinaciones de credenciales válidas.
+
 
 ---
 
