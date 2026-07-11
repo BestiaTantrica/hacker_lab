@@ -75,3 +75,30 @@ Ante dudas:
 Todos los proyectos deben integrarse de forma coherente.
 
 Las decisiones locales nunca deben perjudicar la arquitectura global.
+
+## 11. Estrategia de Modelos y Gestión de Cuotas
+
+Para optimizar costos, tokens y evitar la degradación del razonamiento ante límites de cuota (como el de Claude Sonnet 4.6), se establece el siguiente protocolo de selección de modelos:
+
+### Roles y Selección de Modelos
+
+| Modelo | Nivel | Caso de Uso Óptimo |
+| :--- | :--- | :--- |
+| **Gemini 3.5 Flash** | Medium / High | Tareas de código estándar, refactorizaciones simples, scripts de soporte, Git, y documentación técnica. |
+| **Gemini 3.1 Pro** | Low / High | Análisis lógico, arquitectura de sistemas, diseño de pipelines y lógica de negocio. |
+| **Claude Sonnet 4.6 (Thinking)** | ⭐ Máximo | Exclusivo para auditorías complejas de Bug Bounty, análisis de exploits complejos y redacción final de reportes de vulnerabilidades. |
+
+### Tácticas de Trabajo para Evitar Delirios y Ahorrar Tokens
+
+1. **Aislamiento de Tareas (Unidad de Trabajo Mínima)**:
+   * Desarrollar código mediante funciones cortas e individuales. Evitar solicitar scripts completos de golpe.
+   * Probar localmente cada componente antes de pasar al siguiente.
+2. **Contexto Estricto y Acotado**:
+   * No cargar archivos extensos innecesarios en la ventana de contexto.
+   * Proveer solo las líneas de código que necesitan ser modificadas.
+3. **Uso de Herramientas Deterministas**:
+   * Utilizar la compilación y validación local de sintaxis (`py_compile`, tests unitarios) en lugar de pedirle a la IA análisis predictivos del código.
+4. **Escalamiento de Modelos**:
+   * Iniciar la tarea utilizando **Gemini 3.5 Flash**.
+   * Si la tarea presenta fallos de lógica o bucles de error tras 2 reintentos, pasar a **Gemini 3.1 Pro**.
+   * Reservar **Claude Sonnet** solo para el 5% de tareas críticas que requieran razonamiento avanzado de seguridad.
