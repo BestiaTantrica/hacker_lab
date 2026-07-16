@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-07-12T03:01:05Z",
+  "nuevos_activos": {
+    "mongodb.com": [
+      "amp-pr-123.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-124.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-125.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-126.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-132.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-135.app-mod-rnd.staging.corp.mongodb.com",
+      "amp-pr-143.app-mod-rnd.staging.corp.mongodb.com",
+      "app.ai-ps.prod.corp.mongodb.com",
+      "detections-mitre-coverage.infosec.staging.corp.mongodb.com",
+      "founder-enrichment.ventures.prod.corp.mongodb.com",
+      "mars-e2e-24688.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24689.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24690.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24691.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24692.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24693.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24694.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24695.dataplatform-dev.staging.corp.mongodb.com",
+      "mars-e2e-24696.dataplatform-dev.staging.corp.mongodb.com",
+      "mitre-coverage.infosec.staging.corp.mongodb.com",
+      "mycelium-aem.website.staging.corp.mongodb.com",
+      "mycelium-cms.website.staging.corp.mongodb.com",
+      "pft-approvals.infosec.staging.corp.mongodb.com",
+      "pft.infosec.staging.corp.mongodb.com",
+      "retail-customer-retention-backend.industrysolutions.prod.corp.mongodb.com",
+      "retail-customer-retention-backend.industrysolutions.staging.corp.mongodb.com",
+      "retail-stock-take-frontend.industrysolutions.prod.corp.mongodb.com",
+      "retail-stock-take-powersync.industrysolutions.prod.corp.mongodb.com",
+      "sa-blueprint-mdm-backend.sa-demo.staging.corp.mongodb.com",
+      "sa-blueprint-mdm.sa-demo.staging.corp.mongodb.com",
+      "sls-deploy.corp.mongodb.com"
+    ]
+  }
+}

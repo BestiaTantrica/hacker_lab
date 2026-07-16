@@ -1,0 +1,4274 @@
+{
+  "resumen": {
+    "total_subdominios_analizados": 8433,
+    "activos_http": 533,
+    "candidatos_takeover": 0
+  },
+  "activos": [
+    {
+      "subdomain": "3p-pclick.internal.yahoo.com",
+      "url": "https://3p-pclick.internal.yahoo.com",
+      "status": 404,
+      "title": "Yahoo - 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "acapi.aol.com",
+      "url": "https://acapi.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "acctapi.login.aol.com",
+      "url": "https://acctapi.login.aol.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "acctapi.login.yahoo.com",
+      "url": "https://acctapi.login.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "acapi.yahoo.com",
+      "url": "https://acapi.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "actapi.corp.yahoo.com",
+      "url": "https://actapi.corp.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "acqweb.staging.acqebiz.mil",
+      "url": "https://acqweb.staging.acqebiz.mil",
+      "status": 200,
+      "title": "OUSW Acquisition & Sustainment Homepage",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "admin.meme.yahoo.com",
+      "url": "https://admin.meme.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "admin.nevec.yahoo.com",
+      "url": "https://admin.nevec.yahoo.com",
+      "status": 302,
+      "title": "Yahoo - 302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "albert.rsc.staging.corp.mongodb.com",
+      "url": "https://albert.rsc.staging.corp.mongodb.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "agent.audienceiq-staging.yahoo.com",
+      "url": "https://agent.audienceiq-staging.yahoo.com",
+      "status": 502,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "alpha.api.authnapi.login.yahoo.com",
+      "url": "https://alpha.api.authnapi.login.yahoo.com",
+      "status": 500,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-bcp.advertisinginsights.yahoo.com",
+      "url": "https://api-bcp.advertisinginsights.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-adfeedback.beap.adx.yahoo.com",
+      "url": "https://api-adfeedback.beap.adx.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-internal.g11n.yahoo.com",
+      "url": "https://api-internal.g11n.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-beta.g11n.yahoo.com",
+      "url": "https://api-beta.g11n.yahoo.com",
+      "status": 403,
+      "title": "Yahoo! - Error report",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-beta-internal.g11n.yahoo.com",
+      "url": "https://api-beta-internal.g11n.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-gateway.aws.aol.com",
+      "url": "https://api-gateway.aws.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-da.local.yahoo.com",
+      "url": "http://api-da.local.yahoo.com",
+      "status": 500,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-fantasy-mobile.sports.yahoo.com",
+      "url": "https://api-fantasy-mobile.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-origin.screenname.aol.com",
+      "url": "https://api-origin.screenname.aol.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-partnerinsights.yahoo.com",
+      "url": "https://api-partnerinsights.yahoo.com",
+      "status": 403,
+      "title": "Yahoo! - Error report",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-public.opsdb.ops.yahoo.com",
+      "url": "http://api-public.opsdb.ops.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-qe2bm-prod-gq1-pub.testing-openstack.yahoo.com",
+      "url": "http://api-qe2bm-prod-gq1-pub.testing-openstack.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-ro.fireplace.yahoo.com",
+      "url": "https://api-ro.fireplace.yahoo.com",
+      "status": 502,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-rw-secure.fantasysports.yahoo.com",
+      "url": "https://api-rw-secure.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-rw.fireplace.yahoo.com",
+      "url": "https://api-rw.fireplace.yahoo.com",
+      "status": 502,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-statcloud.sports.yahoo.com",
+      "url": "https://api-statcloud.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-secure.sports.yahoo.com",
+      "url": "https://api-secure.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-trunk.memberprofile.yahoo.com",
+      "url": "https://api-trunk.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-trunk.profile.yahoo.com",
+      "url": "https://api-trunk.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.acctapi.login.aol.com",
+      "url": "https://api.acctapi.login.aol.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-west.push.yahoo.com",
+      "url": "https://api-west.push.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api-yts.cricket.yahoo.com",
+      "url": "https://api-yts.cricket.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.advertisinginsights.yahoo.com",
+      "url": "https://api.advertisinginsights.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.ads.yahoo.com",
+      "url": "https://api.ads.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.authnapi.login.aol.com",
+      "url": "https://api.authnapi.login.aol.com",
+      "status": 500,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.authnapi.login.yahoo.com",
+      "url": "https://api.authnapi.login.yahoo.com",
+      "status": 500,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.bid.yahoo.com",
+      "url": "https://api.bid.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.cmi.aol.com",
+      "url": "https://api.cmi.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.content.dev.aol.com",
+      "url": "https://api.content.dev.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.content.aol.com",
+      "url": "https://api.content.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.content.stage.aol.com",
+      "url": "https://api.content.stage.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.content.qa.aol.com",
+      "url": "https://api.content.qa.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.credstore.yahoo.com",
+      "url": "https://api.credstore.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.dev.cmi.aol.com",
+      "url": "https://api.dev.cmi.aol.com",
+      "status": 418,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.dev.games.yahoo.com",
+      "url": "https://api.dev.games.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.cricket.yahoo.com",
+      "url": "https://api.cricket.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.device.yahoo.com",
+      "url": "https://api.device.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.flickr.com",
+      "url": "https://api.flickr.com",
+      "status": 200,
+      "title": "Flickr | The best place to be a photographer online.",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.games.aol.com",
+      "url": "https://api.games.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.games.yahoo.com",
+      "url": "https://api.games.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.g11n.yahoo.com",
+      "url": "https://api.g11n.yahoo.com",
+      "status": 403,
+      "title": "Yahoo! - Error report",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.global.sports.yahoo.com",
+      "url": "https://api.global.sports.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.identity.aol.com",
+      "url": "https://api.identity.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.i.cmi.aol.com",
+      "url": "https://api.i.cmi.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.insights.yahoo.com",
+      "url": "https://api.insights.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.login.aol.com",
+      "url": "https://api.login.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.login.yahoo.com",
+      "url": "https://api.login.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.oauth.yahoo.com",
+      "url": "https://api.oauth.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.news.yahoo.com",
+      "url": "https://api.news.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.onereporting.aol.com",
+      "url": "https://api.onereporting.aol.com",
+      "status": 404,
+      "title": "404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.partner.yahoo.com",
+      "url": "https://api.partner.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.podcasts.yahoo.com",
+      "url": "https://api.podcasts.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.profile.yahoo.com",
+      "url": "https://api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.profile.lgg1.b.yahoo.com",
+      "url": "https://api.profile.lgg1.b.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.push.yahoo.com",
+      "url": "https://api.push.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.qa.cmi.aol.com",
+      "url": "https://api.qa.cmi.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.push.mail.aol.com",
+      "url": "https://api.push.mail.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.qat.obi.aol.com",
+      "url": "https://api.qat.obi.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.reg.yahoo.com",
+      "url": "https://api.reg.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.screenname.aol.com",
+      "url": "https://api.screenname.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.search.yahoo.com",
+      "url": "https://api.search.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.cmi.aol.com",
+      "url": "https://api.stage.cmi.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.sports.yahoo.com",
+      "url": "https://api.sports.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.asc.yahoo.com",
+      "url": "http://api.stage.asc.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.games.yahoo.com",
+      "url": "https://api.stage.games.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.onereporting.aol.com",
+      "url": "https://api.stage.onereporting.aol.com",
+      "status": 404,
+      "title": "404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.screenname.aol.com",
+      "url": "https://api.stage.screenname.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.stage.login.yahoo.com",
+      "url": "https://api.stage.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.tripod.yahoo.com",
+      "url": "https://api.tripod.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.umapi.yahoo.com",
+      "url": "https://api.umapi.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.view.yahoo.com",
+      "url": "https://api.view.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api.widgets.yahoo.com",
+      "url": "https://api.widgets.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api1.credstore.vip.bf1.yahoo.com",
+      "url": "https://api1.credstore.vip.bf1.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api1.credstore.vip.gq1.yahoo.com",
+      "url": "https://api1.credstore.vip.gq1.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api1.credstore.vip.ne1.yahoo.com",
+      "url": "https://api1.credstore.vip.ne1.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api1.credstore.vip.ir2.yahoo.com",
+      "url": "https://api1.credstore.vip.ir2.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "api1.credstore.vip.sg3.yahoo.com",
+      "url": "https://api1.credstore.vip.sg3.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apis.mail.aol.com",
+      "url": "https://apis.mail.aol.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apis.falcon.aol.com",
+      "url": "https://apis.falcon.aol.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apis.calendar.aol.yahoo.com",
+      "url": "http://apis.calendar.aol.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apis.mail.yahoo.com",
+      "url": "https://apis.mail.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apis.falcon.yahoo.com",
+      "url": "https://apis.falcon.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "apistg-partnerinsights.yahoo.com",
+      "url": "https://apistg-partnerinsights.yahoo.com",
+      "status": 403,
+      "title": "Yahoo! - Error report",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ar.noticias.yahoo.com",
+      "url": "https://ar.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ar.cine.yahoo.com",
+      "url": "https://ar.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ats.api.login.lgg1.b.yahoo.com",
+      "url": "https://ats.api.login.lgg1.b.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "au.recipes.search.yahoo.com",
+      "url": "https://au.recipes.search.yahoo.com",
+      "status": 302,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "au.recipes.yahoo.com",
+      "url": "https://au.recipes.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "auth.preferences.aol.com",
+      "url": "https://auth.preferences.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "authnapi.login.aol.com",
+      "url": "https://authnapi.login.aol.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "authnapi.login.yahoo.com",
+      "url": "https://authnapi.login.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "b-mario-admin.nevec.yahoo.com",
+      "url": "https://b-mario-admin.nevec.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beacon.staging.yahoo.com",
+      "url": "https://beacon.staging.yahoo.com",
+      "status": 404,
+      "title": "Yahoo - 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta-policies.yahoo.com",
+      "url": "https://beta-policies.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta.api.login.yahoo.com",
+      "url": "https://beta.api.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta.es.noticias.yahoo.com",
+      "url": "https://beta.es.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta.br.noticias.yahoo.com",
+      "url": "https://beta.br.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta.login.yahoo.com",
+      "url": "https://beta.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "bf1-api.profile.yahoo.com",
+      "url": "https://bf1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "beta.protect.login.yahoo.com",
+      "url": "https://beta.protect.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "bf1-api.memberprofile.yahoo.com",
+      "url": "https://bf1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.especiais.salaodoautomovel2010.yahoo.com",
+      "url": "https://br.especiais.salaodoautomovel2010.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.cinema.yahoo.com",
+      "url": "https://br.cinema.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.noticias.yahoo.com",
+      "url": "https://br.noticias.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.especiais.yahoo.com",
+      "url": "https://br.especiais.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.recipes.search.yahoo.com",
+      "url": "https://br.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "br.socialbike.yahoo.com",
+      "url": "https://br.socialbike.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "caas-aolcom-staging.comet.aol.com",
+      "url": "https://caas-aolcom-staging.comet.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "canary.api.login.aol.com",
+      "url": "https://canary.api.login.aol.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cache.dev.autos.yahoo.com",
+      "url": "https://cache.dev.autos.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "canary.api.login.yahoo.com",
+      "url": "https://canary.api.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "captcha-stage.login.yahoo.com",
+      "url": "https://captcha-stage.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cine.yahoo.com",
+      "url": "https://cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "citysbest.aol.com",
+      "url": "https://citysbest.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cities-rising.yahoo.com",
+      "url": "https://cities-rising.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cityguide.aol.com",
+      "url": "https://cityguide.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cl.noticias.yahoo.com",
+      "url": "https://cl.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cloud-apis.mail.yahoo.com",
+      "url": "https://cloud-apis.mail.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "co.cine.yahoo.com",
+      "url": "https://co.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "co.noticias.yahoo.com",
+      "url": "https://co.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "cocina.yahoo.com",
+      "url": "https://cocina.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "commsdata.api.yahoo.com",
+      "url": "https://commsdata.api.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "config.mobile.yahoo.com",
+      "url": "https://config.mobile.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "config.yms.vip.bf1.yahoo.com",
+      "url": "https://config.yms.vip.bf1.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "config.yms.vip.gq1.yahoo.com",
+      "url": "https://config.yms.vip.gq1.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "connectid-dcs-test.s2s.analytics.yahoo.com",
+      "url": "https://connectid-dcs-test.s2s.analytics.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "credstore.login.yahoo.com",
+      "url": "https://credstore.login.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "credstore.login.aol.com",
+      "url": "https://credstore.login.aol.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dashboard.vespa.corp.yahoo.com",
+      "url": "https://dashboard.vespa.corp.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dashboard-testing.vespa.corp.yahoo.com",
+      "url": "https://dashboard-testing.vespa.corp.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "de.specials.yahoo.com",
+      "url": "https://de.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-ai.mail.yahoo.com",
+      "url": "https://dev-ai.mail.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-connectid.analytics.yahoo.com",
+      "url": "https://dev-connectid.analytics.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-carta.payments.yahoo.com",
+      "url": "https://dev-carta.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-dcs-ups.analytics.yahoo.com",
+      "url": "https://dev-dcs-ups.analytics.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-cms.analytics.yahoo.com",
+      "url": "https://dev-cms.analytics.yahoo.com",
+      "status": 502,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-int-publisher.push.yahoo.com",
+      "url": "https://dev-int-publisher.push.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-int-api.push.yahoo.com",
+      "url": "https://dev-int-api.push.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-perf-api.push.yahoo.com",
+      "url": "https://dev-perf-api.push.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-sp.analytics.yahoo.com",
+      "url": "https://dev-sp.analytics.yahoo.com",
+      "status": 404,
+      "title": "Error 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-senderhub.commerce.yahoo.com",
+      "url": "https://dev-senderhub.commerce.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-ups.analytics.yahoo.com",
+      "url": "https://dev-ups.analytics.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-ups.analytics.aol.com",
+      "url": "https://dev-ups.analytics.aol.com",
+      "status": 502,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-vega.commerce.yahoo.com",
+      "url": "https://dev-vega.commerce.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev-yai.mail.yahoo.com",
+      "url": "https://dev-yai.mail.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.aol.com",
+      "url": "https://dev.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.autos.yahoo.com",
+      "url": "https://dev.autos.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.calendar.yahoo.com",
+      "url": "https://dev.calendar.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.cdn.payments.yahoo.com",
+      "url": "https://dev.cdn.payments.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.checkout.finance.yahoo.com",
+      "url": "https://dev.checkout.finance.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.checkout.yahoo.com",
+      "url": "https://dev.checkout.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.checkoutnow.aol.com",
+      "url": "https://dev.checkoutnow.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.connectid.s2s.analytics.yahoo.com",
+      "url": "https://dev.connectid.s2s.analytics.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.datacollector.payments.yahoo.com",
+      "url": "https://dev.datacollector.payments.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.checkout.mail.yahoo.com",
+      "url": "https://dev.checkout.mail.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.demo.payments.yahoo.com",
+      "url": "https://dev.demo.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.demoui.payments.yahoo.com",
+      "url": "https://dev.demoui.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.games.yahoo.com",
+      "url": "https://dev.games.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.gdpr.payments.yahoo.com",
+      "url": "https://dev.gdpr.payments.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.gsdapps.corp.yahoo.com",
+      "url": "https://dev.gsdapps.corp.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.help.channels.aol.com",
+      "url": "https://dev.help.channels.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.help.yahoo.com",
+      "url": "https://dev.help.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.helpcachetool.media.corp.yahoo.com",
+      "url": "https://dev.helpcachetool.media.corp.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.il2.2f.mil",
+      "url": "https://dev.il2.2f.mil",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.il5.2f.mil",
+      "url": "https://dev.il5.2f.mil",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.mysubscriptions.finance.yahoo.com",
+      "url": "https://dev.mysubscriptions.finance.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.mysubscriptions.aol.com",
+      "url": "https://dev.mysubscriptions.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.myaccount.aol.com",
+      "url": "https://dev.myaccount.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.mysubscriptions.mail.yahoo.com",
+      "url": "https://dev.mysubscriptions.mail.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.origin.checkout.yahoo.com",
+      "url": "https://dev.origin.checkout.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.plus.yahoo.com",
+      "url": "https://dev.plus.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.searchads.payments.yahoo.com",
+      "url": "https://dev.searchads.payments.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.subscriptions.yahoo.com",
+      "url": "https://dev.subscriptions.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.subs.mobile.payments.yahoo.com",
+      "url": "https://dev.subs.mobile.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.token-service.payment.yahoo.com",
+      "url": "https://dev.token-service.payment.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.ui.payments.yahoo.com",
+      "url": "https://dev.ui.payments.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.tpp.pse.aol.com",
+      "url": "https://dev.tpp.pse.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "dev.vertexlite.payments.yahoo.com",
+      "url": "https://dev.vertexlite.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "developer.aol.com",
+      "url": "https://developer.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "developer.searchmarketing.yahoo.com",
+      "url": "https://developer.searchmarketing.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "developer.search.yahoo.com",
+      "url": "https://developer.search.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "developers.yahoo.com",
+      "url": "https://developers.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "developer.yahoo.com",
+      "url": "https://developer.yahoo.com",
+      "status": 200,
+      "title": "Yahoo Developer Network",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "digital-lifestyle.aol.com",
+      "url": "https://digital-lifestyle.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "digitallifestyle.aol.com",
+      "url": "https://digitallifestyle.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "digital.yahoo.com",
+      "url": "https://digital.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "docapi.location.yahoo.com",
+      "url": "https://docapi.location.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "educacion.yahoo.com",
+      "url": "https://educacion.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "eleccioneseeuu2016.yahoo.com",
+      "url": "https://eleccioneseeuu2016.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.cine.yahoo.com",
+      "url": "https://es.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.especiales.yahoo.com",
+      "url": "https://es.especiales.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.especial.yahoo.com",
+      "url": "https://es.especial.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es-us.cine.yahoo.com",
+      "url": "https://es-us.cine.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.recipes.search.yahoo.com",
+      "url": "https://es.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.tendencias.yahoo.com",
+      "url": "https://es.tendencias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es.noticias.yahoo.com",
+      "url": "https://es.noticias.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "espanol.recipes.search.yahoo.com",
+      "url": "https://espanol.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "es-us.noticias.yahoo.com",
+      "url": "https://es-us.noticias.yahoo.com",
+      "status": 200,
+      "title": "Noticias e informaci\u00f3n de \u00faltima hora en Yahoo en Espanol",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "europe.login.yahoo.com",
+      "url": "https://europe.login.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "external-staging.graphdb.yk.yahoo.com",
+      "url": "http://external-staging.graphdb.yk.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "external-prism-dev.mail.yahoo.com",
+      "url": "http://external-prism-dev.mail.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "externalbeta.login.yahoo.com",
+      "url": "https://externalbeta.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "externalgamma.login.yahoo.com",
+      "url": "https://externalgamma.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "favorites-production.api.aol.com",
+      "url": "https://favorites-production.api.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "feed-api.dev.yahoo.com",
+      "url": "https://feed-api.dev.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "finance-feedback-api.finance.yahoo.com",
+      "url": "https://finance-feedback-api.finance.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "fr.recipes.search.yahoo.com",
+      "url": "https://fr.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "fp-test.secure.yahoo.com",
+      "url": "https://fp-test.secure.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "fr.cinema.yahoo.com",
+      "url": "https://fr.cinema.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "games-service.stage.api.aol.com",
+      "url": "https://games-service.stage.api.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "games-staging.comet.aol.com",
+      "url": "https://games-staging.comet.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gamesgeoportals-origin.aol.com",
+      "url": "https://gamesgeoportals-origin.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gamesgeoportals.aol.com",
+      "url": "https://gamesgeoportals.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gamma.protect.login.yahoo.com",
+      "url": "https://gamma.protect.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gamma.api.login.yahoo.com",
+      "url": "https://gamma.api.login.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gamma.login.yahoo.com",
+      "url": "https://gamma.login.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "geocities.yahoo.com",
+      "url": "https://geocities.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "git.corp.yahoo.com",
+      "url": "https://git.corp.yahoo.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "glance-qe2bm-prod-gq1-pub.testing-openstack.yahoo.com",
+      "url": "http://glance-qe2bm-prod-gq1-pub.testing-openstack.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gmctradesecrets.aol.com",
+      "url": "https://gmctradesecrets.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gq1-api.memberprofile.yahoo.com",
+      "url": "https://gq1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "gq1-api.profile.yahoo.com",
+      "url": "https://gq1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "graviton-weather-api.media.yahoo.com",
+      "url": "https://graviton-weather-api.media.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "guce.login.yahoo.com",
+      "url": "https://guce.login.yahoo.com",
+      "status": 404,
+      "title": "yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.bf1-api.profile.yahoo.com",
+      "url": "https://ha.bf1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.bf1-api.memberprofile.yahoo.com",
+      "url": "https://ha.bf1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.ne1-api.memberprofile.yahoo.com",
+      "url": "https://ha.ne1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.gq1-api.profile.yahoo.com",
+      "url": "https://ha.gq1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "guce.login.aol.com",
+      "url": "https://guce.login.aol.com",
+      "status": 404,
+      "title": "aol",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.ir2-api.profile.yahoo.com",
+      "url": "https://ha.ir2-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.ir2-api.memberprofile.yahoo.com",
+      "url": "https://ha.ir2-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.gq1-api.memberprofile.yahoo.com",
+      "url": "https://ha.gq1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.ne1-api.profile.yahoo.com",
+      "url": "https://ha.ne1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.sg3-api.profile.yahoo.com",
+      "url": "https://ha.sg3-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ha.sg3-api.memberprofile.yahoo.com",
+      "url": "https://ha.sg3-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "hermes.media.static.staging.aol.com",
+      "url": "https://hermes.media.static.staging.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "hermes-admin.ec.yahoo.com",
+      "url": "https://hermes-admin.ec.yahoo.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "hermes.staging.aol.com",
+      "url": "https://hermes.staging.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "hk.admin.deals.yahoo.com",
+      "url": "https://hk.admin.deals.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "identity-api.flickr.com",
+      "url": "https://identity-api.flickr.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "in.ourcity.yahoo.com",
+      "url": "https://in.ourcity.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "in.specials.yahoo.com",
+      "url": "https://in.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "indpol.staging.acqebiz.mil",
+      "url": "https://indpol.staging.acqebiz.mil",
+      "status": 200,
+      "title": "OUSW A&S - Industrial Base Policy - Home",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ir2-api.memberprofile.yahoo.com",
+      "url": "https://ir2-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ir2-api.profile.yahoo.com",
+      "url": "https://ir2-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ironicapi-bm2-prod-gq1-pub.openstack.yahoo.com",
+      "url": "http://ironicapi-bm2-prod-gq1-pub.openstack.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "it.recipes.search.yahoo.com",
+      "url": "https://it.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "it.cinema.yahoo.com",
+      "url": "https://it.cinema.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "jsapi.login.yahoo.com",
+      "url": "https://jsapi.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "jsl.qat.obi.aol.com",
+      "url": "https://jsl.qat.obi.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "latest-cloud.mail.yahoo.com",
+      "url": "https://latest-cloud.mail.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "livelinktest.corp.yahoo.com",
+      "url": "https://livelinktest.corp.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login.aol.com",
+      "url": "https://login.aol.com",
+      "status": 200,
+      "title": "AOL",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login.europe.yahoo.com",
+      "url": "https://login.europe.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login.marketingsolutions.yahoo.com",
+      "url": "https://login.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login12.marketingsolutions.yahoo.com",
+      "url": "https://login12.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login21.marketingsolutions.yahoo.com",
+      "url": "https://login21.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login11.marketingsolutions.yahoo.com",
+      "url": "https://login11.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login.yahoo.com",
+      "url": "https://login.yahoo.com",
+      "status": 200,
+      "title": "Login - Sign in to Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login31.marketingsolutions.yahoo.com",
+      "url": "https://login31.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "login41.marketingsolutions.yahoo.com",
+      "url": "https://login41.marketingsolutions.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "marlon-api.mail.yahoo.com",
+      "url": "https://marlon-api.mail.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "master-qa.data.yahoo.com",
+      "url": "http://master-qa.data.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mario-admin.nevec.yahoo.com",
+      "url": "https://mario-admin.nevec.yahoo.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.canary.media.vip.bf1.yahoo.com",
+      "url": "https://media-router-api71.canary.media.vip.bf1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mci.yahoo.com",
+      "url": "https://mci.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.canary.media.vip.ne1.yahoo.com",
+      "url": "https://media-router-api71.canary.media.vip.ne1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.canary.media.vip.gq1.yahoo.com",
+      "url": "https://media-router-api71.canary.media.vip.gq1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.canary.media.vip.ir2.yahoo.com",
+      "url": "https://media-router-api71.canary.media.vip.ir2.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.prod.media.vip.bf1.yahoo.com",
+      "url": "https://media-router-api71.prod.media.vip.bf1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api1.prod.media.yahoo.com",
+      "url": "https://media-router-api1.prod.media.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.prod.media.vip.gq1.yahoo.com",
+      "url": "https://media-router-api71.prod.media.vip.gq1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.prod.media.vip.ne1.yahoo.com",
+      "url": "https://media-router-api71.prod.media.vip.ne1.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.canary.media.vip.sg3.yahoo.com",
+      "url": "https://media-router-api71.canary.media.vip.sg3.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.prod.media.vip.ir2.yahoo.com",
+      "url": "https://media-router-api71.prod.media.vip.ir2.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "media-router-api71.prod.media.vip.sg3.yahoo.com",
+      "url": "https://media-router-api71.prod.media.vip.sg3.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mgws.dev.maps.yahoo.com",
+      "url": "https://mgws.dev.maps.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mgws2.dev.maps.yahoo.com",
+      "url": "http://mgws2.dev.maps.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mlogin.yahoo.com",
+      "url": "https://mlogin.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mobile.login.yahoo.com",
+      "url": "https://mobile.login.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "monalixa-api-app.yahoo.com",
+      "url": "https://monalixa-api-app.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "monalixa-api.yahoo.com",
+      "url": "https://monalixa-api.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mt-api.yms.vip.bf2.yahoo.com",
+      "url": "https://mt-api.yms.vip.bf2.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mt-api.yms.vip.gq1.yahoo.com",
+      "url": "https://mt-api.yms.vip.gq1.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mx.cine.yahoo.com",
+      "url": "https://mx.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "mx.noticias.yahoo.com",
+      "url": "https://mx.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "my.specials.yahoo.com",
+      "url": "https://my.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ne1-api.memberprofile.yahoo.com",
+      "url": "https://ne1-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ne1-api.profile.yahoo.com",
+      "url": "https://ne1-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "nexus-gateway-dev.media.yahoo.com",
+      "url": "https://nexus-gateway-dev.media.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "node-express-staging.api.aol.com",
+      "url": "https://node-express-staging.api.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "noticias.aol.com",
+      "url": "https://noticias.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "noticias.mx.yahoo.com",
+      "url": "https://noticias.mx.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "noticias.telemundo.yahoo.com",
+      "url": "https://noticias.telemundo.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "novaapi-bm2-prod-gq1-pub.openstack.yahoo.com",
+      "url": "http://novaapi-bm2-prod-gq1-pub.openstack.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "noticias.espanol.yahoo.com",
+      "url": "https://noticias.espanol.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "noticias.yahoo.com",
+      "url": "https://noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "nz.recipes.search.yahoo.com",
+      "url": "https://nz.recipes.search.yahoo.com",
+      "status": 302,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "olympus-pub-api-1.yms.vip.bf1.yahoo.com",
+      "url": "https://olympus-pub-api-1.yms.vip.bf1.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "olympus-pub-api-1.yms.vip.gq1.yahoo.com",
+      "url": "https://olympus-pub-api-1.yms.vip.gq1.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "oneapi-qa.aol.com",
+      "url": "https://oneapi-qa.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "one-qa.aol.com",
+      "url": "https://one-qa.aol.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "oneapi.aol.com",
+      "url": "https://oneapi.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "open.login.yahoo.com",
+      "url": "https://open.login.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "opus-dev.analytics.yahoo.com",
+      "url": "https://opus-dev.analytics.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "origin.subscriptions-qa5.fp.yahoo.com",
+      "url": "https://origin.subscriptions-qa5.fp.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "osw-qa.obi.aol.com",
+      "url": "https://osw-qa.obi.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "partnerads-test.ysm.yahoo.com",
+      "url": "https://partnerads-test.ysm.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pbd-staging.yahoo.com",
+      "url": "https://pbd-staging.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pbs-staging.www.aol.com",
+      "url": "https://pbs-staging.www.aol.com",
+      "status": 200,
+      "title": "Prebid Server",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pbc-staging.yahoo.com",
+      "url": "https://pbc-staging.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pclick.internal.yahoo.com",
+      "url": "https://pclick.internal.yahoo.com",
+      "status": 404,
+      "title": "Yahoo - 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pbs-staging.yahoo.com",
+      "url": "https://pbs-staging.yahoo.com",
+      "status": 200,
+      "title": "Prebid Server",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pe.noticias.yahoo.com",
+      "url": "https://pe.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pe.cine.yahoo.com",
+      "url": "https://pe.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "perf.api.partner.yahoo.com",
+      "url": "https://perf.api.partner.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "perf.api.umapi.yahoo.com",
+      "url": "https://perf.api.umapi.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "perf.sapi.oauth.yahoo.com",
+      "url": "https://perf.sapi.oauth.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "perf.login.yahoo.com",
+      "url": "https://perf.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pickem-backend-staging.sports.yahoo.com",
+      "url": "https://pickem-backend-staging.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "playground-api.dev.games.yahoo.com",
+      "url": "https://playground-api.dev.games.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "playground-nakama.dev.games.yahoo.com",
+      "url": "https://playground-nakama.dev.games.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pnw-api-ro.sports.yahoo.com",
+      "url": "https://pnw-api-ro.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "politicaladsapi.adx.yahoo.com",
+      "url": "https://politicaladsapi.adx.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "policies.yahoo.com",
+      "url": "https://policies.yahoo.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "portal.aol.com",
+      "url": "https://portal.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "portalblog.aol.com",
+      "url": "https://portalblog.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "portals.yahoo.com",
+      "url": "https://portals.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "privatewifi.aol.com",
+      "url": "https://privatewifi.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "prod.contenthubapi2.aion.aol.com",
+      "url": "http://prod.contenthubapi2.aion.aol.com",
+      "status": 403,
+      "title": "ERROR: The request could not be satisfied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "proxy.api.credstore.yahoo.com",
+      "url": "http://proxy.api.credstore.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "production.games-service.api.aol.com",
+      "url": "https://production.games-service.api.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-android-rw.fantasysports.yahoo.com",
+      "url": "https://pub-api-android-rw.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-chat.fantasysports.yahoo.com",
+      "url": "https://pub-api-chat.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-android-ro.fantasysports.yahoo.com",
+      "url": "https://pub-api-android-ro.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-ro.fantasysports.yahoo.com",
+      "url": "https://pub-api-ro.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-ios-rw.fantasysports.yahoo.com",
+      "url": "https://pub-api-ios-rw.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ptest.ysm.yahoo.com",
+      "url": "https://ptest.ysm.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-ios-ro.fantasysports.yahoo.com",
+      "url": "https://pub-api-ios-ro.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api-rw.fantasysports.yahoo.com",
+      "url": "https://pub-api-rw.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "pub-api.fantasysports.yahoo.com",
+      "url": "https://pub-api.fantasysports.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "public.creative-assistant-mtls-production.datascience-creative-assistant.omega.yahoo.com",
+      "url": "http://public.creative-assistant-mtls-production.datascience-creative-assistant.omega.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa-cloud.mail.yahoo.com",
+      "url": "https://qa-cloud.mail.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa-helpchatbot-analytics.aol.com",
+      "url": "https://qa-helpchatbot-analytics.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa-helpchatbot-service.aol.com",
+      "url": "https://qa-helpchatbot-service.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa-l.svc.aol.com",
+      "url": "https://qa-l.svc.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa-searchandrecover.aol.com",
+      "url": "https://qa-searchandrecover.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.adgapps.desktop.aol.com",
+      "url": "https://qa.adgapps.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.adgappsmgmt.desktop.aol.com",
+      "url": "https://qa.adgappsmgmt.desktop.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.api-public.opsdb.ops.yahoo.com",
+      "url": "http://qa.api-public.opsdb.ops.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.bill.aol.com",
+      "url": "https://qa.bill.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.calendar.yahoo.com",
+      "url": "https://qa.calendar.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.caldav.calendar.yahoo.com",
+      "url": "https://qa.caldav.calendar.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.checkout.mail.yahoo.com",
+      "url": "https://qa.checkout.mail.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.checkout.finance.yahoo.com",
+      "url": "https://qa.checkout.finance.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.chat.desktop.aol.com",
+      "url": "https://qa.chat.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.beta.aol.com",
+      "url": "https://qa.beta.aol.com",
+      "status": 200,
+      "title": "Beta - Main",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.changeplan.aol.com",
+      "url": "https://qa.changeplan.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.checkoutnow.aol.com",
+      "url": "https://qa.checkoutnow.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.contenthubapi2.aion.aol.com",
+      "url": "http://qa.contenthubapi2.aion.aol.com",
+      "status": 403,
+      "title": "ERROR: The request could not be satisfied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.checkout.yahoo.com",
+      "url": "https://qa.checkout.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "public.targeting-api.data.yahoo.com",
+      "url": "http://public.targeting-api.data.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.gdpr.desktop.aol.com",
+      "url": "https://qa.gdpr.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.help.aol.com",
+      "url": "https://qa.help.aol.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.feeds.contenthub.aol.com",
+      "url": "https://qa.feeds.contenthub.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "public.targeting-api-stage.data.yahoo.com",
+      "url": "http://public.targeting-api-stage.data.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.dispatcher.yahoo.com",
+      "url": "https://qa.dispatcher.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.mcare.aol.com",
+      "url": "https://qa.mcare.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.keywords.desktop.aol.com",
+      "url": "https://qa.keywords.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.myaccount.aol.com",
+      "url": "https://qa.myaccount.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.membernotifications.aol.com",
+      "url": "https://qa.membernotifications.aol.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.mybenefits.aol.com",
+      "url": "https://qa.mybenefits.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.mysubscriptions.aol.com",
+      "url": "https://qa.mysubscriptions.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.mysubscriptions.mail.yahoo.com",
+      "url": "https://qa.mysubscriptions.mail.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.mysubscriptions.finance.yahoo.com",
+      "url": "https://qa.mysubscriptions.finance.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.origin.checkout.yahoo.com",
+      "url": "https://qa.origin.checkout.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.origin.help.aol.com",
+      "url": "https://qa.origin.help.aol.com",
+      "status": 200,
+      "title": "AOL Help",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.productcentral.aol.com",
+      "url": "https://qa.productcentral.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.pas.desktop.aol.com",
+      "url": "https://qa.pas.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.paypal.ops.aol.com",
+      "url": "https://qa.paypal.ops.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.payments.aol.com",
+      "url": "https://qa.payments.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.origin.subscriptions.aol.com",
+      "url": "https://qa.origin.subscriptions.aol.com",
+      "status": 200,
+      "title": "Improve & Protect your PC, Devices and Life with AOL Products | AOL",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.rab.desktop.aol.com",
+      "url": "https://qa.rab.desktop.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.subscriptions.yahoo.com",
+      "url": "https://qa.subscriptions.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.subscriptions.aol.com",
+      "url": "https://qa.subscriptions.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.tpp.pse.aol.com",
+      "url": "https://qa.tpp.pse.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa.uk.subscriptions.yahoo.com",
+      "url": "https://qa.uk.subscriptions.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qa11vm7.yahoo.com",
+      "url": "https://qa11vm7.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qai-dcs-ups.analytics.yahoo.com",
+      "url": "https://qai-dcs-ups.analytics.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "qai-sp.analytics.yahoo.com",
+      "url": "https://qai-sp.analytics.yahoo.com",
+      "status": 404,
+      "title": "Error 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "racing.fantasysports.yahoo.com",
+      "url": "https://racing.fantasysports.yahoo.com",
+      "status": 200,
+      "title": "Fantasy Auto Racing | Yahoo! Sports",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "rcmdapi.eds.yahoo.com",
+      "url": "https://rcmdapi.eds.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "recipe.aol.com",
+      "url": "https://recipe.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "recipes.api.aol.com",
+      "url": "https://recipes.api.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "recipes.aol.com",
+      "url": "https://recipes.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "recipes.search.yahoo.com",
+      "url": "https://recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "rhelbeta.login.yahoo.com",
+      "url": "https://rhelbeta.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ris-staging.vapi.yahoo.com",
+      "url": "http://ris-staging.vapi.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.datax.yahoo.com",
+      "url": "https://sandbox.datax.yahoo.com",
+      "status": 500,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.dataxonline.yahoo.com",
+      "url": "https://sandbox.dataxonline.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.subs.mobile.payments.yahoo.com",
+      "url": "https://sandbox.subs.mobile.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.ui.payment.yahoo.com",
+      "url": "https://sandbox.ui.payment.yahoo.com",
+      "status": 503,
+      "title": "503 Service Temporarily Unavailable",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.vertexlite.payments.yahoo.com",
+      "url": "https://sandbox.vertexlite.payments.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sandbox.userloc.location.yahoo.com",
+      "url": "https://sandbox.userloc.location.yahoo.com",
+      "status": 401,
+      "title": "Error 401 Unauthorized",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sapi.oauth2.yahoo.com",
+      "url": "http://sapi.oauth2.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sapi.partner.login.yahoo.com",
+      "url": "https://sapi.partner.login.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sapi.stage.login.yahoo.com",
+      "url": "https://sapi.stage.login.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sbc.login.yahoo.com",
+      "url": "https://sbc.login.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sapi.stage.partner.login.yahoo.com",
+      "url": "https://sapi.stage.partner.login.yahoo.com",
+      "status": 404,
+      "title": "Error",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sb-mario-admin.nevec.yahoo.com",
+      "url": "https://sb-mario-admin.nevec.yahoo.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sapi.stage.oauth2.yahoo.com",
+      "url": "http://sapi.stage.oauth2.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "scs-lb.dev.obi.aol.com",
+      "url": "https://scs-lb.dev.obi.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "scs.dev.obi.aol.com",
+      "url": "https://scs.dev.obi.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "server-dev.comet.yahoo.com",
+      "url": "https://server-dev.comet.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "serving.hermes.staging.aol.com",
+      "url": "https://serving.hermes.staging.aol.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sg.specials.yahoo.com",
+      "url": "https://sg.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sg3-api.memberprofile.yahoo.com",
+      "url": "https://sg3-api.memberprofile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sg3-api.profile.yahoo.com",
+      "url": "https://sg3-api.profile.yahoo.com",
+      "status": 401,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "snoozeapi-pub.yms.vip.bf1.yahoo.com",
+      "url": "https://snoozeapi-pub.yms.vip.bf1.yahoo.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "snoozeapi-pub.yms.vip.gq1.yahoo.com",
+      "url": "https://snoozeapi-pub.yms.vip.gq1.yahoo.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "specialoffers.aol.com",
+      "url": "https://specialoffers.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "specials.yahoo.com",
+      "url": "https://specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "sports-fandom-api.sports.yahoo.com",
+      "url": "https://sports-fandom-api.sports.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage-policies.yahoo.com",
+      "url": "https://stage-policies.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api-gateway.aws.aol.com",
+      "url": "https://stage.api-gateway.aws.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.acctapi.login.yahoo.com",
+      "url": "https://stage.api.acctapi.login.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.authnapi.login.yahoo.com",
+      "url": "https://stage.api.authnapi.login.yahoo.com",
+      "status": 500,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.oauth.yahoo.com",
+      "url": "https://stage.api.oauth.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.mock.yahoo.com",
+      "url": "https://stage.api.mock.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.login.aol.com",
+      "url": "https://stage.api.login.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.login.yahoo.com",
+      "url": "https://stage.api.login.yahoo.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.api.umapi.yahoo.com",
+      "url": "https://stage.api.umapi.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.contenthubapi2.aion.aol.com",
+      "url": "http://stage.contenthubapi2.aion.aol.com",
+      "status": 403,
+      "title": "ERROR: The request could not be satisfied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.authnapi.login.yahoo.com",
+      "url": "https://stage.authnapi.login.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.login.aol.com",
+      "url": "https://stage.login.aol.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.login.yahoo.com",
+      "url": "https://stage.login.yahoo.com",
+      "status": 403,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.guce.login.yahoo.com",
+      "url": "https://stage.guce.login.yahoo.com",
+      "status": 404,
+      "title": "yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage.guce.login.aol.com",
+      "url": "https://stage.guce.login.aol.com",
+      "status": 404,
+      "title": "aol",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging-jubilee.flickr.com",
+      "url": "https://staging-jubilee.flickr.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "stage-ccpa-service-internal.yahoo.com",
+      "url": "http://stage-ccpa-service-internal.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.calendar.yahoo.com",
+      "url": "https://staging.calendar.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.creators.yahoo.com",
+      "url": "https://staging.creators.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.health.yahoo.com",
+      "url": "https://staging.health.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.flickr.com",
+      "url": "https://staging.flickr.com",
+      "status": 200,
+      "title": "Flickr | The best place to be a photographer online.",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.preferences.aol.com",
+      "url": "https://staging.preferences.aol.com",
+      "status": 302,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.vapi.yahoo.com",
+      "url": "http://staging.vapi.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.tech.yahoo.com",
+      "url": "https://staging.tech.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.www.yahoo.com",
+      "url": "https://staging.www.yahoo.com",
+      "status": 403,
+      "title": "Access Denied",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.static.profile.yahoo.com",
+      "url": "https://staging.static.profile.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.shield.creators.yahoo.com",
+      "url": "https://staging.shield.creators.yahoo.com",
+      "status": 503,
+      "title": "503 Service Temporarily Unavailable",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "staging.profile.yahoo.com",
+      "url": "https://staging.profile.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "static.staging.profile.yahoo.com",
+      "url": "https://static.staging.profile.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "status.smallbusiness.yahoo.com",
+      "url": "https://status.smallbusiness.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "talentdev.aol.com",
+      "url": "https://talentdev.aol.com",
+      "status": 301,
+      "title": "301 Moved Permanently",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tdv2-app-fp-public-staging.fp.yahoo.com",
+      "url": "https://tdv2-app-fp-public-staging.fp.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test-nflstream.yahoo.com",
+      "url": "https://test-nflstream.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test-vpn2-1-gci.corp.bf1.yahoo.com",
+      "url": "https://test-vpn2-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test-vpn1-1-gci.corp.bf1.yahoo.com",
+      "url": "https://test-vpn1-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test-vpn-1-gci.corp.bf1.yahoo.com",
+      "url": "https://test-vpn-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test.dl-mail.aolmail.yahoo.com",
+      "url": "http://test.dl-mail.aolmail.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test.geo.yahoo.com",
+      "url": "https://test.geo.yahoo.com",
+      "status": 404,
+      "title": "Yahoo - 404 Not Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test.login.yahoo.com",
+      "url": "https://test.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test.onedisplay.aol.com",
+      "url": "https://test.onedisplay.aol.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test.yahoo.com",
+      "url": "https://test.yahoo.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "test2.il5.2f.mil",
+      "url": "https://test2.il5.2f.mil",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "testvideo.advertising.yahoo.com",
+      "url": "https://testvideo.advertising.yahoo.com",
+      "status": 301,
+      "title": "Document Has Moved",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tokenizer.qat.obi.aol.com",
+      "url": "https://tokenizer.qat.obi.aol.com",
+      "status": 404,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.api.mock.yahoo.com",
+      "url": "https://trunk.api.mock.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.api.partner.yahoo.com",
+      "url": "https://trunk.api.partner.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.api.oauth.yahoo.com",
+      "url": "https://trunk.api.oauth.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.api.umapi.yahoo.com",
+      "url": "https://trunk.api.umapi.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.sapi.oauth.yahoo.com",
+      "url": "https://trunk.sapi.oauth.yahoo.com",
+      "status": 403,
+      "title": "403",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tw.api.bid.yahoo.com",
+      "url": "https://tw.api.bid.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.guce.login.yahoo.com",
+      "url": "https://trunk.guce.login.yahoo.com",
+      "status": 404,
+      "title": "yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "trunk.guce.login.aol.com",
+      "url": "https://trunk.guce.login.aol.com",
+      "status": 404,
+      "title": "aol",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tw.mapi.shp.yahoo.com",
+      "url": "https://tw.mapi.shp.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tw.recipes.search.yahoo.com",
+      "url": "https://tw.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "tw.specials.yahoo.com",
+      "url": "https://tw.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "uk.recipes.search.yahoo.com",
+      "url": "https://uk.recipes.search.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "uk.specials.yahoo.com",
+      "url": "https://uk.specials.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ve.noticias.yahoo.com",
+      "url": "https://ve.noticias.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "ve.cine.yahoo.com",
+      "url": "https://ve.cine.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vertexo9-ui.qat.obi.aol.com",
+      "url": "https://vertexo9-ui.qat.obi.aol.com",
+      "status": 302,
+      "title": "302 Found",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "video-api.yql.yahoo.com",
+      "url": "https://video-api.yql.yahoo.com",
+      "status": 403,
+      "title": "Yahoo! - Error report",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vibe-social-notification-yql.media.yahoo.com",
+      "url": "https://vibe-social-notification-yql.media.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.corp.bf1.yahoo.com",
+      "url": "https://vpn-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.corp.ir2.yahoo.com",
+      "url": "https://vpn-1-gci.corp.ir2.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.auz.corp.yahoo.com",
+      "url": "https://vpn-1-gci.auz.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.corp.sg3.yahoo.com",
+      "url": "https://vpn-1-gci.corp.sg3.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.corp.tw1.yahoo.com",
+      "url": "https://vpn-1-gci.corp.tw1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.corp.yahoo.com",
+      "url": "https://vpn-1-gci.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.ramat.corp.yahoo.com",
+      "url": "https://vpn-1-gci.ramat.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.eglbp.corp.yahoo.com",
+      "url": "https://vpn-1-gci.eglbp.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn-1-gci.twz1.corp.yahoo.com",
+      "url": "https://vpn-1-gci.twz1.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.corp.bf1.yahoo.com",
+      "url": "https://vpn1-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.auz.corp.yahoo.com",
+      "url": "https://vpn1-1-gci.auz.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.corp.sg3.yahoo.com",
+      "url": "https://vpn1-1-gci.corp.sg3.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.corp.ir2.yahoo.com",
+      "url": "https://vpn1-1-gci.corp.ir2.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.eglbp.corp.yahoo.com",
+      "url": "https://vpn1-1-gci.eglbp.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.corp.yahoo.com",
+      "url": "https://vpn1-1-gci.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.ramat.corp.yahoo.com",
+      "url": "https://vpn1-1-gci.ramat.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.corp.bf1.yahoo.com",
+      "url": "https://vpn2-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn1-1-gci.twz1.corp.yahoo.com",
+      "url": "https://vpn1-1-gci.twz1.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.corp.ir2.yahoo.com",
+      "url": "https://vpn2-1-gci.corp.ir2.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.corp.yahoo.com",
+      "url": "https://vpn2-1-gci.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.ramat.corp.yahoo.com",
+      "url": "https://vpn2-1-gci.ramat.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.eglbp.corp.yahoo.com",
+      "url": "https://vpn2-1-gci.eglbp.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.auz.corp.yahoo.com",
+      "url": "https://vpn2-1-gci.auz.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.corp.sg3.yahoo.com",
+      "url": "https://vpn2-1-gci.corp.sg3.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn3-1-gci.corp.bf1.yahoo.com",
+      "url": "https://vpn3-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn4-1-gci.corp.bf1.yahoo.com",
+      "url": "https://vpn4-1-gci.corp.bf1.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn3-1-gci.corp.yahoo.com",
+      "url": "https://vpn3-1-gci.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn2-1-gci.twz1.corp.yahoo.com",
+      "url": "https://vpn2-1-gci.twz1.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn4-1-gci.corp.yahoo.com",
+      "url": "https://vpn4-1-gci.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn3-1-gci.eglbp.corp.yahoo.com",
+      "url": "https://vpn3-1-gci.eglbp.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "vpn4-1-gci.eglbp.corp.yahoo.com",
+      "url": "https://vpn4-1-gci.eglbp.corp.yahoo.com",
+      "status": 200,
+      "title": "",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "weather.api.aol.com",
+      "url": "https://weather.api.aol.com",
+      "status": 403,
+      "title": "403 Forbidden",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "wildcard.pr.login.aol.com",
+      "url": "https://wildcard.pr.login.aol.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "wildcard.pr.login.yahoo.com",
+      "url": "https://wildcard.pr.login.yahoo.com",
+      "status": 404,
+      "title": "Not Found on Accelerator",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "www.digital.yahoo.com",
+      "url": "https://www.digital.yahoo.com",
+      "status": 404,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    },
+    {
+      "subdomain": "yourfinancialjourney.yahoo.com",
+      "url": "https://yourfinancialjourney.yahoo.com",
+      "status": 301,
+      "title": "Yahoo",
+      "cdn": "",
+      "cname": ""
+    }
+  ],
+  "takeovers": []
+}
