@@ -1,0 +1,1 @@
+{"type":"gcpckms","initialized":true,"sealed":false,"t":2,"n":12,"progress":0,"nonce":"","version":"1.20.0","build_date":"2025-06-23T10:21:30Z","migration":false,"cluster_name":"infra-vault-staging","cluster_id":"94bfd3fa-a2dc-eb0d-21ab-5a1306563fb7","recovery_seal":true,"storage_type":"raft","recovery_seal_type":"shamir","removed_from_cluster":false}
