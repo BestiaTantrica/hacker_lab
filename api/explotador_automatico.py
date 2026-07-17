@@ -431,8 +431,11 @@ def test_open_redirect(subdominio):
         if status is None:
             break
 
-        # Si la URL final contiene evil.com → redireccionó al dominio del atacante
-        if "evil.com" in final_url and subdominio not in final_url:
+        from urllib.parse import urlparse
+        
+        # Si el dominio final es realmente evil.com → redirección exitosa
+        final_domain = urlparse(final_url).netloc
+        if final_domain == "evil.com":
             msg = (
                 f"⚠️  OPEN REDIRECT\n"
                 f"URL original: {url}\n"
