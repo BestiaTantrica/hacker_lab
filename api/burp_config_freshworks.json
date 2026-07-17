@@ -12,6 +12,26 @@
           "enabled": true,
           "host": "^.*\\.freshservice\\.com$",
           "protocol": "any"
+        },
+        {
+          "enabled": true,
+          "host": "^.*\\.freshdesk\\.com$",
+          "protocol": "any"
+        },
+        {
+          "enabled": true,
+          "host": "^.*\\.freshchat\\.com$",
+          "protocol": "any"
+        },
+        {
+          "enabled": true,
+          "host": "^.*\\.freshcaller\\.com$",
+          "protocol": "any"
+        },
+        {
+          "enabled": true,
+          "host": "^.*\\.myfreshworks\\.com$",
+          "protocol": "any"
         }
       ],
       "exclude": []
@@ -20,11 +40,11 @@
   "proxy": {
     "match_replace_rules": [
       {
-        "comment": "Header obligatorio HackerOne",
+        "comment": "Header obligatorio Freshworks Bug Bounty",
         "enabled": true,
         "is_simple_match": true,
         "match_string": "",
-        "replace_string": "X-HackerOne-Research: tomas244",
+        "replace_string": "X-Bug-Bounty: HackerOne-tomas244",
         "rule_type": "request_header"
       }
     ]
