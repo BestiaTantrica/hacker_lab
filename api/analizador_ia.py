@@ -32,8 +32,11 @@ def cargar_delta(ruta):
     try:
         with open(ruta, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # El delta puede tener dominios agrupados por target
-            # Ej: {"elastic.co": [...], "mongodb.com": [...]}
+            # El delta puede tener dominios agrupados por target, pero bajo distintas claves
+            for key in ["nuevos", "subdominios_nuevos", "dominios", "delta", "nuevos_activos"]:
+                if key in data and isinstance(data[key], dict):
+                    return data[key]
+            # Fallback a la data completa por si el root es directamente el diccionario de targets
             return data.get("dominios", data)
     except Exception as e:
         print(f"Error cargando delta: {e}")

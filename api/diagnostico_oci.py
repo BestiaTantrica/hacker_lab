@@ -15,7 +15,7 @@ import argparse
 import base64
 
 # Configuración de conexión OCI
-KEY_PATH  = "/home/tomas2/WORKSPACE/tomas2/.ssh/id_rsa"
+KEY_PATH  = "/home/tomas2/.ssh/id_rsa"
 SERVER_IP = "129.80.73.248"
 SSH_USER  = "ubuntu"
 

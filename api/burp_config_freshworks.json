@@ -1,0 +1,32 @@
+{
+  "target": {
+    "scope": {
+      "advanced_mode": true,
+      "include": [
+        {
+          "enabled": true,
+          "host": "^.*\\.freshworks\\.com$",
+          "protocol": "any"
+        },
+        {
+          "enabled": true,
+          "host": "^.*\\.freshservice\\.com$",
+          "protocol": "any"
+        }
+      ],
+      "exclude": []
+    }
+  },
+  "proxy": {
+    "match_replace_rules": [
+      {
+        "comment": "Header obligatorio HackerOne",
+        "enabled": true,
+        "is_simple_match": true,
+        "match_string": "",
+        "replace_string": "X-HackerOne-Research: tomas244",
+        "rule_type": "request_header"
+      }
+    ]
+  }
+}
