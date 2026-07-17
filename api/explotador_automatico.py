@@ -472,6 +472,10 @@ def main():
     else:
         delta = cargar_delta(args.delta)
         subdominios = extraer_subdominios(delta)
+        if isinstance(subdominios, dict):
+            subdominios = list(subdominios.keys())
+        elif not isinstance(subdominios, list):
+            subdominios = list(subdominios)
 
     if not subdominios:
         log("❌ Sin subdominios para testear. Revisá el delta o usá --subdominio DOMINIO")
