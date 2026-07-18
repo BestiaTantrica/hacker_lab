@@ -88,6 +88,31 @@ async def get_poc():
         if client: client.close()
         return {"status": "error", "data": f"Error leyendo PoC: {str(e)}"}
 
+@app.post("/api/execute_exploit")
+async def execute_exploit():
+    client = get_ssh_client()
+    if not client:
+        return {"status": "error", "data": "No se pudo conectar a OCI-1."}
+    
+    try:
+        # Ejecutamos el eslabon en OCI-1. Limitado a 50 subdominios para que no se cuelgue la UI mucho tiempo.
+        # En una arquitectura real, esto deberia ser asincrono con Celery/Redis, pero por ahora bloqueamos y esperamos.
+        command = "python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py --max 50"
+        stdin, stdout, stderr = client.exec_command(command, timeout=300) # Esperamos hasta 5 mins
+        
+        output = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        
+        client.close()
+        
+        if error and not output:
+             return {"status": "error", "data": error}
+             
+        return {"status": "success", "data": output + "\n" + error}
+    except Exception as e:
+        if client: client.close()
+        return {"status": "error", "data": f"Excepción ejecutando script: {str(e)}"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

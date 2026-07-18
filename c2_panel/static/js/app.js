@@ -51,21 +51,7 @@ function appendTerminal(msg) {
     terminal.scrollTop = terminal.scrollHeight;
 }
 
-// GENERADOR DE PROMPTS MAESTROS (Con Eslabones Integrados)
 const basePrompts = {
-    orquestador_ia: `Actúa como el Orquestador Táctico de mi laboratorio de Bug Bounty.
-El servidor de reconocimiento (OCI-1) detectó la siguiente telemetría reciente:
----
-[RAW_DATA]
----
-
-Para explotar o profundizar, disponemos de los siguientes "Eslabones" (Scripts) en el servidor:
-1. [IDOR Cross-Tenant]: \`python3 LAB/api/idor_cross_tenant.py --target <URL>\` (Para plataformas SaaS/Multi-tenant)
-2. [Scanner de APIs]: \`python3 LAB/api/auditor_freshdesk.py\` (Específico para Freshworks/CRM)
-3. [Explotador Masivo]: \`python3 LAB/api/explotador_automatico.py\` (Takeovers y CORS)
-
-Tu tarea: Analiza la telemetría, identifica el activo más prometedor, y respóndeme ÚNICAMENTE con el comando exacto que debo ejecutar basado en nuestros Eslabones. No alucines comandos que no existen.`,
-
     h1_report: `Actúa como un Bug Bounty Hunter top tier. He confirmado una vulnerabilidad usando nuestro eslabón automatizado.
 Quiero que redactes un reporte para HackerOne con esta estructura exacta:
 1. Resumen Ejecutivo
@@ -86,25 +72,7 @@ async function generarPrompt(tipo) {
     const modal = document.getElementById('prompt-modal');
     const textarea = document.getElementById('prompt-text');
     
-    // Mostramos estado de carga solo si requiere data cruda
-    if (tipo === 'orquestador_ia') {
-        textarea.value = "Extrayendo telemetría resumida de OCI-1 por SSH... Espere...";
-        modal.classList.add('show');
-        
-        try {
-            const response = await fetch('/api/raw_data');
-            const result = await response.json();
-            if (result.status === 'success' && result.data) {
-                // Truncar para no saturar a la IA (Evitar exceso de contexto)
-                const dataLines = result.data.split('\\n').slice(-30).join('\\n');
-                lastRawData = dataLines || "Sin datos recientes.";
-            }
-        } catch (error) {
-            lastRawData = "Error: OCI-1 no alcanzó a enviar los datos.";
-        }
-        
-        textarea.value = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
-    } else if (tipo === 'h1_report') {
+    if (tipo === 'h1_report') {
         textarea.value = "Extrayendo Evidencia Automática (PoC) de OCI-1 por SSH... Espere...";
         modal.classList.add('show');
         
