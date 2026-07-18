@@ -75,11 +75,12 @@ Quiero que redactes un reporte para HackerOne con esta estructura exacta:
 5. Mitigación Recomendada
 
 No inventes datos. Usa un tono neutro y técnico.
-Datos confirmados del Bug:
-[PEGAR_AQUI_EVIDENCIA_MANUAL]`
+Datos confirmados del Bug (Generado automáticamente por el Eslabón):
+[AUTOMATED_POC_DATA]`
 };
 
 let lastRawData = "Esperando extracción de datos de OCI-1...";
+let lastPocData = "Esperando evidencia (PoC) automática de OCI-1...";
 
 async function generarPrompt(tipo) {
     const modal = document.getElementById('prompt-modal');
@@ -103,6 +104,21 @@ async function generarPrompt(tipo) {
         }
         
         textarea.value = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
+    } else if (tipo === 'h1_report') {
+        textarea.value = "Extrayendo Evidencia Automática (PoC) de OCI-1 por SSH... Espere...";
+        modal.classList.add('show');
+        
+        try {
+            const response = await fetch('/api/get_poc');
+            const result = await response.json();
+            if (result.status === 'success' && result.data) {
+                lastPocData = result.data;
+            }
+        } catch (error) {
+            lastPocData = "Error: Falló la comunicación con OCI-1 para extraer el PoC.";
+        }
+        
+        textarea.value = basePrompts[tipo].replace('[AUTOMATED_POC_DATA]', lastPocData);
     } else {
         textarea.value = basePrompts[tipo];
         modal.classList.add('show');
