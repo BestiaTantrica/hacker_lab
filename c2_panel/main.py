@@ -71,6 +71,23 @@ async def get_raw_data():
         if client: client.close()
         return {"status": "error", "data": f"Error leyendo datos: {str(e)}"}
 
+@app.get("/api/get_poc")
+async def get_poc():
+    client = get_ssh_client()
+    if not client:
+        return {"status": "offline", "data": "No se pudo conectar a OCI-1."}
+    
+    try:
+        # Extraemos el ultimo Proof of Concept generado automáticamente por los scripts
+        stdin, stdout, stderr = client.exec_command("cat /home/ubuntu/plataforma_operativa/resultados/ultimo_poc.txt 2>/dev/null || echo 'Aún no se ha generado un PoC. El sistema debe ejecutar un eslabón de explotación primero.'")
+        poc_output = stdout.read().decode().strip()
+        
+        client.close()
+        return {"status": "success", "data": poc_output}
+    except Exception as e:
+        if client: client.close()
+        return {"status": "error", "data": f"Error leyendo PoC: {str(e)}"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
