@@ -19,38 +19,34 @@
 
 ---
 
-## 🚀 ETAPA 1 — Automatización del Análisis de Vulnerabilidades (Low-Hanging Fruits)
-**Prioridad:** Alta | **Objetivo:** Resolver el "cuello de botella" manual de Burp Suite que detiene el progreso.
+## 🚀 ETAPA 1 — Pipeline OCI-1 (Terminada)
+**Prioridad:** Alta | **Estado:** ✅ Completado
+Se ha establecido el músculo de recolección en la instancia OCI-1 (1GB AMD). 
+- Descubrimiento diario automatizado (`subfinder`).
+- Explotación automática de bugs de bajo esfuerzo/alta recompensa (`explotador_automatico.py`): Subdomain Takeovers, CORS, archivos expuestos (.env).
+- Alertas a Telegram.
+
+---
+
+## 🎯 ETAPA 2 — El Cerebro OCI-2 (Panel C2 Ligero)
+**Prioridad:** Máxima | **Objetivo:** Montar un centro de mando visual para no depender de la consola y poder operar desde el celular.
 
 ### Problema actual:
-El pipeline en OCI encuentra subdominios nuevos y los manda por Telegram. Pero la revisión manual en Burp Suite de cada subdominio es lenta, repetitiva y frena el progreso. Se necesita automatizar la búsqueda de fallos fáciles de explotar.
+Manejar todo desde la terminal requiere saber comandos y estar en la PC. El usuario necesita un sistema de un clic ("Point and Shoot") para capitalizar rápido.
 
 ### Tareas:
-- [ ] **[NUCLEI]** Instalar y configurar `nuclei` de ProjectDiscovery (escáner automatizado de vulnerabilidades basadas en plantillas) en el servidor OCI o en el nodo local.
-- [ ] **[PIPELINE]** Integrar `httpx` (para verificar qué subdominios descubiertos están vivos) y pasar sus resultados directamente a `nuclei`.
-- [ ] **[ALERTAS]** Configurar Telegram para que no solo avise de "nuevos subdominios", sino de "vulnerabilidades críticas/medias encontradas automáticamente".
-- [ ] **[MANUAL REDUCIDO]** Usar Burp Suite *únicamente* cuando `nuclei` detecta paneles de login ocultos, o para probar vectores lógicos complejos (IDOR) que la IA o Nuclei no pueden resolver.
+- [ ] **Desplegar Panel Web (FastHTML/Streamlit) en OCI-2 (12GB ARM):** Una web privada, protegida con contraseña, que lea los hallazgos de OCI-1 y los muestre en tarjetas (cards).
+- [ ] **Acciones de 1 clic:** Botones en el panel como "Revisar CORS", "Extraer Secretos JS", que ejecuten los scripts en segundo plano.
+- [ ] **Integración de IA (Groq):** Un botón de "Generar Reporte HackerOne" que use Groq (Llama 3) para redactar el ticket perfecto en base al bug encontrado, listo para copiar y pegar.
 
-**Criterio de éxito:** El pipeline de OCI descubre un subdominio, confirma si hay web activa (`httpx`), escanea vulnerabilidades conocidas automáticamente (`nuclei`), y solo avisa a Telegram si hay algo accionable que reportar.
+**Criterio de éxito:** El usuario puede entrar desde su celular a una IP web, ver un Subdomain Takeover detectado en `shopify.com`, presionar "Generar Reporte", copiar el texto y cobrar.
 
 ---
 
-## 🎯 ETAPA 2 — Ejecución en Objetivos Activos
+## 🤖 ETAPA 3 — Extractor de Secretos (El Motor de Dinero)
 **Prioridad:** Media-Alta
-
-### Tareas:
-- [ ] **MongoDB (`*.mongodb.com`):** Retomar auditoría de vectores pendientes en el entorno de Atlas (CORS/IDOR) solo sobre hallazgos curados.
-- [ ] **Elastic (`*.elastic.co`):** Investigar manualmente los activos críticos ya descubiertos (`secrets.elastic.co`, `vault-*.elastic.co`, `www.jenkins.elastic.co`).
+- [ ] **Implementar Extractor JS:** Script para OCI-2 que descargue el código de las webs encontradas por OCI-1 y busque tokens de AWS o Stripe usando Regex. Esto tiene cero burocracia y paga directo.
 
 ---
 
-## 🤖 ETAPA 3 — Refactorización del Sistema de "Skills"
-**Prioridad:** Media
-
-### Tareas:
-- [ ] **Auditar el directorio `LAB/skills/`**: Los prompts actuales están fallando o causando sesgos (hallazgo del 15 de Julio). Revisar la lógica de `SKILL-IDOR-TEST.md`, `SKILL-XSS-TEST.md`, etc.
-- [ ] **Conversión a Flujos Deterministas:** Convertir las skills de IA en scripts o flujos deterministas (`bash`/`python`) siempre que sea posible, para no depender de que el LLM alucine instrucciones correctas de seguridad.
-
----
-
-> 📌 **Regla de oro del roadmap:** Si una etapa no tiene su criterio de éxito cumplido, la siguiente etapa no comienza.
+> 📌 **Regla de oro:** Cero burocracia. Si algo requiere logins manuales tediosos, cuentas complejas o adivinar lógica, se descarta. El enfoque es *Volumen Automatizado* (pescar con red, no con caña).
