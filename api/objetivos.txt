@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# OBJETIVOS DE BUG BOUNTY PARA ESCANEO MASIVO Y PASIVO (OCI-1)
+# ─────────────────────────────────────────────────────────────────────────────
+# Criterios: Scopes Wildcard (*.dominio.com), Pagan recompensas en $$$, Mucha Infraestructura Cloud
+# Siéntete libre de añadir más. El sistema OCI los buscará todas las madrugadas.
+
+# E-Commerce y Retail
+shopify.com
+lightspeedhq.com
+vendhq.com
+etsy.com
+ebay.com
+mercari.com
+
+# SaaS B2B y Herramientas de Trabajo (Nuestros preferidos)
+freshworks.com
+freshdesk.com
+freshservice.com
+freshchat.com
+nextcloud.com
+asana.com
+atlassian.com
+atlassian.net
+hubspot.com
+zoom.us
+slack.com
+notion.so
+
+# Fintech y Cripto
+paypal.com
+stripe.com
+square.com
+coinbase.com
+kraken.com
+binance.com
+robinhood.com
+
+# Viajes, Movilidad y Logística
+uber.com
+lyft.com
+airbnb.com
+booking.com
+agoda.com
+grab.com
+doordash.com
+instacart.com
+
+# Entretenimiento y Redes Sociales
+snapchat.com
+tiktok.com
+twitch.tv
+spotify.com
+roblox.com
+epicgames.com
+discord.com
+
+# Infraestructura, Seguridad y Autenticación
+frontegg.com
+auth0.com
+okta.com
+cloudflare.com
+fastly.com
+twilio.com
+sendgrid.com
+digitalocean.com
+hashicorp.com
+gitlab.com
+github.com
+
+# Grandes Corporaciones Tech (Scopes Inmensos)
+yahoo.com
+ibm.com
+intel.com
+dell.com
+tesla.com
+ford.com

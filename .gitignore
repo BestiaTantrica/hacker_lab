@@ -28,3 +28,5 @@ api/discovery_pasivo_nuevo.py
 # Binarios locales
 herramientas/
 
+llave_oci
+llave_ssh
