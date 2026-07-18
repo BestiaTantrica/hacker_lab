@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C2 Panel - HackerLab</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span class="icon">⚡</span>
+            <h2>C2 Panel</h2>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="#">Dashboard</a></li>
+            <li><a href="#">Targets (OCI-1)</a></li>
+            <li><a href="#">Reportes IA</a></li>
+            <li><a href="#">Configuración</a></li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <header>
+            <h1>Centro de Control C2</h1>
+            <div class="user-info">admin@hackerlab</div>
+        </header>
+        
+        <div class="cards-grid">
+            <div class="card status-card">
+                <h3>Estado OCI-1 (Esclavo)</h3>
+                <div class="status-indicator">
+                    <span id="oci-status-dot" class="dot gray"></span>
+                    <span id="oci-status-text">Conectando SSH...</span>
+                </div>
+                <p class="meta-info">IP: {{ oci1_ip }}</p>
+                <p class="meta-info" id="oci-uptime">-</p>
+            </div>
+            
+            <div class="card stat-card">
+                <h3>Volumen Descubierto</h3>
+                <h2 id="targets-count">--</h2>
+                <p class="meta-info">Subdominios en actual.json</p>
+            </div>
+            
+            <div class="card action-card">
+                <h3>Acciones Rápidas</h3>
+                <button class="btn btn-primary" onclick="alert('Ejecutará exploit masivo (Ej: Takeovers)')">💥 Lanzar Explotación Mass</button>
+                <button class="btn btn-secondary" onclick="alert('Analizará el log con IA y armará ticket de H1')">🤖 Generar Reporte H1</button>
+            </div>
+        </div>
+        
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <span>Consola del C2</span>
+            </div>
+            <div class="terminal-body" id="terminal-output">
+                > Sistema inicializado.<br>
+                > OCI-2 (AMD Micro) listo.<br>
+                > Esperando telemetría...
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
