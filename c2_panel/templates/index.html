@@ -2,66 +2,122 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C2 Panel - HackerLab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>C2 Mobile - HackerLab</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0f172a">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">
-            <span class="icon">⚡</span>
-            <h2>C2 Panel</h2>
-        </div>
-        <ul class="nav-links">
-            <li class="active"><a href="#">Dashboard</a></li>
-            <li><a href="#">Targets (OCI-1)</a></li>
-            <li><a href="#">Reportes IA</a></li>
-            <li><a href="#">Configuración</a></li>
-        </ul>
-    </div>
     
-    <div class="main-content">
-        <header>
-            <h1>Centro de Control C2</h1>
-            <div class="user-info">admin@hackerlab</div>
-        </header>
-        
-        <div class="cards-grid">
-            <div class="card status-card">
-                <h3>Estado OCI-1 (Esclavo)</h3>
-                <div class="status-indicator">
-                    <span id="oci-status-dot" class="dot gray"></span>
-                    <span id="oci-status-text">Conectando SSH...</span>
-                </div>
-                <p class="meta-info">IP: {{ oci1_ip }}</p>
-                <p class="meta-info" id="oci-uptime">-</p>
+    <header class="mobile-header">
+        <div class="logo">
+            <span class="icon">🎯</span>
+            <h2>C2 Copilot Hub</h2>
+        </div>
+        <div class="status-badge" id="oci-status-badge">
+            <span id="oci-status-dot" class="dot gray"></span>
+            <span id="oci-status-text">Conectando...</span>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <!-- VISTA DASHBOARD -->
+        <section id="view-dashboard" class="view active">
+            <div class="card stat-card glow">
+                <h3>Volumen Descubierto OCI-1</h3>
+                <h2 id="targets-count">--</h2>
+                <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <div class="card stat-card">
-                <h3>Volumen Descubierto</h3>
-                <h2 id="targets-count">--</h2>
-                <p class="meta-info">Subdominios en actual.json</p>
-            </div>
+            <h3 class="section-title">Generadores de Prompts Maestros</h3>
             
             <div class="card action-card">
-                <h3>Acciones Rápidas</h3>
-                <button class="btn btn-primary" onclick="alert('Ejecutará exploit masivo (Ej: Takeovers)')">💥 Lanzar Explotación Mass</button>
-                <button class="btn btn-secondary" onclick="alert('Analizará el log con IA y armará ticket de H1')">🤖 Generar Reporte H1</button>
+                <div class="card-header">
+                    <span class="icon">📝</span>
+                    <h3>Prompt H1 Report</h3>
+                </div>
+                <p>Genera el formato estructurado para pegar en Claude y redactar un bug report infalible.</p>
+                <button class="btn btn-primary" onclick="generarPrompt('h1_report')">Generar Prompt H1</button>
+            </div>
+
+            <div class="card action-card">
+                <div class="card-header">
+                    <span class="icon">🔍</span>
+                    <h3>Prompt Analista de Código</h3>
+                </div>
+                <p>Inyecta un archivo JS ofuscado y pide a la IA que busque endpoints expuestos o lógica débil.</p>
+                <button class="btn btn-primary" onclick="generarPrompt('js_analysis')">Generar Prompt JS</button>
+            </div>
+        </section>
+
+        <!-- VISTA KITS (ESLABONES) -->
+        <section id="view-kits" class="view">
+            <h3 class="section-title">Kits de Soluciones (Eslabones)</h3>
+            <p class="view-desc">Conocimiento duro pre-cargado. No dependas ciegamente de la IA.</p>
+            
+            <div class="card kit-card">
+                <h3>🛠️ Checklist IDOR (Cross-Tenant)</h3>
+                <ul class="kit-list">
+                    <li>1. Crear 2 cuentas en distintos tenants.</li>
+                    <li>2. Capturar petición en Burp (Cuenta A).</li>
+                    <li>3. Cambiar el ID numérico o UUID por el de la Cuenta B.</li>
+                    <li>4. Verificar si devuelve 200 OK y filtra info.</li>
+                </ul>
+            </div>
+
+            <div class="card kit-card">
+                <h3>🔥 Payloads CORS Comunes</h3>
+                <pre class="code-block">
+Origin: null
+Origin: https://tudominio.com.evil.com
+Origin: https://evil.com
+                </pre>
+            </div>
+        </section>
+
+        <!-- VISTA TERMINAL -->
+        <section id="view-terminal" class="view">
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <span>Telemetría Cruda OCI-1</span>
+                </div>
+                <div class="terminal-body" id="terminal-output">
+                    > Sistema Mobile inicializado.<br>
+                    > Esperando datos de OCI-1...
+                </div>
+            </div>
+        </section>
+
+        <!-- MODAL DE PROMPTS -->
+        <div id="prompt-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Tu Prompt Maestro</h3>
+                    <span class="close" onclick="cerrarModal()">&times;</span>
+                </div>
+                <textarea id="prompt-text" readonly></textarea>
+                <button class="btn btn-success" onclick="copiarPrompt()">Copiar al Portapapeles</button>
             </div>
         </div>
-        
-        <div class="terminal-container">
-            <div class="terminal-header">
-                <span>Consola del C2</span>
-            </div>
-            <div class="terminal-body" id="terminal-output">
-                > Sistema inicializado.<br>
-                > OCI-2 (AMD Micro) listo.<br>
-                > Esperando telemetría...
-            </div>
-        </div>
-    </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR (Mobile First) -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchView('dashboard', this)">
+            <span class="nav-icon">📊</span>
+            <span>Panel</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('kits', this)">
+            <span class="nav-icon">📚</span>
+            <span>Kits</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('terminal', this)">
+            <span class="nav-icon">💻</span>
+            <span>Logs</span>
+        </a>
+    </nav>
 
     <script src="/static/js/app.js"></script>
 </body>
