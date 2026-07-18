@@ -51,29 +51,32 @@ function appendTerminal(msg) {
     terminal.scrollTop = terminal.scrollHeight;
 }
 
-// GENERADOR DE PROMPTS MAESTROS
+// GENERADOR DE PROMPTS MAESTROS (Con Eslabones Integrados)
 const basePrompts = {
-    h1_report: `Actúa como un Bug Bounty Hunter top tier. Voy a pasarte los detalles técnicos de una vulnerabilidad que encontré.
-Quiero que redactes un reporte perfecto para HackerOne siguiendo esta estructura exacta:
+    orquestador_ia: `Actúa como el Orquestador Táctico de mi laboratorio de Bug Bounty.
+El servidor de reconocimiento (OCI-1) detectó la siguiente telemetría reciente:
+---
+[RAW_DATA]
+---
+
+Para explotar o profundizar, disponemos de los siguientes "Eslabones" (Scripts) en el servidor:
+1. [IDOR Cross-Tenant]: \`python3 LAB/api/idor_cross_tenant.py --target <URL>\` (Para plataformas SaaS/Multi-tenant)
+2. [Scanner de APIs]: \`python3 LAB/api/auditor_freshdesk.py\` (Específico para Freshworks/CRM)
+3. [Explotador Masivo]: \`python3 LAB/api/explotador_automatico.py\` (Takeovers y CORS)
+
+Tu tarea: Analiza la telemetría, identifica el activo más prometedor, y respóndeme ÚNICAMENTE con el comando exacto que debo ejecutar basado en nuestros Eslabones. No alucines comandos que no existen.`,
+
+    h1_report: `Actúa como un Bug Bounty Hunter top tier. He confirmado una vulnerabilidad usando nuestro eslabón automatizado.
+Quiero que redactes un reporte para HackerOne con esta estructura exacta:
 1. Resumen Ejecutivo
 2. Descripción Detallada
-3. Pasos para Reproducir (Paso a paso, claros)
-4. Impacto Real en el Negocio
+3. Pasos para Reproducir (Mencionando herramientas estándar como Burp Suite o cURL)
+4. Impacto Real
 5. Mitigación Recomendada
 
-No inventes datos. Usa un tono extremadamente profesional, neutro y técnico.
-Datos del Bug (Extraídos de OCI-1):
-[RAW_DATA]`,
-
-    js_analysis: `Actúa como un analista de código estático (SAST). 
-Te voy a pegar el contenido crudo de subdominios y activos detectados por OCI-1.
-Tu trabajo es identificar:
-1. Dominios de alto valor (paneles admin, APIs internas).
-2. Patrones inusuales que indiquen vulnerabilidades.
-3. Posibles vectores de ataque basados en los nombres de subdominios.
-
-Datos de OCI-1:
-[RAW_DATA]`
+No inventes datos. Usa un tono neutro y técnico.
+Datos confirmados del Bug:
+[PEGAR_AQUI_EVIDENCIA_MANUAL]`
 };
 
 let lastRawData = "Esperando extracción de datos de OCI-1...";
@@ -82,22 +85,28 @@ async function generarPrompt(tipo) {
     const modal = document.getElementById('prompt-modal');
     const textarea = document.getElementById('prompt-text');
     
-    // Mostramos estado de carga
-    textarea.value = "Extrayendo telemetría cruda de OCI-1 por SSH... Espere...";
-    modal.classList.add('show');
-    
-    try {
-        const response = await fetch('/api/raw_data');
-        const result = await response.json();
-        if (result.status === 'success' || result.data) {
-            lastRawData = result.data;
+    // Mostramos estado de carga solo si requiere data cruda
+    if (tipo === 'orquestador_ia') {
+        textarea.value = "Extrayendo telemetría resumida de OCI-1 por SSH... Espere...";
+        modal.classList.add('show');
+        
+        try {
+            const response = await fetch('/api/raw_data');
+            const result = await response.json();
+            if (result.status === 'success' && result.data) {
+                // Truncar para no saturar a la IA (Evitar exceso de contexto)
+                const dataLines = result.data.split('\\n').slice(-30).join('\\n');
+                lastRawData = dataLines || "Sin datos recientes.";
+            }
+        } catch (error) {
+            lastRawData = "Error: OCI-1 no alcanzó a enviar los datos.";
         }
-    } catch (error) {
-        lastRawData = "Error: OCI-1 no alcanzó a enviar los datos.";
+        
+        textarea.value = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
+    } else {
+        textarea.value = basePrompts[tipo];
+        modal.classList.add('show');
     }
-    
-    let promptFinal = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
-    textarea.value = promptFinal;
 }
 
 // LOGS CRUDOS AL ABRIR TERMINAL
