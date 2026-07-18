@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="templates")
 # Configuración OCI-1 (Esclavo)
 OCI1_IP = os.getenv("OCI1_IP", "129.80.73.248")
 OCI1_USER = os.getenv("OCI1_USER", "ubuntu")
-SSH_KEY_PATH = os.getenv("SSH_KEY_PATH", os.path.expanduser("~/.ssh/id_rsa"))
+SSH_KEY_PATH = os.getenv("SSH_KEY_PATH", "/home/ubuntu/.ssh/id_rsa_oci1")
 
 def get_ssh_client():
     client = paramiko.SSHClient()
@@ -53,6 +53,23 @@ async def get_status():
     except Exception as e:
         if client: client.close()
         return {"status": "error", "message": str(e)}
+
+@app.get("/api/raw_data")
+async def get_raw_data():
+    client = get_ssh_client()
+    if not client:
+        return {"status": "offline", "data": "No se pudo conectar a OCI-1 para extraer datos."}
+    
+    try:
+        # Extraemos las ultimas lineas del archivo actual.json (telemetría real)
+        stdin, stdout, stderr = client.exec_command("tail -n 100 /home/ubuntu/plataforma_operativa/resultados/actual.json 2>/dev/null || echo 'No hay datos de descubrimiento aún.'")
+        raw_output = stdout.read().decode().strip()
+        
+        client.close()
+        return {"status": "success", "data": raw_output}
+    except Exception as e:
+        if client: client.close()
+        return {"status": "error", "data": f"Error leyendo datos: {str(e)}"}
 
 if __name__ == "__main__":
     import uvicorn

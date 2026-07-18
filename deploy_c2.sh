@@ -14,14 +14,18 @@ echo "============================================================"
 # Arreglar permisos de la llave local si es necesario
 chmod 600 $LLAVE
 
-echo "[1/3] Subiendo archivos del panel C2 al servidor..."
+echo "[1/3] Subiendo archivos del panel C2 y llaves al servidor..."
 scp -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE -r c2_panel ubuntu@$OCI2_IP:/home/ubuntu/
+scp -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE $LLAVE ubuntu@$OCI2_IP:/home/ubuntu/.ssh/id_rsa_oci1
 
 echo "[2/3] Instalando dependencias y configurando el servidor..."
 ssh -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE ubuntu@$OCI2_IP << 'EOF'
   # Actualizar paquetes y dependencias básicas
   sudo apt-get update -y -qq
   sudo apt-get install -y python3-pip python3-venv -qq
+
+  # Arreglar permisos de la llave SSH de OCI-1
+  chmod 600 /home/ubuntu/.ssh/id_rsa_oci1
 
   # Crear entorno virtual e instalar requirements
   cd /home/ubuntu/c2_panel
