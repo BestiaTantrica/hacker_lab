@@ -52,17 +52,36 @@ function appendTerminal(msg) {
 }
 
 const basePrompts = {
-    h1_report: `Actúa como un Bug Bounty Hunter top tier. He confirmado una vulnerabilidad usando nuestro eslabón automatizado.
+    fase1_recon: `Actúa como mi Mentor y Orquestador Táctico en Bug Bounty.
+He obtenido la siguiente telemetría nueva desde mi infraestructura automatizada de reconocimiento (OCI-1):
+---
+[RAW_DATA]
+---
+Basado en estos subdominios, explícame brevemente y como si fuera un estudiante:
+1. ¿Qué tipo de infraestructura parece ser? (Ej: CDN, plataformas SaaS, etc).
+2. De las automatizaciones que tengo listas en mi sistema (Takeovers, CORS, Archivos Expuestos), ¿cuál tiene más sentido ejecutar aquí y por qué?`,
+
+    fase2_triaje: `Actúa como mi Analista de Triaje. He ejecutado el eslabón de automatización en mi infraestructura y ha devuelto los siguientes resultados crudos (PoC):
+---
+[AUTOMATED_POC_DATA]
+---
+Por favor, analiza esta salida y enséñame:
+1. ¿Hubo algún hallazgo real o son probables falsos positivos? Explícame por qué.
+2. Si hay un hallazgo válido, ¿qué paso manual EXACTO (usando Burp Suite o el navegador) debo hacer yo para confirmar visualmente que el bug existe antes de reportarlo?`,
+
+    fase3_reporte: `Actúa como un Bug Bounty Hunter top tier. He seguido tus instrucciones, he verificado manualmente la vulnerabilidad, y el bug es real.
+La evidencia técnica capturada originalmente por el sistema es esta:
+---
+[AUTOMATED_POC_DATA]
+---
 Quiero que redactes un reporte para HackerOne con esta estructura exacta:
 1. Resumen Ejecutivo
 2. Descripción Detallada
-3. Pasos para Reproducir (Mencionando herramientas estándar como Burp Suite o cURL)
+3. Pasos para Reproducir (Incluyendo la verificación manual que discutimos)
 4. Impacto Real
 5. Mitigación Recomendada
 
-No inventes datos. Usa un tono neutro y técnico.
-Datos confirmados del Bug (Generado automáticamente por el Eslabón):
-[AUTOMATED_POC_DATA]`
+No inventes datos que no estén en la evidencia. Usa un tono neutro y técnico.`
 };
 
 let lastRawData = "Esperando extracción de datos de OCI-1...";
@@ -72,8 +91,24 @@ async function generarPrompt(tipo) {
     const modal = document.getElementById('prompt-modal');
     const textarea = document.getElementById('prompt-text');
     
-    if (tipo === 'h1_report') {
-        textarea.value = "Extrayendo Evidencia Automática (PoC) de OCI-1 por SSH... Espere...";
+    if (tipo === 'fase1_recon') {
+        textarea.value = "Extrayendo telemetría resumida de OCI-1 por SSH... Espere...";
+        modal.classList.add('show');
+        
+        try {
+            const response = await fetch('/api/raw_data');
+            const result = await response.json();
+            if (result.status === 'success' && result.data) {
+                const dataLines = result.data.split('\\n').slice(-30).join('\\n');
+                lastRawData = dataLines || "Sin datos recientes.";
+            }
+        } catch (error) {
+            lastRawData = "Error: OCI-1 no alcanzó a enviar los datos.";
+        }
+        
+        textarea.value = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
+    } else if (tipo === 'fase2_triaje' || tipo === 'fase3_reporte') {
+        textarea.value = "Extrayendo resultados/evidencia (PoC) de OCI-1 por SSH... Espere...";
         modal.classList.add('show');
         
         try {
