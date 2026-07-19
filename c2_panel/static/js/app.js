@@ -55,7 +55,6 @@ function appendTerminal(msg) {
 let pocActual = "";
 
 // LOGICA DE SUPERVISION AUTONOMA
-let pocActual = "";
 
 // Función para generar un template base de H1 según el tipo de bug
 function generarPlantillaH1(hallazgo) {
