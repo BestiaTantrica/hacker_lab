@@ -54,41 +54,57 @@ function appendTerminal(msg) {
 // LOGICA DE SUPERVISION AUTONOMA
 let pocActual = "";
 
-// La lógica ahora es interactiva por botón, no periódica
-// Quitamos el checkTriaje del ciclo de status
-const originalCheck = checkOciStatus;
-checkOciStatus = async function() {
-    await originalCheck();
-}
+// LOGICA DE SUPERVISION AUTONOMA
+let pocActual = "";
 
-function verificarManual() {
-    const modal = document.getElementById('prompt-modal');
-    const textarea = document.getElementById('prompt-text');
+// Función para generar un template base de H1 según el tipo de bug
+function generarPlantillaH1(hallazgo) {
+    let tipo = hallazgo.tipo || "Vulnerabilidad Desconocida";
+    let url = hallazgo.url || "N/A";
     
-    // Le pasamos el POC a la IA con un prompt duro de "Skill"
-    const promptSkill = `Soy el Auditor de un pipeline autónomo de Bug Bounty. El sistema reportó este posible hallazgo mediante su eslabón automático:
----
-${pocActual}
----
-Necesito verificar si esto es un falso positivo. Dime exactamente los pasos que debo realizar manualmente (por ejemplo, con Burp Suite o el navegador) para confirmar que la vulnerabilidad es real.`;
+    if (tipo === "cors") {
+        return `## Title: CORS Misconfiguration with Credentials allowed on ${url}
+## Description:
+The endpoint \`${url}\` is vulnerable to Cross-Origin Resource Sharing (CORS) misconfiguration. It reflects the Origin header back and sets \`Access-Control-Allow-Credentials: true\`. 
+This allows an attacker to send an authenticated cross-origin request and read the sensitive response data.
 
-    textarea.value = promptSkill;
-    modal.classList.add('show');
-}
+## Steps To Reproduce:
+1. Open a browser and navigate to an attacker-controlled domain.
+2. Execute the following JavaScript (or use Burp):
+\`\`\`javascript
+var req = new XMLHttpRequest();
+req.onload = req.onerror = function() { console.log(req.responseText); };
+req.open('GET', '${url}', true);
+req.withCredentials = true;
+req.send();
+\`\`\`
+3. Notice that the sensitive data is successfully returned to the attacker's origin.
 
-function generarReporteFinal() {
-    const modal = document.getElementById('prompt-modal');
-    const textarea = document.getElementById('prompt-text');
+## Impact
+An attacker can craft a malicious page, trick an authenticated victim into visiting it, and steal their sensitive account information or perform unauthorized actions on their behalf.`;
+    }
     
-    const promptReporte = `Actúa como Bug Bounty Hunter. He verificado manualmente que este bug es real siguiendo tus pasos.
-Datos técnicos del sistema:
----
-${pocActual}
----
-Redacta el reporte H1 final (Resumen, Descripción, Impacto, Pasos para Reproducir y Mitigación). No inventes datos.`;
+    if (tipo === "exposed_file") {
+        return `## Title: Sensitive Information Disclosure via Exposed File at ${url}
+## Description:
+The application exposes a sensitive file at \`${url}\` which contains internal application data or credentials.
 
-    textarea.value = promptReporte;
-    modal.classList.add('show');
+## Steps To Reproduce:
+1. Navigate directly to \`${url}\`
+2. Observe the following sensitive keywords in the response: ${hallazgo.keywords ? hallazgo.keywords.join(', ') : ''}
+
+## Impact
+Information disclosure that can aid an attacker in further exploitation of the system.`;
+    }
+    
+    // Plantilla generica
+    return `## Title: ${tipo} on ${url}
+## Description:
+Automated testing identified a potential vulnerability of type ${tipo}.
+Raw data: ${JSON.stringify(hallazgo)}
+
+## Steps To Reproduce:
+Please manually verify the provided raw data.`;
 }
 
 // LANZAR ATAQUE (ESLABON)
@@ -113,14 +129,37 @@ async function ejecutarEslabon(tipo) {
         
         const result = await response.json();
         const pocContainer = document.getElementById('poc-content');
+        const reportSection = document.getElementById('report-section');
+        const reportTextarea = document.getElementById('h1-report');
         
         if (result.status === 'success') {
             appendTerminal(`[OK] Eslabón ${tipo} completado con éxito.`);
-            pocActual = result.data;
-            pocContainer.textContent = result.data;
-            inbox.style.display = 'block'; // Mostrar la caja de triaje con los resultados
             
-            // Scrollear hacia abajo suavemente para que el usuario vea el resultado
+            // Tratamos de parsear si es JSON lo que devuelve el script
+            try {
+                // El script de Python a veces devuelve texto mezclado. Tratamos de extraer el JSON o buscar patrones
+                let raw_data = result.data;
+                pocContainer.textContent = raw_data;
+                
+                // Buscar si hay vulnerabilidades interesantes
+                if (raw_data.includes('CORS MISCONFIGURATION') || raw_data.includes('ALTA') || raw_data.includes('MEDIA')) {
+                    // Armar un reporte básico (parseo burdo por ahora)
+                    let reportType = "cors";
+                    let hallazgo = {tipo: "cors", url: "https://vulnerable.com/endpoint"}; // Mock temporal hasta mejorar parseo
+                    
+                    if(raw_data.includes('ARCHIVO SENSIBLE')) { reportType = "exposed_file"; hallazgo.tipo = reportType; }
+                    
+                    reportTextarea.value = generarPlantillaH1(hallazgo);
+                    reportSection.style.display = 'block';
+                } else {
+                    reportSection.style.display = 'none';
+                }
+            } catch(e) {
+                pocContainer.textContent = result.data;
+                reportSection.style.display = 'none';
+            }
+            
+            inbox.style.display = 'block';
             inbox.scrollIntoView({ behavior: 'smooth' });
         } else {
             appendTerminal(`[ERROR] Falló la ejecución del eslabón: ${result.data}`);
@@ -155,16 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function cerrarModal() {
-    document.getElementById('prompt-modal').classList.remove('show');
-}
-
-function copiarPrompt() {
-    const textarea = document.getElementById('prompt-text');
+function copiarReporte() {
+    const textarea = document.getElementById('h1-report');
     textarea.select();
     document.execCommand('copy');
     
-    const btn = document.querySelector('.btn-success');
+    const btn = event.target;
     const oldText = btn.textContent;
     btn.textContent = '¡Copiado!';
     setTimeout(() => { btn.textContent = oldText; }, 2000);

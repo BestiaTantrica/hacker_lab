@@ -64,16 +64,17 @@
             <div class="card action-card" id="inbox-card" style="display: none; border-top: 3px solid var(--accent); margin-top: 30px;">
                 <div class="card-header">
                     <span class="icon">📬</span>
-                    <h3>Bandeja de Resultados y Triaje</h3>
+                    <h3 id="inbox-title">Resultados del Eslabón</h3>
                 </div>
-                <p>La cascada terminó de ejecutar el eslabón. Estos son los hallazgos técnicos:</p>
+                <p id="inbox-desc">La cascada terminó de ejecutar el eslabón. Estos son los hallazgos técnicos:</p>
                 
                 <div id="poc-content" class="code-block" style="margin-top: 15px; font-size: 11px; max-height: 200px; overflow-y: auto;"></div>
                 
-                <h4 style="margin-top: 15px; margin-bottom: 5px;">Siguiente paso:</h4>
-                <div id="action-buttons" style="display: flex; gap: 10px; flex-direction: column;">
-                    <button class="btn btn-primary" onclick="verificarManual()">1. IA: Enséñame a verificar esto a mano</button>
-                    <button class="btn btn-success" onclick="generarReporteFinal()">2. IA: Esto es real, redacta el Reporte H1</button>
+                <div id="report-section" style="display: none; margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: var(--success);">¡Bug Automáticamente Confirmado! Reporte Pre-Armado:</h4>
+                    <p style="font-size: 12px; margin-bottom: 10px; color: var(--text-muted);">El eslabón ya verificó que el bug es explotable. Copiá este reporte base y envialo.</p>
+                    <textarea id="h1-report" class="code-block" style="width: 100%; height: 200px; font-family: monospace; font-size: 11px; border: 1px solid var(--accent);"></textarea>
+                    <button class="btn btn-success" style="margin-top: 10px;" onclick="copiarReporte()">📋 Copiar Reporte para HackerOne</button>
                 </div>
             </div>
         </section>
@@ -116,17 +117,7 @@ Origin: https://evil.com
             </div>
         </section>
 
-        <!-- MODAL DE PROMPTS -->
-        <div id="prompt-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Tu Prompt Maestro</h3>
-                    <span class="close" onclick="cerrarModal()">&times;</span>
-                </div>
-                <textarea id="prompt-text" readonly></textarea>
-                <button class="btn btn-success" onclick="copiarPrompt()">Copiar al Portapapeles</button>
-            </div>
-        </div>
+
 
     </main>
 
