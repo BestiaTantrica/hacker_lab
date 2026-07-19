@@ -523,10 +523,18 @@ def main():
 
         # Guardar resultados
         output = f"resultados/explotador_{datetime.now().strftime('%Y-%m-%d')}.json"
+        poc_output = "resultados/ultimo_poc.txt"
         os.makedirs("resultados", exist_ok=True)
+        
         with open(output, "w") as f:
             json.dump(todos_los_hallazgos, f, indent=2)
-        log(f"Resultados guardados en {output}")
+            
+        with open(poc_output, "w") as f:
+            f.write("=== ÚLTIMOS HALLAZGOS AUTOMÁTICOS ===\n")
+            for h in todos_los_hallazgos:
+                f.write(json.dumps(h, indent=2) + "\n\n")
+                
+        log(f"Resultados guardados en {output} y {poc_output}")
 
         telegram(
             f"✅ EXPLOTADOR COMPLETADO\n"

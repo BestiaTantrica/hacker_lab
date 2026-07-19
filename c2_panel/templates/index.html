@@ -30,24 +30,34 @@
                 <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <h3 class="section-title">Generadores de Prompts Maestros</h3>
+            <h3 class="section-title">Flujo de Trabajo Guiado (Copiloto)</h3>
             
             <div class="card action-card">
                 <div class="card-header">
-                    <span class="icon">🚀</span>
-                    <h3>Lanzar Explotador Masivo</h3>
+                    <span class="icon">🔍</span>
+                    <h3>Fase 1: Reconocimiento</h3>
                 </div>
-                <p>Se conecta a OCI-1, lee el delta de subdominios y ejecuta el eslabón de explotación automática. Si encuentra bugs, genera el PoC.</p>
-                <button class="btn btn-primary" id="btn-exploit" onclick="ejecutarEslabon()">Ejecutar Ataque en OCI-1</button>
+                <p>Genera un prompt para que la IA actúe como mentor y te explique qué subdominios se encontraron y qué eslabón conviene usar.</p>
+                <button class="btn btn-primary" onclick="generarPrompt('fase1_recon')">Consultar a la IA (Recon)</button>
+            </div>
+
+            <div class="card action-card">
+                <div class="card-header">
+                    <span class="icon">⚙️</span>
+                    <h3>Fase 2: Ejecución y Triaje</h3>
+                </div>
+                <p>Ejecuta la automatización. Luego pide a la IA que te explique los resultados y te enseñe a verificar si es un falso positivo.</p>
+                <button class="btn btn-secondary" id="btn-exploit" onclick="ejecutarEslabon()" style="margin-bottom: 10px; width: 100%; border: 1px solid #334155;">▶️ 1. Ejecutar Eslabón en OCI-1</button>
+                <button class="btn btn-primary" onclick="generarPrompt('fase2_triaje')" style="width: 100%;">🧠 2. Consultar a la IA (Triaje)</button>
             </div>
 
             <div class="card action-card">
                 <div class="card-header">
                     <span class="icon">📝</span>
-                    <h3>Redactor H1 Report</h3>
+                    <h3>Fase 3: Redacción H1</h3>
                 </div>
-                <p>Genera el formato estructurado para pegar evidencias manuales y redactar un bug report infalible.</p>
-                <button class="btn btn-primary" onclick="generarPrompt('h1_report')">Generar Prompt H1</button>
+                <p>Genera el reporte profesional para HackerOne con la evidencia ya analizada y confirmada.</p>
+                <button class="btn btn-primary" onclick="generarPrompt('fase3_reporte')">Generar Prompt H1</button>
             </div>
         </section>
 
