@@ -105,6 +105,9 @@ def execute_exploit(req: ExploitRequest):
         elif req.tipo == "ataque":
             # Ejecuta la comprobación IDOR con los datos mapeados (Paso 2)
             command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --ataque-solo"
+        elif req.tipo == "escalada":
+            # Ejecuta la comprobación de Escalada Vertical (Paso 3)
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --escalada-solo"
         else:
             command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
             

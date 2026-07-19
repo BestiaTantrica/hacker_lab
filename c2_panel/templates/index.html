@@ -45,19 +45,40 @@
             <div class="card action-card" id="step-2" style="border-left: 4px solid #f29057; opacity: 0.5; pointer-events: none;">
                 <div class="card-header">
                     <span class="icon">⚔️</span>
-                    <h3>Paso 2: Ataque Cruzado</h3>
+                    <h3>Paso 2: IDOR (Ataque Horizontal)</h3>
                 </div>
-                <p>El Atacante intenta acceder a los IDs capturados en el Paso 1. Si devuelve 200 OK con datos privados, se confirma el bug.</p>
+                <p>El Atacante intenta acceder a los IDs de la Víctima (Cross-Tenant). Comprueba si hay fugas de datos entre empresas.</p>
                 <button class="btn btn-secondary" onclick="ejecutarPasoCascada('ataque')" id="btn-step-2">Lanzar Cross-Tenant IDOR</button>
             </div>
 
-            <div class="card action-card" id="step-3" style="border-left: 4px solid var(--success); opacity: 0.5; pointer-events: none;">
+            <div class="card action-card" id="step-3" style="border-left: 4px solid #e74c3c; opacity: 0.5; pointer-events: none;">
+                <div class="card-header">
+                    <span class="icon">🔓</span>
+                    <h3>Paso 3: Escalada (Ataque Vertical)</h3>
+                </div>
+                <p>Intenta usar la sesión para acceder a endpoints de Administrador (/admin) ocultos o no documentados.</p>
+                <button class="btn btn-secondary" onclick="ejecutarPasoCascada('escalada')" id="btn-step-3">Lanzar Escalada de Privilegios</button>
+            </div>
+
+            <div class="card action-card" id="step-4" style="border-left: 4px solid var(--success); opacity: 0.5; pointer-events: none;">
                 <div class="card-header">
                     <span class="icon">📄</span>
-                    <h3>Paso 3: Ensambladora de Reporte</h3>
+                    <h3>Paso 4: Ensambladora de Reporte</h3>
                 </div>
-                <p>Formatea la evidencia del Paso 2 en un reporte listo para HackerOne.</p>
-                <button class="btn btn-success" onclick="generarReporteCascada()" id="btn-step-3">Generar Reporte Final</button>
+                <p>Formatea cualquier evidencia obtenida en los pasos 2 o 3 en un reporte listo para HackerOne.</p>
+                <button class="btn btn-success" onclick="generarReporteCascada()" id="btn-step-4">Generar Reporte Final</button>
+            </div>
+
+            <!-- COLA DE ALARMAS -->
+            <div class="card action-card" id="alarm-queue" style="border-left: 4px solid #f1c40f; margin-top: 20px;">
+                <div class="card-header">
+                    <span class="icon">⏰</span>
+                    <h3>Cola de Alarmas (Review Queue)</h3>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">Vulnerabilidades dudosas o endpoints oscuros que requieren investigación futura. No detienen la cascada.</p>
+                <div id="queue-content" class="code-block" style="font-size: 11px; max-height: 150px; overflow-y: auto; color: #f1c40f;">
+                    > Cola vacía. Ejecuta la cascada para poblar.
+                </div>
             </div>
 
             <!-- RESULTADOS DEL PASO ACTUAL -->

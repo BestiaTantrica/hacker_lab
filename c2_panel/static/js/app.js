@@ -156,22 +156,47 @@ async function ejecutarPasoCascada(paso) {
             appendTerminal(`[OK] Paso ${paso} completado.`);
             pocContainer.textContent = result.data;
             
+            // Logica de Cola de Alarmas (Review Queue)
+            if (result.data.includes("COLA DE ESPERA:")) {
+                const queueBox = document.getElementById('queue-content');
+                if (queueBox.textContent.includes("Cola vacía")) queueBox.textContent = "";
+                const alarmMatch = result.data.split("COLA DE ESPERA:")[1];
+                if (alarmMatch) {
+                    queueBox.textContent += `[!] ${new Date().toLocaleTimeString()} - ${alarmMatch}\n`;
+                }
+            }
+
             // Lógica de desbloqueo de la cascada
             if (paso === 'mapeo') {
                 document.getElementById('step-2').style.opacity = '1';
                 document.getElementById('step-2').style.pointerEvents = 'auto';
+                document.getElementById('step-3').style.opacity = '1'; // Desbloqueo paso 3 también
+                document.getElementById('step-3').style.pointerEvents = 'auto';
                 document.getElementById('btn-step-1').classList.replace('btn-primary', 'btn-success');
                 document.getElementById('btn-step-1').textContent = "✅ Mapeo Completado";
             } 
             else if (paso === 'ataque') {
                 if (result.data.includes("IDOR CONFIRMADO")) {
-                    document.getElementById('step-3').style.opacity = '1';
-                    document.getElementById('step-3').style.pointerEvents = 'auto';
+                    document.getElementById('step-4').style.opacity = '1';
+                    document.getElementById('step-4').style.pointerEvents = 'auto';
                     document.getElementById('btn-step-2').classList.replace('btn-secondary', 'btn-success');
                     document.getElementById('btn-step-2').textContent = "✅ Ataque Exitoso";
                     pocActual = result.data; // Guardamos para el reporte
                 } else {
-                    appendTerminal(`[INFO] No se pudo confirmar IDOR en este intento.`);
+                    appendTerminal(`[INFO] No se pudo confirmar IDOR horizontal en este intento.`);
+                    document.getElementById('btn-step-2').textContent = "❌ Fallido (Ver Consola)";
+                }
+            }
+            else if (paso === 'escalada') {
+                if (result.data.includes("ESCALADA CONFIRMADA")) {
+                    document.getElementById('step-4').style.opacity = '1';
+                    document.getElementById('step-4').style.pointerEvents = 'auto';
+                    document.getElementById('btn-step-3').classList.replace('btn-secondary', 'btn-success');
+                    document.getElementById('btn-step-3').textContent = "✅ Escalada Exitosa";
+                    pocActual = result.data; // Guardamos para el reporte
+                } else {
+                    appendTerminal(`[INFO] No se detectó vulnerabilidad vertical evidente.`);
+                    document.getElementById('btn-step-3').textContent = "❌ Fallido (Ver Consola)";
                 }
             }
         } else {

