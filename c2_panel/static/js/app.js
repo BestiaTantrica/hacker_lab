@@ -48,7 +48,10 @@ function appendTerminal(msg) {
     const terminal = document.getElementById('terminal-output');
     const time = new Date().toLocaleTimeString();
     terminal.innerHTML += `<br>> [${time}] ${msg}`;
-    terminal.scrollTop = terminal.scrollHeight// LOGICA DE SUPERVISION AUTONOMA
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+// LOGICA DE SUPERVISION AUTONOMA
 let pocActual = "";
 
 // Llamado desde el checkStatus periódico
@@ -113,9 +116,8 @@ ${pocActual}
 Redacta el reporte H1 final (Resumen, Descripción, Impacto, Pasos para Reproducir y Mitigación). No inventes datos.`;
 
     textarea.value = promptReporte;
+    textarea.value = promptReporte;
     modal.classList.add('show');
-}     modal.classList.add('show');
-    }
 }
 
 // LOGS CRUDOS AL ABRIR TERMINAL
