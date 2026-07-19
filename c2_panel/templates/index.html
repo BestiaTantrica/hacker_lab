@@ -30,34 +30,30 @@
                 <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <h3 class="section-title">Flujo de Trabajo Guiado (Copiloto)</h3>
+            <h3 class="section-title">Supervisor de Cascada Autónoma</h3>
             
-            <div class="card action-card">
+            <div class="card status-card" style="border-left: 4px solid var(--accent);">
                 <div class="card-header">
-                    <span class="icon">🔍</span>
-                    <h3>Fase 1: Reconocimiento</h3>
+                    <span class="icon">🔄</span>
+                    <h3>Estado del Motor (OCI-1)</h3>
                 </div>
-                <p>Genera un prompt para que la IA actúe como mentor y te explique qué subdominios se encontraron y qué eslabón conviene usar.</p>
-                <button class="btn btn-primary" onclick="generarPrompt('fase1_recon')">Consultar a la IA (Recon)</button>
+                <p id="pipeline-status" style="margin-top: 10px; font-weight: 600; color: var(--accent);">Monitoreando... Sistema en piloto automático.</p>
+                <p class="meta-info" style="margin-top: 5px;">El sistema escanea, compara y ejecuta eslabones (Takeover, CORS) de forma autónoma. Solo te avisará cuando haya resultados probados.</p>
             </div>
 
-            <div class="card action-card">
+            <div class="card action-card" id="inbox-card">
                 <div class="card-header">
-                    <span class="icon">⚙️</span>
-                    <h3>Fase 2: Ejecución y Triaje</h3>
+                    <span class="icon">📬</span>
+                    <h3>Bandeja de Triaje (Filtro Humano)</h3>
                 </div>
-                <p>Ejecuta la automatización. Luego pide a la IA que te explique los resultados y te enseñe a verificar si es un falso positivo.</p>
-                <button class="btn btn-secondary" id="btn-exploit" onclick="ejecutarEslabon()" style="margin-bottom: 10px; width: 100%; border: 1px solid #334155;">▶️ 1. Ejecutar Eslabón en OCI-1</button>
-                <button class="btn btn-primary" onclick="generarPrompt('fase2_triaje')" style="width: 100%;">🧠 2. Consultar a la IA (Triaje)</button>
-            </div>
-
-            <div class="card action-card">
-                <div class="card-header">
-                    <span class="icon">📝</span>
-                    <h3>Fase 3: Redacción H1</h3>
+                <p>Bugs detectados por la cascada que requieren tu revisión final como Auditor.</p>
+                
+                <div id="poc-content" class="code-block" style="display: none; margin-top: 15px; font-size: 11px; max-height: 200px; overflow-y: auto;"></div>
+                
+                <div id="action-buttons" style="display: none; margin-top: 15px; gap: 10px; flex-direction: column;">
+                    <button class="btn btn-secondary" onclick="verificarManual()">Instrucciones de Verificación Manual</button>
+                    <button class="btn btn-primary" onclick="generarReporteFinal()">Redactar Reporte H1 (Usa IA Local)</button>
                 </div>
-                <p>Genera el reporte profesional para HackerOne con la evidencia ya analizada y confirmada.</p>
-                <button class="btn btn-primary" onclick="generarPrompt('fase3_reporte')">Generar Prompt H1</button>
             </div>
         </section>
 
