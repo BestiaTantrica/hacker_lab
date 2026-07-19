@@ -48,6 +48,12 @@ function appendTerminal(msg) {
     const terminal = document.getElementById('terminal-output');
     const time = new Date().toLocaleTimeString();
     terminal.innerHTML += `<br>> [${time}] ${msg}`;
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+// LOGICA DE SUPERVISION AUTONOMA
+let pocActual = "";
+
 // La lógica ahora es interactiva por botón, no periódica
 // Quitamos el checkTriaje del ciclo de status
 const originalCheck = checkOciStatus;
@@ -82,10 +88,10 @@ ${pocActual}
 Redacta el reporte H1 final (Resumen, Descripción, Impacto, Pasos para Reproducir y Mitigación). No inventes datos.`;
 
     textarea.value = promptReporte;
-    textarea.value = promptReporte;
     modal.classList.add('show');
+}
+
 // LANZAR ATAQUE (ESLABON)
-let pocActual = "";
 
 async function ejecutarEslabon(tipo) {
     const btn = event.target;
