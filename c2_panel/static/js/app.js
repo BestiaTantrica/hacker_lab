@@ -238,15 +238,21 @@ function generarReporteCascada() {
     const reportTextarea = document.getElementById('h1-report');
     
     let tipoBug = "Vulnerabilidad Desconocida";
+    let urlBug = "Endpoint Vulnerable";
+    
     if (pocActual.includes("ESCALADA CONFIRMADA")) {
         tipoBug = "Privilege Escalation";
+        const match = pocActual.match(/ESCALADA CONFIRMADA \[(.+?)\]/);
+        if (match) urlBug = match[1];
     } else if (pocActual.includes("IDOR CONFIRMADO")) {
         tipoBug = "IDOR (Cross-Tenant Data Exposure)";
+        const match = pocActual.match(/IDOR CONFIRMADO \[(.+?)\]\[(.+?)\]/);
+        if (match) urlBug = `/${match[1]}/${match[2]}`;
     }
     
     const hallazgo = {
         tipo: tipoBug,
-        url: "API Freshdesk",
+        url: urlBug,
         raw: pocActual
     };
     
