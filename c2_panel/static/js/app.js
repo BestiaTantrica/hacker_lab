@@ -106,71 +106,83 @@ Raw data: ${JSON.stringify(hallazgo)}
 Please manually verify the provided raw data.`;
 }
 
-// LANZAR ATAQUE (ESLABON)
-
-async function ejecutarEslabon(tipo) {
+// FLUJO DE CASCADA DE IDOR
+async function ejecutarPasoCascada(paso) {
     const btn = event.target;
     const originalText = btn.textContent;
-    
-    btn.textContent = "Ejecutando en OCI-1... (Puede demorar mins)";
-    btn.disabled = true;
-    appendTerminal(`[INFO] Disparando eslabón de explotación: ${tipo}`);
-    
     const inbox = document.getElementById('inbox-card');
-    inbox.style.display = 'none'; // Ocultar resultados anteriores
+    const pocContainer = document.getElementById('poc-content');
+    const reportSection = document.getElementById('report-section');
+    
+    btn.textContent = "Ejecutando en OCI-1...";
+    btn.disabled = true;
+    appendTerminal(`[CASCADA] Iniciando Paso: ${paso.toUpperCase()}`);
+    
+    inbox.style.display = 'block';
+    reportSection.style.display = 'none';
+    pocContainer.textContent = "Procesando...";
+    inbox.scrollIntoView({ behavior: 'smooth' });
     
     try {
+        // Mocking the request execution for demonstration as backend might need adjustment
         const response = await fetch('/api/execute_exploit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tipo: tipo })
+            body: JSON.stringify({ tipo: paso === 'ataque' ? 'idor' : 'mapeo_mock' }) // Simplificado temporalmente
         });
         
         const result = await response.json();
-        const pocContainer = document.getElementById('poc-content');
-        const reportSection = document.getElementById('report-section');
-        const reportTextarea = document.getElementById('h1-report');
         
         if (result.status === 'success') {
-            appendTerminal(`[OK] Eslabón ${tipo} completado con éxito.`);
+            appendTerminal(`[OK] Paso ${paso} completado.`);
+            pocContainer.textContent = result.data;
             
-            // Tratamos de parsear si es JSON lo que devuelve el script
-            try {
-                // El script de Python a veces devuelve texto mezclado. Tratamos de extraer el JSON o buscar patrones
-                let raw_data = result.data;
-                pocContainer.textContent = raw_data;
-                
-                // Buscar si hay vulnerabilidades interesantes
-                if (raw_data.includes('CORS MISCONFIGURATION') || raw_data.includes('ALTA') || raw_data.includes('MEDIA')) {
-                    // Armar un reporte básico (parseo burdo por ahora)
-                    let reportType = "cors";
-                    let hallazgo = {tipo: "cors", url: "https://vulnerable.com/endpoint"}; // Mock temporal hasta mejorar parseo
-                    
-                    if(raw_data.includes('ARCHIVO SENSIBLE')) { reportType = "exposed_file"; hallazgo.tipo = reportType; }
-                    
-                    reportTextarea.value = generarPlantillaH1(hallazgo);
-                    reportSection.style.display = 'block';
+            // Lógica de desbloqueo de la cascada
+            if (paso === 'mapeo') {
+                document.getElementById('step-2').style.opacity = '1';
+                document.getElementById('step-2').style.pointerEvents = 'auto';
+                document.getElementById('btn-step-1').classList.replace('btn-primary', 'btn-success');
+                document.getElementById('btn-step-1').textContent = "✅ Mapeo Completado";
+            } 
+            else if (paso === 'ataque') {
+                if (result.data.includes("IDOR CONFIRMADO")) {
+                    document.getElementById('step-3').style.opacity = '1';
+                    document.getElementById('step-3').style.pointerEvents = 'auto';
+                    document.getElementById('btn-step-2').classList.replace('btn-secondary', 'btn-success');
+                    document.getElementById('btn-step-2').textContent = "✅ Ataque Exitoso";
+                    pocActual = result.data; // Guardamos para el reporte
                 } else {
-                    reportSection.style.display = 'none';
+                    appendTerminal(`[INFO] No se pudo confirmar IDOR en este intento.`);
                 }
-            } catch(e) {
-                pocContainer.textContent = result.data;
-                reportSection.style.display = 'none';
             }
-            
-            inbox.style.display = 'block';
-            inbox.scrollIntoView({ behavior: 'smooth' });
         } else {
-            appendTerminal(`[ERROR] Falló la ejecución del eslabón: ${result.data}`);
-            alert(`Error ejecutando eslabón: ${result.data}`);
+            appendTerminal(`[ERROR] Falló paso ${paso}: ${result.data}`);
+            pocContainer.textContent = `ERROR: ${result.data}`;
         }
     } catch (error) {
-        appendTerminal("[ERROR] Falló la conexión con el panel para ejecutar el ataque.");
-        alert("Error de red intentando lanzar el ataque.");
+        appendTerminal(`[ERROR] Falló la conexión: ${error}`);
+        pocContainer.textContent = "Error de conexión con el servidor.";
     } finally {
-        btn.textContent = originalText;
+        if(btn.textContent === "Ejecutando en OCI-1...") {
+            btn.textContent = originalText;
+        }
         btn.disabled = false;
     }
+}
+
+function generarReporteCascada() {
+    const reportSection = document.getElementById('report-section');
+    const reportTextarea = document.getElementById('h1-report');
+    
+    const hallazgo = {
+        tipo: "IDOR (Cross-Tenant Data Exposure)",
+        url: "API Freshdesk",
+        raw: pocActual
+    };
+    
+    reportTextarea.value = generarPlantillaH1(hallazgo);
+    reportSection.style.display = 'block';
+    document.getElementById('inbox-card').scrollIntoView({ behavior: 'smooth' });
 }
 
 // LOGS CRUDOS AL ABRIR TERMINAL
