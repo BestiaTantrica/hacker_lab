@@ -115,6 +115,25 @@ ${hallazgo.raw ? hallazgo.raw.split("TEST CROSS-TENANT IDOR")[1] || hallazgo.raw
 This is a High/Critical severity vulnerability. Any authenticated user can enumerate IDs and systematically steal sensitive information (such as private support tickets, PII, or configurations) from all other companies/tenants using the platform.`;
     }
     
+    if (tipo.includes("Privilege Escalation")) {
+        return `## Title: Vertical Privilege Escalation allows standard users to access Admin endpoint ${url}
+## Description:
+A Privilege Escalation vulnerability was discovered at the \`${url}\` endpoint. This endpoint is designed to handle administrative functionalities, but fails to properly validate the role of the requesting user. As a result, a low-privileged user (such as a standard agent or user) can successfully make requests to this endpoint and access sensitive administrative data.
+
+## Steps To Reproduce:
+1. Log in to the application using a low-privileged account.
+2. Make a direct API call to the administrative endpoint \`${url}\`.
+3. Observe that the server responds with a 200 OK and returns sensitive administrative data, instead of a 401/403 Forbidden.
+
+## Evidence / Raw Data:
+\`\`\`text
+${hallazgo.raw ? (hallazgo.raw.split("TEST DE ESCALADA VERTICAL")[1] || hallazgo.raw) : 'Ver consola para datos crudos'}
+\`\`\`
+
+## Impact
+This is a High/Critical severity vulnerability. A low-privileged user can access administrative endpoints, potentially leading to full platform compromise, unauthorized configuration changes, or exposure of highly sensitive billing/account data.`;
+    }
+    
     // Plantilla generica
     return `## Title: ${tipo} on ${url}
 ## Description:
@@ -218,8 +237,15 @@ function generarReporteCascada() {
     const reportSection = document.getElementById('report-section');
     const reportTextarea = document.getElementById('h1-report');
     
+    let tipoBug = "Vulnerabilidad Desconocida";
+    if (pocActual.includes("ESCALADA CONFIRMADA")) {
+        tipoBug = "Privilege Escalation";
+    } else if (pocActual.includes("IDOR CONFIRMADO")) {
+        tipoBug = "IDOR (Cross-Tenant Data Exposure)";
+    }
+    
     const hallazgo = {
-        tipo: "IDOR (Cross-Tenant Data Exposure)",
+        tipo: tipoBug,
         url: "API Freshdesk",
         raw: pocActual
     };
