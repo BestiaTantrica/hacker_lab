@@ -74,6 +74,9 @@ def mapear_ids_tenant(sess, tenant_url, nombre):
         "products": "/api/v2/products",
         "tickets": "/api/v2/tickets",
         "roles": "/api/v2/roles",
+        "companies": "/api/v2/companies",
+        "forums": "/api/v2/forums",
+        "categories": "/api/v2/solutions/categories",
     }
     for nombre_rec, ep in endpoints.items():
         try:
@@ -112,6 +115,11 @@ def test_cross_tenant_idor(sess_atacante, tenant_a_url, ids_victima, tenant_b_ur
         "agents":    "/api/v2/agents/{}",
         "groups":    "/api/v2/groups/{}",
         "products":  "/api/v2/products/{}",
+        "tickets":   "/api/v2/tickets/{}",
+        "roles":     "/api/v2/roles/{}",
+        "companies": "/api/v2/companies/{}",
+        "forums":    "/api/v2/forums/{}",
+        "categories":"/api/v2/solutions/categories/{}",
     }
 
     hallazgos = []

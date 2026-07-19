@@ -96,6 +96,25 @@ The application exposes a sensitive file at \`${url}\` which contains internal a
 Information disclosure that can aid an attacker in further exploitation of the system.`;
     }
     
+    if (tipo.includes("IDOR")) {
+        return `## Title: Insecure Direct Object Reference (IDOR) allows Cross-Tenant Data Exposure on ${url}
+## Description:
+An Insecure Direct Object Reference (IDOR) vulnerability was discovered in the \`${url}\` endpoint. The application fails to properly validate authorization when fetching resources by their ID. This allows an authenticated user from one tenant (Attacker) to access sensitive data belonging to a completely different tenant (Victim) by simply changing the ID parameter in the request.
+
+## Steps To Reproduce:
+1. Log in to the application as Tenant A (Attacker).
+2. Make a direct API call to the vulnerable endpoint requesting an ID that belongs to Tenant B.
+3. Observe that the server responds with a 200 OK and returns the sensitive data of Tenant B, completely bypassing tenant isolation.
+
+## Evidence / Raw Data:
+\`\`\`text
+${hallazgo.raw ? hallazgo.raw.split("TEST CROSS-TENANT IDOR")[1] || hallazgo.raw : 'Ver consola para datos crudos'}
+\`\`\`
+
+## Impact
+This is a High/Critical severity vulnerability. Any authenticated user can enumerate IDs and systematically steal sensitive information (such as private support tickets, PII, or configurations) from all other companies/tenants using the platform.`;
+    }
+    
     // Plantilla generica
     return `## Title: ${tipo} on ${url}
 ## Description:
