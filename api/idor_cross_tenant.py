@@ -84,7 +84,18 @@ def mapear_ids_tenant(sess, tenant_url, nombre):
             if r.status_code == 200:
                 data = r.json()
                 if isinstance(data, list):
-                    ids = [item.get("id") for item in data if item.get("id")]
+                    ids_raw = [item.get("id") for item in data if item.get("id")]
+                    # FILTRO ANTI-FALSO-POSITIVO: Ignorar IDs secuenciales cortos (1, 2, 3...)
+                    # Freshdesk los genera por tenant, NO son globales.
+                    # Solo conservar IDs largos (>6 dígitos) que son únicos globalmente.
+                    if nombre_rec == "tickets":
+                        ids = [i for i in ids_raw if i and len(str(i)) > 6]
+                        if not ids:
+                            print(f"  {nombre_rec:12s}: {len(ids_raw)} items pero solo IDs secuenciales cortos — ignorados (falso positivo)")
+                            recursos[nombre_rec] = []
+                            continue
+                    else:
+                        ids = ids_raw
                     recursos[nombre_rec] = ids
                     print(f"  {nombre_rec:12s}: {len(ids)} items → IDs: {ids[:5]}")
                 elif isinstance(data, dict):
