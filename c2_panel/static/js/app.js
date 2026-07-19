@@ -48,83 +48,73 @@ function appendTerminal(msg) {
     const terminal = document.getElementById('terminal-output');
     const time = new Date().toLocaleTimeString();
     terminal.innerHTML += `<br>> [${time}] ${msg}`;
-    terminal.scrollTop = terminal.scrollHeight;
+    terminal.scrollTop = terminal.scrollHeight// LOGICA DE SUPERVISION AUTONOMA
+let pocActual = "";
+
+// Llamado desde el checkStatus periódico
+async function checkTriaje() {
+    try {
+        const response = await fetch('/api/get_poc');
+        const result = await response.json();
+        
+        const pocContainer = document.getElementById('poc-content');
+        const actionButtons = document.getElementById('action-buttons');
+        const pipelineStatus = document.getElementById('pipeline-status');
+        
+        if (result.status === 'success' && result.data && !result.data.includes("Aún no se ha generado")) {
+            pocActual = result.data;
+            pocContainer.textContent = result.data;
+            pocContainer.style.display = 'block';
+            actionButtons.style.display = 'flex';
+            pipelineStatus.textContent = "¡Atención! Cascada detenida por hallazgos. Requiere Triaje.";
+            pipelineStatus.style.color = "var(--danger)";
+        } else {
+            pocContainer.style.display = 'none';
+            actionButtons.style.display = 'none';
+            pipelineStatus.textContent = "Monitoreando... Sistema en piloto automático.";
+            pipelineStatus.style.color = "var(--accent)";
+        }
+    } catch (error) {
+        console.error("Error chequeando triaje", error);
+    }
 }
 
-const basePrompts = {
-    fase1_recon: `Actúa como mi Mentor y Orquestador Táctico en Bug Bounty.
-He obtenido la siguiente telemetría nueva desde mi infraestructura automatizada de reconocimiento (OCI-1):
----
-[RAW_DATA]
----
-Basado en estos subdominios, explícame brevemente y como si fuera un estudiante:
-1. ¿Qué tipo de infraestructura parece ser? (Ej: CDN, plataformas SaaS, etc).
-2. De las automatizaciones que tengo listas en mi sistema (Takeovers, CORS, Archivos Expuestos), ¿cuál tiene más sentido ejecutar aquí y por qué?`,
+// Modificamos el loop original para que también revise la bandeja
+const originalCheck = checkOciStatus;
+checkOciStatus = async function() {
+    await originalCheck();
+    await checkTriaje();
+}
 
-    fase2_triaje: `Actúa como mi Analista de Triaje. He ejecutado el eslabón de automatización en mi infraestructura y ha devuelto los siguientes resultados crudos (PoC):
----
-[AUTOMATED_POC_DATA]
----
-Por favor, analiza esta salida y enséñame:
-1. ¿Hubo algún hallazgo real o son probables falsos positivos? Explícame por qué.
-2. Si hay un hallazgo válido, ¿qué paso manual EXACTO (usando Burp Suite o el navegador) debo hacer yo para confirmar visualmente que el bug existe antes de reportarlo?`,
-
-    fase3_reporte: `Actúa como un Bug Bounty Hunter top tier. He seguido tus instrucciones, he verificado manualmente la vulnerabilidad, y el bug es real.
-La evidencia técnica capturada originalmente por el sistema es esta:
----
-[AUTOMATED_POC_DATA]
----
-Quiero que redactes un reporte para HackerOne con esta estructura exacta:
-1. Resumen Ejecutivo
-2. Descripción Detallada
-3. Pasos para Reproducir (Incluyendo la verificación manual que discutimos)
-4. Impacto Real
-5. Mitigación Recomendada
-
-No inventes datos que no estén en la evidencia. Usa un tono neutro y técnico.`
-};
-
-let lastRawData = "Esperando extracción de datos de OCI-1...";
-let lastPocData = "Esperando evidencia (PoC) automática de OCI-1...";
-
-async function generarPrompt(tipo) {
+function verificarManual() {
     const modal = document.getElementById('prompt-modal');
     const textarea = document.getElementById('prompt-text');
     
-    if (tipo === 'fase1_recon') {
-        textarea.value = "Extrayendo telemetría resumida de OCI-1 por SSH... Espere...";
-        modal.classList.add('show');
-        
-        try {
-            const response = await fetch('/api/raw_data');
-            const result = await response.json();
-            if (result.status === 'success' && result.data) {
-                const dataLines = result.data.split('\\n').slice(-30).join('\\n');
-                lastRawData = dataLines || "Sin datos recientes.";
-            }
-        } catch (error) {
-            lastRawData = "Error: OCI-1 no alcanzó a enviar los datos.";
-        }
-        
-        textarea.value = basePrompts[tipo].replace('[RAW_DATA]', lastRawData);
-    } else if (tipo === 'fase2_triaje' || tipo === 'fase3_reporte') {
-        textarea.value = "Extrayendo resultados/evidencia (PoC) de OCI-1 por SSH... Espere...";
-        modal.classList.add('show');
-        
-        try {
-            const response = await fetch('/api/get_poc');
-            const result = await response.json();
-            if (result.status === 'success' && result.data) {
-                lastPocData = result.data;
-            }
-        } catch (error) {
-            lastPocData = "Error: Falló la comunicación con OCI-1 para extraer el PoC.";
-        }
-        
-        textarea.value = basePrompts[tipo].replace('[AUTOMATED_POC_DATA]', lastPocData);
-    } else {
-        textarea.value = basePrompts[tipo];
-        modal.classList.add('show');
+    // Le pasamos el POC a la IA con un prompt duro de "Skill"
+    const promptSkill = `Soy el Auditor de un pipeline autónomo de Bug Bounty. El sistema reportó este posible hallazgo mediante su eslabón automático:
+---
+${pocActual}
+---
+Necesito verificar si esto es un falso positivo. Dime exactamente los pasos que debo realizar manualmente (por ejemplo, con Burp Suite o el navegador) para confirmar que la vulnerabilidad es real.`;
+
+    textarea.value = promptSkill;
+    modal.classList.add('show');
+}
+
+function generarReporteFinal() {
+    const modal = document.getElementById('prompt-modal');
+    const textarea = document.getElementById('prompt-text');
+    
+    const promptReporte = `Actúa como Bug Bounty Hunter. He verificado manualmente que este bug es real siguiendo tus pasos.
+Datos técnicos del sistema:
+---
+${pocActual}
+---
+Redacta el reporte H1 final (Resumen, Descripción, Impacto, Pasos para Reproducir y Mitigación). No inventes datos.`;
+
+    textarea.value = promptReporte;
+    modal.classList.add('show');
+}     modal.classList.add('show');
     }
 }
 
