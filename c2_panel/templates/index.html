@@ -30,51 +30,50 @@
                 <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <h3 class="section-title">Cascada Estratégica (Ejecutar Eslabones)</h3>
-            <p class="view-desc">Selecciona la ruta de ataque. El sistema ejecutará el script en OCI-1 y traerá los resultados aquí para que decidas qué hacer.</p>
+            <h3 class="section-title">Cascada de IDOR (Flujo Continuo)</h3>
+            <p class="view-desc">Selecciona un Tenant Objetivo. La cascada no avanzará al siguiente paso hasta validar la explotación del paso anterior.</p>
             
-            <div class="card action-card">
+            <div class="card action-card" id="step-1" style="border-left: 4px solid var(--primary);">
                 <div class="card-header">
-                    <span class="icon">🕸️</span>
-                    <h3>Opción A: Takeovers & CORS</h3>
+                    <span class="icon">🔍</span>
+                    <h3>Paso 1: Mapeo de Víctima</h3>
                 </div>
-                <p>Ideal para volumen bruto. Escanea masivamente errores de configuración DNS y cabeceras permisivas.</p>
-                <button class="btn btn-secondary" onclick="ejecutarEslabon('takeover')">Lanzar Explotador Masivo</button>
+                <p>El sistema ingresa con cookies de Víctima y extrae todos los IDs posibles (tickets, perfiles, configs) para alimentar el ataque.</p>
+                <button class="btn btn-primary" onclick="ejecutarPasoCascada('mapeo')" id="btn-step-1">Iniciar Mapeo de IDs</button>
             </div>
 
-            <div class="card action-card">
+            <div class="card action-card" id="step-2" style="border-left: 4px solid #f29057; opacity: 0.5; pointer-events: none;">
                 <div class="card-header">
-                    <span class="icon">🔑</span>
-                    <h3>Opción B: Escáner IDOR (SaaS)</h3>
+                    <span class="icon">⚔️</span>
+                    <h3>Paso 2: Ataque Cruzado</h3>
                 </div>
-                <p>Verifica filtración de datos cruzando IDs entre 2 tenants. Requiere cuentas pre-configuradas.</p>
-                <button class="btn btn-secondary" onclick="ejecutarEslabon('idor')">Lanzar Escáner IDOR</button>
+                <p>El Atacante intenta acceder a los IDs capturados en el Paso 1. Si devuelve 200 OK con datos privados, se confirma el bug.</p>
+                <button class="btn btn-secondary" onclick="ejecutarPasoCascada('ataque')" id="btn-step-2">Lanzar Cross-Tenant IDOR</button>
             </div>
 
-            <div class="card action-card" style="border-left: 4px solid #f29057;">
+            <div class="card action-card" id="step-3" style="border-left: 4px solid var(--success); opacity: 0.5; pointer-events: none;">
                 <div class="card-header">
-                    <span class="icon">🍃</span>
-                    <h3>Opción C: API Freshworks</h3>
+                    <span class="icon">📄</span>
+                    <h3>Paso 3: Ensambladora de Reporte</h3>
                 </div>
-                <p>Eslabón dedicado a endpoints B2B de Freshdesk/Freshservice. Busca escalada y filtración de tickets.</p>
-                <button class="btn btn-secondary" onclick="ejecutarEslabon('freshworks')">Lanzar Auditor Freshworks</button>
+                <p>Formatea la evidencia del Paso 2 en un reporte listo para HackerOne.</p>
+                <button class="btn btn-success" onclick="generarReporteCascada()" id="btn-step-3">Generar Reporte Final</button>
             </div>
 
-            <!-- RESULTADOS DEL ATAQUE Y TRIAJE -->
+            <!-- RESULTADOS DEL PASO ACTUAL -->
             <div class="card action-card" id="inbox-card" style="display: none; border-top: 3px solid var(--accent); margin-top: 30px;">
                 <div class="card-header">
                     <span class="icon">📬</span>
-                    <h3 id="inbox-title">Resultados del Eslabón</h3>
+                    <h3 id="inbox-title">Consola de la Cascada</h3>
                 </div>
-                <p id="inbox-desc">La cascada terminó de ejecutar el eslabón. Estos son los hallazgos técnicos:</p>
+                <p id="inbox-desc">Resultados en crudo del paso ejecutado:</p>
                 
-                <div id="poc-content" class="code-block" style="margin-top: 15px; font-size: 11px; max-height: 200px; overflow-y: auto;"></div>
+                <div id="poc-content" class="code-block" style="margin-top: 15px; font-size: 11px; max-height: 250px; overflow-y: auto;"></div>
                 
                 <div id="report-section" style="display: none; margin-top: 15px;">
-                    <h4 style="margin-bottom: 10px; color: var(--success);">¡Bug Automáticamente Confirmado! Reporte Pre-Armado:</h4>
-                    <p style="font-size: 12px; margin-bottom: 10px; color: var(--text-muted);">El eslabón ya verificó que el bug es explotable. Copiá este reporte base y envialo.</p>
+                    <h4 style="margin-bottom: 10px; color: var(--success);">Reporte Generado (Copiar y Enviar):</h4>
                     <textarea id="h1-report" class="code-block" style="width: 100%; height: 200px; font-family: monospace; font-size: 11px; border: 1px solid var(--accent);"></textarea>
-                    <button class="btn btn-success" style="margin-top: 10px;" onclick="copiarReporte()">📋 Copiar Reporte para HackerOne</button>
+                    <button class="btn btn-success" style="margin-top: 10px;" onclick="copiarReporte()">📋 Copiar al Portapapeles</button>
                 </div>
             </div>
         </section>
