@@ -30,29 +30,50 @@
                 <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <h3 class="section-title">Supervisor de Cascada Autónoma</h3>
+            <h3 class="section-title">Cascada Estratégica (Ejecutar Eslabones)</h3>
+            <p class="view-desc">Selecciona la ruta de ataque. El sistema ejecutará el script en OCI-1 y traerá los resultados aquí para que decidas qué hacer.</p>
             
-            <div class="card status-card" style="border-left: 4px solid var(--accent);">
+            <div class="card action-card">
                 <div class="card-header">
-                    <span class="icon">🔄</span>
-                    <h3>Estado del Motor (OCI-1)</h3>
+                    <span class="icon">🕸️</span>
+                    <h3>Opción A: Takeovers & CORS</h3>
                 </div>
-                <p id="pipeline-status" style="margin-top: 10px; font-weight: 600; color: var(--accent);">Monitoreando... Sistema en piloto automático.</p>
-                <p class="meta-info" style="margin-top: 5px;">El sistema escanea, compara y ejecuta eslabones (Takeover, CORS) de forma autónoma. Solo te avisará cuando haya resultados probados.</p>
+                <p>Ideal para volumen bruto. Escanea masivamente errores de configuración DNS y cabeceras permisivas.</p>
+                <button class="btn btn-secondary" onclick="ejecutarEslabon('takeover')">Lanzar Explotador Masivo</button>
             </div>
 
-            <div class="card action-card" id="inbox-card">
+            <div class="card action-card">
+                <div class="card-header">
+                    <span class="icon">🔑</span>
+                    <h3>Opción B: Escáner IDOR (SaaS)</h3>
+                </div>
+                <p>Verifica filtración de datos cruzando IDs entre 2 tenants. Requiere cuentas pre-configuradas.</p>
+                <button class="btn btn-secondary" onclick="ejecutarEslabon('idor')">Lanzar Escáner IDOR</button>
+            </div>
+
+            <div class="card action-card" style="border-left: 4px solid #f29057;">
+                <div class="card-header">
+                    <span class="icon">🍃</span>
+                    <h3>Opción C: API Freshworks</h3>
+                </div>
+                <p>Eslabón dedicado a endpoints B2B de Freshdesk/Freshservice. Busca escalada y filtración de tickets.</p>
+                <button class="btn btn-secondary" onclick="ejecutarEslabon('freshworks')">Lanzar Auditor Freshworks</button>
+            </div>
+
+            <!-- RESULTADOS DEL ATAQUE Y TRIAJE -->
+            <div class="card action-card" id="inbox-card" style="display: none; border-top: 3px solid var(--accent); margin-top: 30px;">
                 <div class="card-header">
                     <span class="icon">📬</span>
-                    <h3>Bandeja de Triaje (Filtro Humano)</h3>
+                    <h3>Bandeja de Resultados y Triaje</h3>
                 </div>
-                <p>Bugs detectados por la cascada que requieren tu revisión final como Auditor.</p>
+                <p>La cascada terminó de ejecutar el eslabón. Estos son los hallazgos técnicos:</p>
                 
-                <div id="poc-content" class="code-block" style="display: none; margin-top: 15px; font-size: 11px; max-height: 200px; overflow-y: auto;"></div>
+                <div id="poc-content" class="code-block" style="margin-top: 15px; font-size: 11px; max-height: 200px; overflow-y: auto;"></div>
                 
-                <div id="action-buttons" style="display: none; margin-top: 15px; gap: 10px; flex-direction: column;">
-                    <button class="btn btn-secondary" onclick="verificarManual()">Instrucciones de Verificación Manual</button>
-                    <button class="btn btn-primary" onclick="generarReporteFinal()">Redactar Reporte H1 (Usa IA Local)</button>
+                <h4 style="margin-top: 15px; margin-bottom: 5px;">Siguiente paso:</h4>
+                <div id="action-buttons" style="display: flex; gap: 10px; flex-direction: column;">
+                    <button class="btn btn-primary" onclick="verificarManual()">1. IA: Enséñame a verificar esto a mano</button>
+                    <button class="btn btn-success" onclick="generarReporteFinal()">2. IA: Esto es real, redacta el Reporte H1</button>
                 </div>
             </div>
         </section>

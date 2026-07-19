@@ -88,17 +88,25 @@ def get_poc():
         if client: client.close()
         return {"status": "error", "data": f"Error leyendo PoC: {str(e)}"}
 
+class ExploitRequest(BaseModel):
+    tipo: str
+
 @app.post("/api/execute_exploit")
-def execute_exploit():
+def execute_exploit(req: ExploitRequest):
     client = get_ssh_client()
     if not client:
         return {"status": "error", "data": "No se pudo conectar a OCI-1."}
     
     try:
-        # Ejecutamos el eslabon en OCI-1. Limitado a 50 subdominios para que no se cuelgue la UI mucho tiempo.
-        # En una arquitectura real, esto deberia ser asincrono con Celery/Redis, pero por ahora bloqueamos y esperamos.
-        command = "python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py --max 50"
-        stdin, stdout, stderr = client.exec_command(command, timeout=300) # Esperamos hasta 5 mins
+        # Definir comandos según el eslabón elegido
+        if req.tipo == "idor":
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --max 10"
+        elif req.tipo == "freshworks":
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/auditor_freshdesk.py"
+        else:
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py --max 20"
+            
+        stdin, stdout, stderr = client.exec_command(command, timeout=300)
         
         output = stdout.read().decode().strip()
         error = stderr.read().decode().strip()

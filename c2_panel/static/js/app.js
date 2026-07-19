@@ -48,45 +48,11 @@ function appendTerminal(msg) {
     const terminal = document.getElementById('terminal-output');
     const time = new Date().toLocaleTimeString();
     terminal.innerHTML += `<br>> [${time}] ${msg}`;
-    terminal.scrollTop = terminal.scrollHeight;
-}
-
-// LOGICA DE SUPERVISION AUTONOMA
-let pocActual = "";
-
-// Llamado desde el checkStatus periódico
-async function checkTriaje() {
-    try {
-        const response = await fetch('/api/get_poc');
-        const result = await response.json();
-        
-        const pocContainer = document.getElementById('poc-content');
-        const actionButtons = document.getElementById('action-buttons');
-        const pipelineStatus = document.getElementById('pipeline-status');
-        
-        if (result.status === 'success' && result.data && !result.data.includes("Aún no se ha generado")) {
-            pocActual = result.data;
-            pocContainer.textContent = result.data;
-            pocContainer.style.display = 'block';
-            actionButtons.style.display = 'flex';
-            pipelineStatus.textContent = "¡Atención! Cascada detenida por hallazgos. Requiere Triaje.";
-            pipelineStatus.style.color = "var(--danger)";
-        } else {
-            pocContainer.style.display = 'none';
-            actionButtons.style.display = 'none';
-            pipelineStatus.textContent = "Monitoreando... Sistema en piloto automático.";
-            pipelineStatus.style.color = "var(--accent)";
-        }
-    } catch (error) {
-        console.error("Error chequeando triaje", error);
-    }
-}
-
-// Modificamos el loop original para que también revise la bandeja
+// La lógica ahora es interactiva por botón, no periódica
+// Quitamos el checkTriaje del ciclo de status
 const originalCheck = checkOciStatus;
 checkOciStatus = async function() {
     await originalCheck();
-    await checkTriaje();
 }
 
 function verificarManual() {
@@ -118,6 +84,49 @@ Redacta el reporte H1 final (Resumen, Descripción, Impacto, Pasos para Reproduc
     textarea.value = promptReporte;
     textarea.value = promptReporte;
     modal.classList.add('show');
+// LANZAR ATAQUE (ESLABON)
+let pocActual = "";
+
+async function ejecutarEslabon(tipo) {
+    const btn = event.target;
+    const originalText = btn.textContent;
+    
+    btn.textContent = "Ejecutando en OCI-1... (Puede demorar mins)";
+    btn.disabled = true;
+    appendTerminal(`[INFO] Disparando eslabón de explotación: ${tipo}`);
+    
+    const inbox = document.getElementById('inbox-card');
+    inbox.style.display = 'none'; // Ocultar resultados anteriores
+    
+    try {
+        const response = await fetch('/api/execute_exploit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: tipo })
+        });
+        
+        const result = await response.json();
+        const pocContainer = document.getElementById('poc-content');
+        
+        if (result.status === 'success') {
+            appendTerminal(`[OK] Eslabón ${tipo} completado con éxito.`);
+            pocActual = result.data;
+            pocContainer.textContent = result.data;
+            inbox.style.display = 'block'; // Mostrar la caja de triaje con los resultados
+            
+            // Scrollear hacia abajo suavemente para que el usuario vea el resultado
+            inbox.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            appendTerminal(`[ERROR] Falló la ejecución del eslabón: ${result.data}`);
+            alert(`Error ejecutando eslabón: ${result.data}`);
+        }
+    } catch (error) {
+        appendTerminal("[ERROR] Falló la conexión con el panel para ejecutar el ataque.");
+        alert("Error de red intentando lanzar el ataque.");
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
 }
 
 // LOGS CRUDOS AL ABRIR TERMINAL
