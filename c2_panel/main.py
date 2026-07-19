@@ -99,12 +99,14 @@ def execute_exploit(req: ExploitRequest):
     
     try:
         # Definir comandos según el eslabón elegido
-        if req.tipo == "idor":
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --max 10"
-        elif req.tipo == "freshworks":
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/auditor_freshdesk.py"
+        if req.tipo == "mapeo":
+            # Ejecuta solo la función de mapeo (Paso 1)
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --mapeo-solo"
+        elif req.tipo == "ataque":
+            # Ejecuta la comprobación IDOR con los datos mapeados (Paso 2)
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --ataque-solo"
         else:
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py --max 20"
+            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
             
         stdin, stdout, stderr = client.exec_command(command, timeout=300)
         

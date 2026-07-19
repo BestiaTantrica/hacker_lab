@@ -124,11 +124,11 @@ async function ejecutarPasoCascada(paso) {
     inbox.scrollIntoView({ behavior: 'smooth' });
     
     try {
-        // Mocking the request execution for demonstration as backend might need adjustment
+        // Ejecutamos el eslabón correspondiente a este paso
         const response = await fetch('/api/execute_exploit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tipo: paso === 'ataque' ? 'idor' : 'mapeo_mock' }) // Simplificado temporalmente
+            body: JSON.stringify({ tipo: paso }) 
         });
         
         const result = await response.json();
