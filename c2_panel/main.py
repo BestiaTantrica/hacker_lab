@@ -35,7 +35,7 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "oci1_ip": OCI1_IP})
 
 @app.get("/api/status")
-async def get_status():
+def get_status():
     client = get_ssh_client()
     if not client:
         return {"status": "offline", "message": "No se pudo conectar a OCI-1"}
@@ -55,7 +55,7 @@ async def get_status():
         return {"status": "error", "message": str(e)}
 
 @app.get("/api/raw_data")
-async def get_raw_data():
+def get_raw_data():
     client = get_ssh_client()
     if not client:
         return {"status": "offline", "data": "No se pudo conectar a OCI-1 para extraer datos."}
@@ -72,7 +72,7 @@ async def get_raw_data():
         return {"status": "error", "data": f"Error leyendo datos: {str(e)}"}
 
 @app.get("/api/get_poc")
-async def get_poc():
+def get_poc():
     client = get_ssh_client()
     if not client:
         return {"status": "offline", "data": "No se pudo conectar a OCI-1."}
@@ -89,7 +89,7 @@ async def get_poc():
         return {"status": "error", "data": f"Error leyendo PoC: {str(e)}"}
 
 @app.post("/api/execute_exploit")
-async def execute_exploit():
+def execute_exploit():
     client = get_ssh_client()
     if not client:
         return {"status": "error", "data": "No se pudo conectar a OCI-1."}
