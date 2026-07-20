@@ -198,6 +198,26 @@ Mensaje del usuario: {req.message}"""
     except Exception as e:
         return {"status": "error", "data": str(e)}
 
+class CmdRequest(BaseModel):
+    command: str
+    token: str
+
+@app.post("/api/cmd")
+def execute_raw_command(req: CmdRequest):
+    """
+    MIRROR WEB PARA IA:
+    Permite al agente LLM ejecutar comandos shell directamente en OCI-1.
+    Usa el token definido en variables de entorno o un fallback.
+    """
+    secret_token = os.getenv("C2_ADMIN_TOKEN", "pegaso-admin-2026")
+    if req.token != secret_token:
+        return {"status": "error", "data": "Token de autorización inválido."}
+    
+    output, error = _run_remote_command(req.command)
+    if output is None:
+        return {"status": "error", "data": error}
+    return {"status": "success", "data": output + ("\n" + error if error else "")}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
