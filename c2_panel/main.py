@@ -1,4 +1,5 @@
 import os
+import sys
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -6,6 +7,13 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import paramiko
 from dotenv import load_dotenv
+
+# Añadir el path para importar llm_client desde el directorio api/
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
+try:
+    from llm_client import completar, LLMError
+except ImportError:
+    completar = None
 
 load_dotenv()
 
@@ -168,6 +176,27 @@ def execute_reintentos(req: ExploitRequest):
     if error and not output:
         return {"status": "error", "data": error}
     return {"status": "success", "data": output + ("\n" + error if error else "")}
+
+class ChatRequest(BaseModel):
+    message: str
+
+@app.post("/api/chat")
+def chat_endpoint(req: ChatRequest):
+    if completar is None:
+        return {"status": "error", "data": "Módulo llm_client no encontrado."}
+    
+    # Prompt base para darle contexto al agente
+    system_prompt = f"""Eres Pegaso, el asistente de IA integrado en el C2 Panel de Bug Bounty.
+Tu objetivo es ayudar al usuario a analizar vulnerabilidades, entender logs y redactar reportes.
+Si el usuario menciona "Cola de Revisión" o "actual.json", puedes inferir su contexto de Bug Bounty.
+Sé directo, conciso y profesional.
+Mensaje del usuario: {req.message}"""
+    
+    try:
+        respuesta = completar(system_prompt, max_tokens=1024)
+        return {"status": "success", "data": respuesta}
+    except Exception as e:
+        return {"status": "error", "data": str(e)}
 
 if __name__ == "__main__":
     import uvicorn

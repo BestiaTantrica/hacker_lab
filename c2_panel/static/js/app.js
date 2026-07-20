@@ -418,3 +418,67 @@ async function ejecutarReintentos(target) {
         btn.disabled = false;
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAT PEGASO AI
+// ═══════════════════════════════════════════════════════════════════
+
+async function enviarMensajeChat() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatBox = document.getElementById('chat-messages');
+    
+    // Add user message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'chat-message user';
+    userDiv.innerHTML = `<strong>Tú:</strong> ${message}`;
+    chatBox.appendChild(userDiv);
+    
+    input.value = '';
+    
+    // Add loading indicator
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-message assistant';
+    loadingDiv.innerHTML = `<em>Pegaso está pensando...</em>`;
+    chatBox.appendChild(loadingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        });
+        
+        const result = await res.json();
+        chatBox.removeChild(loadingDiv);
+        
+        const botDiv = document.createElement('div');
+        botDiv.className = 'chat-message assistant';
+        if (result.status === 'success') {
+            botDiv.innerHTML = `<strong>Pegaso:</strong><br>${result.data.replace(/\\n/g, '<br>')}`;
+        } else {
+            botDiv.innerHTML = `<strong>Error:</strong> No pude conectarme con el cerebro. ${result.data}`;
+            botDiv.style.borderLeftColor = 'red';
+        }
+        chatBox.appendChild(botDiv);
+        
+    } catch (e) {
+        chatBox.removeChild(loadingDiv);
+        const botDiv = document.createElement('div');
+        botDiv.className = 'chat-message assistant';
+        botDiv.innerHTML = `<strong>Error local:</strong> No se pudo enviar el mensaje.`;
+        botDiv.style.borderLeftColor = 'red';
+        chatBox.appendChild(botDiv);
+    }
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+document.getElementById('chat-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        enviarMensajeChat();
+    }
+});

@@ -217,3 +217,25 @@ textarea {
     font-size: 14px;
     resize: none;
 }
+
+/* ESTILOS DEL CHAT */
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+.chat-message.user {
+    background-color: var(--primary);
+    color: white;
+    align-self: flex-end;
+    max-width: 85%;
+}
+.chat-message.assistant {
+    background-color: #33334d;
+    color: #eee;
+    align-self: flex-start;
+    max-width: 90%;
+    border-left: 3px solid var(--accent);
+}
