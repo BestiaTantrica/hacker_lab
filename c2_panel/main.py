@@ -91,40 +91,83 @@ def get_poc():
 class ExploitRequest(BaseModel):
     tipo: str
 
-@app.post("/api/execute_exploit")
-def execute_exploit(req: ExploitRequest):
+class EcommerceRequest(BaseModel):
+    paso: str  # "mapeo", "ataque", "escalada", "reintentos", "completo"
+
+def _run_remote_command(command: str, timeout: int = 300):
+    """Helper: ejecuta un comando en OCI-1 via SSH y retorna (output, error)."""
     client = get_ssh_client()
     if not client:
-        return {"status": "error", "data": "No se pudo conectar a OCI-1."}
-    
+        return None, "No se pudo conectar a OCI-1"
     try:
-        # Definir comandos según el eslabón elegido
-        if req.tipo == "mapeo":
-            # Ejecuta solo la función de mapeo (Paso 1)
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --mapeo-solo"
-        elif req.tipo == "ataque":
-            # Ejecuta la comprobación IDOR con los datos mapeados (Paso 2)
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --ataque-solo"
-        elif req.tipo == "escalada":
-            # Ejecuta la comprobación de Escalada Vertical (Paso 3)
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py --escalada-solo"
-        else:
-            command = "python3 /home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
-            
-        stdin, stdout, stderr = client.exec_command(command, timeout=300)
-        
+        stdin, stdout, stderr = client.exec_command(command, timeout=timeout)
         output = stdout.read().decode().strip()
-        error = stderr.read().decode().strip()
-        
+        error  = stderr.read().decode().strip()
         client.close()
-        
-        if error and not output:
-             return {"status": "error", "data": error}
-             
-        return {"status": "success", "data": output + "\n" + error}
+        return output, error
     except Exception as e:
         if client: client.close()
-        return {"status": "error", "data": f"Excepción ejecutando script: {str(e)}"}
+        return None, str(e)
+
+# ── Freshdesk Cascada ────────────────────────────────────────────────────────
+
+@app.post("/api/execute_exploit")
+def execute_exploit(req: ExploitRequest):
+    SCRIPT = "/home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
+    flags = {
+        "mapeo":   "--mapeo-solo",
+        "ataque":  "--ataque-solo",
+        "escalada": "--escalada-solo",
+    }
+    flag = flags.get(req.tipo, "")
+    output, error = _run_remote_command(f"python3 {SCRIPT} {flag}")
+    if output is None:
+        return {"status": "error", "data": error}
+    if error and not output:
+        return {"status": "error", "data": error}
+    return {"status": "success", "data": output + ("\n" + error if error else "")}
+
+# ── eBay / E-Commerce Cascada ────────────────────────────────────────────────
+
+@app.post("/api/execute_ecommerce")
+def execute_ecommerce(req: EcommerceRequest):
+    """Ejecuta la cascada de pruebas e-commerce (api_ecommerce_tester.py) en OCI-1."""
+    SCRIPT = "/home/ubuntu/plataforma_operativa/monitores/api_ecommerce_tester.py"
+    flags = {
+        "mapeo":      "--mapeo-solo",
+        "ataque":     "--ataque-solo",
+        "escalada":   "--escalada-solo",
+        "reintentos": "--reintentos",
+        "cola":       "--cola",
+        "completo":   "",
+    }
+    flag = flags.get(req.paso, "")
+    output, error = _run_remote_command(f"python3 {SCRIPT} {flag}")
+    if output is None:
+        return {"status": "error", "data": error}
+    if error and not output:
+        return {"status": "error", "data": error}
+    return {"status": "success", "data": output + ("\n" + error if error else "")}
+
+# ── Paso 5: Reintentos sobre la Cola de Revisión (Freshdesk) ─────────────────
+
+@app.post("/api/execute_reintentos")
+def execute_reintentos(req: ExploitRequest):
+    """
+    Paso 5 — HTTP Method Fuzzing sobre los endpoints de la Cola de Revisión.
+    Usa explotador_automatico.py con el flag --reintentos si está disponible,
+    de lo contrario llama directamente al script de cross-tenant con --cola.
+    """
+    SCRIPT_MAIN  = "/home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
+    SCRIPT_ECOM  = "/home/ubuntu/plataforma_operativa/monitores/api_ecommerce_tester.py"
+
+    target_script = SCRIPT_ECOM if req.tipo == "ecommerce" else SCRIPT_MAIN
+    output, error = _run_remote_command(f"python3 {target_script} --reintentos")
+    if output is None:
+        return {"status": "error", "data": error}
+    if error and not output:
+        return {"status": "error", "data": error}
+    return {"status": "success", "data": output + ("\n" + error if error else "")}
 
 if __name__ == "__main__":
     import uvicorn

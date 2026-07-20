@@ -99,7 +99,66 @@
             </div>
         </section>
 
-        <!-- VISTA KITS (ESLABONES) -->
+        <!-- VISTA ECOMMERCE (eBay) -->
+        <section id="view-ecommerce" class="view">
+            <div class="card stat-card" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-left: 4px solid #e91e63;">
+                <h3>🛒 Cascada E-Commerce — eBay</h3>
+                <p class="meta-info">Pipeline de auditoría para órdenes, carritos y direcciones. Configura los OAuth tokens en <code>api_ecommerce_tester.py</code> antes de ejecutar.</p>
+            </div>
+
+            <h3 class="section-title">Cascada eBay (3 Pasos)</h3>
+
+            <div class="card action-card" id="ebay-step-1" style="border-left: 4px solid #e91e63;">
+                <div class="card-header">
+                    <span class="icon">🔍</span>
+                    <h3>Paso 1: Mapeo de Víctima</h3>
+                </div>
+                <p>Extrae IDs de órdenes, carritos, ofertas y feedback de la cuenta Víctima (Tenant B) usando su token OAuth.</p>
+                <button class="btn btn-primary" id="btn-ebay-1" onclick="ejecutarEcommerce('mapeo')">Iniciar Mapeo eBay</button>
+            </div>
+
+            <div class="card action-card" id="ebay-step-2" style="border-left: 4px solid #f29057; opacity: 0.5; pointer-events: none;">
+                <div class="card-header">
+                    <span class="icon">⚔️</span>
+                    <h3>Paso 2: IDOR Horizontal</h3>
+                </div>
+                <p>Atacante (Tenant A) intenta acceder a los IDs de la Víctima. Verifica aislamiento entre compradores.</p>
+                <button class="btn btn-secondary" id="btn-ebay-2" onclick="ejecutarEcommerce('ataque')">Lanzar IDOR eBay</button>
+            </div>
+
+            <div class="card action-card" id="ebay-step-3" style="border-left: 4px solid #e74c3c; opacity: 0.5; pointer-events: none;">
+                <div class="card-header">
+                    <span class="icon">🔓</span>
+                    <h3>Paso 3: Escalada Vertical</h3>
+                </div>
+                <p>Intenta acceder a endpoints de Seller Hub, pagos y analíticas con una cuenta de comprador estándar.</p>
+                <button class="btn btn-secondary" id="btn-ebay-3" onclick="ejecutarEcommerce('escalada')">Lanzar Escalada eBay</button>
+            </div>
+
+            <!-- PASO 5 - REINTENTOS -->
+            <h3 class="section-title" style="margin-top: 24px;">Paso 5 — Reintentos (Review Queue)</h3>
+            <div class="card action-card" id="ebay-step-5" style="border-left: 4px solid #9b59b6; opacity: 0.5; pointer-events: none;">
+                <div class="card-header">
+                    <span class="icon">🔄</span>
+                    <h3>HTTP Method Fuzzing (Cola de Revisión)</h3>
+                </div>
+                <p style="font-size: 11px;">Procesa los endpoints ambiguos (404/anómalos) de los pasos anteriores. Prueba GET/POST/PUT/PATCH/DELETE con variaciones de Content-Type para descubrir rutas que existen pero requieren otra sintaxis.</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" id="btn-ebay-5" onclick="ejecutarReintentos('ecommerce')">🔄 Reintentos eBay</button>
+                    <button class="btn btn-secondary" id="btn-fd-5" onclick="ejecutarReintentos('freshdesk')">🔄 Reintentos Freshdesk</button>
+                </div>
+            </div>
+
+            <!-- CONSOLA ECOMMERCE -->
+            <div class="card action-card" id="ebay-inbox" style="display: none; border-top: 3px solid #e91e63; margin-top: 20px;">
+                <div class="card-header">
+                    <span class="icon">📬</span>
+                    <h3>Consola eBay</h3>
+                </div>
+                <div id="ebay-poc-content" class="code-block" style="font-size: 11px; max-height: 300px; overflow-y: auto;"></div>
+            </div>
+        </section>
+
         <section id="view-kits" class="view">
             <h3 class="section-title">Kits de Soluciones (Eslabones)</h3>
             <p class="view-desc">Conocimiento duro pre-cargado. No dependas ciegamente de la IA.</p>
@@ -146,6 +205,10 @@ Origin: https://evil.com
         <a href="#" class="nav-item active" onclick="switchView('dashboard', this)">
             <span class="nav-icon">📊</span>
             <span>Panel</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('ecommerce', this)">
+            <span class="nav-icon">🛒</span>
+            <span>eBay</span>
         </a>
         <a href="#" class="nav-item" onclick="switchView('kits', this)">
             <span class="nav-icon">📚</span>

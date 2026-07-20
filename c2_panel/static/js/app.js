@@ -291,3 +291,130 @@ function copiarReporte() {
     btn.textContent = '¡Copiado!';
     setTimeout(() => { btn.textContent = oldText; }, 2000);
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// CASCADA E-COMMERCE (eBay)
+// ═══════════════════════════════════════════════════════════════════
+
+async function ejecutarEcommerce(paso) {
+    const btnMap = { mapeo: 'btn-ebay-1', ataque: 'btn-ebay-2', escalada: 'btn-ebay-3' };
+    const stepMap = { mapeo: 'ebay-step-2', ataque: 'ebay-step-3', escalada: 'ebay-step-5' };
+    const btn = document.getElementById(btnMap[paso]);
+    if (!btn) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = 'Ejecutando en OCI-1...';
+    btn.disabled = true;
+
+    const inbox = document.getElementById('ebay-inbox');
+    const pocContent = document.getElementById('ebay-poc-content');
+    inbox.style.display = 'block';
+    pocContent.textContent = 'Procesando paso: ' + paso + '...';
+    inbox.scrollIntoView({ behavior: 'smooth' });
+
+    appendTerminal(`[eBay] Iniciando Paso: ${paso.toUpperCase()}`);
+
+    try {
+        const res = await fetch('/api/execute_ecommerce', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paso })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+            pocContent.textContent = result.data;
+            appendTerminal(`[OK] eBay Paso ${paso} completado.`);
+
+            // Extraer items de la cola y mostrarlos en la queue principal
+            if (result.data.includes('COLA DE ESPERA:')) {
+                const queueBox = document.getElementById('queue-content');
+                if (queueBox.textContent.includes('Cola vacía')) queueBox.textContent = '';
+                const match = result.data.split('COLA DE ESPERA:')[1];
+                if (match) queueBox.textContent += `[eBay] ${new Date().toLocaleTimeString()} - ${match.split('\n')[0]}\n`;
+            }
+
+            // Desbloquear siguiente paso
+            const nextStep = stepMap[paso];
+            if (nextStep) {
+                const el = document.getElementById(nextStep);
+                if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
+            }
+
+            // Colorear botón según resultado
+            const idor = result.data.includes('IDOR CONFIRMADO');
+            const esc  = result.data.includes('ESCALADA CONFIRMADA') || result.data.includes('ESCALADA [');
+            if (idor || esc) {
+                btn.classList.replace('btn-secondary', 'btn-success');
+                btn.textContent = '✅ ' + paso.charAt(0).toUpperCase() + paso.slice(1) + ' Exitoso';
+            } else {
+                btn.textContent = '❌ ' + paso + ' (sin hallazgo)';
+            }
+        } else {
+            pocContent.textContent = 'ERROR: ' + result.data;
+            appendTerminal(`[ERROR] eBay paso ${paso}: ${result.data}`);
+            btn.textContent = originalText;
+        }
+    } catch (e) {
+        pocContent.textContent = 'Error de red: ' + e;
+        appendTerminal(`[ERROR] Conexión fallida: ${e}`);
+        btn.textContent = originalText;
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PASO 5 — REINTENTOS (Review Queue / HTTP Method Fuzzing)
+// ═══════════════════════════════════════════════════════════════════
+
+async function ejecutarReintentos(target) {
+    // target: "ecommerce" | "freshdesk"
+    const btnId = target === 'ecommerce' ? 'btn-ebay-5' : 'btn-fd-5';
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Fuzzing en progreso...';
+    btn.disabled = true;
+
+    const inbox = document.getElementById('ebay-inbox');
+    const pocContent = document.getElementById('ebay-poc-content');
+    inbox.style.display = 'block';
+    pocContent.textContent = `[Reintentos] Iniciando HTTP Method Fuzzing sobre Cola de Revisión (${target})...`;
+    inbox.scrollIntoView({ behavior: 'smooth' });
+
+    appendTerminal(`[Paso 5] Reintentos HTTP Method Fuzzing — Target: ${target}`);
+
+    try {
+        const res = await fetch('/api/execute_reintentos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: target })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+            pocContent.textContent = result.data;
+            appendTerminal(`[OK] Reintentos completados.`);
+
+            const halló = result.data.includes('HALLAZGO en REINTENTO');
+            if (halló) {
+                btn.classList.replace('btn-secondary', 'btn-success');
+                btn.textContent = '✅ ¡Hallazgo en Reintento!';
+                appendTerminal(`[🚨] HALLAZGO NUEVO detectado en reintentos. Revisar consola eBay.`);
+            } else {
+                btn.textContent = '✅ Reintentos completados (sin hallazgos)';
+            }
+        } else {
+            pocContent.textContent = 'ERROR: ' + result.data;
+            btn.textContent = originalText;
+            appendTerminal(`[ERROR] Reintentos fallaron: ${result.data}`);
+        }
+    } catch (e) {
+        pocContent.textContent = 'Error de red: ' + e;
+        btn.textContent = originalText;
+    } finally {
+        btn.disabled = false;
+    }
+}
