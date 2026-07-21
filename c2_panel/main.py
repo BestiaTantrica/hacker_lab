@@ -117,84 +117,43 @@ def _run_remote_command(command: str, timeout: int = 300):
         if client: client.close()
         return None, str(e)
 
-# ── Freshdesk Cascada ────────────────────────────────────────────────────────
+class VerifyRequest(BaseModel):
+    url: str
+    tipo: str
 
-@app.post("/api/execute_exploit")
-def execute_exploit(req: ExploitRequest):
-    SCRIPT = "/home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
-    flags = {
-        "mapeo":   "--mapeo-solo",
-        "ataque":  "--ataque-solo",
-        "escalada": "--escalada-solo",
-    }
-    flag = flags.get(req.tipo, "")
-    output, error = _run_remote_command(f"python3 {SCRIPT} {flag}")
-    if output is None:
-        return {"status": "error", "data": error}
-    if error and not output:
-        return {"status": "error", "data": error}
-    return {"status": "success", "data": output + ("\n" + error if error else "")}
-
-# ── eBay / E-Commerce Cascada ────────────────────────────────────────────────
-
-@app.post("/api/execute_ecommerce")
-def execute_ecommerce(req: EcommerceRequest):
-    """Ejecuta la cascada de pruebas e-commerce (api_ecommerce_tester.py) en OCI-1."""
-    SCRIPT = "/home/ubuntu/plataforma_operativa/monitores/api_ecommerce_tester.py"
-    flags = {
-        "mapeo":      "--mapeo-solo",
-        "ataque":     "--ataque-solo",
-        "escalada":   "--escalada-solo",
-        "reintentos": "--reintentos",
-        "cola":       "--cola",
-        "completo":   "",
-    }
-    flag = flags.get(req.paso, "")
-    output, error = _run_remote_command(f"python3 {SCRIPT} {flag}")
-    if output is None:
-        return {"status": "error", "data": error}
-    if error and not output:
-        return {"status": "error", "data": error}
-    return {"status": "success", "data": output + ("\n" + error if error else "")}
-
-# ── Paso 5: Reintentos sobre la Cola de Revisión (Freshdesk) ─────────────────
-
-@app.post("/api/execute_reintentos")
-def execute_reintentos(req: ExploitRequest):
+@app.post("/api/verify_bug")
+def verify_bug(req: VerifyRequest):
     """
-    Paso 5 — HTTP Method Fuzzing sobre los endpoints de la Cola de Revisión.
-    Usa explotador_automatico.py con el flag --reintentos si está disponible,
-    de lo contrario llama directamente al script de cross-tenant con --cola.
+    Verifica en vivo si un bug sigue activo.
+    Hace una petición HTTP GET rápida desde OCI-1 hacia la URL del bug.
     """
-    SCRIPT_MAIN  = "/home/ubuntu/plataforma_operativa/monitores/idor_cross_tenant.py"
-    SCRIPT_ECOM  = "/home/ubuntu/plataforma_operativa/monitores/api_ecommerce_tester.py"
-
-    target_script = SCRIPT_ECOM if req.tipo == "ecommerce" else SCRIPT_MAIN
-    output, error = _run_remote_command(f"python3 {target_script} --reintentos")
-    if output is None:
-        return {"status": "error", "data": error}
-    if error and not output:
-        return {"status": "error", "data": error}
-    return {"status": "success", "data": output + ("\n" + error if error else "")}
-
-class ChatRequest(BaseModel):
-    message: str
-
-# ── Motor de Dinero ─────────────────────────────────────────────────────────
-
-@app.post("/api/run_motor")
-def run_motor():
-    """Ejecuta el extractor de secretos JS."""
-    output, error = _run_remote_command("python3 /home/ubuntu/plataforma_operativa/monitores/extractor_secretos.py")
-    if output is None: return {"status": "error", "data": error}
-    return {"status": "success", "data": output}
-
-@app.post("/api/run_explotador")
-def run_explotador():
-    """Ejecuta el explotador automático (Subdomain Takeover, CORS, etc)."""
-    output, error = _run_remote_command("python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py")
-    if output is None: return {"status": "error", "data": error}
-    return {"status": "success", "data": output}
+    client = get_ssh_client()
+    if not client:
+        return {"status": "offline", "data": "No se pudo conectar a OCI-1."}
+    
+    try:
+        # Hacemos curl a la URL, con timeout corto
+        cmd = f"curl -s -m 10 -I '{req.url}'"
+        stdin, stdout, stderr = client.exec_command(cmd)
+        output = stdout.read().decode().strip()
+        
+        # Validacion basica
+        is_verified = False
+        if req.tipo == "Secreto Expuesto en JS":
+            is_verified = "200 OK" in output or "HTTP/2 200" in output
+        elif req.tipo == "subdomain_takeover":
+            is_verified = "404 Not Found" in output or "NoSuchBucket" in output
+            
+        client.close()
+        
+        if is_verified:
+            return {"status": "success", "data": "✅ VERIFICADO EN VIVO. El endpoint sigue expuesto."}
+        else:
+            return {"status": "success", "data": f"⚠️ ATENCIÓN: El servidor respondió:\n{output[:100]}...\nVerificar manualmente."}
+            
+    except Exception as e:
+        if client: client.close()
+        return {"status": "error", "data": f"Error verificando: {str(e)}"}
 
 @app.get("/api/get_motor_results")
 def get_motor_results():

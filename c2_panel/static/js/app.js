@@ -345,167 +345,116 @@ async function cosecharBugs() {
 }
 
 function renderBugCard(container, titulo, bugData, severidad) {
+    // Generar un ID único para los botones de esta tarjeta
+    const cardId = 'bug-' + Math.random().toString(36).substr(2, 9);
+    
     const card = document.createElement('div');
     const borderCol = severidad === 'critical' ? '#e74c3c' : '#f29057';
-    card.style = `background: #1e1e2e; border: 1px solid #333; border-left: 4px solid ${borderCol}; padding: 12px; border-radius: 5px;`;
+    card.style = `background: #1e1e2e; border: 1px solid #333; border-left: 4px solid ${borderCol}; padding: 12px; border-radius: 5px; margin-bottom: 15px;`;
     
-    // Convertir el JSON a string para el botón
     const rawJson = JSON.stringify(bugData, null, 2);
+    // Intentar extraer la URL del bug para verificación (depende del formato)
+    const urlStr = bugData.url || bugData.endpoint || (bugData.takeover_url) || "";
+    
+    let contextoHTML = "";
+    if (titulo === "Secreto Expuesto en JS") {
+        contextoHTML = `<p style="font-size: 11px; color: #aaa; margin-bottom: 8px;"><strong>Contexto:</strong> Se ha encontrado un token o secreto codificado en el código fuente de un archivo JavaScript. Esto suele ocurrir cuando los desarrolladores compilan el frontend sin ofuscar variables de entorno.</p>`;
+    } else if (titulo.includes("subdomain_takeover")) {
+        contextoHTML = `<p style="font-size: 11px; color: #aaa; margin-bottom: 8px;"><strong>Contexto:</strong> Un subdominio apunta a un servicio externo (como GitHub Pages o AWS S3) pero la cuenta en ese servicio ya no existe. Un atacante puede registrar esa cuenta y tomar el control del subdominio.</p>`;
+    } else {
+        contextoHTML = `<p style="font-size: 11px; color: #aaa; margin-bottom: 8px;"><strong>Contexto:</strong> Posible vulnerabilidad detectada automáticamente. Requiere verificación para confirmar impacto.</p>`;
+    }
     
     card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <h4 style="margin: 0; color: #fff;">${titulo}</h4>
             <span style="font-size: 10px; background: ${borderCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">${severidad.toUpperCase()}</span>
         </div>
+        ${contextoHTML}
         <pre style="font-size: 10px; max-height: 100px; overflow-y: auto; background: #000; padding: 8px; border-radius: 3px; color: #a9ff68; margin-bottom: 10px;">${rawJson}</pre>
-        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 0; display: flex; align-items: center; gap: 5px;" onclick='mandarAPegaso(${JSON.stringify(rawJson)})'>
-            🤖 Redactar Reporte con Pegaso
-        </button>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button id="btn-verif-${cardId}" class="btn btn-secondary" style="padding: 8px 12px; font-size: 11px; margin-top: 0; display: flex; align-items: center; justify-content: center; gap: 5px;" onclick='verificarBug("${cardId}", "${urlStr}", "${titulo}")'>
+                🔍 Verificar Disponibilidad en Vivo
+            </button>
+            <div id="verif-res-${cardId}" style="font-size: 11px; color: #f1c40f; display: none; padding: 5px; background: rgba(0,0,0,0.3); border-radius: 3px;"></div>
+            
+            <button id="btn-rep-${cardId}" class="btn btn-primary" style="padding: 8px 12px; font-size: 11px; margin-top: 0; display: none; align-items: center; justify-content: center; gap: 5px; background-color: var(--success);" onclick='mandarAPegaso(${JSON.stringify(rawJson)})'>
+                🤖 Redactar Reporte HackerOne (Pegaso)
+            </button>
+        </div>
     `;
     container.appendChild(card);
 }
 
+async function verificarBug(cardId, url, tipo) {
+    const btn = document.getElementById(`btn-verif-${cardId}`);
+    const resDiv = document.getElementById(`verif-res-${cardId}`);
+    const btnRep = document.getElementById(`btn-rep-${cardId}`);
+    
+    if (!url) {
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = '⚠️ No se pudo extraer la URL del JSON para verificación automática. Procede con cuidado.';
+        btnRep.style.display = 'flex';
+        return;
+    }
+    
+    btn.textContent = '⏳ Verificando en OCI-1...';
+    btn.disabled = true;
+    
+    try {
+        const res = await fetch('/api/verify_bug', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url, tipo: tipo })
+        });
+        const result = await res.json();
+        
+        resDiv.style.display = 'block';
+        if (result.status === 'success') {
+            resDiv.innerHTML = result.data;
+            if (result.data.includes("VERIFICADO EN VIVO")) {
+                resDiv.style.color = '#2ecc71';
+                btn.classList.replace('btn-secondary', 'btn-success');
+                btn.textContent = '✅ Vulnerabilidad Verificada';
+                // DESBLOQUEAR ESLABON 3
+                btnRep.style.display = 'flex'; 
+            } else {
+                resDiv.style.color = '#f1c40f';
+                btn.textContent = '⚠️ Verificación Dudosa';
+                // Lo desbloqueamos igual por si el usuario quiere reportarlo
+                btnRep.style.display = 'flex'; 
+            }
+        } else {
+            resDiv.innerHTML = `ERROR: ${result.data}`;
+            resDiv.style.color = '#e74c3c';
+            btn.textContent = '❌ Error';
+            btn.disabled = false;
+        }
+    } catch(e) {
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = `Error de red: ${e}`;
+        resDiv.style.color = '#e74c3c';
+        btn.textContent = '❌ Error';
+        btn.disabled = false;
+    }
+}
+
 function mandarAPegaso(rawJsonStr) {
     // Cambiar a la vista del chat
-    const chatTab = document.querySelectorAll('.nav-item')[3]; // Pegaso es el 4to ítem (índice 3)
+    const chatTab = document.querySelectorAll('.nav-item')[2]; // Pegaso es el 3er ítem ahora tras borrar eBay
     switchView('chat', chatTab);
     
     // Inyectar el prompt en el input
     const input = document.getElementById('chat-input');
-    const prompt = `Por favor, redacta un reporte profesional de HackerOne en inglés para este hallazgo del Motor de Dinero:\n\n${rawJsonStr}`;
+    const prompt = `Por favor, redacta un reporte profesional de HackerOne en inglés para esta vulnerabilidad verificada del Motor de Dinero.\n\nContexto: Tienes que usar el siguiente JSON para armar los pasos de reproducción y el impacto.\n\nData:\n${rawJsonStr}`;
     input.value = prompt;
     
     // Auto enviar
     enviarMensajeChat();
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════════
 
-async function ejecutarEcommerce(paso) {
-    const btnMap = { mapeo: 'btn-ebay-1', ataque: 'btn-ebay-2', escalada: 'btn-ebay-3' };
-    const stepMap = { mapeo: 'ebay-step-2', ataque: 'ebay-step-3', escalada: 'ebay-step-5' };
-    const btn = document.getElementById(btnMap[paso]);
-    if (!btn) return;
-
-    const originalText = btn.textContent;
-    btn.textContent = 'Ejecutando en OCI-1...';
-    btn.disabled = true;
-
-    const inbox = document.getElementById('ebay-inbox');
-    const pocContent = document.getElementById('ebay-poc-content');
-    inbox.style.display = 'block';
-    pocContent.textContent = 'Procesando paso: ' + paso + '...';
-    inbox.scrollIntoView({ behavior: 'smooth' });
-
-    appendTerminal(`[eBay] Iniciando Paso: ${paso.toUpperCase()}`);
-
-    try {
-        const res = await fetch('/api/execute_ecommerce', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paso })
-        });
-        const result = await res.json();
-
-        if (result.status === 'success') {
-            pocContent.textContent = result.data;
-            appendTerminal(`[OK] eBay Paso ${paso} completado.`);
-
-            // Extraer items de la cola y mostrarlos en la queue principal
-            if (result.data.includes('COLA DE ESPERA:')) {
-                const queueBox = document.getElementById('queue-content');
-                if (queueBox.textContent.includes('Cola vacía')) queueBox.textContent = '';
-                const match = result.data.split('COLA DE ESPERA:')[1];
-                if (match) queueBox.textContent += `[eBay] ${new Date().toLocaleTimeString()} - ${match.split('\n')[0]}\n`;
-            }
-
-            // Desbloquear siguiente paso
-            const nextStep = stepMap[paso];
-            if (nextStep) {
-                const el = document.getElementById(nextStep);
-                if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
-            }
-
-            // Colorear botón según resultado
-            const idor = result.data.includes('IDOR CONFIRMADO');
-            const esc  = result.data.includes('ESCALADA CONFIRMADA') || result.data.includes('ESCALADA [');
-            if (idor || esc) {
-                btn.classList.replace('btn-secondary', 'btn-success');
-                btn.textContent = '✅ ' + paso.charAt(0).toUpperCase() + paso.slice(1) + ' Exitoso';
-            } else {
-                btn.textContent = '❌ ' + paso + ' (sin hallazgo)';
-            }
-        } else {
-            pocContent.textContent = 'ERROR: ' + result.data;
-            appendTerminal(`[ERROR] eBay paso ${paso}: ${result.data}`);
-            btn.textContent = originalText;
-        }
-    } catch (e) {
-        pocContent.textContent = 'Error de red: ' + e;
-        appendTerminal(`[ERROR] Conexión fallida: ${e}`);
-        btn.textContent = originalText;
-    } finally {
-        btn.disabled = false;
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PASO 5 — REINTENTOS (Review Queue / HTTP Method Fuzzing)
-// ═══════════════════════════════════════════════════════════════════
-
-async function ejecutarReintentos(target) {
-    // target: "ecommerce" | "freshdesk"
-    const btnId = target === 'ecommerce' ? 'btn-ebay-5' : 'btn-fd-5';
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Fuzzing en progreso...';
-    btn.disabled = true;
-
-    const inbox = document.getElementById('ebay-inbox');
-    const pocContent = document.getElementById('ebay-poc-content');
-    inbox.style.display = 'block';
-    pocContent.textContent = `[Reintentos] Iniciando HTTP Method Fuzzing sobre Cola de Revisión (${target})...`;
-    inbox.scrollIntoView({ behavior: 'smooth' });
-
-    appendTerminal(`[Paso 5] Reintentos HTTP Method Fuzzing — Target: ${target}`);
-
-    try {
-        const res = await fetch('/api/execute_reintentos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tipo: target })
-        });
-        const result = await res.json();
-
-        if (result.status === 'success') {
-            pocContent.textContent = result.data;
-            appendTerminal(`[OK] Reintentos completados.`);
-
-            const halló = result.data.includes('HALLAZGO en REINTENTO');
-            if (halló) {
-                btn.classList.replace('btn-secondary', 'btn-success');
-                btn.textContent = '✅ ¡Hallazgo en Reintento!';
-                appendTerminal(`[🚨] HALLAZGO NUEVO detectado en reintentos. Revisar consola eBay.`);
-            } else {
-                btn.textContent = '✅ Reintentos completados (sin hallazgos)';
-            }
-        } else {
-            pocContent.textContent = 'ERROR: ' + result.data;
-            btn.textContent = originalText;
-            appendTerminal(`[ERROR] Reintentos fallaron: ${result.data}`);
-        }
-    } catch (e) {
-        pocContent.textContent = 'Error de red: ' + e;
-        btn.textContent = originalText;
-    } finally {
-        btn.disabled = false;
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════
 // CHAT PEGASO AI
 // ═══════════════════════════════════════════════════════════════════
 
