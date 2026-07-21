@@ -1,0 +1,1159 @@
+2026-07-05T00:29:24+0000 [INFO] ============================================================
+2026-07-05T00:29:24+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-05T00:29:24+0000 [INFO] Cargados 2 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-05T00:29:24+0000 [INFO] Procesando dominio objetivo: starbucks.com
+2026-07-05T00:29:24+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 1/3)
+2026-07-05T00:29:40+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-05T00:29:40+0000 [INFO] Esperando 5 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T00:29:45+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 2/3)
+2026-07-05T00:29:45+0000 [WARNING] Error HTTP consultando 'starbucks.com' (intento 2/3): HTTPError: 502 Bad Gateway
+2026-07-05T00:29:45+0000 [INFO] Esperando 10 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T00:29:55+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 3/3)
+2026-07-05T00:30:10+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 3/3): Timeout: The read operation timed out
+2026-07-05T00:30:10+0000 [ERROR] Fallaron todos los intentos (3) para 'starbucks.com'. Último error: Timeout: The read operation timed out
+2026-07-05T00:30:10+0000 [WARNING] No hay resultado previo para 'starbucks.com'; se registra lista vacía (no se pudo obtener información en esta ejecución)
+2026-07-05T00:30:10+0000 [INFO] Procesando dominio objetivo: github.com
+2026-07-05T00:30:10+0000 [INFO] Consultando crt.sh para 'github.com' (intento 1/3)
+2026-07-05T00:30:26+0000 [WARNING] Timeout consultando 'github.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-05T00:30:26+0000 [INFO] Esperando 5 segundos antes de reintentar 'github.com'...
+2026-07-05T00:30:31+0000 [INFO] Consultando crt.sh para 'github.com' (intento 2/3)
+2026-07-05T00:30:34+0000 [INFO] Dominio 'github.com': 117 subdominio(s) único(s) encontrado(s)
+2026-07-05T00:30:34+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-05T00:30:34+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-05T00:30:34+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-05T00:30:34+0000 [INFO] ============================================================
+2026-07-05T02:12:53+0000 [INFO] ============================================================
+2026-07-05T02:12:53+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-05T02:12:53+0000 [INFO] Cargados 2 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-05T02:12:53+0000 [INFO] Procesando dominio objetivo: starbucks.com
+2026-07-05T02:12:53+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 1/3)
+2026-07-05T02:13:08+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-05T02:13:08+0000 [INFO] Esperando 5 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T02:13:13+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 2/3)
+2026-07-05T02:13:28+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 2/3): Timeout: The read operation timed out
+2026-07-05T02:13:28+0000 [INFO] Esperando 10 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T02:13:38+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 3/3)
+2026-07-05T02:13:43+0000 [INFO] Dominio 'starbucks.com': 1123 subdominio(s) único(s) encontrado(s)
+2026-07-05T02:13:43+0000 [INFO] Procesando dominio objetivo: github.com
+2026-07-05T02:13:43+0000 [INFO] Consultando crt.sh para 'github.com' (intento 1/3)
+2026-07-05T02:13:59+0000 [INFO] Dominio 'github.com': 117 subdominio(s) único(s) encontrado(s)
+2026-07-05T02:13:59+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-05T02:13:59+0000 [INFO] Discovery finalizado exitosamente sin errores.
+2026-07-05T02:13:59+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-05T02:13:59+0000 [INFO] ============================================================
+2026-07-05T06:00:02+0000 [INFO] ============================================================
+2026-07-05T06:00:02+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-05T06:00:02+0000 [INFO] Cargados 2 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-05T06:00:02+0000 [INFO] Procesando dominio objetivo: starbucks.com
+2026-07-05T06:00:02+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 1/3)
+2026-07-05T06:00:17+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-05T06:00:17+0000 [INFO] Esperando 5 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T06:00:22+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 2/3)
+2026-07-05T06:00:22+0000 [WARNING] Error HTTP consultando 'starbucks.com' (intento 2/3): HTTPError: 404 Not Found
+2026-07-05T06:00:22+0000 [INFO] Esperando 10 segundos antes de reintentar 'starbucks.com'...
+2026-07-05T06:00:32+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 3/3)
+2026-07-05T06:00:48+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 3/3): Timeout: The read operation timed out
+2026-07-05T06:00:48+0000 [ERROR] Fallaron todos los intentos (3) para 'starbucks.com'. Último error: Timeout: The read operation timed out
+2026-07-05T06:00:48+0000 [WARNING] Preservando último resultado válido para 'starbucks.com' (1123 subdominio(s)) debido a fallo en la consulta actual
+2026-07-05T06:00:48+0000 [INFO] Procesando dominio objetivo: github.com
+2026-07-05T06:00:48+0000 [INFO] Consultando crt.sh para 'github.com' (intento 1/3)
+2026-07-05T06:01:03+0000 [WARNING] Timeout consultando 'github.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-05T06:01:03+0000 [INFO] Esperando 5 segundos antes de reintentar 'github.com'...
+2026-07-05T06:01:08+0000 [INFO] Consultando crt.sh para 'github.com' (intento 2/3)
+2026-07-05T06:01:23+0000 [WARNING] Timeout consultando 'github.com' (intento 2/3): Timeout: The read operation timed out
+2026-07-05T06:01:23+0000 [INFO] Esperando 10 segundos antes de reintentar 'github.com'...
+2026-07-05T06:01:33+0000 [INFO] Consultando crt.sh para 'github.com' (intento 3/3)
+2026-07-05T06:01:46+0000 [WARNING] Error HTTP consultando 'github.com' (intento 3/3): HTTPError: 503 Service Unavailable
+2026-07-05T06:01:46+0000 [ERROR] Fallaron todos los intentos (3) para 'github.com'. Último error: HTTPError: 503 Service Unavailable
+2026-07-05T06:01:46+0000 [WARNING] Preservando último resultado válido para 'github.com' (117 subdominio(s)) debido a fallo en la consulta actual
+2026-07-05T06:01:46+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-05T06:01:46+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-05T06:01:46+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-05T06:01:46+0000 [INFO] ============================================================
+2026-07-06T06:00:01+0000 [INFO] ============================================================
+2026-07-06T06:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-06T06:00:01+0000 [INFO] Cargados 2 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-06T06:00:01+0000 [INFO] Procesando dominio objetivo: starbucks.com
+2026-07-06T06:00:01+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 1/3)
+2026-07-06T06:00:17+0000 [WARNING] Timeout consultando 'starbucks.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-06T06:00:17+0000 [INFO] Esperando 5 segundos antes de reintentar 'starbucks.com'...
+2026-07-06T06:00:22+0000 [INFO] Consultando crt.sh para 'starbucks.com' (intento 2/3)
+2026-07-06T06:00:33+0000 [INFO] Dominio 'starbucks.com': 1123 subdominio(s) único(s) encontrado(s)
+2026-07-06T06:00:33+0000 [INFO] Procesando dominio objetivo: github.com
+2026-07-06T06:00:33+0000 [INFO] Consultando crt.sh para 'github.com' (intento 1/3)
+2026-07-06T06:00:49+0000 [WARNING] Timeout consultando 'github.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-06T06:00:49+0000 [INFO] Esperando 5 segundos antes de reintentar 'github.com'...
+2026-07-06T06:00:54+0000 [INFO] Consultando crt.sh para 'github.com' (intento 2/3)
+2026-07-06T06:01:01+0000 [WARNING] Error HTTP consultando 'github.com' (intento 2/3): HTTPError: 404 Not Found
+2026-07-06T06:01:01+0000 [INFO] Esperando 10 segundos antes de reintentar 'github.com'...
+2026-07-06T06:01:11+0000 [INFO] Consultando crt.sh para 'github.com' (intento 3/3)
+2026-07-06T06:01:11+0000 [WARNING] Error HTTP consultando 'github.com' (intento 3/3): HTTPError: 502 Bad Gateway
+2026-07-06T06:01:11+0000 [ERROR] Fallaron todos los intentos (3) para 'github.com'. Último error: HTTPError: 502 Bad Gateway
+2026-07-06T06:01:11+0000 [WARNING] Preservando último resultado válido para 'github.com' (117 subdominio(s)) debido a fallo en la consulta actual
+2026-07-06T06:01:11+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-06T06:01:11+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-06T06:01:11+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-06T06:01:11+0000 [INFO] ============================================================
+2026-07-07T06:00:01+0000 [INFO] ============================================================
+2026-07-07T06:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-07T06:00:01+0000 [INFO] Cargados 1 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-07T06:00:01+0000 [INFO] Procesando dominio objetivo: mongodb.com
+2026-07-07T06:00:01+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 1/3)
+2026-07-07T06:00:17+0000 [WARNING] Timeout consultando 'mongodb.com' (intento 1/3): Timeout: The read operation timed out
+2026-07-07T06:00:17+0000 [INFO] Esperando 5 segundos antes de reintentar 'mongodb.com'...
+2026-07-07T06:00:22+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 2/3)
+2026-07-07T06:00:33+0000 [WARNING] Error HTTP consultando 'mongodb.com' (intento 2/3): HTTPError: 404 Not Found
+2026-07-07T06:00:33+0000 [INFO] Esperando 10 segundos antes de reintentar 'mongodb.com'...
+2026-07-07T06:00:43+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 3/3)
+2026-07-07T06:00:54+0000 [WARNING] Error HTTP consultando 'mongodb.com' (intento 3/3): HTTPError: 404 Not Found
+2026-07-07T06:00:54+0000 [ERROR] Fallaron todos los intentos (3) para 'mongodb.com'. Último error: HTTPError: 404 Not Found
+2026-07-07T06:00:54+0000 [WARNING] No hay resultado previo para 'mongodb.com'; se registra lista vacía (no se pudo obtener información en esta ejecución)
+2026-07-07T06:00:54+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-07T06:00:54+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-07T06:00:54+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-07T06:00:54+0000 [INFO] ============================================================
+2026-07-08T06:00:01+0000 [INFO] ============================================================
+2026-07-08T06:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-08T06:00:01+0000 [INFO] Cargados 1 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-08T06:00:01+0000 [INFO] Procesando dominio objetivo: mongodb.com
+2026-07-08T06:00:01+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 1/3)
+2026-07-08T06:00:03+0000 [WARNING] Error HTTP consultando 'mongodb.com' (intento 1/3): HTTPError: 404 Not Found
+2026-07-08T06:00:03+0000 [INFO] Esperando 5 segundos antes de reintentar 'mongodb.com'...
+2026-07-08T06:00:08+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 2/3)
+2026-07-08T06:00:24+0000 [WARNING] Timeout consultando 'mongodb.com' (intento 2/3): Timeout: The read operation timed out
+2026-07-08T06:00:24+0000 [INFO] Esperando 10 segundos antes de reintentar 'mongodb.com'...
+2026-07-08T06:00:34+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 3/3)
+2026-07-08T06:00:49+0000 [WARNING] Timeout consultando 'mongodb.com' (intento 3/3): Timeout: The read operation timed out
+2026-07-08T06:00:49+0000 [ERROR] Fallaron todos los intentos (3) para 'mongodb.com'. Último error: Timeout: The read operation timed out
+2026-07-08T06:00:49+0000 [WARNING] Preservando último resultado válido para 'mongodb.com' (0 subdominio(s)) debido a fallo en la consulta actual
+2026-07-08T06:00:49+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-08T06:00:49+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-08T06:00:49+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-08T06:00:49+0000 [INFO] ============================================================
+2026-07-08T18:17:28+0000 [INFO] ============================================================
+2026-07-08T18:17:28+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-08T18:17:28+0000 [INFO] Cargados 1 dominio(s) objetivo desde /home/ubuntu/plataforma_operativa/config/objetivos.txt
+2026-07-08T18:17:28+0000 [INFO] Procesando dominio objetivo: mongodb.com
+2026-07-08T18:17:28+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 1/3)
+2026-07-08T18:17:29+0000 [WARNING] Error HTTP consultando 'mongodb.com' (intento 1/3): HTTPError: 502 Bad Gateway
+2026-07-08T18:17:29+0000 [INFO] Esperando 5 segundos antes de reintentar 'mongodb.com'...
+2026-07-08T18:17:34+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 2/3)
+2026-07-08T18:17:34+0000 [WARNING] Error HTTP consultando 'mongodb.com' (intento 2/3): HTTPError: 502 Bad Gateway
+2026-07-08T18:17:34+0000 [INFO] Esperando 10 segundos antes de reintentar 'mongodb.com'...
+2026-07-08T18:17:44+0000 [INFO] Consultando crt.sh para 'mongodb.com' (intento 3/3)
+2026-07-08T18:18:00+0000 [WARNING] Timeout consultando 'mongodb.com' (intento 3/3): Timeout: The read operation timed out
+2026-07-08T18:18:00+0000 [ERROR] Fallaron todos los intentos (3) para 'mongodb.com'. Último error: Timeout: The read operation timed out
+2026-07-08T18:18:00+0000 [WARNING] Preservando último resultado válido para 'mongodb.com' (0 subdominio(s)) debido a fallo en la consulta actual
+2026-07-08T18:18:00+0000 [INFO] Resultados guardados exitosamente en /home/ubuntu/plataforma_operativa/resultados/actual.json
+2026-07-08T18:18:00+0000 [WARNING] Discovery finalizado CON errores parciales (ver detalle arriba).
+2026-07-08T18:18:00+0000 [INFO] Finalizando discovery_pasivo.py
+2026-07-08T18:18:00+0000 [INFO] ============================================================
+2026-07-08T19:06:38+0000 [INFO] ============================================================
+2026-07-08T19:06:38+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-08T19:06:38+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-08T19:06:38+0000 [INFO] Procesando: mongodb.com
+2026-07-08T19:06:38+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-08T19:07:24+0000 [INFO] [subfinder] 'mongodb.com': 6271 subdominios encontrados.
+2026-07-08T19:07:24+0000 [INFO] Procesando: elastic.co
+2026-07-08T19:07:24+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-08T19:07:26+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-08T19:07:26+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6887 subdominios.
+2026-07-08T19:07:26+0000 [INFO] Discovery finalizado correctamente.
+2026-07-08T19:07:26+0000 [INFO] ============================================================
+2026-07-08T20:02:07+0000 [INFO] ============================================================
+2026-07-08T20:02:07+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-08T20:02:07+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-08T20:02:07+0000 [INFO] Procesando: mongodb.com
+2026-07-08T20:02:07+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-08T20:02:24+0000 [INFO] [subfinder] 'mongodb.com': 6231 subdominios encontrados.
+2026-07-08T20:02:24+0000 [INFO] Procesando: elastic.co
+2026-07-08T20:02:24+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-08T20:02:58+0000 [INFO] [subfinder] 'elastic.co': 684 subdominios encontrados.
+2026-07-08T20:02:58+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6915 subdominios.
+2026-07-08T20:02:58+0000 [INFO] Discovery finalizado correctamente.
+2026-07-08T20:02:58+0000 [INFO] ============================================================
+2026-07-09T03:00:02+0000 [INFO] ============================================================
+2026-07-09T03:00:02+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-09T03:00:02+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-09T03:00:02+0000 [INFO] Procesando: mongodb.com
+2026-07-09T03:00:02+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-09T03:00:57+0000 [INFO] [subfinder] 'mongodb.com': 6271 subdominios encontrados.
+2026-07-09T03:00:57+0000 [INFO] Procesando: elastic.co
+2026-07-09T03:00:57+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-09T03:00:59+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-09T03:00:59+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6887 subdominios.
+2026-07-09T03:00:59+0000 [INFO] Discovery finalizado correctamente.
+2026-07-09T03:00:59+0000 [INFO] ============================================================
+2026-07-10T03:00:01+0000 [INFO] ============================================================
+2026-07-10T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-10T03:00:01+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-10T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-10T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-10T03:00:50+0000 [INFO] [subfinder] 'mongodb.com': 6321 subdominios encontrados.
+2026-07-10T03:00:50+0000 [INFO] Procesando: elastic.co
+2026-07-10T03:00:50+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-10T03:01:51+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-10T03:01:51+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6937 subdominios.
+2026-07-10T03:01:51+0000 [INFO] Discovery finalizado correctamente.
+2026-07-10T03:01:51+0000 [INFO] ============================================================
+2026-07-11T03:00:01+0000 [INFO] ============================================================
+2026-07-11T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-11T03:00:01+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-11T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-11T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-11T03:00:22+0000 [INFO] [subfinder] 'mongodb.com': 6327 subdominios encontrados.
+2026-07-11T03:00:22+0000 [INFO] Procesando: elastic.co
+2026-07-11T03:00:22+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-11T03:00:24+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-11T03:00:24+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6943 subdominios.
+2026-07-11T03:00:24+0000 [INFO] Discovery finalizado correctamente.
+2026-07-11T03:00:24+0000 [INFO] ============================================================
+2026-07-12T03:00:01+0000 [INFO] ============================================================
+2026-07-12T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-12T03:00:01+0000 [INFO] Cargados 2 dominio(s) objetivo.
+2026-07-12T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-12T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-12T03:01:03+0000 [INFO] [subfinder] 'mongodb.com': 6358 subdominios encontrados.
+2026-07-12T03:01:03+0000 [INFO] Procesando: elastic.co
+2026-07-12T03:01:03+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-12T03:01:05+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-12T03:01:05+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 6974 subdominios.
+2026-07-12T03:01:05+0000 [INFO] Discovery finalizado correctamente.
+2026-07-12T03:01:05+0000 [INFO] ============================================================
+2026-07-13T00:00:59+0000 [INFO] ============================================================
+2026-07-13T00:00:59+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-13T00:00:59+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-13T00:00:59+0000 [INFO] Procesando: mongodb.com
+2026-07-13T00:00:59+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-13T00:02:12+0000 [INFO] [subfinder] 'mongodb.com': 6359 subdominios encontrados.
+2026-07-13T00:02:12+0000 [INFO] Procesando: elastic.co
+2026-07-13T00:02:12+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-13T00:02:14+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-13T00:02:14+0000 [INFO] Procesando: yahoo.com
+2026-07-13T00:02:14+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-13T00:03:40+0000 [INFO] [subfinder] 'yahoo.com': 120758 subdominios encontrados.
+2026-07-13T00:03:40+0000 [INFO] Procesando: aol.com
+2026-07-13T00:03:40+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-13T00:04:41+0000 [INFO] [subfinder] 'aol.com': 3471 subdominios encontrados.
+2026-07-13T00:04:41+0000 [INFO] Procesando: flickr.com
+2026-07-13T00:04:41+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-13T00:06:42+0000 [INFO] [subfinder] 'flickr.com': 254 subdominios encontrados.
+2026-07-13T00:06:42+0000 [INFO] Procesando: mil
+2026-07-13T00:06:42+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-13T00:08:42+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+2026-07-13T00:08:42+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 131508 subdominios.
+2026-07-13T00:08:42+0000 [INFO] Discovery finalizado correctamente.
+2026-07-13T00:08:42+0000 [INFO] ============================================================
+2026-07-13T00:13:44+0000 [INFO] ============================================================
+2026-07-13T00:13:44+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-13T00:13:44+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-13T00:13:44+0000 [INFO] Procesando: mongodb.com
+2026-07-13T00:13:44+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-13T00:15:45+0000 [INFO] [subfinder] 'mongodb.com': 6359 subdominios encontrados.
+2026-07-13T00:15:45+0000 [INFO] Procesando: elastic.co
+2026-07-13T00:15:45+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-13T00:17:45+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-13T00:17:45+0000 [INFO] Procesando: yahoo.com
+2026-07-13T00:17:45+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-13T00:19:47+0000 [INFO] [subfinder] 'yahoo.com': 121006 subdominios encontrados.
+2026-07-13T00:19:47+0000 [INFO] Procesando: aol.com
+2026-07-13T00:19:47+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-13T00:21:48+0000 [INFO] [subfinder] 'aol.com': 5106 subdominios encontrados.
+2026-07-13T00:21:48+0000 [INFO] Procesando: flickr.com
+2026-07-13T00:21:48+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-13T00:23:48+0000 [INFO] [subfinder] 'flickr.com': 259 subdominios encontrados.
+2026-07-13T00:23:48+0000 [INFO] Procesando: mil
+2026-07-13T00:23:48+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-13T00:25:49+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+2026-07-13T00:25:49+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 133396 subdominios.
+2026-07-13T00:25:49+0000 [INFO] Discovery finalizado correctamente.
+2026-07-13T00:25:49+0000 [INFO] ============================================================
+2026-07-13T03:00:01+0000 [INFO] ============================================================
+2026-07-13T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-13T03:00:01+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-13T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-13T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-13T03:02:02+0000 [INFO] [subfinder] 'mongodb.com': 6359 subdominios encontrados.
+2026-07-13T03:02:02+0000 [INFO] Procesando: elastic.co
+2026-07-13T03:02:02+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-13T03:04:02+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-13T03:04:02+0000 [INFO] Procesando: yahoo.com
+2026-07-13T03:04:02+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-13T03:06:05+0000 [INFO] [subfinder] 'yahoo.com': 122110 subdominios encontrados.
+2026-07-13T03:06:05+0000 [INFO] Procesando: aol.com
+2026-07-13T03:06:05+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-13T03:08:05+0000 [INFO] [subfinder] 'aol.com': 5150 subdominios encontrados.
+2026-07-13T03:08:05+0000 [INFO] Procesando: flickr.com
+2026-07-13T03:08:05+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-13T03:10:06+0000 [INFO] [subfinder] 'flickr.com': 254 subdominios encontrados.
+2026-07-13T03:10:06+0000 [INFO] Procesando: mil
+2026-07-13T03:10:06+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-13T03:12:07+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+2026-07-13T03:12:07+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 134539 subdominios.
+2026-07-13T03:12:07+0000 [INFO] Discovery finalizado correctamente.
+2026-07-13T03:12:07+0000 [INFO] ============================================================
+2026-07-14T03:00:02+0000 [INFO] ============================================================
+2026-07-14T03:00:02+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-14T03:00:02+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-14T03:00:02+0000 [INFO] Procesando: mongodb.com
+2026-07-14T03:00:02+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-14T03:00:32+0000 [INFO] [subfinder] 'mongodb.com': 6400 subdominios encontrados.
+2026-07-14T03:00:32+0000 [INFO] Procesando: elastic.co
+2026-07-14T03:00:32+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-14T03:00:50+0000 [INFO] [subfinder] 'elastic.co': 684 subdominios encontrados.
+2026-07-14T03:00:50+0000 [INFO] Procesando: yahoo.com
+2026-07-14T03:00:50+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-14T03:02:13+0000 [INFO] [subfinder] 'yahoo.com': 121587 subdominios encontrados.
+2026-07-14T03:02:13+0000 [INFO] Procesando: aol.com
+2026-07-14T03:02:13+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-14T03:02:14+0000 [INFO] [subfinder] 'aol.com': 3471 subdominios encontrados.
+2026-07-14T03:02:14+0000 [INFO] Procesando: flickr.com
+2026-07-14T03:02:14+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-14T03:04:15+0000 [INFO] [subfinder] 'flickr.com': 259 subdominios encontrados.
+2026-07-14T03:04:15+0000 [INFO] Procesando: mil
+2026-07-14T03:04:15+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-14T03:06:15+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+2026-07-14T03:06:16+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 132451 subdominios.
+2026-07-14T03:06:16+0000 [INFO] Discovery finalizado correctamente.
+2026-07-14T03:06:16+0000 [INFO] ============================================================
+2026-07-15T03:00:01+0000 [INFO] ============================================================
+2026-07-15T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-15T03:00:01+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-15T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-15T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-15T03:00:22+0000 [INFO] [subfinder] 'mongodb.com': 6419 subdominios encontrados.
+2026-07-15T03:00:22+0000 [INFO] Procesando: elastic.co
+2026-07-15T03:00:22+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-15T03:01:24+0000 [INFO] [subfinder] 'elastic.co': 684 subdominios encontrados.
+2026-07-15T03:01:24+0000 [INFO] Procesando: yahoo.com
+2026-07-15T03:01:24+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-15T03:02:52+0000 [INFO] [subfinder] 'yahoo.com': 120769 subdominios encontrados.
+2026-07-15T03:02:52+0000 [INFO] Procesando: aol.com
+2026-07-15T03:02:52+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-15T03:03:52+0000 [INFO] [subfinder] 'aol.com': 5150 subdominios encontrados.
+2026-07-15T03:03:52+0000 [INFO] Procesando: flickr.com
+2026-07-15T03:03:52+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-15T03:05:53+0000 [INFO] [subfinder] 'flickr.com': 259 subdominios encontrados.
+2026-07-15T03:05:53+0000 [INFO] Procesando: mil
+2026-07-15T03:05:53+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-15T03:07:54+0000 [INFO] [subfinder] 'mil': 7920 subdominios encontrados.
+2026-07-15T03:07:54+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 141201 subdominios.
+2026-07-15T03:07:54+0000 [INFO] Discovery finalizado correctamente.
+2026-07-15T03:07:54+0000 [INFO] ============================================================
+2026-07-16T03:00:01+0000 [INFO] ============================================================
+2026-07-16T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-16T03:00:01+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-16T03:00:01+0000 [INFO] Procesando: mongodb.com
+2026-07-16T03:00:01+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-16T03:01:03+0000 [INFO] [subfinder] 'mongodb.com': 6441 subdominios encontrados.
+2026-07-16T03:01:03+0000 [INFO] Procesando: elastic.co
+2026-07-16T03:01:03+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-16T03:01:05+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-16T03:01:05+0000 [INFO] Procesando: yahoo.com
+2026-07-16T03:01:05+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-16T03:02:41+0000 [INFO] [subfinder] 'yahoo.com': 120754 subdominios encontrados.
+2026-07-16T03:02:41+0000 [INFO] Procesando: aol.com
+2026-07-16T03:02:41+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-16T03:02:51+0000 [INFO] [subfinder] 'aol.com': 3471 subdominios encontrados.
+2026-07-16T03:02:51+0000 [INFO] Procesando: flickr.com
+2026-07-16T03:02:51+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-16T03:04:51+0000 [INFO] [subfinder] 'flickr.com': 259 subdominios encontrados.
+2026-07-16T03:04:51+0000 [INFO] Procesando: mil
+2026-07-16T03:04:51+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-16T03:06:52+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+2026-07-16T03:06:52+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 131591 subdominios.
+2026-07-16T03:06:52+0000 [INFO] Discovery finalizado correctamente.
+2026-07-16T03:06:52+0000 [INFO] ============================================================
+2026-07-16T05:02:55+0000 [INFO] ============================================================
+2026-07-16T05:02:55+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-16T05:02:55+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-16T05:02:55+0000 [INFO] Procesando: mongodb.com
+2026-07-16T05:02:55+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-16T05:04:56+0000 [INFO] [subfinder] 'mongodb.com': 6441 subdominios encontrados.
+2026-07-16T05:04:56+0000 [INFO] Procesando: elastic.co
+2026-07-16T05:04:56+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-16T05:05:18+0000 [INFO] ============================================================
+2026-07-16T05:05:18+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-16T05:05:18+0000 [INFO] Cargados 8 dominio(s) objetivo.
+2026-07-16T05:05:18+0000 [INFO] Procesando: freshworks.com
+2026-07-16T05:05:18+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-16T05:07:19+0000 [INFO] [subfinder] 'freshworks.com': 2699 subdominios encontrados.
+2026-07-16T05:07:19+0000 [INFO] Procesando: freshservice.com
+2026-07-16T05:07:19+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-16T05:09:20+0000 [INFO] [subfinder] 'freshservice.com': 44364 subdominios encontrados.
+2026-07-16T05:09:20+0000 [INFO] Procesando: freshchat.com
+2026-07-16T05:09:20+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-16T05:11:20+0000 [INFO] [subfinder] 'freshchat.com': 866 subdominios encontrados.
+2026-07-16T05:11:20+0000 [INFO] Procesando: vendhq.com
+2026-07-16T05:11:20+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-16T05:13:21+0000 [INFO] [subfinder] 'vendhq.com': 403 subdominios encontrados.
+2026-07-16T05:13:21+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-16T05:13:21+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-16T05:15:22+0000 [INFO] [subfinder] 'lightspeedhq.com': 170 subdominios encontrados.
+2026-07-16T05:15:22+0000 [INFO] Procesando: frontegg.com
+2026-07-16T05:15:22+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-16T05:17:22+0000 [INFO] [subfinder] 'frontegg.com': 249 subdominios encontrados.
+2026-07-16T05:17:22+0000 [INFO] Procesando: shopify.com
+2026-07-16T05:17:22+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-16T05:19:23+0000 [INFO] [subfinder] 'shopify.com': 25056 subdominios encontrados.
+2026-07-16T05:19:23+0000 [INFO] Procesando: nextcloud.com
+2026-07-16T05:19:23+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-16T05:21:24+0000 [INFO] [subfinder] 'nextcloud.com': 1483 subdominios encontrados.
+2026-07-16T05:21:24+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 75290 subdominios.
+2026-07-16T05:21:24+0000 [INFO] Discovery finalizado correctamente.
+2026-07-16T05:21:24+0000 [INFO] ============================================================
+2026-07-17T03:00:01+0000 [INFO] ============================================================
+2026-07-17T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-17T03:00:01+0000 [INFO] Cargados 8 dominio(s) objetivo.
+2026-07-17T03:00:01+0000 [INFO] Procesando: freshworks.com
+2026-07-17T03:00:01+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-17T03:00:51+0000 [INFO] [subfinder] 'freshworks.com': 2990 subdominios encontrados.
+2026-07-17T03:00:51+0000 [INFO] Procesando: freshservice.com
+2026-07-17T03:00:51+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-17T03:02:18+0000 [INFO] [subfinder] 'freshservice.com': 44418 subdominios encontrados.
+2026-07-17T03:02:18+0000 [INFO] Procesando: freshchat.com
+2026-07-17T03:02:18+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-17T03:02:20+0000 [INFO] [subfinder] 'freshchat.com': 872 subdominios encontrados.
+2026-07-17T03:02:20+0000 [INFO] Procesando: vendhq.com
+2026-07-17T03:02:20+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-17T03:02:22+0000 [INFO] [subfinder] 'vendhq.com': 396 subdominios encontrados.
+2026-07-17T03:02:22+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-17T03:02:22+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-17T03:04:22+0000 [INFO] [subfinder] 'lightspeedhq.com': 155 subdominios encontrados.
+2026-07-17T03:04:22+0000 [INFO] Procesando: frontegg.com
+2026-07-17T03:04:22+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-17T03:06:23+0000 [INFO] [subfinder] 'frontegg.com': 249 subdominios encontrados.
+2026-07-17T03:06:23+0000 [INFO] Procesando: shopify.com
+2026-07-17T03:06:23+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-17T03:08:24+0000 [INFO] [subfinder] 'shopify.com': 25062 subdominios encontrados.
+2026-07-17T03:08:24+0000 [INFO] Procesando: nextcloud.com
+2026-07-17T03:08:24+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-17T03:10:24+0000 [INFO] [subfinder] 'nextcloud.com': 1483 subdominios encontrados.
+2026-07-17T03:10:24+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 75625 subdominios.
+2026-07-17T03:10:24+0000 [INFO] Discovery finalizado correctamente.
+2026-07-17T03:10:24+0000 [INFO] ============================================================
+2026-07-18T03:00:02+0000 [INFO] ============================================================
+2026-07-18T03:00:02+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-18T03:00:02+0000 [INFO] Cargados 57 dominio(s) objetivo.
+2026-07-18T03:00:02+0000 [INFO] Procesando: shopify.com
+2026-07-18T03:00:02+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-18T03:00:49+0000 [INFO] [subfinder] 'shopify.com': 25071 subdominios encontrados.
+2026-07-18T03:00:49+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-18T03:00:49+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-18T03:01:16+0000 [INFO] [subfinder] 'lightspeedhq.com': 170 subdominios encontrados.
+2026-07-18T03:01:16+0000 [INFO] Procesando: vendhq.com
+2026-07-18T03:01:16+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-18T03:02:17+0000 [INFO] [subfinder] 'vendhq.com': 396 subdominios encontrados.
+2026-07-18T03:02:17+0000 [INFO] Procesando: etsy.com
+2026-07-18T03:02:17+0000 [INFO] [subfinder] Escaneando 'etsy.com'...
+2026-07-18T03:03:52+0000 [INFO] [subfinder] 'etsy.com': 130099 subdominios encontrados.
+2026-07-18T03:03:52+0000 [INFO] Procesando: ebay.com
+2026-07-18T03:03:52+0000 [INFO] [subfinder] Escaneando 'ebay.com'...
+2026-07-18T03:05:52+0000 [INFO] [subfinder] 'ebay.com': 6772 subdominios encontrados.
+2026-07-18T03:05:52+0000 [INFO] Procesando: mercari.com
+2026-07-18T03:05:52+0000 [INFO] [subfinder] Escaneando 'mercari.com'...
+2026-07-18T03:07:53+0000 [INFO] [subfinder] 'mercari.com': 285 subdominios encontrados.
+2026-07-18T03:07:53+0000 [INFO] Procesando: freshworks.com
+2026-07-18T03:07:53+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-18T03:09:54+0000 [INFO] [subfinder] 'freshworks.com': 2967 subdominios encontrados.
+2026-07-18T03:09:54+0000 [INFO] Procesando: freshdesk.com
+2026-07-18T03:09:54+0000 [INFO] [subfinder] Escaneando 'freshdesk.com'...
+2026-07-18T03:11:54+0000 [INFO] [subfinder] 'freshdesk.com': 47417 subdominios encontrados.
+2026-07-18T03:11:54+0000 [INFO] Procesando: freshservice.com
+2026-07-18T03:11:54+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-18T03:13:55+0000 [INFO] [subfinder] 'freshservice.com': 28818 subdominios encontrados.
+2026-07-18T03:13:55+0000 [INFO] Procesando: freshchat.com
+2026-07-18T03:13:55+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-18T03:15:56+0000 [INFO] [subfinder] 'freshchat.com': 872 subdominios encontrados.
+2026-07-18T03:15:56+0000 [INFO] Procesando: nextcloud.com
+2026-07-18T03:15:56+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-18T03:17:56+0000 [INFO] [subfinder] 'nextcloud.com': 1483 subdominios encontrados.
+2026-07-18T03:17:56+0000 [INFO] Procesando: asana.com
+2026-07-18T03:17:56+0000 [INFO] [subfinder] Escaneando 'asana.com'...
+2026-07-18T03:19:57+0000 [INFO] [subfinder] 'asana.com': 2300 subdominios encontrados.
+2026-07-18T03:19:57+0000 [INFO] Procesando: atlassian.com
+2026-07-18T03:19:57+0000 [INFO] [subfinder] Escaneando 'atlassian.com'...
+2026-07-18T03:21:58+0000 [INFO] [subfinder] 'atlassian.com': 26580 subdominios encontrados.
+2026-07-18T03:21:58+0000 [INFO] Procesando: atlassian.net
+2026-07-18T03:21:58+0000 [INFO] [subfinder] Escaneando 'atlassian.net'...
+2026-07-18T03:23:58+0000 [INFO] [subfinder] 'atlassian.net': 35101 subdominios encontrados.
+2026-07-18T03:23:58+0000 [INFO] Procesando: hubspot.com
+2026-07-18T03:23:58+0000 [INFO] [subfinder] Escaneando 'hubspot.com'...
+2026-07-18T03:25:59+0000 [INFO] [subfinder] 'hubspot.com': 1417 subdominios encontrados.
+2026-07-18T03:25:59+0000 [INFO] Procesando: zoom.us
+2026-07-18T03:25:59+0000 [INFO] [subfinder] Escaneando 'zoom.us'...
+2026-07-18T03:28:00+0000 [INFO] [subfinder] 'zoom.us': 45517 subdominios encontrados.
+2026-07-18T03:28:00+0000 [INFO] Procesando: slack.com
+2026-07-18T03:28:00+0000 [INFO] [subfinder] Escaneando 'slack.com'...
+2026-07-18T03:30:01+0000 [INFO] [subfinder] 'slack.com': 71489 subdominios encontrados.
+2026-07-18T03:30:01+0000 [INFO] Procesando: notion.so
+2026-07-18T03:30:01+0000 [INFO] [subfinder] Escaneando 'notion.so'...
+2026-07-18T03:32:01+0000 [INFO] [subfinder] 'notion.so': 193 subdominios encontrados.
+2026-07-18T03:32:01+0000 [INFO] Procesando: paypal.com
+2026-07-18T03:32:01+0000 [INFO] [subfinder] Escaneando 'paypal.com'...
+2026-07-18T03:34:02+0000 [INFO] [subfinder] 'paypal.com': 3468 subdominios encontrados.
+2026-07-18T03:34:02+0000 [INFO] Procesando: stripe.com
+2026-07-18T03:34:02+0000 [INFO] [subfinder] Escaneando 'stripe.com'...
+2026-07-18T03:36:02+0000 [INFO] [subfinder] 'stripe.com': 585 subdominios encontrados.
+2026-07-18T03:36:02+0000 [INFO] Procesando: square.com
+2026-07-18T03:36:02+0000 [INFO] [subfinder] Escaneando 'square.com'...
+2026-07-18T03:38:03+0000 [INFO] [subfinder] 'square.com': 41 subdominios encontrados.
+2026-07-18T03:38:03+0000 [INFO] Procesando: coinbase.com
+2026-07-18T03:38:03+0000 [INFO] [subfinder] Escaneando 'coinbase.com'...
+2026-07-18T03:40:04+0000 [INFO] [subfinder] 'coinbase.com': 515 subdominios encontrados.
+2026-07-18T03:40:04+0000 [INFO] Procesando: kraken.com
+2026-07-18T03:40:04+0000 [INFO] [subfinder] Escaneando 'kraken.com'...
+2026-07-18T03:42:04+0000 [INFO] [subfinder] 'kraken.com': 1225 subdominios encontrados.
+2026-07-18T03:42:04+0000 [INFO] Procesando: binance.com
+2026-07-18T03:42:04+0000 [INFO] [subfinder] Escaneando 'binance.com'...
+2026-07-18T03:44:05+0000 [INFO] [subfinder] 'binance.com': 748 subdominios encontrados.
+2026-07-18T03:44:05+0000 [INFO] Procesando: robinhood.com
+2026-07-18T03:44:05+0000 [INFO] [subfinder] Escaneando 'robinhood.com'...
+2026-07-18T03:46:05+0000 [INFO] [subfinder] 'robinhood.com': 1135 subdominios encontrados.
+2026-07-18T03:46:05+0000 [INFO] Procesando: uber.com
+2026-07-18T03:46:05+0000 [INFO] [subfinder] Escaneando 'uber.com'...
+2026-07-18T03:48:06+0000 [INFO] [subfinder] 'uber.com': 931 subdominios encontrados.
+2026-07-18T03:48:06+0000 [INFO] Procesando: lyft.com
+2026-07-18T03:48:06+0000 [INFO] [subfinder] Escaneando 'lyft.com'...
+2026-07-18T03:50:07+0000 [INFO] [subfinder] 'lyft.com': 122 subdominios encontrados.
+2026-07-18T03:50:07+0000 [INFO] Procesando: airbnb.com
+2026-07-18T03:50:07+0000 [INFO] [subfinder] Escaneando 'airbnb.com'...
+2026-07-18T03:52:07+0000 [INFO] [subfinder] 'airbnb.com': 737 subdominios encontrados.
+2026-07-18T03:52:07+0000 [INFO] Procesando: booking.com
+2026-07-18T03:52:07+0000 [INFO] [subfinder] Escaneando 'booking.com'...
+2026-07-18T03:54:08+0000 [INFO] [subfinder] 'booking.com': 1639 subdominios encontrados.
+2026-07-18T03:54:08+0000 [INFO] Procesando: agoda.com
+2026-07-18T03:54:08+0000 [INFO] [subfinder] Escaneando 'agoda.com'...
+2026-07-18T03:56:09+0000 [INFO] [subfinder] 'agoda.com': 563 subdominios encontrados.
+2026-07-18T03:56:09+0000 [INFO] Procesando: grab.com
+2026-07-18T03:56:09+0000 [INFO] [subfinder] Escaneando 'grab.com'...
+2026-07-18T03:58:09+0000 [INFO] [subfinder] 'grab.com': 14633 subdominios encontrados.
+2026-07-18T03:58:09+0000 [INFO] Procesando: doordash.com
+2026-07-18T03:58:09+0000 [INFO] [subfinder] Escaneando 'doordash.com'...
+2026-07-18T04:00:10+0000 [INFO] [subfinder] 'doordash.com': 380 subdominios encontrados.
+2026-07-18T04:00:10+0000 [INFO] Procesando: instacart.com
+2026-07-18T04:00:10+0000 [INFO] [subfinder] Escaneando 'instacart.com'...
+2026-07-18T04:02:11+0000 [INFO] [subfinder] 'instacart.com': 1011 subdominios encontrados.
+2026-07-18T04:02:11+0000 [INFO] Procesando: snapchat.com
+2026-07-18T04:02:11+0000 [INFO] [subfinder] Escaneando 'snapchat.com'...
+2026-07-18T04:04:11+0000 [INFO] [subfinder] 'snapchat.com': 1031 subdominios encontrados.
+2026-07-18T04:04:11+0000 [INFO] Procesando: tiktok.com
+2026-07-18T04:04:11+0000 [INFO] [subfinder] Escaneando 'tiktok.com'...
+2026-07-18T04:06:12+0000 [INFO] [subfinder] 'tiktok.com': 684 subdominios encontrados.
+2026-07-18T04:06:12+0000 [INFO] Procesando: twitch.tv
+2026-07-18T04:06:12+0000 [INFO] [subfinder] Escaneando 'twitch.tv'...
+2026-07-18T04:08:13+0000 [INFO] [subfinder] 'twitch.tv': 716 subdominios encontrados.
+2026-07-18T04:08:13+0000 [INFO] Procesando: spotify.com
+2026-07-18T04:08:13+0000 [INFO] [subfinder] Escaneando 'spotify.com'...
+2026-07-18T04:10:13+0000 [INFO] [subfinder] 'spotify.com': 975 subdominios encontrados.
+2026-07-18T04:10:13+0000 [INFO] Procesando: roblox.com
+2026-07-18T04:10:13+0000 [INFO] [subfinder] Escaneando 'roblox.com'...
+2026-07-18T04:12:14+0000 [INFO] [subfinder] 'roblox.com': 1276 subdominios encontrados.
+2026-07-18T04:12:14+0000 [INFO] Procesando: epicgames.com
+2026-07-18T04:12:14+0000 [INFO] [subfinder] Escaneando 'epicgames.com'...
+2026-07-18T04:14:14+0000 [INFO] [subfinder] 'epicgames.com': 3323 subdominios encontrados.
+2026-07-18T04:14:14+0000 [INFO] Procesando: discord.com
+2026-07-18T04:14:14+0000 [INFO] [subfinder] Escaneando 'discord.com'...
+2026-07-18T04:16:15+0000 [INFO] [subfinder] 'discord.com': 112 subdominios encontrados.
+2026-07-18T04:16:15+0000 [INFO] Procesando: frontegg.com
+2026-07-18T04:16:15+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-18T04:18:16+0000 [INFO] [subfinder] 'frontegg.com': 906 subdominios encontrados.
+2026-07-18T04:18:16+0000 [INFO] Procesando: auth0.com
+2026-07-18T04:18:16+0000 [INFO] [subfinder] Escaneando 'auth0.com'...
+2026-07-18T04:20:23+0000 [INFO] [subfinder] 'auth0.com': 67065 subdominios encontrados.
+2026-07-18T04:20:23+0000 [INFO] Procesando: okta.com
+2026-07-18T04:20:23+0000 [INFO] [subfinder] Escaneando 'okta.com'...
+2026-07-18T04:22:24+0000 [INFO] [subfinder] 'okta.com': 27733 subdominios encontrados.
+2026-07-18T04:22:24+0000 [INFO] Procesando: cloudflare.com
+2026-07-18T04:22:24+0000 [INFO] [subfinder] Escaneando 'cloudflare.com'...
+2026-07-18T04:24:24+0000 [INFO] [subfinder] 'cloudflare.com': 15555 subdominios encontrados.
+2026-07-18T04:24:24+0000 [INFO] Procesando: fastly.com
+2026-07-18T04:24:24+0000 [INFO] [subfinder] Escaneando 'fastly.com'...
+2026-07-18T04:26:25+0000 [INFO] [subfinder] 'fastly.com': 137 subdominios encontrados.
+2026-07-18T04:26:25+0000 [INFO] Procesando: twilio.com
+2026-07-18T04:26:25+0000 [INFO] [subfinder] Escaneando 'twilio.com'...
+2026-07-18T04:28:25+0000 [INFO] [subfinder] 'twilio.com': 3973 subdominios encontrados.
+2026-07-18T04:28:25+0000 [INFO] Procesando: sendgrid.com
+2026-07-18T04:28:25+0000 [INFO] [subfinder] Escaneando 'sendgrid.com'...
+2026-07-18T04:30:26+0000 [INFO] [subfinder] 'sendgrid.com': 184 subdominios encontrados.
+2026-07-18T04:30:26+0000 [INFO] Procesando: digitalocean.com
+2026-07-18T04:30:26+0000 [INFO] [subfinder] Escaneando 'digitalocean.com'...
+2026-07-18T04:32:27+0000 [INFO] [subfinder] 'digitalocean.com': 347 subdominios encontrados.
+2026-07-18T04:32:27+0000 [INFO] Procesando: hashicorp.com
+2026-07-18T04:32:27+0000 [INFO] [subfinder] Escaneando 'hashicorp.com'...
+2026-07-18T04:34:27+0000 [INFO] [subfinder] 'hashicorp.com': 185 subdominios encontrados.
+2026-07-18T04:34:27+0000 [INFO] Procesando: gitlab.com
+2026-07-18T04:34:27+0000 [INFO] [subfinder] Escaneando 'gitlab.com'...
+2026-07-18T04:36:28+0000 [INFO] [subfinder] 'gitlab.com': 327 subdominios encontrados.
+2026-07-18T04:36:28+0000 [INFO] Procesando: github.com
+2026-07-18T04:36:28+0000 [INFO] [subfinder] Escaneando 'github.com'...
+2026-07-18T04:38:29+0000 [INFO] [subfinder] 'github.com': 4340 subdominios encontrados.
+2026-07-18T04:38:29+0000 [INFO] Procesando: yahoo.com
+2026-07-18T04:38:29+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-18T04:40:30+0000 [INFO] [subfinder] 'yahoo.com': 31123 subdominios encontrados.
+2026-07-18T04:40:30+0000 [INFO] Procesando: ibm.com
+2026-07-18T04:40:30+0000 [INFO] [subfinder] Escaneando 'ibm.com'...
+2026-07-18T04:42:30+0000 [INFO] [subfinder] 'ibm.com': 2093 subdominios encontrados.
+2026-07-18T04:42:30+0000 [INFO] Procesando: intel.com
+2026-07-18T04:42:30+0000 [INFO] [subfinder] Escaneando 'intel.com'...
+2026-07-18T04:44:31+0000 [INFO] [subfinder] 'intel.com': 9650 subdominios encontrados.
+2026-07-18T04:44:31+0000 [INFO] Procesando: dell.com
+2026-07-18T04:44:31+0000 [INFO] [subfinder] Escaneando 'dell.com'...
+2026-07-18T04:46:31+0000 [INFO] [subfinder] 'dell.com': 7781 subdominios encontrados.
+2026-07-18T04:46:31+0000 [INFO] Procesando: tesla.com
+2026-07-18T04:46:31+0000 [INFO] [subfinder] Escaneando 'tesla.com'...
+2026-07-18T04:48:32+0000 [INFO] [subfinder] 'tesla.com': 438 subdominios encontrados.
+2026-07-18T04:48:32+0000 [INFO] Procesando: ford.com
+2026-07-18T04:48:32+0000 [INFO] [subfinder] Escaneando 'ford.com'...
+2026-07-18T04:50:33+0000 [INFO] [subfinder] 'ford.com': 12698 subdominios encontrados.
+2026-07-18T04:50:34+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 647332 subdominios.
+2026-07-18T04:50:34+0000 [INFO] Discovery finalizado correctamente.
+2026-07-18T04:50:34+0000 [INFO] ============================================================
+2026-07-19T03:00:01+0000 [INFO] ============================================================
+2026-07-19T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-19T03:00:01+0000 [INFO] Cargados 57 dominio(s) objetivo.
+2026-07-19T03:00:02+0000 [INFO] Procesando: shopify.com
+2026-07-19T03:00:02+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-19T03:02:03+0000 [INFO] [subfinder] 'shopify.com': 25063 subdominios encontrados.
+2026-07-19T03:02:03+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-19T03:02:03+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-19T03:02:04+0000 [INFO] [subfinder] 'lightspeedhq.com': 155 subdominios encontrados.
+2026-07-19T03:02:04+0000 [INFO] Procesando: vendhq.com
+2026-07-19T03:02:04+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-19T03:02:05+0000 [INFO] [subfinder] 'vendhq.com': 396 subdominios encontrados.
+2026-07-19T03:02:05+0000 [INFO] Procesando: etsy.com
+2026-07-19T03:02:05+0000 [INFO] [subfinder] Escaneando 'etsy.com'...
+2026-07-19T03:03:49+0000 [INFO] [subfinder] 'etsy.com': 130280 subdominios encontrados.
+2026-07-19T03:03:49+0000 [INFO] Procesando: ebay.com
+2026-07-19T03:03:49+0000 [INFO] [subfinder] Escaneando 'ebay.com'...
+2026-07-19T03:05:49+0000 [INFO] [subfinder] 'ebay.com': 8344 subdominios encontrados.
+2026-07-19T03:05:49+0000 [INFO] Procesando: mercari.com
+2026-07-19T03:05:49+0000 [INFO] [subfinder] Escaneando 'mercari.com'...
+2026-07-19T03:07:50+0000 [INFO] [subfinder] 'mercari.com': 284 subdominios encontrados.
+2026-07-19T03:07:50+0000 [INFO] Procesando: freshworks.com
+2026-07-19T03:07:50+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-19T03:09:50+0000 [INFO] [subfinder] 'freshworks.com': 2967 subdominios encontrados.
+2026-07-19T03:09:50+0000 [INFO] Procesando: freshdesk.com
+2026-07-19T03:09:50+0000 [INFO] [subfinder] Escaneando 'freshdesk.com'...
+2026-07-19T03:11:51+0000 [INFO] [subfinder] 'freshdesk.com': 47492 subdominios encontrados.
+2026-07-19T03:11:51+0000 [INFO] Procesando: freshservice.com
+2026-07-19T03:11:51+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-19T03:13:52+0000 [INFO] [subfinder] 'freshservice.com': 28837 subdominios encontrados.
+2026-07-19T03:13:52+0000 [INFO] Procesando: freshchat.com
+2026-07-19T03:13:52+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-19T03:15:53+0000 [INFO] [subfinder] 'freshchat.com': 872 subdominios encontrados.
+2026-07-19T03:15:53+0000 [INFO] Procesando: nextcloud.com
+2026-07-19T03:15:53+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-19T03:17:53+0000 [INFO] [subfinder] 'nextcloud.com': 1502 subdominios encontrados.
+2026-07-19T03:17:53+0000 [INFO] Procesando: asana.com
+2026-07-19T03:17:53+0000 [INFO] [subfinder] Escaneando 'asana.com'...
+2026-07-19T03:19:54+0000 [INFO] [subfinder] 'asana.com': 2304 subdominios encontrados.
+2026-07-19T03:19:54+0000 [INFO] Procesando: atlassian.com
+2026-07-19T03:19:54+0000 [INFO] [subfinder] Escaneando 'atlassian.com'...
+2026-07-19T03:21:55+0000 [INFO] [subfinder] 'atlassian.com': 25278 subdominios encontrados.
+2026-07-19T03:21:55+0000 [INFO] Procesando: atlassian.net
+2026-07-19T03:21:55+0000 [INFO] [subfinder] Escaneando 'atlassian.net'...
+2026-07-19T03:23:55+0000 [INFO] [subfinder] 'atlassian.net': 35615 subdominios encontrados.
+2026-07-19T03:23:55+0000 [INFO] Procesando: hubspot.com
+2026-07-19T03:23:55+0000 [INFO] [subfinder] Escaneando 'hubspot.com'...
+2026-07-19T03:25:56+0000 [INFO] [subfinder] 'hubspot.com': 1417 subdominios encontrados.
+2026-07-19T03:25:56+0000 [INFO] Procesando: zoom.us
+2026-07-19T03:25:56+0000 [INFO] [subfinder] Escaneando 'zoom.us'...
+2026-07-19T03:27:57+0000 [INFO] [subfinder] 'zoom.us': 43917 subdominios encontrados.
+2026-07-19T03:27:57+0000 [INFO] Procesando: slack.com
+2026-07-19T03:27:57+0000 [INFO] [subfinder] Escaneando 'slack.com'...
+2026-07-19T03:29:58+0000 [INFO] [subfinder] 'slack.com': 72897 subdominios encontrados.
+2026-07-19T03:29:58+0000 [INFO] Procesando: notion.so
+2026-07-19T03:29:58+0000 [INFO] [subfinder] Escaneando 'notion.so'...
+2026-07-19T03:31:58+0000 [INFO] [subfinder] 'notion.so': 193 subdominios encontrados.
+2026-07-19T03:31:58+0000 [INFO] Procesando: paypal.com
+2026-07-19T03:31:58+0000 [INFO] [subfinder] Escaneando 'paypal.com'...
+2026-07-19T03:33:59+0000 [INFO] [subfinder] 'paypal.com': 3470 subdominios encontrados.
+2026-07-19T03:33:59+0000 [INFO] Procesando: stripe.com
+2026-07-19T03:33:59+0000 [INFO] [subfinder] Escaneando 'stripe.com'...
+2026-07-19T03:36:00+0000 [INFO] [subfinder] 'stripe.com': 585 subdominios encontrados.
+2026-07-19T03:36:00+0000 [INFO] Procesando: square.com
+2026-07-19T03:36:00+0000 [INFO] [subfinder] Escaneando 'square.com'...
+2026-07-19T03:38:00+0000 [INFO] [subfinder] 'square.com': 53 subdominios encontrados.
+2026-07-19T03:38:00+0000 [INFO] Procesando: coinbase.com
+2026-07-19T03:38:00+0000 [INFO] [subfinder] Escaneando 'coinbase.com'...
+2026-07-19T03:40:01+0000 [INFO] [subfinder] 'coinbase.com': 494 subdominios encontrados.
+2026-07-19T03:40:01+0000 [INFO] Procesando: kraken.com
+2026-07-19T03:40:01+0000 [INFO] [subfinder] Escaneando 'kraken.com'...
+2026-07-19T03:42:02+0000 [INFO] [subfinder] 'kraken.com': 1225 subdominios encontrados.
+2026-07-19T03:42:02+0000 [INFO] Procesando: binance.com
+2026-07-19T03:42:02+0000 [INFO] [subfinder] Escaneando 'binance.com'...
+2026-07-19T03:44:02+0000 [INFO] [subfinder] 'binance.com': 749 subdominios encontrados.
+2026-07-19T03:44:02+0000 [INFO] Procesando: robinhood.com
+2026-07-19T03:44:02+0000 [INFO] [subfinder] Escaneando 'robinhood.com'...
+2026-07-19T03:46:03+0000 [INFO] [subfinder] 'robinhood.com': 1119 subdominios encontrados.
+2026-07-19T03:46:03+0000 [INFO] Procesando: uber.com
+2026-07-19T03:46:03+0000 [INFO] [subfinder] Escaneando 'uber.com'...
+2026-07-19T03:48:04+0000 [INFO] [subfinder] 'uber.com': 457 subdominios encontrados.
+2026-07-19T03:48:04+0000 [INFO] Procesando: lyft.com
+2026-07-19T03:48:04+0000 [INFO] [subfinder] Escaneando 'lyft.com'...
+2026-07-19T03:50:04+0000 [INFO] [subfinder] 'lyft.com': 131 subdominios encontrados.
+2026-07-19T03:50:04+0000 [INFO] Procesando: airbnb.com
+2026-07-19T03:50:04+0000 [INFO] [subfinder] Escaneando 'airbnb.com'...
+2026-07-19T03:52:05+0000 [INFO] [subfinder] 'airbnb.com': 762 subdominios encontrados.
+2026-07-19T03:52:05+0000 [INFO] Procesando: booking.com
+2026-07-19T03:52:05+0000 [INFO] [subfinder] Escaneando 'booking.com'...
+2026-07-19T03:54:05+0000 [INFO] [subfinder] 'booking.com': 2002 subdominios encontrados.
+2026-07-19T03:54:05+0000 [INFO] Procesando: agoda.com
+2026-07-19T03:54:05+0000 [INFO] [subfinder] Escaneando 'agoda.com'...
+2026-07-19T03:56:06+0000 [INFO] [subfinder] 'agoda.com': 563 subdominios encontrados.
+2026-07-19T03:56:06+0000 [INFO] Procesando: grab.com
+2026-07-19T03:56:06+0000 [INFO] [subfinder] Escaneando 'grab.com'...
+2026-07-19T03:58:07+0000 [INFO] [subfinder] 'grab.com': 14495 subdominios encontrados.
+2026-07-19T03:58:07+0000 [INFO] Procesando: doordash.com
+2026-07-19T03:58:07+0000 [INFO] [subfinder] Escaneando 'doordash.com'...
+2026-07-19T04:00:07+0000 [INFO] [subfinder] 'doordash.com': 380 subdominios encontrados.
+2026-07-19T04:00:07+0000 [INFO] Procesando: instacart.com
+2026-07-19T04:00:07+0000 [INFO] [subfinder] Escaneando 'instacart.com'...
+2026-07-19T04:02:08+0000 [INFO] [subfinder] 'instacart.com': 1011 subdominios encontrados.
+2026-07-19T04:02:08+0000 [INFO] Procesando: snapchat.com
+2026-07-19T04:02:08+0000 [INFO] [subfinder] Escaneando 'snapchat.com'...
+2026-07-19T04:04:09+0000 [INFO] [subfinder] 'snapchat.com': 1031 subdominios encontrados.
+2026-07-19T04:04:09+0000 [INFO] Procesando: tiktok.com
+2026-07-19T04:04:09+0000 [INFO] [subfinder] Escaneando 'tiktok.com'...
+2026-07-19T04:06:09+0000 [INFO] [subfinder] 'tiktok.com': 702 subdominios encontrados.
+2026-07-19T04:06:09+0000 [INFO] Procesando: twitch.tv
+2026-07-19T04:06:09+0000 [INFO] [subfinder] Escaneando 'twitch.tv'...
+2026-07-19T04:08:10+0000 [INFO] [subfinder] 'twitch.tv': 843 subdominios encontrados.
+2026-07-19T04:08:10+0000 [INFO] Procesando: spotify.com
+2026-07-19T04:08:10+0000 [INFO] [subfinder] Escaneando 'spotify.com'...
+2026-07-19T04:10:11+0000 [INFO] [subfinder] 'spotify.com': 975 subdominios encontrados.
+2026-07-19T04:10:11+0000 [INFO] Procesando: roblox.com
+2026-07-19T04:10:11+0000 [INFO] [subfinder] Escaneando 'roblox.com'...
+2026-07-19T04:12:11+0000 [INFO] [subfinder] 'roblox.com': 1276 subdominios encontrados.
+2026-07-19T04:12:11+0000 [INFO] Procesando: epicgames.com
+2026-07-19T04:12:11+0000 [INFO] [subfinder] Escaneando 'epicgames.com'...
+2026-07-19T04:14:12+0000 [INFO] [subfinder] 'epicgames.com': 3682 subdominios encontrados.
+2026-07-19T04:14:12+0000 [INFO] Procesando: discord.com
+2026-07-19T04:14:12+0000 [INFO] [subfinder] Escaneando 'discord.com'...
+2026-07-19T04:16:13+0000 [INFO] [subfinder] 'discord.com': 112 subdominios encontrados.
+2026-07-19T04:16:13+0000 [INFO] Procesando: frontegg.com
+2026-07-19T04:16:13+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-19T04:18:13+0000 [INFO] [subfinder] 'frontegg.com': 223 subdominios encontrados.
+2026-07-19T04:18:13+0000 [INFO] Procesando: auth0.com
+2026-07-19T04:18:13+0000 [INFO] [subfinder] Escaneando 'auth0.com'...
+2026-07-19T04:20:37+0000 [INFO] [subfinder] 'auth0.com': 67510 subdominios encontrados.
+2026-07-19T04:20:37+0000 [INFO] Procesando: okta.com
+2026-07-19T04:20:37+0000 [INFO] [subfinder] Escaneando 'okta.com'...
+2026-07-19T04:22:38+0000 [INFO] [subfinder] 'okta.com': 27708 subdominios encontrados.
+2026-07-19T04:22:38+0000 [INFO] Procesando: cloudflare.com
+2026-07-19T04:22:38+0000 [INFO] [subfinder] Escaneando 'cloudflare.com'...
+2026-07-19T04:24:39+0000 [INFO] [subfinder] 'cloudflare.com': 18428 subdominios encontrados.
+2026-07-19T04:24:39+0000 [INFO] Procesando: fastly.com
+2026-07-19T04:24:39+0000 [INFO] [subfinder] Escaneando 'fastly.com'...
+2026-07-19T04:26:39+0000 [INFO] [subfinder] 'fastly.com': 159 subdominios encontrados.
+2026-07-19T04:26:39+0000 [INFO] Procesando: twilio.com
+2026-07-19T04:26:39+0000 [INFO] [subfinder] Escaneando 'twilio.com'...
+2026-07-19T04:28:40+0000 [INFO] [subfinder] 'twilio.com': 3973 subdominios encontrados.
+2026-07-19T04:28:40+0000 [INFO] Procesando: sendgrid.com
+2026-07-19T04:28:40+0000 [INFO] [subfinder] Escaneando 'sendgrid.com'...
+2026-07-19T04:30:41+0000 [INFO] [subfinder] 'sendgrid.com': 204 subdominios encontrados.
+2026-07-19T04:30:41+0000 [INFO] Procesando: digitalocean.com
+2026-07-19T04:30:41+0000 [INFO] [subfinder] Escaneando 'digitalocean.com'...
+2026-07-19T04:32:41+0000 [INFO] [subfinder] 'digitalocean.com': 347 subdominios encontrados.
+2026-07-19T04:32:41+0000 [INFO] Procesando: hashicorp.com
+2026-07-19T04:32:41+0000 [INFO] [subfinder] Escaneando 'hashicorp.com'...
+2026-07-19T04:34:42+0000 [INFO] [subfinder] 'hashicorp.com': 200 subdominios encontrados.
+2026-07-19T04:34:42+0000 [INFO] Procesando: gitlab.com
+2026-07-19T04:34:42+0000 [INFO] [subfinder] Escaneando 'gitlab.com'...
+2026-07-19T04:36:43+0000 [INFO] [subfinder] 'gitlab.com': 630 subdominios encontrados.
+2026-07-19T04:36:43+0000 [INFO] Procesando: github.com
+2026-07-19T04:36:43+0000 [INFO] [subfinder] Escaneando 'github.com'...
+2026-07-19T04:38:44+0000 [INFO] [subfinder] 'github.com': 41690 subdominios encontrados.
+2026-07-19T04:38:44+0000 [INFO] Procesando: yahoo.com
+2026-07-19T04:38:44+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-19T04:40:45+0000 [INFO] [subfinder] 'yahoo.com': 121958 subdominios encontrados.
+2026-07-19T04:40:45+0000 [INFO] Procesando: ibm.com
+2026-07-19T04:40:45+0000 [INFO] [subfinder] Escaneando 'ibm.com'...
+2026-07-19T04:42:46+0000 [INFO] [subfinder] 'ibm.com': 2093 subdominios encontrados.
+2026-07-19T04:42:46+0000 [INFO] Procesando: intel.com
+2026-07-19T04:42:46+0000 [INFO] [subfinder] Escaneando 'intel.com'...
+2026-07-19T04:44:47+0000 [INFO] [subfinder] 'intel.com': 9276 subdominios encontrados.
+2026-07-19T04:44:47+0000 [INFO] Procesando: dell.com
+2026-07-19T04:44:47+0000 [INFO] [subfinder] Escaneando 'dell.com'...
+2026-07-19T04:46:47+0000 [INFO] [subfinder] 'dell.com': 8131 subdominios encontrados.
+2026-07-19T04:46:47+0000 [INFO] Procesando: tesla.com
+2026-07-19T04:46:47+0000 [INFO] [subfinder] Escaneando 'tesla.com'...
+2026-07-19T04:48:48+0000 [INFO] [subfinder] 'tesla.com': 438 subdominios encontrados.
+2026-07-19T04:48:48+0000 [INFO] Procesando: ford.com
+2026-07-19T04:48:48+0000 [INFO] [subfinder] Escaneando 'ford.com'...
+2026-07-19T04:50:49+0000 [INFO] [subfinder] 'ford.com': 15771 subdominios encontrados.
+2026-07-19T04:50:50+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 782669 subdominios.
+2026-07-19T04:50:50+0000 [INFO] Discovery finalizado correctamente.
+2026-07-19T04:50:50+0000 [INFO] ============================================================
+2026-07-20T03:00:01+0000 [INFO] ============================================================
+2026-07-20T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-20T03:00:01+0000 [INFO] Cargados 57 dominio(s) objetivo.
+2026-07-20T03:00:02+0000 [INFO] Procesando: shopify.com
+2026-07-20T03:00:02+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-20T03:01:00+0000 [INFO] [subfinder] 'shopify.com': 25072 subdominios encontrados.
+2026-07-20T03:01:00+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-20T03:01:00+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-20T03:01:02+0000 [INFO] [subfinder] 'lightspeedhq.com': 155 subdominios encontrados.
+2026-07-20T03:01:02+0000 [INFO] Procesando: vendhq.com
+2026-07-20T03:01:02+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-20T03:01:03+0000 [INFO] [subfinder] 'vendhq.com': 396 subdominios encontrados.
+2026-07-20T03:01:03+0000 [INFO] Procesando: etsy.com
+2026-07-20T03:01:03+0000 [INFO] [subfinder] Escaneando 'etsy.com'...
+2026-07-20T03:02:42+0000 [INFO] [subfinder] 'etsy.com': 130099 subdominios encontrados.
+2026-07-20T03:02:42+0000 [INFO] Procesando: ebay.com
+2026-07-20T03:02:42+0000 [INFO] [subfinder] Escaneando 'ebay.com'...
+2026-07-20T03:04:43+0000 [INFO] [subfinder] 'ebay.com': 6772 subdominios encontrados.
+2026-07-20T03:04:43+0000 [INFO] Procesando: mercari.com
+2026-07-20T03:04:43+0000 [INFO] [subfinder] Escaneando 'mercari.com'...
+2026-07-20T03:06:43+0000 [INFO] [subfinder] 'mercari.com': 285 subdominios encontrados.
+2026-07-20T03:06:43+0000 [INFO] Procesando: freshworks.com
+2026-07-20T03:06:43+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-20T03:08:44+0000 [INFO] [subfinder] 'freshworks.com': 2986 subdominios encontrados.
+2026-07-20T03:08:44+0000 [INFO] Procesando: freshdesk.com
+2026-07-20T03:08:44+0000 [INFO] [subfinder] Escaneando 'freshdesk.com'...
+2026-07-20T03:10:45+0000 [INFO] [subfinder] 'freshdesk.com': 47492 subdominios encontrados.
+2026-07-20T03:10:45+0000 [INFO] Procesando: freshservice.com
+2026-07-20T03:10:45+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-20T03:12:46+0000 [INFO] [subfinder] 'freshservice.com': 28818 subdominios encontrados.
+2026-07-20T03:12:46+0000 [INFO] Procesando: freshchat.com
+2026-07-20T03:12:46+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-20T03:14:46+0000 [INFO] [subfinder] 'freshchat.com': 876 subdominios encontrados.
+2026-07-20T03:14:46+0000 [INFO] Procesando: nextcloud.com
+2026-07-20T03:14:46+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-20T03:16:47+0000 [INFO] [subfinder] 'nextcloud.com': 1502 subdominios encontrados.
+2026-07-20T03:16:47+0000 [INFO] Procesando: asana.com
+2026-07-20T03:16:47+0000 [INFO] [subfinder] Escaneando 'asana.com'...
+2026-07-20T03:18:48+0000 [INFO] [subfinder] 'asana.com': 2353 subdominios encontrados.
+2026-07-20T03:18:48+0000 [INFO] Procesando: atlassian.com
+2026-07-20T03:18:48+0000 [INFO] [subfinder] Escaneando 'atlassian.com'...
+2026-07-20T03:20:48+0000 [INFO] [subfinder] 'atlassian.com': 25383 subdominios encontrados.
+2026-07-20T03:20:48+0000 [INFO] Procesando: atlassian.net
+2026-07-20T03:20:48+0000 [INFO] [subfinder] Escaneando 'atlassian.net'...
+2026-07-20T03:22:49+0000 [INFO] [subfinder] 'atlassian.net': 35506 subdominios encontrados.
+2026-07-20T03:22:49+0000 [INFO] Procesando: hubspot.com
+2026-07-20T03:22:49+0000 [INFO] [subfinder] Escaneando 'hubspot.com'...
+2026-07-20T03:24:50+0000 [INFO] [subfinder] 'hubspot.com': 1440 subdominios encontrados.
+2026-07-20T03:24:50+0000 [INFO] Procesando: zoom.us
+2026-07-20T03:24:50+0000 [INFO] [subfinder] Escaneando 'zoom.us'...
+2026-07-20T03:26:50+0000 [INFO] [subfinder] 'zoom.us': 45009 subdominios encontrados.
+2026-07-20T03:26:50+0000 [INFO] Procesando: slack.com
+2026-07-20T03:26:50+0000 [INFO] [subfinder] Escaneando 'slack.com'...
+2026-07-20T03:28:51+0000 [INFO] [subfinder] 'slack.com': 72829 subdominios encontrados.
+2026-07-20T03:28:51+0000 [INFO] Procesando: notion.so
+2026-07-20T03:28:51+0000 [INFO] [subfinder] Escaneando 'notion.so'...
+2026-07-20T03:30:52+0000 [INFO] [subfinder] 'notion.so': 184 subdominios encontrados.
+2026-07-20T03:30:52+0000 [INFO] Procesando: paypal.com
+2026-07-20T03:30:52+0000 [INFO] [subfinder] Escaneando 'paypal.com'...
+2026-07-20T03:32:53+0000 [INFO] [subfinder] 'paypal.com': 3470 subdominios encontrados.
+2026-07-20T03:32:53+0000 [INFO] Procesando: stripe.com
+2026-07-20T03:32:53+0000 [INFO] [subfinder] Escaneando 'stripe.com'...
+2026-07-20T03:34:53+0000 [INFO] [subfinder] 'stripe.com': 585 subdominios encontrados.
+2026-07-20T03:34:53+0000 [INFO] Procesando: square.com
+2026-07-20T03:34:53+0000 [INFO] [subfinder] Escaneando 'square.com'...
+2026-07-20T03:36:54+0000 [INFO] [subfinder] 'square.com': 53 subdominios encontrados.
+2026-07-20T03:36:54+0000 [INFO] Procesando: coinbase.com
+2026-07-20T03:36:54+0000 [INFO] [subfinder] Escaneando 'coinbase.com'...
+2026-07-20T03:38:55+0000 [INFO] [subfinder] 'coinbase.com': 494 subdominios encontrados.
+2026-07-20T03:38:55+0000 [INFO] Procesando: kraken.com
+2026-07-20T03:38:55+0000 [INFO] [subfinder] Escaneando 'kraken.com'...
+2026-07-20T03:40:55+0000 [INFO] [subfinder] 'kraken.com': 994 subdominios encontrados.
+2026-07-20T03:40:55+0000 [INFO] Procesando: binance.com
+2026-07-20T03:40:55+0000 [INFO] [subfinder] Escaneando 'binance.com'...
+2026-07-20T03:42:56+0000 [INFO] [subfinder] 'binance.com': 749 subdominios encontrados.
+2026-07-20T03:42:56+0000 [INFO] Procesando: robinhood.com
+2026-07-20T03:42:56+0000 [INFO] [subfinder] Escaneando 'robinhood.com'...
+2026-07-20T03:44:57+0000 [INFO] [subfinder] 'robinhood.com': 1135 subdominios encontrados.
+2026-07-20T03:44:57+0000 [INFO] Procesando: uber.com
+2026-07-20T03:44:57+0000 [INFO] [subfinder] Escaneando 'uber.com'...
+2026-07-20T03:46:58+0000 [INFO] [subfinder] 'uber.com': 931 subdominios encontrados.
+2026-07-20T03:46:58+0000 [INFO] Procesando: lyft.com
+2026-07-20T03:46:58+0000 [INFO] [subfinder] Escaneando 'lyft.com'...
+2026-07-20T03:48:58+0000 [INFO] [subfinder] 'lyft.com': 131 subdominios encontrados.
+2026-07-20T03:48:58+0000 [INFO] Procesando: airbnb.com
+2026-07-20T03:48:58+0000 [INFO] [subfinder] Escaneando 'airbnb.com'...
+2026-07-20T03:50:59+0000 [INFO] [subfinder] 'airbnb.com': 737 subdominios encontrados.
+2026-07-20T03:50:59+0000 [INFO] Procesando: booking.com
+2026-07-20T03:50:59+0000 [INFO] [subfinder] Escaneando 'booking.com'...
+2026-07-20T03:53:00+0000 [INFO] [subfinder] 'booking.com': 1538 subdominios encontrados.
+2026-07-20T03:53:00+0000 [INFO] Procesando: agoda.com
+2026-07-20T03:53:00+0000 [INFO] [subfinder] Escaneando 'agoda.com'...
+2026-07-20T03:55:01+0000 [INFO] [subfinder] 'agoda.com': 563 subdominios encontrados.
+2026-07-20T03:55:01+0000 [INFO] Procesando: grab.com
+2026-07-20T03:55:01+0000 [INFO] [subfinder] Escaneando 'grab.com'...
+2026-07-20T03:57:01+0000 [INFO] [subfinder] 'grab.com': 14631 subdominios encontrados.
+2026-07-20T03:57:01+0000 [INFO] Procesando: doordash.com
+2026-07-20T03:57:02+0000 [INFO] [subfinder] Escaneando 'doordash.com'...
+2026-07-20T03:59:02+0000 [INFO] [subfinder] 'doordash.com': 380 subdominios encontrados.
+2026-07-20T03:59:02+0000 [INFO] Procesando: instacart.com
+2026-07-20T03:59:02+0000 [INFO] [subfinder] Escaneando 'instacart.com'...
+2026-07-20T04:01:03+0000 [INFO] [subfinder] 'instacart.com': 1083 subdominios encontrados.
+2026-07-20T04:01:03+0000 [INFO] Procesando: snapchat.com
+2026-07-20T04:01:03+0000 [INFO] [subfinder] Escaneando 'snapchat.com'...
+2026-07-20T04:03:03+0000 [INFO] [subfinder] 'snapchat.com': 1031 subdominios encontrados.
+2026-07-20T04:03:03+0000 [INFO] Procesando: tiktok.com
+2026-07-20T04:03:03+0000 [INFO] [subfinder] Escaneando 'tiktok.com'...
+2026-07-20T04:05:04+0000 [INFO] [subfinder] 'tiktok.com': 702 subdominios encontrados.
+2026-07-20T04:05:04+0000 [INFO] Procesando: twitch.tv
+2026-07-20T04:05:04+0000 [INFO] [subfinder] Escaneando 'twitch.tv'...
+2026-07-20T04:07:05+0000 [INFO] [subfinder] 'twitch.tv': 716 subdominios encontrados.
+2026-07-20T04:07:05+0000 [INFO] Procesando: spotify.com
+2026-07-20T04:07:05+0000 [INFO] [subfinder] Escaneando 'spotify.com'...
+2026-07-20T04:09:05+0000 [INFO] [subfinder] 'spotify.com': 1019 subdominios encontrados.
+2026-07-20T04:09:05+0000 [INFO] Procesando: roblox.com
+2026-07-20T04:09:05+0000 [INFO] [subfinder] Escaneando 'roblox.com'...
+2026-07-20T04:11:06+0000 [INFO] [subfinder] 'roblox.com': 1276 subdominios encontrados.
+2026-07-20T04:11:06+0000 [INFO] Procesando: epicgames.com
+2026-07-20T04:11:06+0000 [INFO] [subfinder] Escaneando 'epicgames.com'...
+2026-07-20T04:13:07+0000 [INFO] [subfinder] 'epicgames.com': 3324 subdominios encontrados.
+2026-07-20T04:13:07+0000 [INFO] Procesando: discord.com
+2026-07-20T04:13:07+0000 [INFO] [subfinder] Escaneando 'discord.com'...
+2026-07-20T04:15:07+0000 [INFO] [subfinder] 'discord.com': 112 subdominios encontrados.
+2026-07-20T04:15:07+0000 [INFO] Procesando: frontegg.com
+2026-07-20T04:15:07+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-20T04:17:08+0000 [INFO] [subfinder] 'frontegg.com': 223 subdominios encontrados.
+2026-07-20T04:17:08+0000 [INFO] Procesando: auth0.com
+2026-07-20T04:17:08+0000 [INFO] [subfinder] Escaneando 'auth0.com'...
+2026-07-20T04:19:41+0000 [INFO] [subfinder] 'auth0.com': 67560 subdominios encontrados.
+2026-07-20T04:19:41+0000 [INFO] Procesando: okta.com
+2026-07-20T04:19:41+0000 [INFO] [subfinder] Escaneando 'okta.com'...
+2026-07-20T04:21:41+0000 [INFO] [subfinder] 'okta.com': 27602 subdominios encontrados.
+2026-07-20T04:21:41+0000 [INFO] Procesando: cloudflare.com
+2026-07-20T04:21:41+0000 [INFO] [subfinder] Escaneando 'cloudflare.com'...
+2026-07-20T04:23:42+0000 [INFO] [subfinder] 'cloudflare.com': 18428 subdominios encontrados.
+2026-07-20T04:23:42+0000 [INFO] Procesando: fastly.com
+2026-07-20T04:23:42+0000 [INFO] [subfinder] Escaneando 'fastly.com'...
+2026-07-20T04:25:43+0000 [INFO] [subfinder] 'fastly.com': 137 subdominios encontrados.
+2026-07-20T04:25:43+0000 [INFO] Procesando: twilio.com
+2026-07-20T04:25:43+0000 [INFO] [subfinder] Escaneando 'twilio.com'...
+2026-07-20T04:27:43+0000 [INFO] [subfinder] 'twilio.com': 3973 subdominios encontrados.
+2026-07-20T04:27:43+0000 [INFO] Procesando: sendgrid.com
+2026-07-20T04:27:43+0000 [INFO] [subfinder] Escaneando 'sendgrid.com'...
+2026-07-20T04:29:44+0000 [INFO] [subfinder] 'sendgrid.com': 184 subdominios encontrados.
+2026-07-20T04:29:44+0000 [INFO] Procesando: digitalocean.com
+2026-07-20T04:29:44+0000 [INFO] [subfinder] Escaneando 'digitalocean.com'...
+2026-07-20T04:31:45+0000 [INFO] [subfinder] 'digitalocean.com': 347 subdominios encontrados.
+2026-07-20T04:31:45+0000 [INFO] Procesando: hashicorp.com
+2026-07-20T04:31:45+0000 [INFO] [subfinder] Escaneando 'hashicorp.com'...
+2026-07-20T04:33:45+0000 [INFO] [subfinder] 'hashicorp.com': 185 subdominios encontrados.
+2026-07-20T04:33:45+0000 [INFO] Procesando: gitlab.com
+2026-07-20T04:33:45+0000 [INFO] [subfinder] Escaneando 'gitlab.com'...
+2026-07-20T04:35:46+0000 [INFO] [subfinder] 'gitlab.com': 327 subdominios encontrados.
+2026-07-20T04:35:46+0000 [INFO] Procesando: github.com
+2026-07-20T04:35:46+0000 [INFO] [subfinder] Escaneando 'github.com'...
+2026-07-20T04:37:47+0000 [INFO] [subfinder] 'github.com': 41690 subdominios encontrados.
+2026-07-20T04:37:47+0000 [INFO] Procesando: yahoo.com
+2026-07-20T04:37:47+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-20T04:39:47+0000 [INFO] [subfinder] 'yahoo.com': 29797 subdominios encontrados.
+2026-07-20T04:39:47+0000 [INFO] Procesando: ibm.com
+2026-07-20T04:39:47+0000 [INFO] [subfinder] Escaneando 'ibm.com'...
+2026-07-20T04:41:48+0000 [INFO] [subfinder] 'ibm.com': 1895 subdominios encontrados.
+2026-07-20T04:41:48+0000 [INFO] Procesando: intel.com
+2026-07-20T04:41:48+0000 [INFO] [subfinder] Escaneando 'intel.com'...
+2026-07-20T04:43:49+0000 [INFO] [subfinder] 'intel.com': 6537 subdominios encontrados.
+2026-07-20T04:43:49+0000 [INFO] Procesando: dell.com
+2026-07-20T04:43:49+0000 [INFO] [subfinder] Escaneando 'dell.com'...
+2026-07-20T04:45:49+0000 [INFO] [subfinder] 'dell.com': 5305 subdominios encontrados.
+2026-07-20T04:45:49+0000 [INFO] Procesando: tesla.com
+2026-07-20T04:45:49+0000 [INFO] [subfinder] Escaneando 'tesla.com'...
+2026-07-20T04:47:50+0000 [INFO] [subfinder] 'tesla.com': 599 subdominios encontrados.
+2026-07-20T04:47:50+0000 [INFO] Procesando: ford.com
+2026-07-20T04:47:50+0000 [INFO] [subfinder] Escaneando 'ford.com'...
+2026-07-20T04:49:51+0000 [INFO] [subfinder] 'ford.com': 16671 subdominios encontrados.
+2026-07-20T04:49:52+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 684271 subdominios.
+2026-07-20T04:49:52+0000 [INFO] Discovery finalizado correctamente.
+2026-07-20T04:49:52+0000 [INFO] ============================================================
+2026-07-21T03:00:01+0000 [INFO] ============================================================
+2026-07-21T03:00:01+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-21T03:00:01+0000 [INFO] Cargados 57 dominio(s) objetivo.
+2026-07-21T03:00:01+0000 [INFO] Procesando: shopify.com
+2026-07-21T03:00:01+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-21T03:01:03+0000 [INFO] [subfinder] 'shopify.com': 25063 subdominios encontrados.
+2026-07-21T03:01:03+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-21T03:01:03+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-21T03:01:04+0000 [INFO] [subfinder] 'lightspeedhq.com': 155 subdominios encontrados.
+2026-07-21T03:01:04+0000 [INFO] Procesando: vendhq.com
+2026-07-21T03:01:04+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-21T03:01:05+0000 [INFO] [subfinder] 'vendhq.com': 396 subdominios encontrados.
+2026-07-21T03:01:05+0000 [INFO] Procesando: etsy.com
+2026-07-21T03:01:05+0000 [INFO] [subfinder] Escaneando 'etsy.com'...
+2026-07-21T03:02:38+0000 [INFO] [subfinder] 'etsy.com': 129916 subdominios encontrados.
+2026-07-21T03:02:38+0000 [INFO] Procesando: ebay.com
+2026-07-21T03:02:38+0000 [INFO] [subfinder] Escaneando 'ebay.com'...
+2026-07-21T03:04:39+0000 [INFO] [subfinder] 'ebay.com': 6772 subdominios encontrados.
+2026-07-21T03:04:39+0000 [INFO] Procesando: mercari.com
+2026-07-21T03:04:39+0000 [INFO] [subfinder] Escaneando 'mercari.com'...
+2026-07-21T03:06:39+0000 [INFO] [subfinder] 'mercari.com': 285 subdominios encontrados.
+2026-07-21T03:06:39+0000 [INFO] Procesando: freshworks.com
+2026-07-21T03:06:39+0000 [INFO] [subfinder] Escaneando 'freshworks.com'...
+2026-07-21T03:08:40+0000 [INFO] [subfinder] 'freshworks.com': 2967 subdominios encontrados.
+2026-07-21T03:08:40+0000 [INFO] Procesando: freshdesk.com
+2026-07-21T03:08:40+0000 [INFO] [subfinder] Escaneando 'freshdesk.com'...
+2026-07-21T03:10:41+0000 [INFO] [subfinder] 'freshdesk.com': 46514 subdominios encontrados.
+2026-07-21T03:10:41+0000 [INFO] Procesando: freshservice.com
+2026-07-21T03:10:41+0000 [INFO] [subfinder] Escaneando 'freshservice.com'...
+2026-07-21T03:12:42+0000 [INFO] [subfinder] 'freshservice.com': 30034 subdominios encontrados.
+2026-07-21T03:12:42+0000 [INFO] Procesando: freshchat.com
+2026-07-21T03:12:42+0000 [INFO] [subfinder] Escaneando 'freshchat.com'...
+2026-07-21T03:14:42+0000 [INFO] [subfinder] 'freshchat.com': 872 subdominios encontrados.
+2026-07-21T03:14:42+0000 [INFO] Procesando: nextcloud.com
+2026-07-21T03:14:42+0000 [INFO] [subfinder] Escaneando 'nextcloud.com'...
+2026-07-21T03:16:43+0000 [INFO] [subfinder] 'nextcloud.com': 1486 subdominios encontrados.
+2026-07-21T03:16:43+0000 [INFO] Procesando: asana.com
+2026-07-21T03:16:43+0000 [INFO] [subfinder] Escaneando 'asana.com'...
+2026-07-21T03:18:44+0000 [INFO] [subfinder] 'asana.com': 2304 subdominios encontrados.
+2026-07-21T03:18:44+0000 [INFO] Procesando: atlassian.com
+2026-07-21T03:18:44+0000 [INFO] [subfinder] Escaneando 'atlassian.com'...
+2026-07-21T03:20:44+0000 [INFO] [subfinder] 'atlassian.com': 25582 subdominios encontrados.
+2026-07-21T03:20:44+0000 [INFO] Procesando: atlassian.net
+2026-07-21T03:20:44+0000 [INFO] [subfinder] Escaneando 'atlassian.net'...
+2026-07-21T03:22:45+0000 [INFO] [subfinder] 'atlassian.net': 35368 subdominios encontrados.
+2026-07-21T03:22:45+0000 [INFO] Procesando: hubspot.com
+2026-07-21T03:22:45+0000 [INFO] [subfinder] Escaneando 'hubspot.com'...
+2026-07-21T03:24:46+0000 [INFO] [subfinder] 'hubspot.com': 1440 subdominios encontrados.
+2026-07-21T03:24:46+0000 [INFO] Procesando: zoom.us
+2026-07-21T03:24:46+0000 [INFO] [subfinder] Escaneando 'zoom.us'...
+2026-07-21T03:26:47+0000 [INFO] [subfinder] 'zoom.us': 46509 subdominios encontrados.
+2026-07-21T03:26:47+0000 [INFO] Procesando: slack.com
+2026-07-21T03:26:47+0000 [INFO] [subfinder] Escaneando 'slack.com'...
+2026-07-21T03:28:47+0000 [INFO] [subfinder] 'slack.com': 71405 subdominios encontrados.
+2026-07-21T03:28:47+0000 [INFO] Procesando: notion.so
+2026-07-21T03:28:47+0000 [INFO] [subfinder] Escaneando 'notion.so'...
+2026-07-21T03:30:48+0000 [INFO] [subfinder] 'notion.so': 184 subdominios encontrados.
+2026-07-21T03:30:48+0000 [INFO] Procesando: paypal.com
+2026-07-21T03:30:48+0000 [INFO] [subfinder] Escaneando 'paypal.com'...
+2026-07-21T03:32:49+0000 [INFO] [subfinder] 'paypal.com': 4358 subdominios encontrados.
+2026-07-21T03:32:49+0000 [INFO] Procesando: stripe.com
+2026-07-21T03:32:49+0000 [INFO] [subfinder] Escaneando 'stripe.com'...
+2026-07-21T03:34:49+0000 [INFO] [subfinder] 'stripe.com': 585 subdominios encontrados.
+2026-07-21T03:34:49+0000 [INFO] Procesando: square.com
+2026-07-21T03:34:49+0000 [INFO] [subfinder] Escaneando 'square.com'...
+2026-07-21T03:36:50+0000 [INFO] [subfinder] 'square.com': 41 subdominios encontrados.
+2026-07-21T03:36:50+0000 [INFO] Procesando: coinbase.com
+2026-07-21T03:36:50+0000 [INFO] [subfinder] Escaneando 'coinbase.com'...
+2026-07-21T03:38:51+0000 [INFO] [subfinder] 'coinbase.com': 518 subdominios encontrados.
+2026-07-21T03:38:51+0000 [INFO] Procesando: kraken.com
+2026-07-21T03:38:51+0000 [INFO] [subfinder] Escaneando 'kraken.com'...
+2026-07-21T03:40:51+0000 [INFO] [subfinder] 'kraken.com': 994 subdominios encontrados.
+2026-07-21T03:40:51+0000 [INFO] Procesando: binance.com
+2026-07-21T03:40:51+0000 [INFO] [subfinder] Escaneando 'binance.com'...
+2026-07-21T03:42:52+0000 [INFO] [subfinder] 'binance.com': 748 subdominios encontrados.
+2026-07-21T03:42:52+0000 [INFO] Procesando: robinhood.com
+2026-07-21T03:42:52+0000 [INFO] [subfinder] Escaneando 'robinhood.com'...
+2026-07-21T03:44:52+0000 [INFO] [subfinder] 'robinhood.com': 1135 subdominios encontrados.
+2026-07-21T03:44:52+0000 [INFO] Procesando: uber.com
+2026-07-21T03:44:52+0000 [INFO] [subfinder] Escaneando 'uber.com'...
+2026-07-21T03:46:53+0000 [INFO] [subfinder] 'uber.com': 931 subdominios encontrados.
+2026-07-21T03:46:53+0000 [INFO] Procesando: lyft.com
+2026-07-21T03:46:53+0000 [INFO] [subfinder] Escaneando 'lyft.com'...
+2026-07-21T03:48:54+0000 [INFO] [subfinder] 'lyft.com': 122 subdominios encontrados.
+2026-07-21T03:48:54+0000 [INFO] Procesando: airbnb.com
+2026-07-21T03:48:54+0000 [INFO] [subfinder] Escaneando 'airbnb.com'...
+2026-07-21T03:50:54+0000 [INFO] [subfinder] 'airbnb.com': 762 subdominios encontrados.
+2026-07-21T03:50:54+0000 [INFO] Procesando: booking.com
+2026-07-21T03:50:54+0000 [INFO] [subfinder] Escaneando 'booking.com'...
+2026-07-21T03:52:55+0000 [INFO] [subfinder] 'booking.com': 1639 subdominios encontrados.
+2026-07-21T03:52:55+0000 [INFO] Procesando: agoda.com
+2026-07-21T03:52:55+0000 [INFO] [subfinder] Escaneando 'agoda.com'...
+2026-07-21T03:54:56+0000 [INFO] [subfinder] 'agoda.com': 586 subdominios encontrados.
+2026-07-21T03:54:56+0000 [INFO] Procesando: grab.com
+2026-07-21T03:54:56+0000 [INFO] [subfinder] Escaneando 'grab.com'...
+2026-07-21T03:56:56+0000 [INFO] [subfinder] 'grab.com': 14495 subdominios encontrados.
+2026-07-21T03:56:56+0000 [INFO] Procesando: doordash.com
+2026-07-21T03:56:56+0000 [INFO] [subfinder] Escaneando 'doordash.com'...
+2026-07-21T03:58:57+0000 [INFO] [subfinder] 'doordash.com': 380 subdominios encontrados.
+2026-07-21T03:58:57+0000 [INFO] Procesando: instacart.com
+2026-07-21T03:58:57+0000 [INFO] [subfinder] Escaneando 'instacart.com'...
+2026-07-21T04:00:57+0000 [INFO] [subfinder] 'instacart.com': 1011 subdominios encontrados.
+2026-07-21T04:00:57+0000 [INFO] Procesando: snapchat.com
+2026-07-21T04:00:57+0000 [INFO] [subfinder] Escaneando 'snapchat.com'...
+2026-07-21T04:02:58+0000 [INFO] [subfinder] 'snapchat.com': 1031 subdominios encontrados.
+2026-07-21T04:02:58+0000 [INFO] Procesando: tiktok.com
+2026-07-21T04:02:58+0000 [INFO] [subfinder] Escaneando 'tiktok.com'...
+2026-07-21T04:04:59+0000 [INFO] [subfinder] 'tiktok.com': 702 subdominios encontrados.
+2026-07-21T04:04:59+0000 [INFO] Procesando: twitch.tv
+2026-07-21T04:04:59+0000 [INFO] [subfinder] Escaneando 'twitch.tv'...
+2026-07-21T04:06:59+0000 [INFO] [subfinder] 'twitch.tv': 716 subdominios encontrados.
+2026-07-21T04:06:59+0000 [INFO] Procesando: spotify.com
+2026-07-21T04:06:59+0000 [INFO] [subfinder] Escaneando 'spotify.com'...
+2026-07-21T04:09:00+0000 [INFO] [subfinder] 'spotify.com': 975 subdominios encontrados.
+2026-07-21T04:09:00+0000 [INFO] Procesando: roblox.com
+2026-07-21T04:09:00+0000 [INFO] [subfinder] Escaneando 'roblox.com'...
+2026-07-21T04:11:01+0000 [INFO] [subfinder] 'roblox.com': 1276 subdominios encontrados.
+2026-07-21T04:11:01+0000 [INFO] Procesando: epicgames.com
+2026-07-21T04:11:01+0000 [INFO] [subfinder] Escaneando 'epicgames.com'...
+2026-07-21T04:13:01+0000 [INFO] [subfinder] 'epicgames.com': 3324 subdominios encontrados.
+2026-07-21T04:13:01+0000 [INFO] Procesando: discord.com
+2026-07-21T04:13:01+0000 [INFO] [subfinder] Escaneando 'discord.com'...
+2026-07-21T04:15:02+0000 [INFO] [subfinder] 'discord.com': 112 subdominios encontrados.
+2026-07-21T04:15:02+0000 [INFO] Procesando: frontegg.com
+2026-07-21T04:15:02+0000 [INFO] [subfinder] Escaneando 'frontegg.com'...
+2026-07-21T04:17:02+0000 [INFO] [subfinder] 'frontegg.com': 223 subdominios encontrados.
+2026-07-21T04:17:02+0000 [INFO] Procesando: auth0.com
+2026-07-21T04:17:02+0000 [INFO] [subfinder] Escaneando 'auth0.com'...
+2026-07-21T04:19:03+0000 [INFO] [subfinder] 'auth0.com': 66832 subdominios encontrados.
+2026-07-21T04:19:03+0000 [INFO] Procesando: okta.com
+2026-07-21T04:19:03+0000 [INFO] [subfinder] Escaneando 'okta.com'...
+2026-07-21T04:21:04+0000 [INFO] [subfinder] 'okta.com': 28195 subdominios encontrados.
+2026-07-21T04:21:04+0000 [INFO] Procesando: cloudflare.com
+2026-07-21T04:21:04+0000 [INFO] [subfinder] Escaneando 'cloudflare.com'...
+2026-07-21T04:23:05+0000 [INFO] [subfinder] 'cloudflare.com': 15555 subdominios encontrados.
+2026-07-21T04:23:05+0000 [INFO] Procesando: fastly.com
+2026-07-21T04:23:05+0000 [INFO] [subfinder] Escaneando 'fastly.com'...
+2026-07-21T04:25:05+0000 [INFO] [subfinder] 'fastly.com': 137 subdominios encontrados.
+2026-07-21T04:25:05+0000 [INFO] Procesando: twilio.com
+2026-07-21T04:25:05+0000 [INFO] [subfinder] Escaneando 'twilio.com'...
+2026-07-21T04:27:06+0000 [INFO] [subfinder] 'twilio.com': 3973 subdominios encontrados.
+2026-07-21T04:27:06+0000 [INFO] Procesando: sendgrid.com
+2026-07-21T04:27:06+0000 [INFO] [subfinder] Escaneando 'sendgrid.com'...
+2026-07-21T04:29:07+0000 [INFO] [subfinder] 'sendgrid.com': 184 subdominios encontrados.
+2026-07-21T04:29:07+0000 [INFO] Procesando: digitalocean.com
+2026-07-21T04:29:07+0000 [INFO] [subfinder] Escaneando 'digitalocean.com'...
+2026-07-21T04:31:07+0000 [INFO] [subfinder] 'digitalocean.com': 475 subdominios encontrados.
+2026-07-21T04:31:07+0000 [INFO] Procesando: hashicorp.com
+2026-07-21T04:31:07+0000 [INFO] [subfinder] Escaneando 'hashicorp.com'...
+2026-07-21T04:33:08+0000 [INFO] [subfinder] 'hashicorp.com': 185 subdominios encontrados.
+2026-07-21T04:33:08+0000 [INFO] Procesando: gitlab.com
+2026-07-21T04:33:08+0000 [INFO] [subfinder] Escaneando 'gitlab.com'...
+2026-07-21T04:35:09+0000 [INFO] [subfinder] 'gitlab.com': 327 subdominios encontrados.
+2026-07-21T04:35:09+0000 [INFO] Procesando: github.com
+2026-07-21T04:35:09+0000 [INFO] [subfinder] Escaneando 'github.com'...
+2026-07-21T04:37:09+0000 [INFO] [subfinder] 'github.com': 4289 subdominios encontrados.
+2026-07-21T04:37:09+0000 [INFO] Procesando: yahoo.com
+2026-07-21T04:37:09+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-21T04:39:10+0000 [INFO] [subfinder] 'yahoo.com': 29497 subdominios encontrados.
+2026-07-21T04:39:10+0000 [INFO] Procesando: ibm.com
+2026-07-21T04:39:10+0000 [INFO] [subfinder] Escaneando 'ibm.com'...
+2026-07-21T04:41:11+0000 [INFO] [subfinder] 'ibm.com': 4014 subdominios encontrados.
+2026-07-21T04:41:11+0000 [INFO] Procesando: intel.com
+2026-07-21T04:41:11+0000 [INFO] [subfinder] Escaneando 'intel.com'...
+2026-07-21T04:43:11+0000 [INFO] [subfinder] 'intel.com': 6341 subdominios encontrados.
+2026-07-21T04:43:11+0000 [INFO] Procesando: dell.com
+2026-07-21T04:43:11+0000 [INFO] [subfinder] Escaneando 'dell.com'...
+2026-07-21T04:45:12+0000 [INFO] [subfinder] 'dell.com': 5402 subdominios encontrados.
+2026-07-21T04:45:12+0000 [INFO] Procesando: tesla.com
+2026-07-21T04:45:12+0000 [INFO] [subfinder] Escaneando 'tesla.com'...
+2026-07-21T04:47:13+0000 [INFO] [subfinder] 'tesla.com': 599 subdominios encontrados.
+2026-07-21T04:47:13+0000 [INFO] Procesando: ford.com
+2026-07-21T04:47:13+0000 [INFO] [subfinder] Escaneando 'ford.com'...
+2026-07-21T04:49:13+0000 [INFO] [subfinder] 'ford.com': 15971 subdominios encontrados.
+2026-07-21T04:49:14+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 645892 subdominios.
+2026-07-21T04:49:14+0000 [INFO] Discovery finalizado correctamente.
+2026-07-21T04:49:14+0000 [INFO] ============================================================
+2026-07-21T05:34:56+0000 [INFO] ============================================================
+2026-07-21T05:34:56+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-21T05:34:56+0000 [INFO] Cargados 57 dominio(s) objetivo.
+2026-07-21T05:34:56+0000 [INFO] Procesando: shopify.com
+2026-07-21T05:34:56+0000 [INFO] [subfinder] Escaneando 'shopify.com'...
+2026-07-21T05:36:57+0000 [INFO] [subfinder] 'shopify.com': 1221 subdominios encontrados.
+2026-07-21T05:36:57+0000 [INFO] Procesando: lightspeedhq.com
+2026-07-21T05:36:57+0000 [INFO] [subfinder] Escaneando 'lightspeedhq.com'...
+2026-07-21T05:38:58+0000 [INFO] [subfinder] 'lightspeedhq.com': 81 subdominios encontrados.
+2026-07-21T05:38:58+0000 [INFO] Procesando: vendhq.com
+2026-07-21T05:38:58+0000 [INFO] [subfinder] Escaneando 'vendhq.com'...
+2026-07-21T05:40:58+0000 [INFO] [subfinder] 'vendhq.com': 154 subdominios encontrados.
+2026-07-21T05:40:58+0000 [INFO] Procesando: etsy.com
+2026-07-21T05:40:58+0000 [INFO] [subfinder] Escaneando 'etsy.com'...
+2026-07-21T05:42:59+0000 [INFO] [subfinder] 'etsy.com': 30099 subdominios encontrados.
+2026-07-21T05:42:59+0000 [INFO] Procesando: ebay.com
+2026-07-21T05:42:59+0000 [INFO] [subfinder] Escaneando 'ebay.com'...

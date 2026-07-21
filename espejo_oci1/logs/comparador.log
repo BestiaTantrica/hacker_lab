@@ -1,0 +1,453 @@
+2026-07-05T01:59:33+0000 [INFO] ============================================================
+2026-07-05T01:59:33+0000 [INFO] Iniciando comparador.py
+2026-07-05T01:59:33+0000 [INFO] No existe estado previo válido (/home/ubuntu/plataforma_operativa/estado/previo.json); se tratan todos los subdominios actuales como nuevos (primera ejecución)
+2026-07-05T01:59:33+0000 [DEBUG] Dominio 'starbucks.com': sin novedades
+2026-07-05T01:59:33+0000 [INFO] Dominio 'github.com': 117 subdominio(s) nuevo(s) detectado(s)
+2026-07-05T01:59:33+0000 [INFO] Total de activos nuevos detectados: 117
+2026-07-05T01:59:33+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-05.json
+2026-07-05T01:59:33+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-05T01:59:33+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-05T01:59:33+0000 [INFO] ============================================================
+2026-07-05T02:01:19+0000 [INFO] ============================================================
+2026-07-05T02:01:19+0000 [INFO] Iniciando comparador.py
+2026-07-05T02:01:19+0000 [DEBUG] Dominio 'starbucks.com': sin novedades
+2026-07-05T02:01:19+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-05T02:01:19+0000 [INFO] Sin cambios detectados
+2026-07-05T02:01:19+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-05T02:01:19+0000 [INFO] Finalizando comparador.py (sin novedades)
+2026-07-05T02:01:19+0000 [INFO] ============================================================
+2026-07-05T02:13:59+0000 [INFO] ============================================================
+2026-07-05T02:13:59+0000 [INFO] Iniciando comparador.py
+2026-07-05T02:13:59+0000 [INFO] Dominio 'starbucks.com': 1123 subdominio(s) nuevo(s) detectado(s)
+2026-07-05T02:13:59+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-05T02:13:59+0000 [INFO] Total de activos nuevos detectados: 1123
+2026-07-05T02:13:59+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-05.json
+2026-07-05T02:13:59+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-05T02:13:59+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-05T02:13:59+0000 [INFO] ============================================================
+2026-07-05T06:01:47+0000 [INFO] ============================================================
+2026-07-05T06:01:47+0000 [INFO] Iniciando comparador.py
+2026-07-05T06:01:47+0000 [DEBUG] Dominio 'starbucks.com': sin novedades
+2026-07-05T06:01:47+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-05T06:01:47+0000 [INFO] Sin cambios detectados
+2026-07-05T06:01:47+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-05T06:01:47+0000 [INFO] Finalizando comparador.py (sin novedades)
+2026-07-05T06:01:47+0000 [INFO] ============================================================
+2026-07-06T06:01:11+0000 [INFO] ============================================================
+2026-07-06T06:01:11+0000 [INFO] Iniciando comparador.py
+2026-07-06T06:01:11+0000 [DEBUG] Dominio 'starbucks.com': sin novedades
+2026-07-06T06:01:11+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-06T06:01:11+0000 [INFO] Sin cambios detectados
+2026-07-06T06:01:11+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-06T06:01:11+0000 [INFO] Finalizando comparador.py (sin novedades)
+2026-07-06T06:01:11+0000 [INFO] ============================================================
+2026-07-07T06:00:54+0000 [INFO] ============================================================
+2026-07-07T06:00:54+0000 [INFO] Iniciando comparador.py
+2026-07-07T06:00:54+0000 [DEBUG] Dominio 'mongodb.com': sin novedades
+2026-07-07T06:00:54+0000 [INFO] Sin cambios detectados
+2026-07-07T06:00:54+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-07T06:00:54+0000 [INFO] Finalizando comparador.py (sin novedades)
+2026-07-07T06:00:54+0000 [INFO] ============================================================
+2026-07-08T06:00:49+0000 [INFO] ============================================================
+2026-07-08T06:00:49+0000 [INFO] Iniciando comparador.py
+2026-07-08T06:00:49+0000 [DEBUG] Dominio 'mongodb.com': sin novedades
+2026-07-08T06:00:49+0000 [INFO] Sin cambios detectados
+2026-07-08T06:00:49+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-08T06:00:49+0000 [INFO] Finalizando comparador.py (sin novedades)
+2026-07-08T06:00:49+0000 [INFO] ============================================================
+2026-07-08T20:02:59+0000 [INFO] ============================================================
+2026-07-08T20:02:59+0000 [INFO] Iniciando comparador.py
+2026-07-08T20:02:59+0000 [DEBUG] Dominio 'mongodb.com': sin novedades
+2026-07-08T20:02:59+0000 [INFO] Dominio 'elastic.co': 68 subdominio(s) nuevo(s) detectado(s)
+2026-07-08T20:02:59+0000 [INFO] Total de activos nuevos detectados: 68
+2026-07-08T20:02:59+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-08.json
+2026-07-08T20:02:59+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-08T20:02:59+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-08T20:02:59+0000 [INFO] ============================================================
+2026-07-09T03:00:59+0000 [INFO] ============================================================
+2026-07-09T03:00:59+0000 [INFO] Iniciando comparador.py
+2026-07-09T03:00:59+0000 [INFO] Dominio 'mongodb.com': 40 subdominio(s) nuevo(s) detectado(s)
+2026-07-09T03:00:59+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-09T03:00:59+0000 [INFO] Total de activos nuevos detectados: 40
+2026-07-09T03:00:59+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-09.json
+2026-07-09T03:00:59+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-09T03:00:59+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-09T03:00:59+0000 [INFO] ============================================================
+2026-07-10T03:01:51+0000 [INFO] ============================================================
+2026-07-10T03:01:51+0000 [INFO] Iniciando comparador.py
+2026-07-10T03:01:51+0000 [INFO] Dominio 'mongodb.com': 50 subdominio(s) nuevo(s) detectado(s)
+2026-07-10T03:01:51+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-10T03:01:51+0000 [INFO] Total de activos nuevos detectados: 50
+2026-07-10T03:01:51+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-10.json
+2026-07-10T03:01:51+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-10T03:01:51+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-10T03:01:51+0000 [INFO] ============================================================
+2026-07-11T03:00:24+0000 [INFO] ============================================================
+2026-07-11T03:00:24+0000 [INFO] Iniciando comparador.py
+2026-07-11T03:00:24+0000 [INFO] Dominio 'mongodb.com': 46 subdominio(s) nuevo(s) detectado(s)
+2026-07-11T03:00:24+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-11T03:00:24+0000 [INFO] Total de activos nuevos detectados: 46
+2026-07-11T03:00:24+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-11.json
+2026-07-11T03:00:24+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-11T03:00:24+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-11T03:00:24+0000 [INFO] ============================================================
+2026-07-12T03:01:05+0000 [INFO] ============================================================
+2026-07-12T03:01:05+0000 [INFO] Iniciando comparador.py
+2026-07-12T03:01:05+0000 [INFO] Dominio 'mongodb.com': 31 subdominio(s) nuevo(s) detectado(s)
+2026-07-12T03:01:05+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-12T03:01:05+0000 [INFO] Total de activos nuevos detectados: 31
+2026-07-12T03:01:05+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-12.json
+2026-07-12T03:01:05+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-12T03:01:05+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-12T03:01:05+0000 [INFO] ============================================================
+2026-07-13T02:02:14+0000 [INFO] ============================================================
+2026-07-13T02:02:14+0000 [INFO] Iniciando comparador.py
+2026-07-13T02:02:14+0000 [INFO] Dominio 'mongodb.com': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T02:02:14+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-13T02:02:14+0000 [INFO] Dominio 'yahoo.com': 121006 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T02:02:14+0000 [INFO] Dominio 'aol.com': 5106 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T02:02:14+0000 [INFO] Dominio 'flickr.com': 259 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T02:02:14+0000 [INFO] Dominio 'mil': 50 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T02:02:14+0000 [INFO] Total de activos nuevos detectados: 126422
+2026-07-13T02:02:14+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-13.json
+2026-07-13T02:02:15+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-13T02:02:15+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-13T02:02:15+0000 [INFO] ============================================================
+2026-07-13T03:12:07+0000 [INFO] ============================================================
+2026-07-13T03:12:07+0000 [INFO] Iniciando comparador.py
+2026-07-13T03:12:07+0000 [DEBUG] Dominio 'mongodb.com': sin novedades
+2026-07-13T03:12:07+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-13T03:12:07+0000 [INFO] Dominio 'yahoo.com': 1104 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T03:12:07+0000 [INFO] Dominio 'aol.com': 1677 subdominio(s) nuevo(s) detectado(s)
+2026-07-13T03:12:07+0000 [DEBUG] Dominio 'flickr.com': sin novedades
+2026-07-13T03:12:07+0000 [DEBUG] Dominio 'mil': sin novedades
+2026-07-13T03:12:07+0000 [INFO] Total de activos nuevos detectados: 2781
+2026-07-13T03:12:07+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-13.json
+2026-07-13T03:12:07+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-13T03:12:07+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-13T03:12:07+0000 [INFO] ============================================================
+2026-07-14T03:06:16+0000 [INFO] ============================================================
+2026-07-14T03:06:16+0000 [INFO] Iniciando comparador.py
+2026-07-14T03:06:16+0000 [INFO] Dominio 'mongodb.com': 41 subdominio(s) nuevo(s) detectado(s)
+2026-07-14T03:06:16+0000 [INFO] Dominio 'elastic.co': 68 subdominio(s) nuevo(s) detectado(s)
+2026-07-14T03:06:16+0000 [DEBUG] Dominio 'yahoo.com': sin novedades
+2026-07-14T03:06:16+0000 [DEBUG] Dominio 'aol.com': sin novedades
+2026-07-14T03:06:16+0000 [INFO] Dominio 'flickr.com': 5 subdominio(s) nuevo(s) detectado(s)
+2026-07-14T03:06:16+0000 [DEBUG] Dominio 'mil': sin novedades
+2026-07-14T03:06:16+0000 [INFO] Total de activos nuevos detectados: 114
+2026-07-14T03:06:16+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-14.json
+2026-07-14T03:06:16+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-14T03:06:16+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-14T03:06:16+0000 [INFO] ============================================================
+2026-07-15T03:07:54+0000 [INFO] ============================================================
+2026-07-15T03:07:54+0000 [INFO] Iniciando comparador.py
+2026-07-15T03:07:54+0000 [INFO] Dominio 'mongodb.com': 59 subdominio(s) nuevo(s) detectado(s)
+2026-07-15T03:07:54+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-15T03:07:54+0000 [INFO] Dominio 'yahoo.com': 112 subdominio(s) nuevo(s) detectado(s)
+2026-07-15T03:07:54+0000 [INFO] Dominio 'aol.com': 1679 subdominio(s) nuevo(s) detectado(s)
+2026-07-15T03:07:54+0000 [DEBUG] Dominio 'flickr.com': sin novedades
+2026-07-15T03:07:54+0000 [INFO] Dominio 'mil': 7870 subdominio(s) nuevo(s) detectado(s)
+2026-07-15T03:07:54+0000 [INFO] Total de activos nuevos detectados: 9720
+2026-07-15T03:07:54+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-15.json
+2026-07-15T03:07:55+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-15T03:07:55+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-15T03:07:55+0000 [INFO] ============================================================
+2026-07-16T03:06:52+0000 [INFO] ============================================================
+2026-07-16T03:06:52+0000 [INFO] Iniciando comparador.py
+2026-07-16T03:06:53+0000 [INFO] Dominio 'mongodb.com': 22 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T03:06:53+0000 [DEBUG] Dominio 'elastic.co': sin novedades
+2026-07-16T03:06:53+0000 [DEBUG] Dominio 'yahoo.com': sin novedades
+2026-07-16T03:06:53+0000 [DEBUG] Dominio 'aol.com': sin novedades
+2026-07-16T03:06:53+0000 [DEBUG] Dominio 'flickr.com': sin novedades
+2026-07-16T03:06:53+0000 [DEBUG] Dominio 'mil': sin novedades
+2026-07-16T03:06:53+0000 [INFO] Total de activos nuevos detectados: 22
+2026-07-16T03:06:53+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-16.json
+2026-07-16T03:06:53+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-16T03:06:53+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-16T03:06:53+0000 [INFO] ============================================================
+2026-07-16T05:21:24+0000 [INFO] ============================================================
+2026-07-16T05:21:24+0000 [INFO] Iniciando comparador.py
+2026-07-16T05:21:24+0000 [INFO] Dominio 'freshworks.com': 2699 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'freshservice.com': 44364 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'freshchat.com': 866 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'vendhq.com': 403 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'lightspeedhq.com': 170 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'frontegg.com': 249 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'shopify.com': 25056 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Dominio 'nextcloud.com': 1483 subdominio(s) nuevo(s) detectado(s)
+2026-07-16T05:21:24+0000 [INFO] Total de activos nuevos detectados: 75290
+2026-07-16T05:21:24+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-16.json
+2026-07-16T05:21:24+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-16T05:21:24+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-16T05:21:24+0000 [INFO] ============================================================
+2026-07-17T03:10:24+0000 [INFO] ============================================================
+2026-07-17T03:10:24+0000 [INFO] Iniciando comparador.py
+2026-07-17T03:10:25+0000 [INFO] Dominio 'freshworks.com': 291 subdominio(s) nuevo(s) detectado(s)
+2026-07-17T03:10:25+0000 [INFO] Dominio 'freshservice.com': 56 subdominio(s) nuevo(s) detectado(s)
+2026-07-17T03:10:25+0000 [INFO] Dominio 'freshchat.com': 10 subdominio(s) nuevo(s) detectado(s)
+2026-07-17T03:10:25+0000 [INFO] Dominio 'vendhq.com': 2 subdominio(s) nuevo(s) detectado(s)
+2026-07-17T03:10:25+0000 [DEBUG] Dominio 'lightspeedhq.com': sin novedades
+2026-07-17T03:10:25+0000 [DEBUG] Dominio 'frontegg.com': sin novedades
+2026-07-17T03:10:25+0000 [INFO] Dominio 'shopify.com': 6 subdominio(s) nuevo(s) detectado(s)
+2026-07-17T03:10:25+0000 [DEBUG] Dominio 'nextcloud.com': sin novedades
+2026-07-17T03:10:25+0000 [INFO] Total de activos nuevos detectados: 365
+2026-07-17T03:10:25+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-17.json
+2026-07-17T03:10:25+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-17T03:10:25+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-17T03:10:25+0000 [INFO] ============================================================
+2026-07-18T04:50:34+0000 [INFO] ============================================================
+2026-07-18T04:50:34+0000 [INFO] Iniciando comparador.py
+2026-07-18T04:50:34+0000 [INFO] Dominio 'shopify.com': 9 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:34+0000 [INFO] Dominio 'lightspeedhq.com': 15 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:34+0000 [DEBUG] Dominio 'vendhq.com': sin novedades
+2026-07-18T04:50:34+0000 [INFO] Dominio 'etsy.com': 130099 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:34+0000 [INFO] Dominio 'ebay.com': 6772 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:34+0000 [INFO] Dominio 'mercari.com': 285 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:34+0000 [DEBUG] Dominio 'freshworks.com': sin novedades
+2026-07-18T04:50:35+0000 [INFO] Dominio 'freshdesk.com': 47417 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'freshservice.com': 4 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [DEBUG] Dominio 'freshchat.com': sin novedades
+2026-07-18T04:50:35+0000 [DEBUG] Dominio 'nextcloud.com': sin novedades
+2026-07-18T04:50:35+0000 [INFO] Dominio 'asana.com': 2300 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'atlassian.com': 26580 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'atlassian.net': 35101 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'hubspot.com': 1417 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'zoom.us': 45517 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'slack.com': 71489 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'notion.so': 193 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'paypal.com': 3468 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'stripe.com': 585 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'square.com': 41 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'coinbase.com': 515 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'kraken.com': 1225 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'binance.com': 748 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'robinhood.com': 1135 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'uber.com': 931 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'lyft.com': 122 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'airbnb.com': 737 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'booking.com': 1639 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'agoda.com': 563 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'grab.com': 14633 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'doordash.com': 380 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'instacart.com': 1011 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'snapchat.com': 1031 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'tiktok.com': 684 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'twitch.tv': 716 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'spotify.com': 975 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'roblox.com': 1276 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'epicgames.com': 3323 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'discord.com': 112 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'frontegg.com': 683 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'auth0.com': 67065 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'okta.com': 27733 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'cloudflare.com': 15555 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'fastly.com': 137 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'twilio.com': 3973 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'sendgrid.com': 184 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'digitalocean.com': 347 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'hashicorp.com': 185 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'gitlab.com': 327 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'github.com': 4340 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'yahoo.com': 31123 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'ibm.com': 2093 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'intel.com': 9650 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'dell.com': 7781 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'tesla.com': 438 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Dominio 'ford.com': 12698 subdominio(s) nuevo(s) detectado(s)
+2026-07-18T04:50:35+0000 [INFO] Total de activos nuevos detectados: 587360
+2026-07-18T04:50:36+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-18.json
+2026-07-18T04:50:37+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-18T04:50:37+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-18T04:50:37+0000 [INFO] ============================================================
+2026-07-19T04:50:50+0000 [INFO] ============================================================
+2026-07-19T04:50:50+0000 [INFO] Iniciando comparador.py
+2026-07-19T04:50:51+0000 [INFO] Dominio 'shopify.com': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'lightspeedhq.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'vendhq.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'etsy.com': 181 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'ebay.com': 1602 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'mercari.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'freshworks.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'freshdesk.com': 75 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'freshservice.com': 21 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'freshchat.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'nextcloud.com': 19 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'asana.com': 4 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'atlassian.com': 110 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'atlassian.net': 514 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'hubspot.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'zoom.us': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'slack.com': 1408 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'notion.so': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'paypal.com': 2 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'stripe.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'square.com': 12 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'coinbase.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'kraken.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'binance.com': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'robinhood.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'uber.com': 45 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'lyft.com': 9 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'airbnb.com': 25 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'booking.com': 363 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'agoda.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'grab.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'doordash.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'instacart.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'snapchat.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'tiktok.com': 18 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'twitch.tv': 127 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'spotify.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'roblox.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'epicgames.com': 359 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'discord.com': sin novedades
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'frontegg.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'auth0.com': 445 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'okta.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'cloudflare.com': 2873 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'fastly.com': 22 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'twilio.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'sendgrid.com': 20 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [DEBUG] Dominio 'digitalocean.com': sin novedades
+2026-07-19T04:50:51+0000 [INFO] Dominio 'hashicorp.com': 15 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'gitlab.com': 303 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'github.com': 37359 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'yahoo.com': 90835 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:51+0000 [INFO] Dominio 'ibm.com': 16 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:52+0000 [DEBUG] Dominio 'intel.com': sin novedades
+2026-07-19T04:50:52+0000 [INFO] Dominio 'dell.com': 350 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:52+0000 [DEBUG] Dominio 'tesla.com': sin novedades
+2026-07-19T04:50:52+0000 [INFO] Dominio 'ford.com': 3175 subdominio(s) nuevo(s) detectado(s)
+2026-07-19T04:50:52+0000 [INFO] Total de activos nuevos detectados: 140309
+2026-07-19T04:50:52+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-19.json
+2026-07-19T04:50:53+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-19T04:50:53+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-19T04:50:53+0000 [INFO] ============================================================
+2026-07-20T04:49:53+0000 [INFO] ============================================================
+2026-07-20T04:49:53+0000 [INFO] Iniciando comparador.py
+2026-07-20T04:49:54+0000 [INFO] Dominio 'shopify.com': 9 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'lightspeedhq.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'vendhq.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'etsy.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'ebay.com': 30 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'mercari.com': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'freshworks.com': 19 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'freshdesk.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'freshservice.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'freshchat.com': 4 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'nextcloud.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'asana.com': 49 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'atlassian.com': 200 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'atlassian.net': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'hubspot.com': 23 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'zoom.us': 1092 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'slack.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'notion.so': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'paypal.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'stripe.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'square.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'coinbase.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'kraken.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'binance.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'robinhood.com': 16 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'uber.com': 519 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'lyft.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'airbnb.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'booking.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'agoda.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'grab.com': 136 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'doordash.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'instacart.com': 72 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'snapchat.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'tiktok.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'twitch.tv': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'spotify.com': 44 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'roblox.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'epicgames.com': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'discord.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'frontegg.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'auth0.com': 141 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'okta.com': 25 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'cloudflare.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'fastly.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'twilio.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'sendgrid.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'digitalocean.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'hashicorp.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'gitlab.com': sin novedades
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'yahoo.com': 7 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'ibm.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'intel.com': 374 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [DEBUG] Dominio 'dell.com': sin novedades
+2026-07-20T04:49:54+0000 [INFO] Dominio 'tesla.com': 161 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Dominio 'ford.com': 900 subdominio(s) nuevo(s) detectado(s)
+2026-07-20T04:49:54+0000 [INFO] Total de activos nuevos detectados: 3823
+2026-07-20T04:49:54+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-20.json
+2026-07-20T04:49:55+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-20T04:49:55+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-20T04:49:55+0000 [INFO] ============================================================
+2026-07-21T04:49:14+0000 [INFO] ============================================================
+2026-07-21T04:49:14+0000 [INFO] Iniciando comparador.py
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'shopify.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'lightspeedhq.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'vendhq.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'etsy.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'ebay.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'mercari.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'freshworks.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'freshdesk.com': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'freshservice.com': 1216 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'freshchat.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'nextcloud.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'asana.com': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'atlassian.com': 199 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [INFO] Dominio 'atlassian.net': 1 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'hubspot.com': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'zoom.us': 1500 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'slack.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'notion.so': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'paypal.com': 888 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'stripe.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'square.com': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'coinbase.com': 24 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'kraken.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'binance.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'robinhood.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'uber.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'lyft.com': sin novedades
+2026-07-21T04:49:15+0000 [INFO] Dominio 'airbnb.com': 25 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [INFO] Dominio 'booking.com': 464 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [INFO] Dominio 'agoda.com': 23 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'grab.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'doordash.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'instacart.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'snapchat.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'tiktok.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'twitch.tv': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'spotify.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'roblox.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'epicgames.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'discord.com': sin novedades
+2026-07-21T04:49:15+0000 [DEBUG] Dominio 'frontegg.com': sin novedades
+2026-07-21T04:49:16+0000 [INFO] Dominio 'auth0.com': 91 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:16+0000 [INFO] Dominio 'okta.com': 593 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'cloudflare.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'fastly.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'twilio.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'sendgrid.com': sin novedades
+2026-07-21T04:49:16+0000 [INFO] Dominio 'digitalocean.com': 128 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'hashicorp.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'gitlab.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'github.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'yahoo.com': sin novedades
+2026-07-21T04:49:16+0000 [INFO] Dominio 'ibm.com': 2119 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'intel.com': sin novedades
+2026-07-21T04:49:16+0000 [INFO] Dominio 'dell.com': 97 subdominio(s) nuevo(s) detectado(s)
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'tesla.com': sin novedades
+2026-07-21T04:49:16+0000 [DEBUG] Dominio 'ford.com': sin novedades
+2026-07-21T04:49:16+0000 [INFO] Total de activos nuevos detectados: 7368
+2026-07-21T04:49:16+0000 [INFO] Delta guardado en /home/ubuntu/plataforma_operativa/resultados/delta_2026-07-21.json
+2026-07-21T04:49:17+0000 [INFO] Estado histórico actualizado en /home/ubuntu/plataforma_operativa/estado/previo.json
+2026-07-21T04:49:17+0000 [INFO] Finalizando comparador.py (con novedades)
+2026-07-21T04:49:17+0000 [INFO] ============================================================

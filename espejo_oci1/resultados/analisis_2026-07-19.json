@@ -1,0 +1,4 @@
+{
+  "timestamp": "2026-07-19",
+  "analisis": "**TOP 5 de subdominios de mayor inter\u00e9s para auditor\u00edas de seguridad**\n\n**1. **`admin-in.vip.ebay.com`**\nVector de riesgo: Acceso no autorizado a paneles de administraci\u00f3n.\n\n**2. **`api-dataio.corp.ebay.com`**\nVector de riesgo: Exposici\u00f3n de API sin autenticaci\u00f3n.\n\n**3. **`apianalytics-staging.qa.ebay.com`**\nVector de riesgo: Acceso no autorizado a entornos de desarrollo/prueba.\n\n**4. **`cmportal.vip.ebay.com`**\nVector de riesgo: Acceso no autorizado a paneles de administraci\u00f3n.\n\n**5. **`arbd.intl.paradise.qa.ebay.com`**\nVector de riesgo: Integraci\u00f3n de credenciales u objetos sensibles."
+}

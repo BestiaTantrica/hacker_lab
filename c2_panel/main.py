@@ -180,16 +180,77 @@ def execute_reintentos(req: ExploitRequest):
 class ChatRequest(BaseModel):
     message: str
 
+# ── Motor de Dinero ─────────────────────────────────────────────────────────
+
+@app.post("/api/run_motor")
+def run_motor():
+    """Ejecuta el extractor de secretos JS."""
+    output, error = _run_remote_command("python3 /home/ubuntu/plataforma_operativa/monitores/extractor_secretos.py")
+    if output is None: return {"status": "error", "data": error}
+    return {"status": "success", "data": output}
+
+@app.post("/api/run_explotador")
+def run_explotador():
+    """Ejecuta el explotador automático (Subdomain Takeover, CORS, etc)."""
+    output, error = _run_remote_command("python3 /home/ubuntu/plataforma_operativa/monitores/explotador_automatico.py")
+    if output is None: return {"status": "error", "data": error}
+    return {"status": "success", "data": output}
+
+@app.get("/api/get_motor_results")
+def get_motor_results():
+    """Obtiene los resultados de la cosecha nocturna (Secretos JS y Explotador Automático)"""
+    client = get_ssh_client()
+    if not client:
+        return {"status": "offline", "data": "No se pudo conectar a OCI-1."}
+    
+    try:
+        # Extraer secretos
+        stdin, stdout, stderr = client.exec_command("cat /home/ubuntu/plataforma_operativa/resultados/secretos_js.json 2>/dev/null || echo '[]'")
+        secretos = stdout.read().decode().strip()
+        if not secretos or secretos == "[]": secretos = "[]"
+        
+        # Extraer ultimo reporte del explotador
+        stdin, stdout, stderr = client.exec_command("cat $(ls -t /home/ubuntu/plataforma_operativa/resultados/explotador_*.json 2>/dev/null | head -1) 2>/dev/null || echo '[]'")
+        explotador = stdout.read().decode().strip()
+        if not explotador or explotador == "[]": explotador = "[]"
+        
+        client.close()
+        
+        return {
+            "status": "success",
+            "secretos": secretos,
+            "explotador": explotador
+        }
+    except Exception as e:
+        if client: client.close()
+        return {"status": "error", "data": f"Error leyendo resultados: {str(e)}"}
+
+
 @app.post("/api/chat")
 def chat_endpoint(req: ChatRequest):
     if completar is None:
         return {"status": "error", "data": "Módulo llm_client no encontrado."}
     
+    # Intentamos leer el contexto RAG de OCI-1
+    contexto_rag = ""
+    client = get_ssh_client()
+    if client:
+        try:
+            stdin, stdout, stderr = client.exec_command("cat /home/ubuntu/plataforma_operativa/resultados/CEREBRO_CONTEXTO.txt 2>/dev/null || echo ''")
+            contexto_rag = stdout.read().decode().strip()
+            client.close()
+        except Exception:
+            if client: client.close()
+
     # Prompt base para darle contexto al agente
     system_prompt = f"""Eres Pegaso, el asistente de IA integrado en el C2 Panel de Bug Bounty.
 Tu objetivo es ayudar al usuario a analizar vulnerabilidades, entender logs y redactar reportes.
 Si el usuario menciona "Cola de Revisión" o "actual.json", puedes inferir su contexto de Bug Bounty.
 Sé directo, conciso y profesional.
+
+CONTEXTO ACTUAL DEL SISTEMA (RAG):
+{contexto_rag if contexto_rag else "No hay contexto dinámico disponible."}
+
 Mensaje del usuario: {req.message}"""
     
     try:

@@ -1,0 +1,26 @@
+2026-07-13T00:13:44+0000 [INFO] ============================================================
+2026-07-13T00:13:44+0000 [INFO] Iniciando discovery_pasivo.py
+2026-07-13T00:13:44+0000 [INFO] Cargados 6 dominio(s) objetivo.
+2026-07-13T00:13:44+0000 [INFO] Procesando: mongodb.com
+2026-07-13T00:13:44+0000 [INFO] [subfinder] Escaneando 'mongodb.com'...
+2026-07-13T00:15:45+0000 [INFO] [subfinder] 'mongodb.com': 6359 subdominios encontrados.
+2026-07-13T00:15:45+0000 [INFO] Procesando: elastic.co
+2026-07-13T00:15:45+0000 [INFO] [subfinder] Escaneando 'elastic.co'...
+2026-07-13T00:17:45+0000 [INFO] [subfinder] 'elastic.co': 616 subdominios encontrados.
+2026-07-13T00:17:45+0000 [INFO] Procesando: yahoo.com
+2026-07-13T00:17:45+0000 [INFO] [subfinder] Escaneando 'yahoo.com'...
+2026-07-13T00:19:47+0000 [INFO] [subfinder] 'yahoo.com': 121006 subdominios encontrados.
+2026-07-13T00:19:47+0000 [INFO] Procesando: aol.com
+2026-07-13T00:19:47+0000 [INFO] [subfinder] Escaneando 'aol.com'...
+2026-07-13T00:21:48+0000 [INFO] [subfinder] 'aol.com': 5106 subdominios encontrados.
+2026-07-13T00:21:48+0000 [INFO] Procesando: flickr.com
+2026-07-13T00:21:48+0000 [INFO] [subfinder] Escaneando 'flickr.com'...
+2026-07-13T00:23:48+0000 [INFO] [subfinder] 'flickr.com': 259 subdominios encontrados.
+2026-07-13T00:23:48+0000 [INFO] Procesando: mil
+2026-07-13T00:23:48+0000 [INFO] [subfinder] Escaneando 'mil'...
+2026-07-13T00:25:49+0000 [INFO] [subfinder] 'mil': 50 subdominios encontrados.
+/home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py:213: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+2026-07-13T00:25:49+0000 [INFO] Resultados guardados en /home/ubuntu/plataforma_operativa/resultados/actual.json — Total: 133396 subdominios.
+2026-07-13T00:25:49+0000 [INFO] Discovery finalizado correctamente.
+2026-07-13T00:25:49+0000 [INFO] ============================================================

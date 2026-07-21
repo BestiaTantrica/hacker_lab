@@ -1,0 +1,60 @@
+2026-07-05T02:12:52Z [INFO] ============================================================
+2026-07-05T02:12:52Z [INFO] Iniciando run_pipeline.sh
+2026-07-05T02:12:52Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-05T02:12:52Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-05T02:12:52Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-05T02:13:59Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-05T02:13:59Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-05T02:13:59Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-05T02:13:59Z [INFO] Pipeline finalizado exitosamente
+2026-07-05T02:13:59Z [INFO] ============================================================
+2026-07-05T06:00:01Z [INFO] ============================================================
+2026-07-05T06:00:01Z [INFO] Iniciando run_pipeline.sh
+2026-07-05T06:00:01Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-05T06:00:01Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-05T06:00:02Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-05T06:01:46Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-05T06:01:46Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-05T06:01:47Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-05T06:01:47Z [INFO] Pipeline finalizado exitosamente
+2026-07-05T06:01:47Z [INFO] ============================================================
+2026-07-06T06:00:01Z [INFO] ============================================================
+2026-07-06T06:00:01Z [INFO] Iniciando run_pipeline.sh
+2026-07-06T06:00:01Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-06T06:00:01Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-06T06:00:01Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-06T06:01:11Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-06T06:01:11Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-06T06:01:11Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-06T06:01:11Z [INFO] Pipeline finalizado exitosamente
+2026-07-06T06:01:11Z [INFO] ============================================================
+2026-07-07T06:00:01Z [INFO] ============================================================
+2026-07-07T06:00:01Z [INFO] Iniciando run_pipeline.sh
+2026-07-07T06:00:01Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-07T06:00:01Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-07T06:00:01Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-07T06:00:54Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-07T06:00:54Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-07T06:00:54Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-07T06:00:54Z [INFO] Pipeline finalizado exitosamente
+2026-07-07T06:00:54Z [INFO] ============================================================
+2026-07-08T06:00:01Z [INFO] ============================================================
+2026-07-08T06:00:01Z [INFO] Iniciando run_pipeline.sh
+2026-07-08T06:00:01Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-08T06:00:01Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-08T06:00:01Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-08T06:00:49Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-08T06:00:49Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-08T06:00:49Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-08T06:00:49Z [INFO] Pipeline finalizado exitosamente
+2026-07-08T06:00:49Z [INFO] ============================================================
+2026-07-08T20:02:06Z [INFO] ============================================================
+2026-07-08T20:02:06Z [INFO] Iniciando run_pipeline.sh
+2026-07-08T20:02:07Z [INFO] Cargando variables de entorno desde /home/ubuntu/plataforma_operativa/config/entorno.env
+2026-07-08T20:02:07Z [INFO] Activando entorno virtual: /home/ubuntu/workspace_lab/venv/bin/activate
+2026-07-08T20:02:07Z [INFO] Ejecutando discovery pasivo: /home/ubuntu/plataforma_operativa/monitores/discovery_pasivo.py
+2026-07-08T20:02:58Z [INFO] discovery_pasivo.py finalizó exitosamente (código 0)
+2026-07-08T20:02:58Z [INFO] Ejecutando comparador de deltas: /home/ubuntu/plataforma_operativa/monitores/comparador.py
+2026-07-08T20:02:59Z [INFO] comparador.py finalizó exitosamente (código 0)
+2026-07-08T20:02:59Z [INFO] Pipeline finalizado exitosamente
+2026-07-08T20:02:59Z [INFO] ============================================================

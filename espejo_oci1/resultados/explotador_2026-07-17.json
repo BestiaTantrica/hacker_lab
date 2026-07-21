@@ -1,0 +1,12 @@
+[
+  {
+    "tipo": "open_redirect",
+    "url": "https://freshservice.com/?redirect=https://evil.com",
+    "redirige_a": "https://www.freshworks.com/freshservice/?redirect=https://evil.com"
+  },
+  {
+    "tipo": "open_redirect",
+    "url": "https://vendhq.com/?redirect=https://evil.com",
+    "redirige_a": "https://www.lightspeedhq.com/vend/?redirect=https://evil.com"
+  }
+]

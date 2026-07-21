@@ -46,6 +46,7 @@ async function checkOciStatus() {
 
 function appendTerminal(msg) {
     const terminal = document.getElementById('terminal-output');
+    if (!terminal) return;
     const time = new Date().toLocaleTimeString();
     terminal.innerHTML += `<br>> [${time}] ${msg}`;
     terminal.scrollTop = terminal.scrollHeight;
@@ -293,7 +294,92 @@ function copiarReporte() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// CASCADA E-COMMERCE (eBay)
+// ═══════════════════════════════════════════════════════════════════
+// MOTOR DE DINERO (Resultados Automáticos y Triage)
+// ═══════════════════════════════════════════════════════════════════
+
+async function cosecharBugs() {
+    const btn = document.getElementById('btn-cosechar');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Descargando de OCI-1...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/api/get_motor_results');
+        const result = await res.json();
+        
+        if (result.status === 'success') {
+            document.getElementById('results-card').style.display = 'block';
+            const bugList = document.getElementById('bug-list');
+            bugList.innerHTML = ''; // Limpiar lista
+            
+            let secretos = [];
+            let explotador = [];
+            try { secretos = JSON.parse(result.secretos); } catch(e) {}
+            try { explotador = JSON.parse(result.explotador); } catch(e) {}
+            
+            const totalBugs = secretos.length + explotador.length;
+            
+            if (totalBugs === 0) {
+                bugList.innerHTML = '<div style="padding: 10px; background: #2a2a35; border-radius: 5px; color: #aaa;">No se encontraron vulnerabilidades en la última ejecución nocturna. OCI-1 seguirá monitoreando.</div>';
+            } else {
+                // Renderizar secretos JS
+                secretos.forEach((bug, index) => renderBugCard(bugList, "Secreto Expuesto en JS", bug, "critical"));
+                // Renderizar explotador automático
+                explotador.forEach((bug, index) => renderBugCard(bugList, bug.tipo, bug, "high"));
+            }
+            
+            btn.classList.replace('btn-success', 'btn-primary');
+            btn.textContent = `✅ Cosecha Completada (${totalBugs} bugs)`;
+            appendTerminal(`[OK] Cosecha descargada: ${totalBugs} bugs listos para triage.`);
+        } else {
+            appendTerminal(`[ERROR] No se pudo descargar la cosecha: ${result.data}`);
+            btn.textContent = '❌ Error al descargar';
+            setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 3000);
+        }
+    } catch (e) {
+        appendTerminal(`[ERROR] Conexión fallida: ${e}`);
+        btn.textContent = '❌ Error de red';
+        setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 3000);
+    }
+}
+
+function renderBugCard(container, titulo, bugData, severidad) {
+    const card = document.createElement('div');
+    const borderCol = severidad === 'critical' ? '#e74c3c' : '#f29057';
+    card.style = `background: #1e1e2e; border: 1px solid #333; border-left: 4px solid ${borderCol}; padding: 12px; border-radius: 5px;`;
+    
+    // Convertir el JSON a string para el botón
+    const rawJson = JSON.stringify(bugData, null, 2);
+    
+    card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 style="margin: 0; color: #fff;">${titulo}</h4>
+            <span style="font-size: 10px; background: ${borderCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">${severidad.toUpperCase()}</span>
+        </div>
+        <pre style="font-size: 10px; max-height: 100px; overflow-y: auto; background: #000; padding: 8px; border-radius: 3px; color: #a9ff68; margin-bottom: 10px;">${rawJson}</pre>
+        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 0; display: flex; align-items: center; gap: 5px;" onclick='mandarAPegaso(${JSON.stringify(rawJson)})'>
+            🤖 Redactar Reporte con Pegaso
+        </button>
+    `;
+    container.appendChild(card);
+}
+
+function mandarAPegaso(rawJsonStr) {
+    // Cambiar a la vista del chat
+    const chatTab = document.querySelectorAll('.nav-item')[3]; // Pegaso es el 4to ítem (índice 3)
+    switchView('chat', chatTab);
+    
+    // Inyectar el prompt en el input
+    const input = document.getElementById('chat-input');
+    const prompt = `Por favor, redacta un reporte profesional de HackerOne en inglés para este hallazgo del Motor de Dinero:\n\n${rawJsonStr}`;
+    input.value = prompt;
+    
+    // Auto enviar
+    enviarMensajeChat();
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════════
 
 async function ejecutarEcommerce(paso) {

@@ -30,71 +30,27 @@
                 <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
             </div>
             
-            <h3 class="section-title">Cascada de IDOR (Flujo Continuo)</h3>
-            <p class="view-desc">Selecciona un Tenant Objetivo. La cascada no avanzará al siguiente paso hasta validar la explotación del paso anterior.</p>
+            <h3 class="section-title">Motor de Dinero (Resultados Automáticos)</h3>
+            <p class="view-desc">El cronjob (OCI-1) hace el trabajo pesado cada noche a las 3:00 AM UTC. Tu único trabajo aquí es recolectar y capitalizar.</p>
             
-            <div class="card action-card" id="step-1" style="border-left: 4px solid var(--primary);">
+            <div class="card action-card" id="triage-card" style="border-left: 4px solid var(--success);">
                 <div class="card-header">
-                    <span class="icon">🔍</span>
-                    <h3>Paso 1: Mapeo de Víctima</h3>
+                    <span class="icon">💰</span>
+                    <h3>Eslabón 1: Descargar Cosecha</h3>
                 </div>
-                <p>El sistema ingresa con cookies de Víctima y extrae todos los IDs posibles (tickets, perfiles, configs) para alimentar el ataque.</p>
-                <button class="btn btn-primary" onclick="ejecutarPasoCascada('mapeo')" id="btn-step-1">Iniciar Mapeo de IDs</button>
+                <p>Conecta con OCI-1 y recupera todos los hallazgos críticos (Secretos Expuestos, Subdomain Takeovers) encontrados anoche.</p>
+                <button class="btn btn-success" onclick="cosecharBugs()" id="btn-cosechar">📥 Descargar Resultados de Hoy</button>
             </div>
 
-            <div class="card action-card" id="step-2" style="border-left: 4px solid #f29057; opacity: 0.5; pointer-events: none;">
+            <div class="card action-card" id="results-card" style="display: none; border-top: 3px solid var(--primary); margin-top: 30px;">
                 <div class="card-header">
-                    <span class="icon">⚔️</span>
-                    <h3>Paso 2: IDOR (Ataque Horizontal)</h3>
+                    <span class="icon">🎯</span>
+                    <h3>Eslabón 2: Triage y Reporte</h3>
                 </div>
-                <p>El Atacante intenta acceder a los IDs de la Víctima (Cross-Tenant). Comprueba si hay fugas de datos entre empresas.</p>
-                <button class="btn btn-secondary" onclick="ejecutarPasoCascada('ataque')" id="btn-step-2">Lanzar Cross-Tenant IDOR</button>
-            </div>
-
-            <div class="card action-card" id="step-3" style="border-left: 4px solid #e74c3c; opacity: 0.5; pointer-events: none;">
-                <div class="card-header">
-                    <span class="icon">🔓</span>
-                    <h3>Paso 3: Escalada (Ataque Vertical)</h3>
-                </div>
-                <p>Intenta usar la sesión para acceder a endpoints de Administrador (/admin) ocultos o no documentados.</p>
-                <button class="btn btn-secondary" onclick="ejecutarPasoCascada('escalada')" id="btn-step-3">Lanzar Escalada de Privilegios</button>
-            </div>
-
-            <div class="card action-card" id="step-4" style="border-left: 4px solid var(--success); opacity: 0.5; pointer-events: none;">
-                <div class="card-header">
-                    <span class="icon">📄</span>
-                    <h3>Paso 4: Ensambladora de Reporte</h3>
-                </div>
-                <p>Formatea cualquier evidencia obtenida en los pasos 2 o 3 en un reporte listo para HackerOne.</p>
-                <button class="btn btn-success" onclick="generarReporteCascada()" id="btn-step-4">Generar Reporte Final</button>
-            </div>
-
-            <!-- COLA DE ALARMAS -->
-            <div class="card action-card" id="alarm-queue" style="border-left: 4px solid #f1c40f; margin-top: 20px;">
-                <div class="card-header">
-                    <span class="icon">⏰</span>
-                    <h3>Cola de Alarmas (Review Queue)</h3>
-                </div>
-                <p style="font-size: 11px; margin-bottom: 10px;">Vulnerabilidades dudosas o endpoints oscuros que requieren investigación futura. No detienen la cascada.</p>
-                <div id="queue-content" class="code-block" style="font-size: 11px; max-height: 150px; overflow-y: auto; color: #f1c40f;">
-                    > Cola vacía. Ejecuta la cascada para poblar.
-                </div>
-            </div>
-
-            <!-- RESULTADOS DEL PASO ACTUAL -->
-            <div class="card action-card" id="inbox-card" style="display: none; border-top: 3px solid var(--accent); margin-top: 30px;">
-                <div class="card-header">
-                    <span class="icon">📬</span>
-                    <h3 id="inbox-title">Consola de la Cascada</h3>
-                </div>
-                <p id="inbox-desc">Resultados en crudo del paso ejecutado:</p>
+                <p>Bugs listos para cobrar. Envía los datos crudos a Pegaso (IA) para que redacte el reporte final para HackerOne.</p>
                 
-                <div id="poc-content" class="code-block" style="margin-top: 15px; font-size: 11px; max-height: 250px; overflow-y: auto;"></div>
-                
-                <div id="report-section" style="display: none; margin-top: 15px;">
-                    <h4 style="margin-bottom: 10px; color: var(--success);">Reporte Generado (Copiar y Enviar):</h4>
-                    <textarea id="h1-report" class="code-block" style="width: 100%; height: 200px; font-family: monospace; font-size: 11px; border: 1px solid var(--accent);"></textarea>
-                    <button class="btn btn-success" style="margin-top: 10px;" onclick="copiarReporte()">📋 Copiar al Portapapeles</button>
+                <div id="bug-list" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- JS insertará los bugs aquí -->
                 </div>
             </div>
         </section>
@@ -207,6 +163,16 @@ Origin: https://evil.com
         </section>
 
         <!-- VISTA TERMINAL -->
+        <section id="view-terminal" class="view">
+            <div class="terminal-container" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="terminal-header" style="background: #2a2a4a; border-bottom: 1px solid #4a4a8a; padding: 10px;">
+                    <span class="icon">💻</span> Logs en Vivo (OCI-1)
+                </div>
+                <div id="terminal-output" class="terminal-body" style="flex-grow: 1; overflow-y: auto; background: #000; color: #0f0; padding: 15px; font-family: 'Fira Code', monospace; font-size: 11px;">
+                    > Terminal iniciada...
+                </div>
+            </div>
+        </section>
 
     </main>
 

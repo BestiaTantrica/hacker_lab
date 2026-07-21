@@ -1,0 +1,1551 @@
+21:07:23 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:26 [INFO] [groq] completado con éxito (5769 caracteres)
+21:07:26 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:28 [INFO] [groq] completado con éxito (4686 caracteres)
+21:07:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:29 [INFO] [groq] completado con éxito (3623 caracteres)
+21:07:29 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:31 [INFO] [groq] completado con éxito (3755 caracteres)
+21:07:31 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:31 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5475, Requested 1928. Please try again in 14.03s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:07:31 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:07:51 [INFO] [groq] intentando completado... (Intento 2/3)
+21:07:53 [INFO] [groq] completado con éxito (6216 caracteres)
+21:07:53 [INFO] [groq] intentando completado... (Intento 1/3)
+21:07:53 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5256, Requested 1938. Please try again in 11.94s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:07:53 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:08:13 [INFO] [groq] intentando completado... (Intento 2/3)
+21:08:14 [INFO] [groq] completado con éxito (4134 caracteres)
+21:08:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:08:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4720, Requested 1776. Please try again in 4.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:08:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:08:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:08:37 [INFO] [groq] completado con éxito (5759 caracteres)
+21:08:37 [INFO] [groq] intentando completado... (Intento 1/3)
+21:08:37 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4536, Requested 1823. Please try again in 3.59s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:08:37 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:08:57 [INFO] [groq] intentando completado... (Intento 2/3)
+21:08:58 [INFO] [groq] completado con éxito (4461 caracteres)
+21:08:58 [INFO] [groq] intentando completado... (Intento 1/3)
+21:08:58 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4089, Requested 2054. Please try again in 1.43s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:08:58 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:09:18 [INFO] [groq] intentando completado... (Intento 2/3)
+21:09:20 [INFO] [groq] completado con éxito (5390 caracteres)
+21:09:20 [INFO] [groq] intentando completado... (Intento 1/3)
+21:09:22 [INFO] [groq] completado con éxito (3702 caracteres)
+21:09:22 [INFO] [groq] intentando completado... (Intento 1/3)
+21:09:22 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5345, Requested 1908. Please try again in 12.53s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:09:22 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:09:42 [INFO] [groq] intentando completado... (Intento 2/3)
+21:09:44 [INFO] [groq] completado con éxito (4020 caracteres)
+21:09:44 [INFO] [groq] intentando completado... (Intento 1/3)
+21:09:44 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4575, Requested 1983. Please try again in 5.58s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:09:44 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:10:04 [INFO] [groq] intentando completado... (Intento 2/3)
+21:10:06 [INFO] [groq] completado con éxito (5800 caracteres)
+21:10:06 [INFO] [groq] intentando completado... (Intento 1/3)
+21:10:06 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4143, Requested 1968. Please try again in 1.109999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:10:06 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:10:26 [INFO] [groq] intentando completado... (Intento 2/3)
+21:10:28 [INFO] [groq] completado con éxito (3468 caracteres)
+21:10:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:10:29 [INFO] [groq] completado con éxito (4420 caracteres)
+21:10:29 [INFO] [groq] intentando completado... (Intento 1/3)
+21:10:29 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4697, Requested 1921. Please try again in 6.18s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:10:29 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:10:49 [INFO] [groq] intentando completado... (Intento 2/3)
+21:10:51 [INFO] [groq] completado con éxito (3999 caracteres)
+21:10:51 [INFO] [groq] intentando completado... (Intento 1/3)
+21:10:52 [INFO] [groq] completado con éxito (5727 caracteres)
+21:10:52 [INFO] [groq] intentando completado... (Intento 1/3)
+21:10:53 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5565, Requested 1916. Please try again in 14.809999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:10:53 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:11:13 [INFO] [groq] intentando completado... (Intento 2/3)
+21:11:14 [INFO] [groq] completado con éxito (3651 caracteres)
+21:11:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:11:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4811, Requested 1762. Please try again in 5.73s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:11:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:11:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:11:36 [INFO] [groq] completado con éxito (2897 caracteres)
+21:11:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:11:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5356, Requested 1899. Please try again in 12.55s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:11:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:11:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:11:58 [INFO] [groq] completado con éxito (6051 caracteres)
+21:11:58 [INFO] [groq] intentando completado... (Intento 1/3)
+21:11:58 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4950, Requested 2054. Please try again in 10.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:11:58 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:12:18 [INFO] [groq] intentando completado... (Intento 2/3)
+21:12:20 [INFO] [groq] completado con éxito (4508 caracteres)
+21:12:20 [INFO] [groq] intentando completado... (Intento 1/3)
+21:12:20 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4520, Requested 1942. Please try again in 4.62s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:12:20 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:12:40 [INFO] [groq] intentando completado... (Intento 2/3)
+21:12:41 [INFO] [groq] completado con éxito (5633 caracteres)
+21:12:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:12:44 [INFO] [groq] completado con éxito (6115 caracteres)
+21:12:44 [INFO] [groq] intentando completado... (Intento 1/3)
+21:12:44 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5790, Requested 1869. Please try again in 16.59s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:12:44 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:13:04 [INFO] [groq] intentando completado... (Intento 2/3)
+21:13:06 [INFO] [groq] completado con éxito (6309 caracteres)
+21:13:06 [INFO] [groq] intentando completado... (Intento 1/3)
+21:13:06 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5386, Requested 1951. Please try again in 13.37s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:13:06 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:13:26 [INFO] [groq] intentando completado... (Intento 2/3)
+21:13:28 [INFO] [groq] completado con éxito (5243 caracteres)
+21:13:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:13:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5165, Requested 1637. Please try again in 8.02s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:13:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:13:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:13:51 [INFO] [groq] completado con éxito (5228 caracteres)
+21:13:51 [INFO] [groq] intentando completado... (Intento 1/3)
+21:13:51 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4468, Requested 1977. Please try again in 4.45s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:13:51 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:14:11 [INFO] [groq] intentando completado... (Intento 2/3)
+21:14:12 [INFO] [groq] completado con éxito (4966 caracteres)
+21:14:12 [INFO] [groq] intentando completado... (Intento 1/3)
+21:14:14 [INFO] [groq] completado con éxito (5487 caracteres)
+21:14:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:14:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5542, Requested 1938. Please try again in 14.8s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:14:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:14:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:14:36 [INFO] [groq] completado con éxito (4117 caracteres)
+21:14:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:14:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5997, Requested 1963. Please try again in 19.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:14:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:14:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:14:57 [INFO] [groq] completado con éxito (4211 caracteres)
+21:14:57 [INFO] [groq] intentando completado... (Intento 1/3)
+21:14:57 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5998, Requested 1925. Please try again in 19.23s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:14:57 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:15:17 [INFO] [groq] intentando completado... (Intento 2/3)
+21:15:19 [INFO] [groq] completado con éxito (5629 caracteres)
+21:15:19 [INFO] [groq] intentando completado... (Intento 1/3)
+21:15:19 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5617, Requested 1877. Please try again in 14.94s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:15:19 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:15:39 [INFO] [groq] intentando completado... (Intento 2/3)
+21:15:41 [INFO] [groq] completado con éxito (4490 caracteres)
+21:15:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:15:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4837, Requested 1867. Please try again in 7.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:15:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:16:01 [INFO] [groq] intentando completado... (Intento 2/3)
+21:16:04 [INFO] [groq] completado con éxito (6339 caracteres)
+21:16:04 [INFO] [groq] intentando completado... (Intento 1/3)
+21:16:05 [INFO] [groq] completado con éxito (4046 caracteres)
+21:16:05 [INFO] [groq] intentando completado... (Intento 1/3)
+21:16:06 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5684, Requested 1931. Please try again in 16.149999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:16:06 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:16:26 [INFO] [groq] intentando completado... (Intento 2/3)
+21:16:28 [INFO] [groq] completado con éxito (5692 caracteres)
+21:16:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:16:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5376, Requested 1884. Please try again in 12.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:16:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:16:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:16:50 [INFO] [groq] completado con éxito (4429 caracteres)
+21:16:50 [INFO] [groq] intentando completado... (Intento 1/3)
+21:16:50 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4707, Requested 1972. Please try again in 6.79s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:16:50 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:17:10 [INFO] [groq] intentando completado... (Intento 2/3)
+21:17:12 [INFO] [groq] completado con éxito (4493 caracteres)
+21:17:12 [INFO] [groq] intentando completado... (Intento 1/3)
+21:17:12 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4098, Requested 2028. Please try again in 1.26s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:17:12 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:17:32 [INFO] [groq] intentando completado... (Intento 2/3)
+21:17:34 [INFO] [groq] completado con éxito (4857 caracteres)
+21:17:34 [INFO] [groq] intentando completado... (Intento 1/3)
+21:17:36 [INFO] [groq] completado con éxito (4593 caracteres)
+21:17:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:17:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5258, Requested 2004. Please try again in 12.62s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:17:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:17:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:17:57 [INFO] [groq] completado con éxito (4831 caracteres)
+21:17:57 [INFO] [groq] intentando completado... (Intento 1/3)
+21:17:57 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4834, Requested 1993. Please try again in 8.27s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:17:57 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:18:17 [INFO] [groq] intentando completado... (Intento 2/3)
+21:18:19 [INFO] [groq] completado con éxito (3886 caracteres)
+21:18:19 [INFO] [groq] intentando completado... (Intento 1/3)
+21:18:19 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4110, Requested 1926. Please try again in 360ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:18:19 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:18:39 [INFO] [groq] intentando completado... (Intento 2/3)
+21:18:41 [INFO] [groq] completado con éxito (5817 caracteres)
+21:18:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:18:43 [INFO] [groq] completado con éxito (4075 caracteres)
+21:18:43 [INFO] [groq] intentando completado... (Intento 1/3)
+21:18:43 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5001, Requested 1868. Please try again in 8.69s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:18:43 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:19:03 [INFO] [groq] intentando completado... (Intento 2/3)
+21:19:05 [INFO] [groq] completado con éxito (5460 caracteres)
+21:19:05 [INFO] [groq] intentando completado... (Intento 1/3)
+21:19:05 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4502, Requested 1902. Please try again in 4.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:19:05 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:19:25 [INFO] [groq] intentando completado... (Intento 2/3)
+21:19:27 [INFO] [groq] completado con éxito (4964 caracteres)
+21:19:27 [INFO] [groq] intentando completado... (Intento 1/3)
+21:19:28 [INFO] [groq] completado con éxito (4432 caracteres)
+21:19:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:19:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5225, Requested 1926. Please try again in 11.51s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:19:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:19:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:19:51 [INFO] [groq] completado con éxito (4898 caracteres)
+21:19:51 [INFO] [groq] intentando completado... (Intento 1/3)
+21:19:51 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4517, Requested 2007. Please try again in 5.24s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:19:51 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:20:11 [INFO] [groq] intentando completado... (Intento 2/3)
+21:20:14 [INFO] [groq] completado con éxito (5654 caracteres)
+21:20:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:20:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4226, Requested 2002. Please try again in 2.28s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:20:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:20:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:20:36 [INFO] [groq] completado con éxito (3394 caracteres)
+21:20:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:20:37 [INFO] [groq] completado con éxito (4371 caracteres)
+21:20:37 [INFO] [groq] intentando completado... (Intento 1/3)
+21:20:37 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4761, Requested 1928. Please try again in 6.89s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:20:37 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:20:57 [INFO] [groq] intentando completado... (Intento 2/3)
+21:20:59 [INFO] [groq] completado con éxito (5976 caracteres)
+21:20:59 [INFO] [groq] intentando completado... (Intento 1/3)
+21:20:59 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4472, Requested 1914. Please try again in 3.86s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:20:59 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:21:19 [INFO] [groq] intentando completado... (Intento 2/3)
+21:21:22 [INFO] [groq] completado con éxito (5000 caracteres)
+21:21:22 [INFO] [groq] intentando completado... (Intento 1/3)
+21:21:24 [INFO] [groq] completado con éxito (5539 caracteres)
+21:21:24 [INFO] [groq] intentando completado... (Intento 1/3)
+21:21:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5628, Requested 1934. Please try again in 15.62s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:21:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:21:44 [INFO] [groq] intentando completado... (Intento 2/3)
+21:21:45 [INFO] [groq] completado con éxito (3209 caracteres)
+21:21:45 [INFO] [groq] intentando completado... (Intento 1/3)
+21:21:45 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4669, Requested 1921. Please try again in 5.899999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:21:45 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:22:05 [INFO] [groq] intentando completado... (Intento 2/3)
+21:22:08 [INFO] [groq] completado con éxito (4490 caracteres)
+21:22:08 [INFO] [groq] intentando completado... (Intento 1/3)
+21:22:09 [INFO] [groq] completado con éxito (4283 caracteres)
+21:22:09 [INFO] [groq] intentando completado... (Intento 1/3)
+21:22:09 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5269, Requested 1890. Please try again in 11.59s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:22:09 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:22:29 [INFO] [groq] intentando completado... (Intento 2/3)
+21:22:31 [INFO] [groq] completado con éxito (5734 caracteres)
+21:22:31 [INFO] [groq] intentando completado... (Intento 1/3)
+21:22:31 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4824, Requested 1851. Please try again in 6.75s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:22:31 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:22:51 [INFO] [groq] intentando completado... (Intento 2/3)
+21:22:53 [INFO] [groq] completado con éxito (4338 caracteres)
+21:22:53 [INFO] [groq] intentando completado... (Intento 1/3)
+21:22:53 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4206, Requested 1859. Please try again in 650ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:22:53 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:23:13 [INFO] [groq] intentando completado... (Intento 2/3)
+21:23:14 [INFO] [groq] completado con éxito (3858 caracteres)
+21:23:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:23:16 [INFO] [groq] completado con éxito (5254 caracteres)
+21:23:16 [INFO] [groq] intentando completado... (Intento 1/3)
+21:23:16 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5121, Requested 1512. Please try again in 6.33s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:23:16 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:23:36 [INFO] [groq] intentando completado... (Intento 2/3)
+21:23:37 [INFO] [groq] completado con éxito (4068 caracteres)
+21:23:37 [INFO] [groq] intentando completado... (Intento 1/3)
+21:23:39 [INFO] [groq] completado con éxito (3868 caracteres)
+21:23:39 [INFO] [groq] intentando completado... (Intento 1/3)
+21:23:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5257, Requested 1922. Please try again in 11.79s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:23:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:23:59 [INFO] [groq] intentando completado... (Intento 2/3)
+21:24:01 [INFO] [groq] completado con éxito (3981 caracteres)
+21:24:01 [INFO] [groq] intentando completado... (Intento 1/3)
+21:24:01 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4511, Requested 1947. Please try again in 4.58s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:24:01 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:24:21 [INFO] [groq] intentando completado... (Intento 2/3)
+21:24:23 [INFO] [groq] completado con éxito (5806 caracteres)
+21:24:23 [INFO] [groq] intentando completado... (Intento 1/3)
+21:24:23 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4255, Requested 1859. Please try again in 1.14s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:24:23 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:24:43 [INFO] [groq] intentando completado... (Intento 2/3)
+21:24:45 [INFO] [groq] completado con éxito (3523 caracteres)
+21:24:45 [INFO] [groq] intentando completado... (Intento 1/3)
+21:24:47 [INFO] [groq] completado con éxito (5963 caracteres)
+21:24:47 [INFO] [groq] intentando completado... (Intento 1/3)
+21:24:47 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5148, Requested 1900. Please try again in 10.48s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:24:47 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:25:07 [INFO] [groq] intentando completado... (Intento 2/3)
+21:25:09 [INFO] [groq] completado con éxito (5808 caracteres)
+21:25:09 [INFO] [groq] intentando completado... (Intento 1/3)
+21:25:09 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4806, Requested 1891. Please try again in 6.97s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:25:09 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:25:29 [INFO] [groq] intentando completado... (Intento 2/3)
+21:25:31 [INFO] [groq] completado con éxito (5069 caracteres)
+21:25:31 [INFO] [groq] intentando completado... (Intento 1/3)
+21:25:31 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4328, Requested 1956. Please try again in 2.84s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:25:31 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:25:51 [INFO] [groq] intentando completado... (Intento 2/3)
+21:25:52 [INFO] [groq] completado con éxito (3919 caracteres)
+21:25:52 [INFO] [groq] intentando completado... (Intento 1/3)
+21:25:55 [INFO] [groq] completado con éxito (5732 caracteres)
+21:25:55 [INFO] [groq] intentando completado... (Intento 1/3)
+21:25:55 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5291, Requested 1882. Please try again in 11.73s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:25:55 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:26:15 [INFO] [groq] intentando completado... (Intento 2/3)
+21:26:16 [INFO] [groq] completado con éxito (3640 caracteres)
+21:26:16 [INFO] [groq] intentando completado... (Intento 1/3)
+21:26:16 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5068, Requested 1978. Please try again in 10.46s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:26:16 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:26:36 [INFO] [groq] intentando completado... (Intento 2/3)
+21:26:38 [INFO] [groq] completado con éxito (4714 caracteres)
+21:26:38 [INFO] [groq] intentando completado... (Intento 1/3)
+21:26:39 [INFO] [groq] completado con éxito (4732 caracteres)
+21:26:39 [INFO] [groq] intentando completado... (Intento 1/3)
+21:26:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5581, Requested 1963. Please try again in 15.44s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:26:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:26:59 [INFO] [groq] intentando completado... (Intento 2/3)
+21:27:02 [INFO] [groq] completado con éxito (4612 caracteres)
+21:27:02 [INFO] [groq] intentando completado... (Intento 1/3)
+21:27:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5013, Requested 1891. Please try again in 9.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:27:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:27:22 [INFO] [groq] intentando completado... (Intento 2/3)
+21:27:23 [INFO] [groq] completado con éxito (5919 caracteres)
+21:27:23 [INFO] [groq] intentando completado... (Intento 1/3)
+21:27:23 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4721, Requested 1944. Please try again in 6.65s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:27:23 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:27:43 [INFO] [groq] intentando completado... (Intento 2/3)
+21:27:45 [INFO] [groq] completado con éxito (4658 caracteres)
+21:27:45 [INFO] [groq] intentando completado... (Intento 1/3)
+21:27:45 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4017, Requested 2048. Please try again in 650ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:27:45 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:28:05 [INFO] [groq] intentando completado... (Intento 2/3)
+21:28:07 [INFO] [groq] completado con éxito (6130 caracteres)
+21:28:07 [INFO] [groq] intentando completado... (Intento 1/3)
+21:28:09 [INFO] [groq] completado con éxito (4436 caracteres)
+21:28:09 [INFO] [groq] intentando completado... (Intento 1/3)
+21:28:09 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5777, Requested 1827. Please try again in 16.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:28:09 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:28:29 [INFO] [groq] intentando completado... (Intento 2/3)
+21:28:30 [INFO] [groq] completado con éxito (5700 caracteres)
+21:28:30 [INFO] [groq] intentando completado... (Intento 1/3)
+21:28:30 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5995, Requested 2062. Please try again in 20.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:28:30 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:28:50 [INFO] [groq] intentando completado... (Intento 2/3)
+21:28:50 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 3990, Requested 2013. Please try again in 30ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:28:50 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:29:10 [INFO] [groq] intentando completado... (Intento 3/3)
+21:29:12 [INFO] [groq] completado con éxito (6218 caracteres)
+21:29:12 [INFO] [groq] intentando completado... (Intento 1/3)
+21:29:14 [INFO] [groq] completado con éxito (6169 caracteres)
+21:29:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:29:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5746, Requested 2079. Please try again in 18.25s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:29:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:29:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:29:36 [INFO] [groq] completado con éxito (4746 caracteres)
+21:29:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:29:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5406, Requested 2061. Please try again in 14.67s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:29:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:29:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:29:58 [INFO] [groq] completado con éxito (5999 caracteres)
+21:29:58 [INFO] [groq] intentando completado... (Intento 1/3)
+21:29:58 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5268, Requested 2053. Please try again in 13.21s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:29:58 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:30:18 [INFO] [groq] intentando completado... (Intento 2/3)
+21:30:20 [INFO] [groq] completado con éxito (4766 caracteres)
+21:30:20 [INFO] [groq] intentando completado... (Intento 1/3)
+21:30:20 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4850, Requested 2054. Please try again in 9.04s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:30:20 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:30:40 [INFO] [groq] intentando completado... (Intento 2/3)
+21:30:41 [INFO] [groq] completado con éxito (4927 caracteres)
+21:30:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:30:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4736, Requested 1824. Please try again in 5.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:30:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:31:01 [INFO] [groq] intentando completado... (Intento 2/3)
+21:31:03 [INFO] [groq] completado con éxito (4578 caracteres)
+21:31:03 [INFO] [groq] intentando completado... (Intento 1/3)
+21:31:03 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4433, Requested 1824. Please try again in 2.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:31:03 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:31:23 [INFO] [groq] intentando completado... (Intento 2/3)
+21:31:25 [INFO] [groq] completado con éxito (4926 caracteres)
+21:31:25 [INFO] [groq] intentando completado... (Intento 1/3)
+21:31:28 [INFO] [groq] completado con éxito (5369 caracteres)
+21:31:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:31:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5539, Requested 2054. Please try again in 15.93s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:31:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:31:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:31:50 [INFO] [groq] completado con éxito (5701 caracteres)
+21:31:50 [INFO] [groq] intentando completado... (Intento 1/3)
+21:31:50 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5386, Requested 2054. Please try again in 14.399999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:31:50 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:32:10 [INFO] [groq] intentando completado... (Intento 2/3)
+21:32:12 [INFO] [groq] completado con éxito (5153 caracteres)
+21:32:12 [INFO] [groq] intentando completado... (Intento 1/3)
+21:32:12 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5051, Requested 1876. Please try again in 9.27s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:32:12 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:32:32 [INFO] [groq] intentando completado... (Intento 2/3)
+21:32:34 [INFO] [groq] completado con éxito (4599 caracteres)
+21:32:34 [INFO] [groq] intentando completado... (Intento 1/3)
+21:32:34 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4609, Requested 2054. Please try again in 6.63s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:32:34 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:32:54 [INFO] [groq] intentando completado... (Intento 2/3)
+21:32:56 [INFO] [groq] completado con éxito (4116 caracteres)
+21:32:56 [INFO] [groq] intentando completado... (Intento 1/3)
+21:32:56 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4139, Requested 1876. Please try again in 150ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:32:56 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:33:16 [INFO] [groq] intentando completado... (Intento 2/3)
+21:33:18 [INFO] [groq] completado con éxito (5562 caracteres)
+21:33:18 [INFO] [groq] intentando completado... (Intento 1/3)
+21:33:19 [INFO] [groq] completado con éxito (3423 caracteres)
+21:33:19 [INFO] [groq] intentando completado... (Intento 1/3)
+21:33:19 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5818, Requested 2054. Please try again in 18.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:33:19 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:33:39 [INFO] [groq] intentando completado... (Intento 2/3)
+21:33:41 [INFO] [groq] completado con éxito (4094 caracteres)
+21:33:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:33:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4830, Requested 2054. Please try again in 8.84s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:33:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:34:01 [INFO] [groq] intentando completado... (Intento 2/3)
+21:34:05 [INFO] [groq] completado con éxito (5440 caracteres)
+21:34:05 [INFO] [groq] intentando completado... (Intento 1/3)
+21:34:06 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4442, Requested 2054. Please try again in 4.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:34:06 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:34:26 [INFO] [groq] intentando completado... (Intento 2/3)
+21:34:27 [INFO] [groq] completado con éxito (5398 caracteres)
+21:34:27 [INFO] [groq] intentando completado... (Intento 1/3)
+21:34:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4294, Requested 2054. Please try again in 3.48s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:34:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:34:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:34:49 [INFO] [groq] completado con éxito (5708 caracteres)
+21:34:49 [INFO] [groq] intentando completado... (Intento 1/3)
+21:34:49 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4141, Requested 2054. Please try again in 1.95s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:34:49 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:35:09 [INFO] [groq] intentando completado... (Intento 2/3)
+21:35:11 [INFO] [groq] completado con éxito (4174 caracteres)
+21:35:11 [INFO] [groq] intentando completado... (Intento 1/3)
+21:35:14 [INFO] [groq] completado con éxito (4502 caracteres)
+21:35:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:35:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5112, Requested 2054. Please try again in 11.66s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:35:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:35:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:35:36 [INFO] [groq] completado con éxito (4878 caracteres)
+21:35:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:35:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4832, Requested 1876. Please try again in 7.08s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:35:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:35:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:35:58 [INFO] [groq] completado con éxito (4930 caracteres)
+21:35:58 [INFO] [groq] intentando completado... (Intento 1/3)
+21:35:58 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4498, Requested 2054. Please try again in 5.52s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:35:58 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:36:18 [INFO] [groq] intentando completado... (Intento 2/3)
+21:36:19 [INFO] [groq] completado con éxito (4473 caracteres)
+21:36:19 [INFO] [groq] intentando completado... (Intento 1/3)
+21:36:19 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4038, Requested 2054. Please try again in 919.999999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:36:19 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:36:39 [INFO] [groq] intentando completado... (Intento 2/3)
+21:36:42 [INFO] [groq] completado con éxito (5844 caracteres)
+21:36:42 [INFO] [groq] intentando completado... (Intento 1/3)
+21:36:44 [INFO] [groq] completado con éxito (6220 caracteres)
+21:36:44 [INFO] [groq] intentando completado... (Intento 1/3)
+21:36:44 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5720, Requested 1876. Please try again in 15.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:36:44 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:37:04 [INFO] [groq] intentando completado... (Intento 2/3)
+21:37:06 [INFO] [groq] completado con éxito (5228 caracteres)
+21:37:06 [INFO] [groq] intentando completado... (Intento 1/3)
+21:37:06 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5419, Requested 2054. Please try again in 14.73s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:37:06 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:37:26 [INFO] [groq] intentando completado... (Intento 2/3)
+21:37:27 [INFO] [groq] completado con éxito (4621 caracteres)
+21:37:27 [INFO] [groq] intentando completado... (Intento 1/3)
+21:37:27 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5032, Requested 2054. Please try again in 10.86s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:37:27 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:37:47 [INFO] [groq] intentando completado... (Intento 2/3)
+21:37:50 [INFO] [groq] completado con éxito (4303 caracteres)
+21:37:50 [INFO] [groq] intentando completado... (Intento 1/3)
+21:37:50 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4530, Requested 2054. Please try again in 5.84s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:37:50 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:38:10 [INFO] [groq] intentando completado... (Intento 2/3)
+21:38:11 [INFO] [groq] completado con éxito (3572 caracteres)
+21:38:11 [INFO] [groq] intentando completado... (Intento 1/3)
+21:38:13 [INFO] [groq] completado con éxito (5196 caracteres)
+21:38:13 [INFO] [groq] intentando completado... (Intento 1/3)
+21:38:13 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5777, Requested 2054. Please try again in 18.31s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:38:13 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:38:33 [INFO] [groq] intentando completado... (Intento 2/3)
+21:38:35 [INFO] [groq] completado con éxito (5512 caracteres)
+21:38:35 [INFO] [groq] intentando completado... (Intento 1/3)
+21:38:35 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5634, Requested 2054. Please try again in 16.879999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:38:35 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:38:55 [INFO] [groq] intentando completado... (Intento 2/3)
+21:38:56 [INFO] [groq] completado con éxito (4310 caracteres)
+21:38:56 [INFO] [groq] intentando completado... (Intento 1/3)
+21:38:57 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5995, Requested 2054. Please try again in 20.49s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:38:57 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:39:17 [INFO] [groq] intentando completado... (Intento 2/3)
+21:39:17 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 3990, Requested 2054. Please try again in 440ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:39:17 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:39:37 [INFO] [groq] intentando completado... (Intento 3/3)
+21:39:39 [INFO] [groq] completado con éxito (5835 caracteres)
+21:39:39 [INFO] [groq] intentando completado... (Intento 1/3)
+21:39:41 [INFO] [groq] completado con éxito (4633 caracteres)
+21:39:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:39:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5693, Requested 1876. Please try again in 15.69s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:39:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:40:01 [INFO] [groq] intentando completado... (Intento 2/3)
+21:40:02 [INFO] [groq] completado con éxito (4535 caracteres)
+21:40:02 [INFO] [groq] intentando completado... (Intento 1/3)
+21:40:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5293, Requested 2054. Please try again in 13.47s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:40:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:40:22 [INFO] [groq] intentando completado... (Intento 2/3)
+21:40:24 [INFO] [groq] completado con éxito (5340 caracteres)
+21:40:24 [INFO] [groq] intentando completado... (Intento 1/3)
+21:40:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4655, Requested 2054. Please try again in 7.09s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:40:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:40:44 [INFO] [groq] intentando completado... (Intento 2/3)
+21:40:46 [INFO] [groq] completado con éxito (5200 caracteres)
+21:40:46 [INFO] [groq] intentando completado... (Intento 1/3)
+21:40:46 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4509, Requested 2054. Please try again in 5.63s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:40:46 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:41:06 [INFO] [groq] intentando completado... (Intento 2/3)
+21:41:08 [INFO] [groq] completado con éxito (3979 caracteres)
+21:41:08 [INFO] [groq] intentando completado... (Intento 1/3)
+21:41:10 [INFO] [groq] completado con éxito (5288 caracteres)
+21:41:10 [INFO] [groq] intentando completado... (Intento 1/3)
+21:41:10 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5653, Requested 2054. Please try again in 17.07s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:41:10 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:41:30 [INFO] [groq] intentando completado... (Intento 2/3)
+21:41:32 [INFO] [groq] completado con éxito (3696 caracteres)
+21:41:32 [INFO] [groq] intentando completado... (Intento 1/3)
+21:41:32 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4916, Requested 2054. Please try again in 9.7s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:41:32 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:41:52 [INFO] [groq] intentando completado... (Intento 2/3)
+21:41:54 [INFO] [groq] completado con éxito (5253 caracteres)
+21:41:54 [INFO] [groq] intentando completado... (Intento 1/3)
+21:41:54 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4688, Requested 2054. Please try again in 7.42s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:41:54 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:42:14 [INFO] [groq] intentando completado... (Intento 2/3)
+21:42:15 [INFO] [groq] completado con éxito (3790 caracteres)
+21:42:15 [INFO] [groq] intentando completado... (Intento 1/3)
+21:42:15 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4586, Requested 2054. Please try again in 6.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:42:15 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:42:35 [INFO] [groq] intentando completado... (Intento 2/3)
+21:42:37 [INFO] [groq] completado con éxito (3829 caracteres)
+21:42:37 [INFO] [groq] intentando completado... (Intento 1/3)
+21:42:39 [INFO] [groq] completado con éxito (5644 caracteres)
+21:42:39 [INFO] [groq] intentando completado... (Intento 1/3)
+21:42:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5222, Requested 2054. Please try again in 12.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:42:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:42:59 [INFO] [groq] intentando completado... (Intento 2/3)
+21:43:01 [INFO] [groq] completado con éxito (5943 caracteres)
+21:43:01 [INFO] [groq] intentando completado... (Intento 1/3)
+21:43:01 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5031, Requested 2054. Please try again in 10.85s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:43:01 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:43:21 [INFO] [groq] intentando completado... (Intento 2/3)
+21:43:24 [INFO] [groq] completado con éxito (5812 caracteres)
+21:43:24 [INFO] [groq] intentando completado... (Intento 1/3)
+21:43:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4822, Requested 2054. Please try again in 8.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:43:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:43:44 [INFO] [groq] intentando completado... (Intento 2/3)
+21:43:46 [INFO] [groq] completado con éxito (5837 caracteres)
+21:43:46 [INFO] [groq] intentando completado... (Intento 1/3)
+21:43:46 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4521, Requested 2054. Please try again in 5.75s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:43:46 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:44:06 [INFO] [groq] intentando completado... (Intento 2/3)
+21:44:08 [INFO] [groq] completado con éxito (4633 caracteres)
+21:44:08 [INFO] [groq] intentando completado... (Intento 1/3)
+21:44:08 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4046, Requested 2054. Please try again in 1s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:44:08 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:44:28 [INFO] [groq] intentando completado... (Intento 2/3)
+21:44:31 [INFO] [groq] completado con éxito (6328 caracteres)
+21:44:31 [INFO] [groq] intentando completado... (Intento 1/3)
+21:44:32 [INFO] [groq] completado con éxito (4852 caracteres)
+21:44:32 [INFO] [groq] intentando completado... (Intento 1/3)
+21:44:32 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5522, Requested 2054. Please try again in 15.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:44:32 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:44:52 [INFO] [groq] intentando completado... (Intento 2/3)
+21:44:54 [INFO] [groq] completado con éxito (3964 caracteres)
+21:44:54 [INFO] [groq] intentando completado... (Intento 1/3)
+21:44:54 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5997, Requested 2054. Please try again in 20.509999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:44:54 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:45:14 [INFO] [groq] intentando completado... (Intento 2/3)
+21:45:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 3992, Requested 2054. Please try again in 459.999999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:45:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:45:34 [INFO] [groq] intentando completado... (Intento 3/3)
+21:45:36 [INFO] [groq] completado con éxito (4138 caracteres)
+21:45:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:45:39 [INFO] [groq] completado con éxito (5754 caracteres)
+21:45:39 [INFO] [groq] intentando completado... (Intento 1/3)
+21:45:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5262, Requested 2054. Please try again in 13.16s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:45:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:45:59 [INFO] [groq] intentando completado... (Intento 2/3)
+21:46:00 [INFO] [groq] completado con éxito (4618 caracteres)
+21:46:00 [INFO] [groq] intentando completado... (Intento 1/3)
+21:46:01 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5998, Requested 2054. Please try again in 20.52s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:46:01 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:46:21 [INFO] [groq] intentando completado... (Intento 2/3)
+21:46:21 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 3993, Requested 2054. Please try again in 470ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:46:21 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:46:41 [INFO] [groq] intentando completado... (Intento 3/3)
+21:46:43 [INFO] [groq] completado con éxito (4636 caracteres)
+21:46:43 [INFO] [groq] intentando completado... (Intento 1/3)
+21:46:45 [INFO] [groq] completado con éxito (5920 caracteres)
+21:46:45 [INFO] [groq] intentando completado... (Intento 1/3)
+21:46:45 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5433, Requested 2054. Please try again in 14.87s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:46:45 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:47:05 [INFO] [groq] intentando completado... (Intento 2/3)
+21:47:06 [INFO] [groq] completado con éxito (3974 caracteres)
+21:47:06 [INFO] [groq] intentando completado... (Intento 1/3)
+21:47:07 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5301, Requested 2054. Please try again in 13.55s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:47:07 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:47:27 [INFO] [groq] intentando completado... (Intento 2/3)
+21:47:28 [INFO] [groq] completado con éxito (3660 caracteres)
+21:47:28 [INFO] [groq] intentando completado... (Intento 1/3)
+21:47:28 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4395, Requested 2054. Please try again in 4.49s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:47:28 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:47:48 [INFO] [groq] intentando completado... (Intento 2/3)
+21:47:49 [INFO] [groq] completado con éxito (4348 caracteres)
+21:47:49 [INFO] [groq] intentando completado... (Intento 1/3)
+21:47:51 [INFO] [groq] completado con éxito (5139 caracteres)
+21:47:51 [INFO] [groq] intentando completado... (Intento 1/3)
+21:47:52 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5493, Requested 2054. Please try again in 15.47s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:47:52 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:48:12 [INFO] [groq] intentando completado... (Intento 2/3)
+21:48:14 [INFO] [groq] completado con éxito (6085 caracteres)
+21:48:14 [INFO] [groq] intentando completado... (Intento 1/3)
+21:48:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5280, Requested 2054. Please try again in 13.34s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:48:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:48:34 [INFO] [groq] intentando completado... (Intento 2/3)
+21:48:36 [INFO] [groq] completado con éxito (4448 caracteres)
+21:48:36 [INFO] [groq] intentando completado... (Intento 1/3)
+21:48:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4820, Requested 2054. Please try again in 8.74s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:48:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:48:56 [INFO] [groq] intentando completado... (Intento 2/3)
+21:48:58 [INFO] [groq] completado con éxito (6114 caracteres)
+21:48:58 [INFO] [groq] intentando completado... (Intento 1/3)
+21:48:59 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4632, Requested 2054. Please try again in 6.859999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:48:59 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:49:19 [INFO] [groq] intentando completado... (Intento 2/3)
+21:49:20 [INFO] [groq] completado con éxito (5929 caracteres)
+21:49:20 [INFO] [groq] intentando completado... (Intento 1/3)
+21:49:21 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4485, Requested 1746. Please try again in 2.31s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:49:21 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:49:41 [INFO] [groq] intentando completado... (Intento 2/3)
+21:49:43 [INFO] [groq] completado con éxito (4690 caracteres)
+21:49:43 [INFO] [groq] intentando completado... (Intento 1/3)
+21:49:43 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4023, Requested 2054. Please try again in 770ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:49:43 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:50:03 [INFO] [groq] intentando completado... (Intento 2/3)
+21:50:05 [INFO] [groq] completado con éxito (5579 caracteres)
+21:50:05 [INFO] [groq] intentando completado... (Intento 1/3)
+21:50:05 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5346, Requested 2054. Please try again in 14s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:50:05 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:50:25 [INFO] [groq] intentando completado... (Intento 2/3)
+21:50:27 [INFO] [groq] completado con éxito (6002 caracteres)
+21:50:27 [INFO] [groq] intentando completado... (Intento 1/3)
+21:50:27 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5190, Requested 2054. Please try again in 12.44s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:50:27 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:50:47 [INFO] [groq] intentando completado... (Intento 2/3)
+21:50:49 [INFO] [groq] completado con éxito (5202 caracteres)
+21:50:49 [INFO] [groq] intentando completado... (Intento 1/3)
+21:50:49 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5053, Requested 2023. Please try again in 10.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:50:49 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:51:09 [INFO] [groq] intentando completado... (Intento 2/3)
+21:51:11 [INFO] [groq] completado con éxito (4025 caracteres)
+21:51:11 [INFO] [groq] intentando completado... (Intento 1/3)
+21:51:11 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4136, Requested 2054. Please try again in 1.9s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:51:11 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:51:31 [INFO] [groq] intentando completado... (Intento 2/3)
+21:51:32 [INFO] [groq] completado con éxito (3079 caracteres)
+21:51:32 [INFO] [groq] intentando completado... (Intento 1/3)
+21:51:34 [INFO] [groq] completado con éxito (4657 caracteres)
+21:51:34 [INFO] [groq] intentando completado... (Intento 1/3)
+21:51:34 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4912, Requested 2054. Please try again in 9.66s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:51:34 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:51:54 [INFO] [groq] intentando completado... (Intento 2/3)
+21:51:56 [INFO] [groq] completado con éxito (5793 caracteres)
+21:51:56 [INFO] [groq] intentando completado... (Intento 1/3)
+21:51:56 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4753, Requested 2054. Please try again in 8.07s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:51:56 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:52:16 [INFO] [groq] intentando completado... (Intento 2/3)
+21:52:18 [INFO] [groq] completado con éxito (4697 caracteres)
+21:52:18 [INFO] [groq] intentando completado... (Intento 1/3)
+21:52:18 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4262, Requested 2054. Please try again in 3.16s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:52:18 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:52:38 [INFO] [groq] intentando completado... (Intento 2/3)
+21:52:40 [INFO] [groq] completado con éxito (6123 caracteres)
+21:52:40 [INFO] [groq] intentando completado... (Intento 1/3)
+21:52:40 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4112, Requested 2054. Please try again in 1.66s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:52:40 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:53:00 [INFO] [groq] intentando completado... (Intento 2/3)
+21:53:02 [INFO] [groq] completado con éxito (5295 caracteres)
+21:53:02 [INFO] [groq] intentando completado... (Intento 1/3)
+21:53:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 3962, Requested 2054. Please try again in 160ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:53:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:53:22 [INFO] [groq] intentando completado... (Intento 2/3)
+21:53:24 [INFO] [groq] completado con éxito (5024 caracteres)
+21:53:24 [INFO] [groq] intentando completado... (Intento 1/3)
+21:53:26 [INFO] [groq] completado con éxito (3715 caracteres)
+21:53:26 [INFO] [groq] intentando completado... (Intento 1/3)
+21:53:26 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5036, Requested 2054. Please try again in 10.9s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:53:26 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:53:46 [INFO] [groq] intentando completado... (Intento 2/3)
+21:53:48 [INFO] [groq] completado con éxito (5077 caracteres)
+21:53:48 [INFO] [groq] intentando completado... (Intento 1/3)
+21:53:48 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4734, Requested 2054. Please try again in 7.88s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:53:48 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:54:08 [INFO] [groq] intentando completado... (Intento 2/3)
+21:54:10 [INFO] [groq] completado con éxito (3102 caracteres)
+21:54:10 [INFO] [groq] intentando completado... (Intento 1/3)
+21:54:10 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4006, Requested 2054. Please try again in 600ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:54:10 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:54:30 [INFO] [groq] intentando completado... (Intento 2/3)
+21:54:32 [INFO] [groq] completado con éxito (4703 caracteres)
+21:54:32 [INFO] [groq] intentando completado... (Intento 1/3)
+21:54:33 [INFO] [groq] completado con éxito (5412 caracteres)
+21:54:33 [INFO] [groq] intentando completado... (Intento 1/3)
+21:54:34 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5340, Requested 2054. Please try again in 13.94s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:54:34 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:54:54 [INFO] [groq] intentando completado... (Intento 2/3)
+21:54:55 [INFO] [groq] completado con éxito (5144 caracteres)
+21:54:55 [INFO] [groq] intentando completado... (Intento 1/3)
+21:54:55 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5071, Requested 2054. Please try again in 11.25s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:54:55 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:55:15 [INFO] [groq] intentando completado... (Intento 2/3)
+21:55:17 [INFO] [groq] completado con éxito (4707 caracteres)
+21:55:17 [INFO] [groq] intentando completado... (Intento 1/3)
+21:55:17 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4689, Requested 2054. Please try again in 7.43s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:55:17 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:55:37 [INFO] [groq] intentando completado... (Intento 2/3)
+21:55:38 [INFO] [groq] completado con éxito (4545 caracteres)
+21:55:38 [INFO] [groq] intentando completado... (Intento 1/3)
+21:55:38 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4275, Requested 2054. Please try again in 3.29s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:55:38 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:55:58 [INFO] [groq] intentando completado... (Intento 2/3)
+21:56:00 [INFO] [groq] completado con éxito (4649 caracteres)
+21:56:00 [INFO] [groq] intentando completado... (Intento 1/3)
+21:56:02 [INFO] [groq] completado con éxito (5787 caracteres)
+21:56:02 [INFO] [groq] intentando completado... (Intento 1/3)
+21:56:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5655, Requested 2054. Please try again in 17.09s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:56:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:56:22 [INFO] [groq] intentando completado... (Intento 2/3)
+21:56:24 [INFO] [groq] completado con éxito (5891 caracteres)
+🤖 Iniciando analizador_completo.py en el servidor...
+🧹 Pre-filtrando subdominios sospechosos...
+🎯 Total de subdominios sospechosos identificados: 5010
+🧠 Analizando lote 1/236 para mongodb.com...
+🧠 Analizando lote 2/236 para mongodb.com...
+🧠 Analizando lote 3/236 para mongodb.com...
+🧠 Analizando lote 4/236 para mongodb.com...
+🧠 Analizando lote 5/236 para mongodb.com...
+🧠 Analizando lote 6/236 para mongodb.com...
+🧠 Analizando lote 7/236 para mongodb.com...
+🧠 Analizando lote 8/236 para mongodb.com...
+🧠 Analizando lote 9/236 para mongodb.com...
+🧠 Analizando lote 10/236 para mongodb.com...
+🧠 Analizando lote 11/236 para mongodb.com...
+🧠 Analizando lote 12/236 para mongodb.com...
+🧠 Analizando lote 13/236 para mongodb.com...
+🧠 Analizando lote 14/236 para mongodb.com...
+🧠 Analizando lote 15/236 para mongodb.com...
+🧠 Analizando lote 16/236 para mongodb.com...
+🧠 Analizando lote 17/236 para mongodb.com...
+🧠 Analizando lote 18/236 para mongodb.com...
+🧠 Analizando lote 19/236 para mongodb.com...
+🧠 Analizando lote 20/236 para mongodb.com...
+🧠 Analizando lote 21/236 para mongodb.com...
+🧠 Analizando lote 22/236 para mongodb.com...
+🧠 Analizando lote 23/236 para mongodb.com...
+🧠 Analizando lote 24/236 para mongodb.com...
+🧠 Analizando lote 25/236 para mongodb.com...
+🧠 Analizando lote 26/236 para mongodb.com...
+🧠 Analizando lote 27/236 para mongodb.com...
+🧠 Analizando lote 28/236 para mongodb.com...
+🧠 Analizando lote 29/236 para mongodb.com...
+🧠 Analizando lote 30/236 para mongodb.com...
+🧠 Analizando lote 31/236 para mongodb.com...
+🧠 Analizando lote 32/236 para mongodb.com...
+🧠 Analizando lote 33/236 para mongodb.com...
+🧠 Analizando lote 34/236 para mongodb.com...
+🧠 Analizando lote 35/236 para mongodb.com...
+🧠 Analizando lote 36/236 para mongodb.com...
+🧠 Analizando lote 37/236 para mongodb.com...
+🧠 Analizando lote 38/236 para mongodb.com...
+🧠 Analizando lote 39/236 para mongodb.com...
+🧠 Analizando lote 40/236 para mongodb.com...
+🧠 Analizando lote 41/236 para mongodb.com...
+🧠 Analizando lote 42/236 para mongodb.com...
+🧠 Analizando lote 43/236 para mongodb.com...
+🧠 Analizando lote 44/236 para mongodb.com...
+🧠 Analizando lote 45/236 para mongodb.com...
+🧠 Analizando lote 46/236 para mongodb.com...
+🧠 Analizando lote 47/236 para mongodb.com...
+🧠 Analizando lote 48/236 para mongodb.com...
+🧠 Analizando lote 49/236 para mongodb.com...
+🧠 Analizando lote 50/236 para mongodb.com...
+🧠 Analizando lote 51/236 para mongodb.com...
+🧠 Analizando lote 52/236 para mongodb.com...
+🧠 Analizando lote 53/236 para mongodb.com...
+🧠 Analizando lote 54/236 para mongodb.com...
+🧠 Analizando lote 55/236 para mongodb.com...
+🧠 Analizando lote 56/236 para mongodb.com...
+🧠 Analizando lote 57/236 para mongodb.com...
+🧠 Analizando lote 58/236 para mongodb.com...
+🧠 Analizando lote 59/236 para mongodb.com...
+🧠 Analizando lote 60/236 para mongodb.com...
+🧠 Analizando lote 61/236 para mongodb.com...
+🧠 Analizando lote 62/236 para mongodb.com...
+🧠 Analizando lote 63/236 para mongodb.com...
+🧠 Analizando lote 64/236 para mongodb.com...
+🧠 Analizando lote 65/236 para mongodb.com...
+🧠 Analizando lote 66/236 para mongodb.com...
+🧠 Analizando lote 67/236 para mongodb.com...
+🧠 Analizando lote 68/236 para mongodb.com...
+🧠 Analizando lote 69/236 para mongodb.com...
+🧠 Analizando lote 70/236 para mongodb.com...
+🧠 Analizando lote 71/236 para mongodb.com...
+🧠 Analizando lote 72/236 para mongodb.com...
+🧠 Analizando lote 73/236 para mongodb.com...
+🧠 Analizando lote 74/236 para mongodb.com...
+🧠 Analizando lote 75/236 para mongodb.com...
+🧠 Analizando lote 76/236 para mongodb.com...
+🧠 Analizando lote 77/236 para mongodb.com...
+🧠 Analizando lote 78/236 para mongodb.com...
+🧠 Analizando lote 79/236 para mongodb.com...
+🧠 Analizando lote 80/236 para mongodb.com...
+🧠 Analizando lote 81/236 para mongodb.com...
+🧠 Analizando lote 82/236 para mongodb.com...
+🧠 Analizando lote 83/236 para mongodb.com...
+🧠 Analizando lote 84/236 para mongodb.com...
+🧠 Analizando lote 85/236 para mongodb.com...
+🧠 Analizando lote 86/236 para mongodb.com...
+🧠 Analizando lote 87/236 para mongodb.com...
+🧠 Analizando lote 88/236 para mongodb.com...
+🧠 Analizando lote 89/236 para mongodb.com...
+🧠 Analizando lote 90/236 para mongodb.com...
+🧠 Analizando lote 91/236 para mongodb.com...
+🧠 Analizando lote 92/236 para mongodb.com...
+🧠 Analizando lote 93/236 para mongodb.com...
+🧠 Analizando lote 94/236 para mongodb.com...
+🧠 Analizando lote 95/236 para mongodb.com...
+🧠 Analizando lote 96/236 para mongodb.com...
+🧠 Analizando lote 97/236 para mongodb.com...
+🧠 Analizando lote 98/236 para mongodb.com...
+🧠 Analizando lote 99/236 para mongodb.com...
+🧠 Analizando lote 100/236 para mongodb.com...
+🧠 Analizando lote 101/236 para mongodb.com...
+🧠 Analizando lote 102/236 para mongodb.com...
+🧠 Analizando lote 103/236 para mongodb.com...
+🧠 Analizando lote 104/236 para mongodb.com...
+🧠 Analizando lote 105/236 para mongodb.com...
+🧠 Analizando lote 106/236 para mongodb.com...
+🧠 Analizando lote 107/236 para mongodb.com...
+🧠 Analizando lote 108/236 para mongodb.com...
+🧠 Analizando lote 109/236 para mongodb.com...
+🧠 Analizando lote 110/236 para mongodb.com...
+🧠 Analizando lote 111/236 para mongodb.com...
+🧠 Analizando lote 112/236 para mongodb.com...
+🧠 Analizando lote 113/236 para mongodb.com...
+🧠 Analizando lote 114/236 para mongodb.com...
+🧠 Analizando lote 115/236 para mongodb.com...
+🧠 Analizando lote 116/236 para mongodb.com...
+🧠 Analizando lote 117/236 para mongodb.com...
+🧠 Analizando lote 118/236 para mongodb.com...
+🧠 Analizando lote 119/236 para mongodb.com...
+🧠 Analizando lote 120/236 para mongodb.com...
+🧠 Analizando lote 121/236 para mongodb.com...
+🧠 Analizando lote 122/236 para mongodb.com...
+🧠 Analizando lote 123/236 para mongodb.com...
+🧠 Analizando lote 124/236 para mongodb.com...
+🧠 Analizando lote 125/236 para mongodb.com...
+🧠 Analizando lote 126/236 para mongodb.com...
+🧠 Analizando lote 127/236 para mongodb.com...
+🧠 Analizando lote 128/236 para mongodb.com...
+🧠 Analizando lote 129/236 para mongodb.com...
+🧠 Analizando lote 130/236 para mongodb.com...
+🧠 Analizando lote 131/236 para mongodb.com...
+🧠 Analizando lote 132/236 para mongodb.com...
+🧠 Analizando lote 133/236 para mongodb.com...
+🧠 Analizando lote 134/236 para mongodb.com...
+🧠 Analizando lote 135/236 para mongodb.com...
+🧠 Analizando lote 136/236 para mongodb.com...
+🧠 Analizando lote 137/236 para mongodb.com...
+🧠 Analizando lote 138/236 para mongodb.com...
+🧠 Analizando lote 139/236 para mongodb.com...
+🧠 Analizando lote 140/236 para mongodb.com...
+🧠 Analizando lote 141/236 para mongodb.com...
+🧠 Analizando lote 142/236 para mongodb.com...
+🧠 Analizando lote 143/236 para mongodb.com...
+🧠 Analizando lote 144/236 para mongodb.com...
+🧠 Analizando lote 145/236 para mongodb.com...
+🧠 Analizando lote 146/236 para mongodb.com...
+🧠 Analizando lote 147/236 para mongodb.com...
+🧠 Analizando lote 148/236 para mongodb.com...
+🧠 Analizando lote 149/236 para mongodb.com...
+🧠 Analizando lote 150/236 para mongodb.com...
+🧠 Analizando lote 151/236 para mongodb.com...
+🧠 Analizando lote 152/236 para mongodb.com...
+🧠 Analizando lote 153/236 para mongodb.com...
+🧠 Analizando lote 154/236 para mongodb.com...
+🧠 Analizando lote 155/236 para mongodb.com...
+🧠 Analizando lote 156/236 para mongodb.com...
+🧠 Analizando lote 157/236 para mongodb.com...
+🧠 Analizando lote 158/236 para mongodb.com...
+🧠 Analizando lote 159/236 para mongodb.com...
+🧠 Analizando lote 160/236 para mongodb.com...
+🧠 Analizando lote 161/236 para mongodb.com...
+🧠 Analizando lote 162/236 para mongodb.com...
+🧠 Analizando lote 163/236 para mongodb.com...
+🧠 Analizando lote 164/236 para mongodb.com...
+🧠 Analizando lote 165/236 para mongodb.com...
+🧠 Analizando lote 166/236 para mongodb.com...
+🧠 Analizando lote 167/236 para mongodb.com...21:56:24 [INFO] [groq] intentando completado... (Intento 1/3)
+21:56:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5530, Requested 2054. Please try again in 15.84s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:56:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:56:44 [INFO] [groq] intentando completado... (Intento 2/3)
+21:56:46 [INFO] [groq] completado con éxito (4968 caracteres)
+21:56:46 [INFO] [groq] intentando completado... (Intento 1/3)
+21:56:46 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5388, Requested 2054. Please try again in 14.42s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:56:46 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:57:06 [INFO] [groq] intentando completado... (Intento 2/3)
+21:57:07 [INFO] [groq] completado con éxito (3034 caracteres)
+21:57:07 [INFO] [groq] intentando completado... (Intento 1/3)
+21:57:07 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4415, Requested 2054. Please try again in 4.689999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:57:07 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:57:27 [INFO] [groq] intentando completado... (Intento 2/3)
+21:57:29 [INFO] [groq] completado con éxito (3804 caracteres)
+21:57:29 [INFO] [groq] intentando completado... (Intento 1/3)
+21:57:29 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5246, Requested 2054. Please try again in 13s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:57:29 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:57:49 [INFO] [groq] intentando completado... (Intento 2/3)
+21:57:50 [INFO] [groq] completado con éxito (5381 caracteres)
+21:57:50 [INFO] [groq] intentando completado... (Intento 1/3)
+21:57:50 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5014, Requested 2054. Please try again in 10.68s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:57:50 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:58:10 [INFO] [groq] intentando completado... (Intento 2/3)
+21:58:12 [INFO] [groq] completado con éxito (5469 caracteres)
+21:58:12 [INFO] [groq] intentando completado... (Intento 1/3)
+21:58:12 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4760, Requested 2054. Please try again in 8.139999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:58:12 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:58:32 [INFO] [groq] intentando completado... (Intento 2/3)
+21:58:35 [INFO] [groq] completado con éxito (5884 caracteres)
+21:58:35 [INFO] [groq] intentando completado... (Intento 1/3)
+21:58:35 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4601, Requested 2054. Please try again in 6.55s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:58:35 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:58:55 [INFO] [groq] intentando completado... (Intento 2/3)
+21:58:56 [INFO] [groq] completado con éxito (4870 caracteres)
+21:58:56 [INFO] [groq] intentando completado... (Intento 1/3)
+21:58:56 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5772, Requested 2054. Please try again in 18.26s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:58:56 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:59:16 [INFO] [groq] intentando completado... (Intento 2/3)
+21:59:19 [INFO] [groq] completado con éxito (6092 caracteres)
+21:59:19 [INFO] [groq] intentando completado... (Intento 1/3)
+21:59:19 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5562, Requested 2054. Please try again in 16.16s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:59:19 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+21:59:39 [INFO] [groq] intentando completado... (Intento 2/3)
+21:59:41 [INFO] [groq] completado con éxito (4675 caracteres)
+21:59:41 [INFO] [groq] intentando completado... (Intento 1/3)
+21:59:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5177, Requested 2023. Please try again in 12s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+21:59:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:00:01 [INFO] [groq] intentando completado... (Intento 2/3)
+22:00:03 [INFO] [groq] completado con éxito (5555 caracteres)
+22:00:03 [INFO] [groq] intentando completado... (Intento 1/3)
+22:00:03 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5022, Requested 1935. Please try again in 9.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:00:03 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:00:23 [INFO] [groq] intentando completado... (Intento 2/3)
+22:00:25 [INFO] [groq] completado con éxito (5952 caracteres)
+22:00:25 [INFO] [groq] intentando completado... (Intento 1/3)
+22:00:25 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4708, Requested 1932. Please try again in 6.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:00:25 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:00:45 [INFO] [groq] intentando completado... (Intento 2/3)
+22:00:47 [INFO] [groq] completado con éxito (5272 caracteres)
+22:00:47 [INFO] [groq] intentando completado... (Intento 1/3)
+22:00:47 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4430, Requested 1927. Please try again in 3.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:00:47 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:01:07 [INFO] [groq] intentando completado... (Intento 2/3)
+22:01:09 [INFO] [groq] completado con éxito (3918 caracteres)
+22:01:09 [INFO] [groq] intentando completado... (Intento 1/3)
+22:01:11 [INFO] [groq] completado con éxito (5722 caracteres)
+22:01:11 [INFO] [groq] intentando completado... (Intento 1/3)
+22:01:11 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5304, Requested 1951. Please try again in 12.55s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:01:11 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:01:31 [INFO] [groq] intentando completado... (Intento 2/3)
+22:01:33 [INFO] [groq] completado con éxito (5574 caracteres)
+22:01:33 [INFO] [groq] intentando completado... (Intento 1/3)
+22:01:33 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4864, Requested 1744. Please try again in 6.08s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:01:33 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:01:53 [INFO] [groq] intentando completado... (Intento 2/3)
+22:01:55 [INFO] [groq] completado con éxito (5438 caracteres)
+22:01:55 [INFO] [groq] intentando completado... (Intento 1/3)
+22:01:55 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4387, Requested 1946. Please try again in 3.33s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:01:55 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:02:15 [INFO] [groq] intentando completado... (Intento 2/3)
+22:02:17 [INFO] [groq] completado con éxito (6065 caracteres)
+22:02:17 [INFO] [groq] intentando completado... (Intento 1/3)
+22:02:17 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4083, Requested 1958. Please try again in 410ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:02:17 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:02:37 [INFO] [groq] intentando completado... (Intento 2/3)
+22:02:39 [INFO] [groq] completado con éxito (5371 caracteres)
+22:02:39 [INFO] [groq] intentando completado... (Intento 1/3)
+22:02:41 [INFO] [groq] completado con éxito (5151 caracteres)
+22:02:41 [INFO] [groq] intentando completado... (Intento 1/3)
+22:02:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5147, Requested 1911. Please try again in 10.58s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:02:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:03:01 [INFO] [groq] intentando completado... (Intento 2/3)
+22:03:03 [INFO] [groq] completado con éxito (3837 caracteres)
+22:03:03 [INFO] [groq] intentando completado... (Intento 1/3)
+22:03:03 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4419, Requested 1914. Please try again in 3.33s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:03:03 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:03:23 [INFO] [groq] intentando completado... (Intento 2/3)
+22:03:25 [INFO] [groq] completado con éxito (4873 caracteres)
+22:03:25 [INFO] [groq] intentando completado... (Intento 1/3)
+22:03:25 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4162, Requested 1872. Please try again in 340ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:03:25 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:03:45 [INFO] [groq] intentando completado... (Intento 2/3)
+22:03:46 [INFO] [groq] completado con éxito (4527 caracteres)
+22:03:46 [INFO] [groq] intentando completado... (Intento 1/3)
+22:03:48 [INFO] [groq] completado con éxito (5020 caracteres)
+22:03:48 [INFO] [groq] intentando completado... (Intento 1/3)
+22:03:48 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 6000, Requested 1689. Please try again in 16.889999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:03:48 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:04:08 [INFO] [groq] intentando completado... (Intento 2/3)
+22:04:11 [INFO] [groq] completado con éxito (6130 caracteres)
+22:04:11 [INFO] [groq] intentando completado... (Intento 1/3)
+22:04:11 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5624, Requested 1708. Please try again in 13.32s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:04:11 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:04:31 [INFO] [groq] intentando completado... (Intento 2/3)
+22:04:33 [INFO] [groq] completado con éxito (3701 caracteres)
+22:04:33 [INFO] [groq] intentando completado... (Intento 1/3)
+22:04:33 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4796, Requested 1890. Please try again in 6.859999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:04:33 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:04:53 [INFO] [groq] intentando completado... (Intento 2/3)
+22:04:55 [INFO] [groq] completado con éxito (4466 caracteres)
+22:04:55 [INFO] [groq] intentando completado... (Intento 1/3)
+22:04:56 [INFO] [groq] completado con éxito (3890 caracteres)
+22:04:56 [INFO] [groq] intentando completado... (Intento 1/3)
+22:04:56 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5444, Requested 1936. Please try again in 13.8s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:04:56 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:05:16 [INFO] [groq] intentando completado... (Intento 2/3)
+22:05:18 [INFO] [groq] completado con éxito (4559 caracteres)
+22:05:18 [INFO] [groq] intentando completado... (Intento 1/3)
+22:05:18 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4821, Requested 1685. Please try again in 5.06s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:05:18 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:05:38 [INFO] [groq] intentando completado... (Intento 2/3)
+22:05:39 [INFO] [groq] completado con éxito (3367 caracteres)
+22:05:39 [INFO] [groq] intentando completado... (Intento 1/3)
+22:05:41 [INFO] [groq] completado con éxito (5748 caracteres)
+22:05:41 [INFO] [groq] intentando completado... (Intento 1/3)
+22:05:41 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5809, Requested 1954. Please try again in 17.63s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:05:41 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:06:01 [INFO] [groq] intentando completado... (Intento 2/3)
+22:06:03 [INFO] [groq] completado con éxito (5495 caracteres)
+22:06:03 [INFO] [groq] intentando completado... (Intento 1/3)
+22:06:03 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5365, Requested 1948. Please try again in 13.129999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:06:03 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:06:23 [INFO] [groq] intentando completado... (Intento 2/3)
+22:06:25 [INFO] [groq] completado con éxito (3855 caracteres)
+22:06:25 [INFO] [groq] intentando completado... (Intento 1/3)
+22:06:25 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4807, Requested 1928. Please try again in 7.35s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:06:25 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:06:45 [INFO] [groq] intentando completado... (Intento 2/3)
+22:06:48 [INFO] [groq] completado con éxito (4768 caracteres)
+22:06:48 [INFO] [groq] intentando completado... (Intento 1/3)
+22:06:48 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4457, Requested 1900. Please try again in 3.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:06:48 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:07:08 [INFO] [groq] intentando completado... (Intento 2/3)
+22:07:09 [INFO] [groq] completado con éxito (3565 caracteres)
+22:07:09 [INFO] [groq] intentando completado... (Intento 1/3)
+22:07:10 [INFO] [groq] completado con éxito (3816 caracteres)
+22:07:10 [INFO] [groq] intentando completado... (Intento 1/3)
+22:07:10 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5984, Requested 1922. Please try again in 19.06s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:07:10 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:07:30 [INFO] [groq] intentando completado... (Intento 2/3)
+22:07:33 [INFO] [groq] completado con éxito (6003 caracteres)
+22:07:33 [INFO] [groq] intentando completado... (Intento 1/3)
+22:07:33 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5600, Requested 1956. Please try again in 15.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:07:33 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:07:53 [INFO] [groq] intentando completado... (Intento 2/3)
+22:07:55 [INFO] [groq] completado con éxito (4502 caracteres)
+22:07:55 [INFO] [groq] intentando completado... (Intento 1/3)
+22:07:55 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4894, Requested 1923. Please try again in 8.17s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:07:55 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:08:15 [INFO] [groq] intentando completado... (Intento 2/3)
+22:08:17 [INFO] [groq] completado con éxito (5723 caracteres)
+22:08:17 [INFO] [groq] intentando completado... (Intento 1/3)
+22:08:17 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4690, Requested 1910. Please try again in 6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:08:17 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:08:37 [INFO] [groq] intentando completado... (Intento 2/3)
+22:08:38 [INFO] [groq] completado con éxito (4530 caracteres)
+22:08:38 [INFO] [groq] intentando completado... (Intento 1/3)
+22:08:40 [INFO] [groq] completado con éxito (4285 caracteres)
+22:08:40 [INFO] [groq] intentando completado... (Intento 1/3)
+22:08:40 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5400, Requested 1866. Please try again in 12.66s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:08:40 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:09:00 [INFO] [groq] intentando completado... (Intento 2/3)
+22:09:01 [INFO] [groq] completado con éxito (5144 caracteres)
+22:09:01 [INFO] [groq] intentando completado... (Intento 1/3)
+22:09:01 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4873, Requested 1920. Please try again in 7.93s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:09:01 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:09:21 [INFO] [groq] intentando completado... (Intento 2/3)
+22:09:23 [INFO] [groq] completado con éxito (3891 caracteres)
+22:09:23 [INFO] [groq] intentando completado... (Intento 1/3)
+22:09:23 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5525, Requested 1896. Please try again in 14.21s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:09:23 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:09:43 [INFO] [groq] intentando completado... (Intento 2/3)
+22:09:46 [INFO] [groq] completado con éxito (5155 caracteres)
+22:09:46 [INFO] [groq] intentando completado... (Intento 1/3)
+22:09:46 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4911, Requested 1943. Please try again in 8.54s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:09:46 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:10:06 [INFO] [groq] intentando completado... (Intento 2/3)
+22:10:07 [INFO] [groq] completado con éxito (5201 caracteres)
+22:10:07 [INFO] [groq] intentando completado... (Intento 1/3)
+22:10:08 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4470, Requested 1974. Please try again in 4.439999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:10:08 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:10:28 [INFO] [groq] intentando completado... (Intento 2/3)
+22:10:29 [INFO] [groq] completado con éxito (4421 caracteres)
+22:10:29 [INFO] [groq] intentando completado... (Intento 1/3)
+22:10:31 [INFO] [groq] completado con éxito (4422 caracteres)
+22:10:31 [INFO] [groq] intentando completado... (Intento 1/3)
+22:10:31 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5671, Requested 1427. Please try again in 10.98s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:10:31 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:10:51 [INFO] [groq] intentando completado... (Intento 2/3)
+22:10:52 [INFO] [groq] completado con éxito (4187 caracteres)
+22:10:52 [INFO] [groq] intentando completado... (Intento 1/3)
+22:10:52 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4735, Requested 1941. Please try again in 6.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:10:52 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:11:12 [INFO] [groq] intentando completado... (Intento 2/3)
+22:11:15 [INFO] [groq] completado con éxito (3638 caracteres)
+22:11:15 [INFO] [groq] intentando completado... (Intento 1/3)
+22:11:15 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4398, Requested 1686. Please try again in 840ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:11:15 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:11:35 [INFO] [groq] intentando completado... (Intento 2/3)
+22:11:36 [INFO] [groq] completado con éxito (3670 caracteres)
+22:11:36 [INFO] [groq] intentando completado... (Intento 1/3)
+22:11:38 [INFO] [groq] completado con éxito (5087 caracteres)
+22:11:38 [INFO] [groq] intentando completado... (Intento 1/3)
+22:11:38 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4535, Requested 1691. Please try again in 2.26s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:11:38 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:11:58 [INFO] [groq] intentando completado... (Intento 2/3)
+22:12:00 [INFO] [groq] completado con éxito (4515 caracteres)
+22:12:00 [INFO] [groq] intentando completado... (Intento 1/3)
+22:12:00 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4234, Requested 1840. Please try again in 740ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:12:00 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:12:20 [INFO] [groq] intentando completado... (Intento 2/3)
+22:12:21 [INFO] [groq] completado con éxito (5213 caracteres)
+22:12:21 [INFO] [groq] intentando completado... (Intento 1/3)
+22:12:23 [INFO] [groq] completado con éxito (5117 caracteres)
+22:12:23 [INFO] [groq] intentando completado... (Intento 1/3)
+22:12:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5530, Requested 2063. Please try again in 15.93s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:12:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:12:44 [INFO] [groq] intentando completado... (Intento 2/3)
+22:12:45 [INFO] [groq] completado con éxito (5433 caracteres)
+22:12:45 [INFO] [groq] intentando completado... (Intento 1/3)
+22:12:45 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5309, Requested 1701. Please try again in 10.1s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:12:45 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:13:05 [INFO] [groq] intentando completado... (Intento 2/3)
+22:13:07 [INFO] [groq] completado con éxito (4047 caracteres)
+22:13:07 [INFO] [groq] intentando completado... (Intento 1/3)
+22:13:07 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4773, Requested 2057. Please try again in 8.3s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:13:07 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:13:27 [INFO] [groq] intentando completado... (Intento 2/3)
+22:13:29 [INFO] [groq] completado con éxito (4651 caracteres)
+22:13:29 [INFO] [groq] intentando completado... (Intento 1/3)
+22:13:29 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4405, Requested 2011. Please try again in 4.16s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:13:29 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:13:49 [INFO] [groq] intentando completado... (Intento 2/3)
+22:13:51 [INFO] [groq] completado con éxito (4793 caracteres)
+22:13:51 [INFO] [groq] intentando completado... (Intento 1/3)
+22:13:52 [INFO] [groq] completado con éxito (3607 caracteres)
+22:13:52 [INFO] [groq] intentando completado... (Intento 1/3)
+22:13:52 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5159, Requested 1890. Please try again in 10.49s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:13:52 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:14:12 [INFO] [groq] intentando completado... (Intento 2/3)
+22:14:14 [INFO] [groq] completado con éxito (4580 caracteres)
+22:14:14 [INFO] [groq] intentando completado... (Intento 1/3)
+22:14:14 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4546, Requested 1935. Please try again in 4.81s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:14:14 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:14:34 [INFO] [groq] intentando completado... (Intento 2/3)
+22:14:36 [INFO] [groq] completado con éxito (5489 caracteres)
+22:14:36 [INFO] [groq] intentando completado... (Intento 1/3)
+22:14:36 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4073, Requested 1929. Please try again in 20ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:14:36 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:14:56 [INFO] [groq] intentando completado... (Intento 2/3)
+22:14:58 [INFO] [groq] completado con éxito (4478 caracteres)
+22:14:58 [INFO] [groq] intentando completado... (Intento 1/3)
+22:15:00 [INFO] [groq] completado con éxito (4222 caracteres)
+22:15:00 [INFO] [groq] intentando completado... (Intento 1/3)
+22:15:00 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4693, Requested 1871. Please try again in 5.64s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:15:00 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:15:20 [INFO] [groq] intentando completado... (Intento 2/3)
+22:15:22 [INFO] [groq] completado con éxito (3235 caracteres)
+22:15:22 [INFO] [groq] intentando completado... (Intento 1/3)
+22:15:24 [INFO] [groq] completado con éxito (3971 caracteres)
+22:15:24 [INFO] [groq] intentando completado... (Intento 1/3)
+22:15:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5356, Requested 1731. Please try again in 10.87s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:15:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:15:44 [INFO] [groq] intentando completado... (Intento 2/3)
+22:15:47 [INFO] [groq] completado con éxito (6476 caracteres)
+22:15:47 [INFO] [groq] intentando completado... (Intento 1/3)
+22:15:47 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4467, Requested 1878. Please try again in 3.45s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:15:47 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:16:07 [INFO] [groq] intentando completado... (Intento 2/3)
+22:16:09 [INFO] [groq] completado con éxito (5981 caracteres)
+22:16:09 [INFO] [groq] intentando completado... (Intento 1/3)
+22:16:10 [INFO] [groq] completado con éxito (4058 caracteres)
+22:16:10 [INFO] [groq] intentando completado... (Intento 1/3)
+22:16:10 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5363, Requested 1866. Please try again in 12.29s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:16:10 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:16:30 [INFO] [groq] intentando completado... (Intento 2/3)
+22:16:32 [INFO] [groq] completado con éxito (3962 caracteres)
+22:16:32 [INFO] [groq] intentando completado... (Intento 1/3)
+22:16:32 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5096, Requested 1715. Please try again in 8.109999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:16:32 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:16:52 [INFO] [groq] intentando completado... (Intento 2/3)
+22:16:54 [INFO] [groq] completado con éxito (4930 caracteres)
+22:16:54 [INFO] [groq] intentando completado... (Intento 1/3)
+22:16:55 [INFO] [groq] completado con éxito (3545 caracteres)
+22:16:55 [INFO] [groq] intentando completado... (Intento 1/3)
+22:16:55 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5136, Requested 1921. Please try again in 10.57s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:16:55 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:17:15 [INFO] [groq] intentando completado... (Intento 2/3)
+22:17:17 [INFO] [groq] completado con éxito (6067 caracteres)
+22:17:17 [INFO] [groq] intentando completado... (Intento 1/3)
+22:17:17 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4893, Requested 1945. Please try again in 8.379999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:17:17 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:17:37 [INFO] [groq] intentando completado... (Intento 2/3)
+22:17:39 [INFO] [groq] completado con éxito (4538 caracteres)
+22:17:39 [INFO] [groq] intentando completado... (Intento 1/3)
+22:17:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4395, Requested 1908. Please try again in 3.03s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:17:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:17:59 [INFO] [groq] intentando completado... (Intento 2/3)
+22:18:01 [INFO] [groq] completado con éxito (3777 caracteres)
+22:18:01 [INFO] [groq] intentando completado... (Intento 1/3)
+22:18:02 [INFO] [groq] completado con éxito (3693 caracteres)
+22:18:02 [INFO] [groq] intentando completado... (Intento 1/3)
+22:18:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4808, Requested 1848. Please try again in 6.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:18:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:18:22 [INFO] [groq] intentando completado... (Intento 2/3)
+22:18:24 [INFO] [groq] completado con éxito (4546 caracteres)
+22:18:24 [INFO] [groq] intentando completado... (Intento 1/3)
+22:18:24 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4482, Requested 1650. Please try again in 1.319999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:18:24 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:18:44 [INFO] [groq] intentando completado... (Intento 2/3)
+22:18:46 [INFO] [groq] completado con éxito (5760 caracteres)
+22:18:46 [INFO] [groq] intentando completado... (Intento 1/3)
+22:18:46 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5241, Requested 1884. Please try again in 11.25s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:18:46 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:19:06 [INFO] [groq] intentando completado... (Intento 2/3)
+22:19:08 [INFO] [groq] completado con éxito (3721 caracteres)
+22:19:08 [INFO] [groq] intentando completado... (Intento 1/3)
+22:19:08 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4352, Requested 1869. Please try again in 2.21s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:19:08 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:19:28 [INFO] [groq] intentando completado... (Intento 2/3)
+22:19:30 [INFO] [groq] completado con éxito (4580 caracteres)
+22:19:30 [INFO] [groq] intentando completado... (Intento 1/3)
+22:19:32 [INFO] [groq] completado con éxito (5493 caracteres)
+22:19:32 [INFO] [groq] intentando completado... (Intento 1/3)
+22:19:32 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5412, Requested 1673. Please try again in 10.85s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:19:32 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:19:52 [INFO] [groq] intentando completado... (Intento 2/3)
+22:19:54 [INFO] [groq] completado con éxito (5732 caracteres)
+22:19:54 [INFO] [groq] intentando completado... (Intento 1/3)
+22:19:54 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 6000, Requested 1875. Please try again in 18.75s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:19:54 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:20:14 [INFO] [groq] intentando completado... (Intento 2/3)
+22:20:16 [INFO] [groq] completado con éxito (3871 caracteres)
+22:20:16 [INFO] [groq] intentando completado... (Intento 1/3)
+22:20:16 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5721, Requested 1926. Please try again in 16.47s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:20:16 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:20:36 [INFO] [groq] intentando completado... (Intento 2/3)
+22:20:39 [INFO] [groq] completado con éxito (5587 caracteres)
+22:20:39 [INFO] [groq] intentando completado... (Intento 1/3)
+22:20:39 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4858, Requested 1856. Please try again in 7.14s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:20:39 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:20:59 [INFO] [groq] intentando completado... (Intento 2/3)
+22:21:02 [INFO] [groq] completado con éxito (6010 caracteres)
+22:21:02 [INFO] [groq] intentando completado... (Intento 1/3)
+22:21:02 [WARNING] [groq] falló: HTTP 429: {"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kfjdttzjefes96rs5vsft4qb` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4374, Requested 1869. Please try again in 2.43s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+22:21:02 [INFO] ⏳ Límite de API alcanzado. Esperando 20 segundos antes de reintentar...
+22:21:22 [INFO] [groq] intentando completado... (Intento 2/3)
+22:21:24 [INFO] [groq] completado con éxito (3477 caracteres)
+22:21:24 [INFO] [groq] intentando completado... (Intento 1/3)
+22:21:25 [INFO] [groq] completado con éxito (2550 caracteres)
+22:21:25 [INFO] ✅ Notificación enviada a Telegram (chat_id=6527908321)
+
+🧠 Analizando lote 168/236 para mongodb.com...
+🧠 Analizando lote 169/236 para mongodb.com...
+🧠 Analizando lote 170/236 para mongodb.com...
+🧠 Analizando lote 171/236 para mongodb.com...
+🧠 Analizando lote 172/236 para mongodb.com...
+🧠 Analizando lote 173/236 para mongodb.com...
+🧠 Analizando lote 174/236 para mongodb.com...
+🧠 Analizando lote 175/236 para mongodb.com...
+🧠 Analizando lote 176/236 para mongodb.com...
+🧠 Analizando lote 177/236 para mongodb.com...
+🧠 Analizando lote 178/236 para mongodb.com...
+🧠 Analizando lote 179/236 para mongodb.com...
+🧠 Analizando lote 180/236 para mongodb.com...
+🧠 Analizando lote 181/236 para mongodb.com...
+🧠 Analizando lote 182/236 para mongodb.com...
+🧠 Analizando lote 183/236 para mongodb.com...
+🧠 Analizando lote 184/236 para mongodb.com...
+🧠 Analizando lote 185/236 para mongodb.com...
+🧠 Analizando lote 186/236 para mongodb.com...
+🧠 Analizando lote 187/236 para mongodb.com...
+🧠 Analizando lote 188/236 para mongodb.com...
+🧠 Analizando lote 189/236 para mongodb.com...
+🧠 Analizando lote 190/236 para mongodb.com...
+🧠 Analizando lote 191/236 para mongodb.com...
+🧠 Analizando lote 192/236 para mongodb.com...
+🧠 Analizando lote 193/236 para mongodb.com...
+🧠 Analizando lote 194/236 para mongodb.com...
+🧠 Analizando lote 195/236 para mongodb.com...
+🧠 Analizando lote 196/236 para mongodb.com...
+🧠 Analizando lote 197/236 para mongodb.com...
+🧠 Analizando lote 198/236 para mongodb.com...
+🧠 Analizando lote 199/236 para mongodb.com...
+🧠 Analizando lote 200/236 para mongodb.com...
+🧠 Analizando lote 201/236 para mongodb.com...
+🧠 Analizando lote 202/236 para mongodb.com...
+🧠 Analizando lote 203/236 para mongodb.com...
+🧠 Analizando lote 204/236 para mongodb.com...
+🧠 Analizando lote 205/236 para mongodb.com...
+🧠 Analizando lote 206/236 para mongodb.com...
+🧠 Analizando lote 207/236 para mongodb.com...
+🧠 Analizando lote 208/236 para mongodb.com...
+🧠 Analizando lote 209/236 para mongodb.com...
+🧠 Analizando lote 210/236 para mongodb.com...
+🧠 Analizando lote 211/236 para mongodb.com...
+🧠 Analizando lote 212/236 para mongodb.com...
+🧠 Analizando lote 213/236 para mongodb.com...
+🧠 Analizando lote 214/236 para mongodb.com...
+🧠 Analizando lote 215/236 para mongodb.com...
+🧠 Analizando lote 216/236 para mongodb.com...
+🧠 Analizando lote 217/236 para mongodb.com...
+🧠 Analizando lote 218/236 para mongodb.com...
+🧠 Analizando lote 219/236 para mongodb.com...
+🧠 Analizando lote 220/236 para mongodb.com...
+🧠 Analizando lote 221/236 para mongodb.com...
+🧠 Analizando lote 222/236 para mongodb.com...
+🧠 Analizando lote 223/236 para mongodb.com...
+🧠 Analizando lote 224/236 para mongodb.com...
+🧠 Analizando lote 225/236 para mongodb.com...
+🧠 Analizando lote 226/236 para mongodb.com...
+🧠 Analizando lote 227/236 para mongodb.com...
+🧠 Analizando lote 228/236 para mongodb.com...
+🧠 Analizando lote 229/236 para mongodb.com...
+🧠 Analizando lote 230/236 para mongodb.com...
+🧠 Analizando lote 231/236 para mongodb.com...
+🧠 Analizando lote 232/236 para mongodb.com...
+🧠 Analizando lote 233/236 para mongodb.com...
+🧠 Analizando lote 234/236 para mongodb.com...
+🧠 Analizando lote 235/236 para mongodb.com...
+🧠 Analizando lote 236/236 para mongodb.com...
+🧠 Analizando lote 1/15 para elastic.co...
+🧠 Analizando lote 2/15 para elastic.co...
+🧠 Analizando lote 3/15 para elastic.co...
+🧠 Analizando lote 4/15 para elastic.co...
+🧠 Analizando lote 5/15 para elastic.co...
+🧠 Analizando lote 6/15 para elastic.co...
+🧠 Analizando lote 7/15 para elastic.co...
+🧠 Analizando lote 8/15 para elastic.co...
+🧠 Analizando lote 9/15 para elastic.co...
+🧠 Analizando lote 10/15 para elastic.co...
+🧠 Analizando lote 11/15 para elastic.co...
+🧠 Analizando lote 12/15 para elastic.co...
+🧠 Analizando lote 13/15 para elastic.co...
+🧠 Analizando lote 14/15 para elastic.co...
+🧠 Analizando lote 15/15 para elastic.co...
+✅ Mapa de ataque completo guardado en: /home/ubuntu/plataforma_operativa/resultados/MAPA_DE_ATAQUE.md
+🚀 Alerta enviada a Telegram.
