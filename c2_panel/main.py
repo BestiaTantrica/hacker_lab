@@ -169,7 +169,7 @@ def get_motor_results():
         if not secretos or secretos == "[]": secretos = "[]"
         
         # Extraer ultimo reporte del explotador
-        stdin, stdout, stderr = client.exec_command("cat $(ls -t /home/ubuntu/plataforma_operativa/resultados/explotador_*.json 2>/dev/null | head -1) 2>/dev/null || echo '[]'")
+        stdin, stdout, stderr = client.exec_command("file=$(ls -t /home/ubuntu/plataforma_operativa/resultados/explotador_*.json 2>/dev/null | head -1); if [ -n \"$file\" ]; then cat \"$file\"; else echo '[]'; fi")
         explotador = stdout.read().decode().strip()
         if not explotador or explotador == "[]": explotador = "[]"
         
@@ -184,6 +184,9 @@ def get_motor_results():
         if client: client.close()
         return {"status": "error", "data": f"Error leyendo resultados: {str(e)}"}
 
+
+class ChatRequest(BaseModel):
+    message: str
 
 @app.post("/api/chat")
 def chat_endpoint(req: ChatRequest):

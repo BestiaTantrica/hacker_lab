@@ -265,7 +265,7 @@ function generarReporteCascada() {
 // LOGS CRUDOS AL ABRIR TERMINAL
 document.addEventListener('DOMContentLoaded', () => {
     // Escuchar clics en la tab de Terminal para cargar data cruda
-    const terminalTab = document.querySelectorAll('.nav-item')[2];
+    const terminalTab = document.querySelectorAll('.nav-item')[3];
     terminalTab.addEventListener('click', async () => {
         appendTerminal("[INFO] Solicitando volcado de datos crudos (actual.json)...");
         try {
