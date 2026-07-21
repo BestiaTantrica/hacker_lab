@@ -130,7 +130,6 @@ EXPOSED_PATHS = [
     "/.DS_Store",
     "/robots.txt",
     "/sitemap.xml",
-    "/.well-known/security.txt",
     "/server-status",
     "/server-info",
     "/.htpasswd",
