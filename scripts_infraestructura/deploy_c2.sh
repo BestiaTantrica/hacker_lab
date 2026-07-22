@@ -2,7 +2,7 @@
 
 # Este script usa la llave_oci local para conectarse a OCI-2, subir el panel y dejarlo corriendo como servicio web.
 
-cd /home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB || exit 1
+cd /home/tomas2/WORKSPACE/LAB || exit 1
 
 OCI2_IP="143.47.115.34"
 LLAVE="llave_oci"
@@ -15,7 +15,7 @@ echo "============================================================"
 chmod 600 $LLAVE
 
 echo "[1/3] Subiendo archivos del panel C2 y llaves al servidor..."
-scp -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE -r c2_panel ubuntu@$OCI2_IP:/home/ubuntu/
+rsync -avz --delete -e "ssh -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE" c2_panel/ ubuntu@$OCI2_IP:/home/ubuntu/c2_panel/
 scp -F /dev/null -o StrictHostKeyChecking=no -i $LLAVE $LLAVE ubuntu@$OCI2_IP:/home/ubuntu/.ssh/id_rsa_oci1
 
 echo "[2/3] Instalando dependencias y configurando el servidor..."
