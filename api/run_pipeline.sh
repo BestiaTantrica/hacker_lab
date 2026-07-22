@@ -35,15 +35,15 @@ else
     log "⚠️ No se encontró el entorno virtual en ${VENV_ACTIVATE}"
 fi
 
-# 3. Ejecutar Discovery Pasivo
-log "Ejecutando discovery pasivo: ${BASE_DIR}/monitores/discovery_pasivo.py"
-python3 "${BASE_DIR}/monitores/discovery_pasivo.py"
+# 3. Ejecutar MassRecon (Discovery Avanzado)
+log "Ejecutando MassRecon: ${BASE_DIR}/monitores/mass_recon.py"
+python3 "${BASE_DIR}/monitores/mass_recon.py"
 DISC_CODE=$?
 if [ $DISC_CODE -ne 0 ]; then
-    log "❌ discovery_pasivo.py falló con código ${DISC_CODE}"
+    log "❌ mass_recon.py falló con código ${DISC_CODE}"
     exit 1
 fi
-log "discovery_pasivo.py finalizó exitosamente (código 0)"
+log "mass_recon.py finalizó exitosamente (código 0)"
 
 # 4. Ejecutar Comparador
 log "Ejecutando comparador de deltas: ${BASE_DIR}/monitores/comparador.py"
