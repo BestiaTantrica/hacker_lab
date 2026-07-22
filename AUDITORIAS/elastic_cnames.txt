@@ -1,1 +1,0 @@
-staging-oauth-test.elastic.co [[35mCNAME[0m] [[32minfra-oauth-proxy-test.elastic.co[0m] 

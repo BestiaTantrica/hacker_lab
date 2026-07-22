@@ -16,12 +16,10 @@ venv/
 # Outputs y datos crudos
 resultados/*.json
 estado/*.json
-logs/*.log
-api/trafico_burp.xml
-api/burp_analisis.json
-api/burp_config_mongodb.json
+*.log
 api/scratch/
 *.xml
+*.json
 fix_desktop.sh
 # Archivos de despliegue al servidor OCI (copias locales de staging)
 api/discovery_pasivo_nuevo.py
