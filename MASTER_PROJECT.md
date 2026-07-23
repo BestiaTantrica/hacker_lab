@@ -45,19 +45,17 @@ El laboratorio se divide físicamente en dos entornos de ejecución:
 ---
 
 ## 📂 4. Estructura de Documentación Maestra (`/LAB/`)
-Toda la documentación estratégica reside en el directorio `/home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/`:
-- **[MASTER_PROJECT.md](file:///home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/MASTER_PROJECT.md):** (Este archivo) Portal maestro y estado global.
-- **[ARQUITECTURA.md](file:///home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/ARQUITECTURA.md):** Mapa del sistema, flujos de datos e interconectividad.
-- **[INVENTARIO.md](file:///home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/INVENTARIO.md):** Catálogo técnico detallado de proyectos, scripts, dependencias y fallos detectados.
-- **[ROADMAP.md](file:///home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/ROADMAP.md):** Plan de desarrollo por etapas funcionales semanales.
-- **[CHANGELOG.md](file:///home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/CHANGELOG.md):** Historial detallado de modificaciones y versiones.
+Toda la documentación estratégica reside en el directorio `/home/tomas2/WORKSPACE/LAB/`:
+- **[MASTER_PROJECT.md](file:///home/tomas2/WORKSPACE/LAB/MASTER_PROJECT.md):** (Este archivo) Portal maestro y estado global.
+- **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado de la Red de Pesca automatizada en OCI-1.
+- **[espejo_oci1/](file:///home/tomas2/WORKSPACE/LAB/espejo_oci1/):** Réplica de la infraestructura de ingestión pasiva y escaneo masivo (OCI-1).
+- **[c2_panel/](file:///home/tomas2/WORKSPACE/LAB/c2_panel/):** Código fuente de la consola Web / Cerebro en OCI-2 (Base de Datos + Hub de Prompts IA + Alertas Telegram).
+- **[skills/](file:///home/tomas2/WORKSPACE/LAB/skills/):** Plantillas de Prompts de IA para formateo de reportes y análisis automático.
 
 ---
 
 ## 🚦 5. Estado de Integración y Siguiente Paso
-Actualmente, el **Nodo Local** posee herramientas de diagnóstico estables pero independientes. El **Nodo Oracle** cuenta con la estructura física inicial creada, pero aún no se han desplegado los scripts operativos automáticos del primer hito (Etapa 1: Discovery Pasivo).
+Actualmente, el repositorio ha sido completamente purgado de deudas técnicas (scripts manuales, wordlists obsoletas y guías estáticas). 
 
-El siguiente paso prioritario tras concluir esta auditoría es la implementación en el Nodo Oracle del script `discovery_pasivo.py` bajo un entorno virtual aislado en Python.
-
-> [!WARNING]
-> **Nota de Acceso del Agente:** Debido a restricciones del entorno sandbox local (donde `~/.ssh` está montado como un `tmpfs` vacío), el agente de IA no puede conectarse vía SSH de manera autónoma al Nodo Oracle. La auditoría del nodo remoto se complementa mediante las directrices del usuario o la ejecución manual de diagnósticos compartidos.
+**Siguiente paso prioritario:**
+Finalizar el desarrollo y sincronización del **Web C2 Panel (OCI-2)** para consumir directamente la API/JSONs de **OCI-1**, integrando la Base de Datos central y el Hub de Prompts de IA para la gestión de alertas y generación de reportes con 1 solo clic.
