@@ -18,6 +18,7 @@ import sys
 import json
 import logging
 import subprocess
+import argparse
 import datetime
 import urllib.request
 import urllib.error
@@ -32,7 +33,14 @@ CONFIG_DIR = os.path.join(BASE_DIR, "config")
 RESULT_DIR = os.path.join(BASE_DIR, "resultados")
 LOG_DIR    = os.path.join(BASE_DIR, "logs")
 
-OBJETIVOS_FILE = os.path.join(CONFIG_DIR, "objetivos.txt")
+# Mapeo de zonas horarias a archivos de objetivos
+ZONE_FILES = {
+    "americas": os.path.join(CONFIG_DIR, "objetivos_americas.txt"),
+    "emea":     os.path.join(CONFIG_DIR, "objetivos_emea.txt"),
+    "asia":     os.path.join(CONFIG_DIR, "objetivos_asia.txt"),
+    "all":      os.path.join(CONFIG_DIR, "objetivos.txt"),  # Legado
+}
+
 RESULTADO_FILE = os.path.join(RESULT_DIR, "actual.json")
 LOG_FILE       = os.path.join(LOG_DIR, "mass_recon.log")
 
@@ -167,15 +175,24 @@ def descubrir_dominio(dominio: str, previo: dict) -> list[str]:
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Mass Recon — Red de Pesca Fase 2")
+    parser.add_argument("--zone", choices=["americas", "emea", "asia", "all"], default="all",
+                        help="Zona geográfica a escanear (default: all)")
+    args = parser.parse_args()
+
     log.info("=" * 70)
-    log.info("🌐 INICIANDO MASS_RECON (FASE 2 RED DE PESCA) 🌐")
-    
-    # 1. Cargar Objetivos
-    if not os.path.isfile(OBJETIVOS_FILE):
-        log.error(f"Falta archivo de objetivos: {OBJETIVOS_FILE}")
+    log.info(f"🌐 INICIANDO MASS_RECON (FASE 2 RED DE PESCA) — ZONA: {args.zone.upper()} 🌐")
+
+    objetivos_file = ZONE_FILES.get(args.zone)
+    if not objetivos_file or not os.path.isfile(objetivos_file):
+        log.error(f"Falta archivo de objetivos para zona '{args.zone}': {objetivos_file}")
         sys.exit(1)
 
-    with open(OBJETIVOS_FILE, "r") as f:
+    # El archivo de salida es por zona para no mezclar deltas entre continentes
+    global RESULTADO_FILE
+    RESULTADO_FILE = os.path.join(RESULT_DIR, f"actual_{args.zone}.json")
+
+    with open(objetivos_file, "r") as f:
         dominios = [l.strip() for l in f if l.strip() and not l.startswith("#")]
 
     if not dominios:

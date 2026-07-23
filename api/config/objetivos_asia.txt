@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# BLOQUE ASIA/OCEANÍA — Bug Bounty Targets (OCI-1)
+# Criterio: Wildcards confirmados en HackerOne/Bugcrowd, pagan en $$$,
+# fintechs y e-commerce de alto crecimiento (APAC).
+# ESCANEO: 19:00 UTC = 03:00 AM Singapur/Pekín / 04:00 AM Tokio
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Superapps & Ride-hailing APAC ────────────────────────────────────────────
+grab.com
+gojek.com
+ola.com
+didi.com
+lalamove.com
+
+# ── E-Commerce APAC ──────────────────────────────────────────────────────────
+lazada.com
+shopee.com
+flipkart.com
+meesho.com
+tatadigital.com
+bigbasket.com
+myntra.com
+
+# ── Fintech APAC (Explosión de infra cloud, muchos errores de config) ────────
+paytm.com
+phonepe.com
+razorpay.com
+zerodha.com
+groww.in
+moneylion.com
+seismicai.com
+transfergo.com
+singpass.gov.sg
+dbs.com
+
+# ── Gaming & Entretenimiento APAC ────────────────────────────────────────────
+sea.com
+garena.com
+nexon.com
+netmarble.com
+kakao.com
+line.me
+cyberagent.co.jp
+
+# ── Infra & SaaS APAC ────────────────────────────────────────────────────────
+zoho.com
+freshworks.com
+sprinklr.com
+zendesk.co.jp
+jirarecommendations.com
+
+# ── Crypto & Blockchain APAC (Scope amplísimo, pagan bien) ───────────────────
+binance.com
+bybit.com
+okx.com
+kucoin.com
+gate.io
+bitget.com
+crypto.com
+huobi.com
+
+# ── Australia & NZ ────────────────────────────────────────────────────────────
+canva.com
+atlassian.com
+xero.com
+seek.com.au
+carsales.com.au
+afterpay.com
+
+# ── Japón & Corea ────────────────────────────────────────────────────────────
+rakuten.com
+mercari.com
+line.me
+kakaobank.com
+tossinvest.com
+nhn.com

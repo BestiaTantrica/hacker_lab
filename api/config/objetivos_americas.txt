@@ -1,0 +1,84 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# BLOQUE AMÉRICAS — Bug Bounty Targets (OCI-1)
+# Criterio: Wildcards confirmados en HackerOne/Bugcrowd, pagan en $$$,
+# infraestructura cloud dinámica (AWS/GCP/Azure), SaaS B2B o e-commerce.
+# ESCANEO: 09:00 UTC = 02:00 AM San Francisco / 05:00 AM NYC
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── E-Commerce & Marketplace ──────────────────────────────────────────────────
+shopify.com
+etsy.com
+ebay.com
+mercari.com
+poshmark.com
+wish.com
+reverb.com
+depop.com
+
+# ── SaaS B2B (Alto ROI - subdominios efímeros de clientes) ───────────────────
+salesforce.com
+hubspot.com
+zendesk.com
+intercom.com
+freshworks.com
+freshdesk.com
+asana.com
+atlassian.com
+notion.so
+dropbox.com
+box.com
+docusign.com
+zoom.us
+slack.com
+twilio.com
+sendgrid.com
+segment.com
+amplitude.com
+mixpanel.com
+
+# ── Fintech & Pagos ──────────────────────────────────────────────────────────
+stripe.com
+square.com
+braintreepayments.com
+paypal.com
+robinhood.com
+coinbase.com
+kraken.com
+gemini.com
+chime.com
+plaid.com
+marqeta.com
+
+# ── Movilidad & Logística (Gran infra cloud) ─────────────────────────────────
+uber.com
+lyft.com
+doordash.com
+instacart.com
+gopuff.com
+
+# ── Entretenimiento & Media ──────────────────────────────────────────────────
+roblox.com
+epicgames.com
+discord.com
+twitch.tv
+spotify.com
+netflix.com
+vimeo.com
+
+# ── Infraestructura & DevOps ─────────────────────────────────────────────────
+github.com
+gitlab.com
+digitalocean.com
+cloudflare.com
+hashicorp.com
+datadog.com
+pagerduty.com
+newrelic.com
+
+# ── LATAM (Oportunidad de baja competencia) ──────────────────────────────────
+mercadolibre.com
+mercadopago.com
+rappi.com
+nubank.com
+totvs.com
+vtex.com

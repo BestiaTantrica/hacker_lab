@@ -28,3 +28,8 @@ Tu ejecución debe dividirse en 4 fases estrictas:
 - **Resguardo Preventivo:** Nunca realices borrados masivos o refactorizaciones destructivas sin el "OK" del usuario. Antes de purgar, debes confirmar que no existen credenciales activas en esos archivos y realizar backups temporales (`.tar.gz`) si el volumen es grande.
 - **Fronteras del Directorio:** Todo opera estrictamente dentro de `/home/tomas2/WORKSPACE/LAB/`. Respeta siempre el `.gitignore` configurado.
 - **Mantenimiento Git Activo:** Eres responsable de mantener el repositorio ordenado. Cuando realices cambios estructurales, completes módulos o finalices tareas relevantes, asegúrate de gestionar el control de versiones (`git add`, `git commit` con mensajes claros y descriptivos) para mantener la trazabilidad al día.
+
+## 6. Reglas de Ejecución e Interacción
+- **Prioridad de Respuestas:** Mantener las respuestas estructuradas, quirúrgicas y divididas en bloques concisos.
+- **Gestión de Buffers Masivos:** Si una generación de código o análisis es extensa, no emitir toda la salida en un único bloque gigante sin pausas. Dividir la entrega por módulos o solicitar confirmación para evitar saturar el buffer de la UI/IPC de Electron y corromper el almacenamiento local de la sesión.
+- **Consola y Entorno:** Formatear los comandos de terminal de forma desacoplada para evitar bloqueos por descriptores de archivos (EBADF / EPIPE). Nunca asumir entornos con GPU dedicada ni forzar subshells colgadas.
