@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>C2 Mobile - HackerLab</title>
+    <title>C2 Copilot Hub — HackerLab</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#0f172a">
@@ -12,105 +12,101 @@
     
     <header class="mobile-header">
         <div class="logo">
-            <span class="icon">🎯</span>
+            <span class="icon">⚡</span>
             <h2>C2 Copilot Hub</h2>
         </div>
         <div class="status-badge" id="oci-status-badge">
             <span id="oci-status-dot" class="dot gray"></span>
-            <span id="oci-status-text">Conectando...</span>
+            <span id="oci-status-text">Cargando estado...</span>
         </div>
     </header>
     
     <main class="main-content">
         <!-- VISTA DASHBOARD -->
         <section id="view-dashboard" class="view active">
-            <div class="card stat-card glow">
-                <h3>Volumen Descubierto OCI-1</h3>
-                <h2 id="targets-count">--</h2>
-                <p class="meta-info">Subdominios en actual.json listos para análisis.</p>
-            </div>
-            
-            <h3 class="section-title">Motor de Dinero (Resultados Automáticos)</h3>
-            <p class="view-desc">El cronjob (OCI-1) hace el trabajo pesado cada noche a las 3:00 AM UTC. Tu único trabajo aquí es recolectar y capitalizar.</p>
-            
-            <div class="card action-card" id="triage-card" style="border-left: 4px solid var(--success);">
-                <div class="card-header">
-                    <span class="icon">💰</span>
-                    <h3>Eslabón 1: Descargar Cosecha</h3>
+            <!-- TARJETAS DE INDICADORES EN TIEMPO REAL -->
+            <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div class="card stat-card glow" style="padding: 15px; border-left: 4px solid var(--primary);">
+                    <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Subdominios Recogidos</h4>
+                    <h2 id="total-deltas-count" style="font-size: 24px; color: #fff; margin: 5px 0;">0</h2>
+                    <p style="font-size: 10px; color: #aaa; margin: 0;">Red de Pesca OCI-1</p>
                 </div>
-                <p>Conecta con OCI-1 y recupera todos los hallazgos críticos (Secretos Expuestos, Subdomain Takeovers) encontrados anoche.</p>
-                <button class="btn btn-success" onclick="cosecharBugs()" id="btn-cosechar">📥 Descargar Resultados de Hoy</button>
+                <div class="card stat-card glow" style="padding: 15px; border-left: 4px solid var(--success);">
+                    <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Hallazgos ($50-$300+)</h4>
+                    <h2 id="total-findings-count" style="font-size: 24px; color: #2ecc71; margin: 5px 0;">0</h2>
+                    <p style="font-size: 10px; color: #aaa; margin: 0;">PoCs Verificados</p>
+                </div>
             </div>
 
-            <div class="card action-card" id="results-card" style="display: none; border-top: 3px solid var(--primary); margin-top: 30px;">
-                <div class="card-header">
-                    <span class="icon">🎯</span>
-                    <h3>Eslabón 2: Triage y Reporte</h3>
+            <!-- FILTRO DE ZONAS HORARIAS -->
+            <h3 class="section-title">🌐 Cobertura por Zonas Horarias</h3>
+            <div class="zone-selector" style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <button class="btn btn-secondary zone-btn active" onclick="filtrarZona('all', this)" style="flex: 1; font-size: 11px; padding: 8px;">Todas</button>
+                <button class="btn btn-secondary zone-btn" onclick="filtrarZona('americas', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌎 Américas</button>
+                <button class="btn btn-secondary zone-btn" onclick="filtrarZona('emea', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌍 EMEA</button>
+                <button class="btn btn-secondary zone-btn" onclick="filtrarZona('asia', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌏 Asia</button>
+            </div>
+            
+            <div class="card action-card" style="border-top: 3px solid var(--primary);">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="icon">🎯</span>
+                        <h3>Bugs Verificados & Oportunidades</h3>
+                    </div>
+                    <button class="btn btn-primary" onclick="cargarHallazgos()" style="font-size: 10px; padding: 4px 8px; margin: 0;">🔄 Refrescar</button>
                 </div>
-                <p>Bugs listos para cobrar. Envía los datos crudos a Pegaso (IA) para que redacte el reporte final para HackerOne.</p>
+                <p style="font-size: 11px; color: #aaa; margin-top: 5px;">Hallazgos clasificados con PoC funcional listos para cobro rápido.</p>
                 
-                <div id="bug-list" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
-                    <!-- JS insertará los bugs aquí -->
+                <div id="findings-list" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="padding: 10px; background: #1e1e2e; border-radius: 5px; color: #888; font-size: 11px;">Cargando hallazgos desde OCI-2 DB...</div>
                 </div>
             </div>
         </section>
 
-
-        <section id="view-kits" class="view">
-            <h3 class="section-title">Kits de Soluciones (Eslabones)</h3>
-            <p class="view-desc">Conocimiento duro pre-cargado. No dependas ciegamente de la IA.</p>
+        <!-- VISTA HUB DE PROMPTS Y SKILLS -->
+        <section id="view-prompts" class="view">
+            <h3 class="section-title">🤖 Hub de Prompts de IA (1-Clic)</h3>
+            <p class="view-desc">Selecciona una plantilla o envía evidencia cruda directamente para formatear reportes profesionales.</p>
             
-            <div class="card kit-card">
-                <h3>🛠️ Checklist IDOR (Cross-Tenant)</h3>
-                <ul class="kit-list">
-                    <li>1. Crear 2 cuentas en distintos tenants.</li>
-                    <li>2. Capturar petición en Burp (Cuenta A).</li>
-                    <li>3. Cambiar el ID numérico o UUID por el de la Cuenta B.</li>
-                    <li>4. Verificar si devuelve 200 OK y filtra info.</li>
-                </ul>
+            <div class="card kit-card" style="margin-bottom: 15px;">
+                <h4 style="color: #fff; margin-bottom: 8px;">📝 Formateador de Reportes HackerOne</h4>
+                <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Convierte evidencia cruda (requests/responses) en un reporte en inglés con pasos detallados y CVSS v3.1.</p>
+                <textarea id="prompt-evidence-input" placeholder="Pega aquí el request/response de Burp o la evidencia..." style="width: 100%; height: 90px; background: #111; color: #a9ff68; font-family: 'Fira Code', monospace; font-size: 11px; padding: 8px; border-radius: 4px; border: 1px solid #333; box-sizing: border-box;"></textarea>
+                
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-success" onclick="ejecutarPromptSkill('report_h1')" style="flex: 1; font-size: 11px; padding: 8px;">🚀 Generar Reporte H1</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('takeover_analysis')" style="flex: 1; font-size: 11px; padding: 8px;">🔍 Analizar Takeover</button>
+                </div>
             </div>
 
-            <div class="card kit-card">
-                <h3>🔥 Payloads CORS Comunes</h3>
-                <pre class="code-block">
-Origin: null
-Origin: https://tudominio.com.evil.com
-Origin: https://evil.com
-                </pre>
+            <div id="prompt-result-container" class="card" style="display: none; background: #0d1117; border: 1px solid var(--primary);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h4 style="color: #2ecc71; margin: 0;">✅ Reporte Generado por IA</h4>
+                    <button class="btn btn-primary" onclick="copiarReporteGenerado()" style="font-size: 10px; padding: 4px 8px; margin: 0;">📋 Copiar</button>
+                </div>
+                <textarea id="prompt-result-output" style="width: 100%; height: 220px; background: #000; color: #fff; font-family: 'Fira Code', monospace; font-size: 11px; padding: 8px; border-radius: 4px; border: 1px solid #333; box-sizing: border-box;" readonly></textarea>
             </div>
         </section>
 
-        <!-- VISTA CHAT PEGASO -->
+        <!-- VISTA CHAT PEGASO COPILOT -->
         <section id="view-chat" class="view">
             <div class="terminal-container" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="terminal-header" style="background: #2a2a4a; border-bottom: 1px solid #4a4a8a;">
+                <div class="terminal-header" style="background: #2a2a4a; border-bottom: 1px solid #4a4a8a; padding: 10px;">
                     <span style="display: flex; align-items: center; gap: 8px;">
                         <span class="icon" style="font-size: 1.2em;">🤖</span> 
-                        Pegaso AI - C2 Copilot
+                        Pegaso AI — Copiloto Bug Bounty
                     </span>
                 </div>
                 <div class="terminal-body" id="chat-messages" style="flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #1e1e2e;">
                     <div class="chat-message assistant">
-                        <strong>Pegaso:</strong> ¡Hola! Soy tu asistente de IA integrado. Puedo analizar los resultados de OCI-1, revisar la Cola de Alarmas o ayudarte a redactar reportes. ¿En qué te ayudo hoy?
+                        <strong>Pegaso:</strong> ¡Hola! Estoy conectado a la base de datos de OCI-2. Puedo ayudarte a analizar objetivos, revisar deltas por zona horaria o formatear reportes de $50-$300 USD. ¿En qué trabajamos?
                     </div>
                 </div>
                 <div style="padding: 10px; background: #1e1e2e; border-top: 1px solid #333;">
                     <div style="display: flex; gap: 8px;">
-                        <input type="text" id="chat-input" placeholder="Pregúntale a Pegaso..." style="flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #2a2a35; color: #fff; font-family: 'Inter', sans-serif;">
-                        <button class="btn btn-primary" onclick="enviarMensajeChat()" style="padding: 10px 15px; margin-top: 0;">Enviar</button>
+                        <input type="text" id="chat-input" placeholder="Escribe tu consulta a Pegaso..." style="flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #2a2a35; color: #fff; font-family: 'Inter', sans-serif; font-size: 12px;">
+                        <button class="btn btn-primary" onclick="enviarMensajeChat()" style="padding: 10px 15px; margin-top: 0; font-size: 12px;">Enviar</button>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VISTA TERMINAL -->
-        <section id="view-terminal" class="view">
-            <div class="terminal-container" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="terminal-header" style="background: #2a2a4a; border-bottom: 1px solid #4a4a8a; padding: 10px;">
-                    <span class="icon">💻</span> Logs en Vivo (OCI-1)
-                </div>
-                <div id="terminal-output" class="terminal-body" style="flex-grow: 1; overflow-y: auto; background: #000; color: #0f0; padding: 15px; font-family: 'Fira Code', monospace; font-size: 11px;">
-                    > Terminal iniciada...
                 </div>
             </div>
         </section>
@@ -123,21 +119,16 @@ Origin: https://evil.com
             <span class="nav-icon">📊</span>
             <span>Panel</span>
         </a>
-
-        <a href="#" class="nav-item" onclick="switchView('kits', this)">
-            <span class="nav-icon">📚</span>
-            <span>Kits</span>
+        <a href="#" class="nav-item" onclick="switchView('prompts', this)">
+            <span class="nav-icon">🤖</span>
+            <span>Prompts IA</span>
         </a>
         <a href="#" class="nav-item" onclick="switchView('chat', this)">
-            <span class="nav-icon">🤖</span>
-            <span>Pegaso</span>
-        </a>
-        <a href="#" class="nav-item" onclick="switchView('terminal', this)">
-            <span class="nav-icon">💻</span>
-            <span>Logs</span>
+            <span class="nav-icon">💬</span>
+            <span>Copiloto</span>
         </a>
     </nav>
 
-    <script src="/static/js/app.js?v=3"></script>
+    <script src="/static/js/app.js?v=4"></script>
 </body>
 </html>

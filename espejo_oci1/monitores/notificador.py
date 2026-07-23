@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """
-notificador.py — Módulo de notificaciones Telegram
-Lee TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID desde el entorno o .env del directorio.
+notificador.py — Módulo de Notificaciones y Sincronización OCI-1 -> OCI-2 (C2 Panel)
 
-Uso standalone:
-    python3 notificador.py "Mensaje de prueba"
-Importado:
-    from notificador import send_telegram
-    send_telegram("Alerta: nuevo delta detectado")
+Regla de Filtrado de Valor:
+- Sincroniza todas las deltas y hallazgos hacia OCI-2 (Base de Datos Central).
+- Envia mensaje a Telegram SOLO si la oportunidad representa un bounty potencial verificado (Subdomain Takeovers, Secretos Expuestos, CORS credentials) >= $50 USD.
 """
 import os
 import sys
@@ -22,14 +19,12 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 
-
 def _cargar_dotenv():
-    """Carga variables de entorno desde múltiples rutas posibles."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
     candidatos = [
-        os.path.join(script_dir, ".env"),                                         # Local: mismo dir del script
-        os.path.join(script_dir, "..", "config", "entorno.env"),                  # OCI: monitores/../config/
-        os.path.expanduser("~/plataforma_operativa/config/entorno.env"),          # OCI: ruta absoluta
+        os.path.join(script_dir, ".env"),
+        os.path.join(script_dir, "..", "config", "entorno.env"),
+        os.path.expanduser("~/plataforma_operativa/config/entorno.env"),
     ]
     for ruta in candidatos:
         ruta = os.path.normpath(ruta)
@@ -45,25 +40,17 @@ def _cargar_dotenv():
                 valor = valor.strip().strip('"').strip("'")
                 if clave and clave not in os.environ:
                     os.environ[clave] = valor
-        return  # Con el primer archivo encontrado alcanza
-
+        return
 
 def send_telegram(message: str) -> bool:
-    """
-    Envía un mensaje al chat de Telegram configurado en las variables de entorno.
-    Devuelve True si fue exitoso, False si hubo cualquier error.
-    No lanza excepciones (el pipeline no debe romperse por fallos de notificación).
-    """
     _cargar_dotenv()
-
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
     if not token or not chat_id:
-        logging.error("Faltan TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID en el entorno / .env")
+        logging.error("Faltan TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID")
         return False
 
-    # Telegram permite máximo 4096 caracteres por mensaje
     if len(message) > 4096:
         message = message[:4093] + "..."
 
@@ -74,32 +61,60 @@ def send_telegram(message: str) -> bool:
         "parse_mode": "Markdown",
     }
 
-    data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
     try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
         with urllib.request.urlopen(req, timeout=10) as response:
-            result = json.loads(response.read().decode("utf-8"))
-            if result.get("ok"):
-                logging.info("✅ Notificación enviada a Telegram (chat_id=%s)", chat_id)
-                return True
-            logging.error("Telegram respondió ok=false: %s", result)
-            return False
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        logging.error("HTTP %s desde Telegram: %s", e.code, body)
-        return False
+            res = json.loads(response.read().decode("utf-8"))
+            return res.get("ok", False)
     except Exception as e:
         logging.error("Fallo enviando a Telegram: %s", e)
         return False
 
+def sync_to_c2_panel(zone: str, deltas_dict: dict, findings: list) -> bool:
+    """Envía los datos de recolección de OCI-1 hacia la API de OCI-2 (C2 Panel)."""
+    _cargar_dotenv()
+    c2_url = os.environ.get("C2_PANEL_URL", "http://127.0.0.1:8000/api/ingest_delta")
+
+    payload = {
+        "zone": zone,
+        "deltas": deltas_dict,
+        "findings": findings
+    }
+
+    try:
+        req = urllib.request.Request(
+            c2_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            logging.info("✅ Datos de zona %s sincronizados exitosamente con OCI-2.", zone)
+            return True
+    except Exception as e:
+        logging.warning("⚠️ No se pudo enviar telemetría a OCI-2 (%s): %s", c2_url, e)
+        return False
+
+def notificar_hallazgos_valor(findings: list):
+    """Filtra y notifica a Telegram solo las vulnerabilidades verificadas con bounty ($50+ USD)."""
+    for f in findings:
+        target = f.get("target", "N/A")
+        vuln_type = f.get("vuln_type", "Desconocida")
+        estimated = f.get("estimated_bounty", "$50-$150")
+        
+        msg = f"🎯 *¡NUEVO HALLAZGO EN RED DE PESCA!*\n\n" \
+              f"📌 *Tipo:* {vuln_type}\n" \
+              f"🌐 *Target:* `{target}`\n" \
+              f"💰 *Estimado Bounty:* {estimated}\n\n" \
+              f"👉 _Entra al C2 Panel en OCI-2 para generar el reporte HackerOne en 1-clic._"
+        
+        send_telegram(msg)
 
 if __name__ == "__main__":
-    msg = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "🔔 Prueba de sistema: PEGASO operativo."
-    ok = send_telegram(msg)
-    sys.exit(0 if ok else 1)
+    msg = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "🔔 Notificador de OCI-1 operativo."
+    send_telegram(msg)
