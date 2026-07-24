@@ -234,7 +234,7 @@ def generate_copilot_prompt(req: GenerateReportRequest):
     if completar is None:
         raise HTTPException(status_code=500, detail="LLM Client no disponible.")
     
-    template = SKILL_PROMPTS.get(req.skill_key, SKILL_PROMPTS["report_h1"])
+    template = SKILLS_PROMPTS.get(req.skill_key, SKILLS_PROMPTS["report_h1"])
     prompt = template.replace("{EVIDENCIA_CRUDA}", req.evidence)
     if req.target:
         prompt += f"\nTarget: {req.target}"

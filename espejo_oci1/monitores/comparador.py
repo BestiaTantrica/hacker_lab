@@ -4,10 +4,8 @@ comparador.py
 --------------
 Etapa 2: Comparador de deltas para el pipeline de monitoreo pasivo de activos.
 
-Compara resultados/actual.json (última corrida de discovery_pasivo.py) contra
-estado/previo.json (snapshot de la corrida anterior) para detectar subdominios
-NUEVOS por dominio. Si hay novedades, genera resultados/delta_YYYY-MM-DD.json
-y actualiza el estado histórico. Si no hay novedades, sólo deja constancia en el log.
+Acepta --zone [americas|emea|asia|all] para comparar el archivo actual_{zone}.json
+generado por mass_recon.py contra el estado previo por zona.
 
 Sin dependencias de terceros: sólo librería estándar (json, os, sys, datetime, logging).
 """
@@ -16,14 +14,24 @@ import os
 import sys
 import json
 import logging
+import argparse
 from datetime import datetime, timezone
 
 # ---------------------------------------------------------------------------
-# Rutas del entorno (dinámicas, expandidas de forma segura)
+# Argumentos de zona
+# ---------------------------------------------------------------------------
+parser = argparse.ArgumentParser(description="Comparador de deltas por zona")
+parser.add_argument("--zone", choices=["americas", "emea", "asia", "all"], default="all",
+                    help="Zona geográfica a comparar (default: all)")
+args, _ = parser.parse_known_args()
+ZONA = args.zone
+
+# ---------------------------------------------------------------------------
+# Rutas del entorno (dinámicas según zona)
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
-ACTUAL_FILE = os.path.join(BASE_DIR, "resultados", "actual.json")
-PREVIO_FILE = os.path.join(BASE_DIR, "estado", "previo.json")
+ACTUAL_FILE = os.path.join(BASE_DIR, "resultados", f"actual_{ZONA}.json")
+PREVIO_FILE = os.path.join(BASE_DIR, "estado", f"previo_{ZONA}.json")
 LOG_FILE = os.path.join(BASE_DIR, "logs", "comparador.log")
 RESULTADOS_DIR = os.path.join(BASE_DIR, "resultados")
 
@@ -110,9 +118,9 @@ def calcular_delta(dominios_actual, dominios_previo, logger):
 
 
 def guardar_delta(nuevos_activos, logger):
-    """Genera resultados/delta_YYYY-MM-DD.json de forma atómica."""
+    """Genera resultados/delta_{zone}_YYYY-MM-DD.json de forma atómica."""
     fecha_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    delta_file = os.path.join(RESULTADOS_DIR, f"delta_{fecha_str}.json")
+    delta_file = os.path.join(RESULTADOS_DIR, f"delta_{ZONA}_{fecha_str}.json")
     tmp_file = delta_file + ".tmp"
 
     contenido = {
