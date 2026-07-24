@@ -92,6 +92,11 @@ TAKEOVER_FINGERPRINTS = [
     ("UserVoice",       "This UserVoice subdomain is currently available", [404]),
     ("HubSpot",         "This page isn't available",               [404]),
     ("Campaign Monitor","Double check the URL",                    [404]),
+    ("Firebase",        "Firebase App Not Configured",             [404]),
+    ("Azure App Service","The page cannot be displayed because an internal server error", [404, 500, 502]),
+    ("Netlify",         "Not Found - Request ID",                  [404]),
+    ("AWS CloudFront",  "Bad request. We can't connect to the server", [400, 403]),
+    ("Digital Ocean",   "NoSuchBucket",                            [404]),
     ("Mailchimp",       "isn't a Mailchimp list",                  [404]),
 ]
 
@@ -410,7 +415,28 @@ def test_exposed_files(subdominio):
                         "body": body[:200],
                     })
 
-        time.sleep(0.1)  # Evitar rate limiting
+        time.sleep(0.5)  # Evitar rate limiting en la iteración de rutas
+
+    # Test específico para S3 Bucket Listing en la raíz
+    try:
+        s3_url = f"https://{subdominio}/"
+        s3_status, s3_headers, s3_body, _ = http_probe(s3_url, allow_redirects=False)
+        if s3_status == 200 and "ListBucketResult" in s3_body and "<Key>" in s3_body:
+            msg = (
+                f"🚨 S3 BUCKET LISTING EXPUESTO\n"
+                f"URL: {s3_url}\n"
+                f"Severidad: MEDIA-ALTA ($200-$500)\n"
+                f"Impacto: El bucket permite listar todos sus archivos de forma anónima."
+            )
+            log(msg)
+            telegram(msg)
+            hallazgos.append({
+                "tipo": "s3_bucket_listing",
+                "url": s3_url,
+                "preview": s3_body[:200]
+            })
+    except Exception:
+        pass
 
     return hallazgos
 
@@ -512,7 +538,13 @@ def main():
         hallazgos_sub += test_open_redirect(sub)
 
         todos_los_hallazgos.extend(hallazgos_sub)
-        time.sleep(0.2)  # Pausa entre subdominios
+        
+        # Rate limit dinámico: si estamos escaneando muchos subdominios del mismo target,
+        # frenar un poco para no ser bloqueados a nivel IP (WAF/Cloudflare)
+        if testeados <= 10:
+            time.sleep(1)
+        else:
+            time.sleep(0.5)
 
     # Resumen final
     print("\n" + "=" * 60)

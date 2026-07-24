@@ -113,9 +113,14 @@ def run_wayback(dominio: str) -> set:
             if len(data) > 1:
                 for row in data[1:]:
                     try:
-                        parsed = urlparse(row[0])
-                        if parsed.hostname and parsed.hostname.endswith(dominio):
-                            subdominios.add(parsed.hostname.lower())
+                        # Limpiar barras dobles raras en urls de Wayback: //subdomain.com/
+                        raw_url = row[0].replace("///", "//")
+                        parsed = urlparse(raw_url)
+                        if parsed.hostname:
+                            # Eliminar puerto si existe (ej. subdomain.com:8080)
+                            clean_host = parsed.hostname.split(":")[0].lower().strip()
+                            if clean_host.endswith(dominio):
+                                subdominios.add(clean_host)
                     except:
                         pass
         log.info(f"[{dominio}] Wayback Machine: {len(subdominios)} hosts extraídos.")
