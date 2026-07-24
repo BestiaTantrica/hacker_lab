@@ -1,0 +1,5 @@
+# Crontab de OCI-1 — Red de Pesca Automatizada por Zonas Horarias
+0 1 * * * /home/ubuntu/workspace_lab/venv/bin/python3 /home/ubuntu/plataforma_operativa/monitores/mass_recon.py --zone emea >> /home/ubuntu/plataforma_operativa/logs/cron_emea.log 2>&1
+0 9 * * * /home/ubuntu/workspace_lab/venv/bin/python3 /home/ubuntu/plataforma_operativa/monitores/mass_recon.py --zone americas >> /home/ubuntu/plataforma_operativa/logs/cron_americas.log 2>&1
+0 19 * * * /home/ubuntu/workspace_lab/venv/bin/python3 /home/ubuntu/plataforma_operativa/monitores/mass_recon.py --zone asia >> /home/ubuntu/plataforma_operativa/logs/cron_asia.log 2>&1
+0 3 * * 0 find /home/ubuntu/plataforma_operativa/resultados/ -name "delta_*.json" -mtime +14 -delete

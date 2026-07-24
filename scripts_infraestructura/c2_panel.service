@@ -1,0 +1,14 @@
+[Unit]
+Description=C2 Copilot Web Panel (HackerLab - OCI2)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/c2_panel
+ExecStart=/home/ubuntu/c2_panel/venv/bin/python3 main.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
