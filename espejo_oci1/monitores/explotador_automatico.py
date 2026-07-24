@@ -223,17 +223,25 @@ def cargar_delta(path=None):
 
 def extraer_subdominios(delta):
     """Extrae la lista de subdominios del delta (acepta múltiples formatos)."""
-    # Formato 1: {"nuevos_activos": ["sub1.domain.com", ...]}
+    # Formato 1: mass_recon output {"dominios": {"domain.com": ["sub1", "sub2"]}}
+    if "dominios" in delta and isinstance(delta["dominios"], dict):
+        subs = []
+        for d, lista in delta["dominios"].items():
+            if isinstance(lista, list):
+                subs.extend(lista)
+        return subs
+    # Formato 2: {"nuevos_activos": ["sub1.domain.com", ...]}
     if "nuevos_activos" in delta:
         return delta["nuevos_activos"]
-    # Formato 2: lista directa
+    # Formato 3: lista directa
     if isinstance(delta, list):
         return delta
-    # Formato 3: cualquier lista en el primer nivel
+    # Formato 4: cualquier lista en el primer nivel
     for key, val in delta.items():
         if isinstance(val, list) and val:
             return val
     return []
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -320,8 +328,8 @@ def test_cors(subdominio):
             acao = headers.get("Access-Control-Allow-Origin", "")
             acac = headers.get("Access-Control-Allow-Credentials", "").lower()
 
-            # Vulnerable: refleja el origin del atacante Y permite credenciales
-            if acao == EVIL_ORIGIN and acac == "true":
+            # Vulnerable: refleja el origin del atacante Y permite credenciales Y responde 200
+            if acao == EVIL_ORIGIN and acac == "true" and status == 200:
                 msg = (
                     f"🚨 CORS MISCONFIGURATION\n"
                     f"URL: {url}\n"
