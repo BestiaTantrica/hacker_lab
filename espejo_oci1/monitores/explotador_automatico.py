@@ -93,10 +93,12 @@ TAKEOVER_FINGERPRINTS = [
     ("HubSpot",         "This page isn't available",               [404]),
     ("Campaign Monitor","Double check the URL",                    [404]),
     ("Firebase",        "Firebase App Not Configured",             [404]),
-    ("Azure App Service","The page cannot be displayed because an internal server error", [404, 500, 502]),
+    ("Azure App Service","404 Web Site not Found",                  [404]),
+    ("Azure App Service","The resource you are looking for has been removed", [404]),
     ("Netlify",         "Not Found - Request ID",                  [404]),
     ("AWS CloudFront",  "Bad request. We can't connect to the server", [400, 403]),
-    ("Digital Ocean",   "NoSuchBucket",                            [404]),
+    ("Digital Ocean Spaces", "NoSuchKey",                               [404]),
+    ("Digital Ocean Spaces", "The specified key does not exist",         [404]),
     ("Mailchimp",       "isn't a Mailchimp list",                  [404]),
 ]
 

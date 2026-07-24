@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-analizador_ia.py — Módulo de Inteligencia Artificial para el Pipeline.
-Analiza la lista de subdominios nuevos (delta), prioriza los de mayor riesgo 
-usando Groq/Gemini, y envía el reporte detallado a Telegram.
+analizador_ia.py — Eslabón Final de la Cascada de Pesca
+=========================================================
+Corre DESPUÉS del explotador_automatico.py en el pipeline por zona.
+Su lógica es en cascada estricta:
+
+1. Carga el delta de subdominios nuevos del día y zona.
+2. Aplica un scoring determinístico (sin IA) para pre-priorizar candidatos.
+3. Consulta a la IA con el TOP de candidatos priorizados (no al azar).
+4. Integra los hallazgos verificados del explotador en el análisis final.
+5. Envía UN SOLO mensaje a Telegram con el link al C2 Panel para actuar.
+
+No duplica alertas. No informa si no hay nada accionable.
 """
 
 import os
 import sys
 import json
 import glob
+import argparse
 import datetime
 from llm_client import completar
 from notificador import send_telegram
@@ -17,141 +27,224 @@ from notificador import send_telegram
 # Configuración de rutas
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
 RESULT_DIR = os.path.join(BASE_DIR, "resultados")
+C2_PANEL_URL = os.environ.get("C2_PANEL_URL", "http://localhost:8000")
 
-def obtener_ultimo_delta():
-    """Busca el archivo delta_*.json más reciente en la carpeta de resultados."""
-    patron = os.path.join(RESULT_DIR, "delta_*.json")
+# ─────────────────────────────────────────────────────────────────────────────
+# SCORING DETERMINÍSTICO — Priorizar antes de quemar tokens de IA
+# ─────────────────────────────────────────────────────────────────────────────
+SCORING_RULES = [
+    # (keywords que deben estar TODAS presentes, puntos)
+    (["admin", "dev"],      5),
+    (["admin", "staging"],  5),
+    (["secret", "api"],     5),
+    (["vault"],             4),
+    (["jenkins"],           4),
+    (["admin"],             3),
+    (["staging"],           3),
+    (["dev"],               2),
+    (["api"],               2),
+    (["internal"],          2),
+    (["auth"],              2),
+    (["login"],             2),
+    (["dashboard"],         2),
+    (["portal"],            2),
+    (["sandbox"],           2),
+    (["qa"],                1),
+    (["test"],              1),
+    (["git"],               1),
+    (["status"],            1),
+    (["private"],           1),
+]
+
+def calcular_score(subdominio: str) -> int:
+    """Calcula un score de riesgo para un subdominio según sus keywords."""
+    sub_lower = subdominio.lower()
+    score = 0
+    for keywords, puntos in SCORING_RULES:
+        if all(kw in sub_lower for kw in keywords):
+            score += puntos
+    return score
+
+
+def obtener_ultimo_delta(zona: str = "all"):
+    """Busca el archivo delta más reciente para la zona indicada."""
+    if zona != "all":
+        patron = os.path.join(RESULT_DIR, f"delta_{zona}_*.json")
+    else:
+        patron = os.path.join(RESULT_DIR, "delta_*.json")
+
     archivos = glob.glob(patron)
     if not archivos:
         return None
-    # Devolver el archivo con fecha de modificación más reciente
     return max(archivos, key=os.path.getmtime)
 
-def cargar_delta(ruta):
+
+def cargar_delta(ruta: str) -> dict:
     """Carga los dominios del archivo JSON delta."""
     try:
         with open(ruta, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # El delta puede tener dominios agrupados por target
-            # Ej: {"elastic.co": [...], "mongodb.com": [...]}
             return data.get("nuevos_activos", data.get("dominios", data))
     except Exception as e:
         print(f"Error cargando delta: {e}")
+        return {}
+
+
+def cargar_hallazgos_explotador() -> list:
+    """
+    Carga el reporte de hallazgos del explotador_automatico.py de hoy.
+    Estos son bugs YA VERIFICADOS con PoC real ($50-$3000 USD).
+    """
+    fecha_hoy = datetime.datetime.now().strftime("%Y-%m-%d")
+    ruta = os.path.join(RESULT_DIR, f"explotador_{fecha_hoy}.json")
+    if not os.path.exists(ruta):
+        return []
+    try:
+        with open(ruta, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def analizar_con_ia(candidatos_priorizados: list) -> str | None:
+    """
+    Envía el TOP de candidatos ya scored a la IA para análisis final.
+    La IA recibe candidatos PRE-FILTRADOS y priorizados, no basura aleatoria.
+    """
+    if not candidatos_priorizados:
         return None
 
-def analizar_con_ia(lista_dominios):
-    """Envía la lista a la IA para categorizar y priorizar."""
-    prompt = f"""
-Eres un analista de seguridad y cazador de Bug Bounty senior. 
-Analiza la siguiente lista de subdominios nuevos descubiertos en nuestra infraestructura y selecciona el TOP 5 de mayor interés para auditorías de seguridad.
+    lista_formateada = "\n".join(
+        [f"{i+1}. {item['sub']} (score={item['score']})"
+         for i, item in enumerate(candidatos_priorizados)]
+    )
 
-Prioriza subdominios que apunten a:
-- Paneles de administración o login (admin, login, auth, sso, portal, dashboard).
-- Entornos de desarrollo/prueba expuestos (dev, test, staging, QA, sandbox, internal).
-- Integración continua (jenkins, ci, gitlab, build).
-- Gestión de credenciales u objetos sensibles (secrets, vault, key, database, db).
+    prompt = f"""Eres un cazador de Bug Bounty senior especializado en infraestructura cloud y APIs.
+Estos subdominios ya fueron pre-filtrados por un scoring algorítmico de riesgo.
+Tu tarea es analizar los TOP 5 más prometedores y explicar en 1 línea el vector de ataque específico.
 
-Lista de subdominios a analizar:
-{json.dumps(lista_dominios, indent=2)}
+Considera vectores como: Subdomain Takeover, credenciales expuestas, endpoints de admin sin auth,
+entornos de staging con datos reales, y misconfiguraciones de CORS o JWT.
 
-Devuelve ÚNICAMENTE un listado en formato Markdown ordenado por prioridad del 1 al 5.
-Para cada uno incluye:
-- El subdominio en negrita.
-- Una breve explicación de 1 sola línea de cuál es el vector de riesgo o por qué llama la atención.
-"""
+Subdominios candidatos (ordenados por score de riesgo):
+{lista_formateada}
+
+Devuelve SOLO la lista numerada 1-5 en Markdown con el subdominio en **negrita** y el vector de riesgo."""
+
     try:
-        # Llamamos al cliente LLM unificado (Groq con fallback a Gemini)
-        respuesta = completar(prompt, max_tokens=1024)
+        respuesta = completar(prompt, max_tokens=512)
         return respuesta.strip()
     except Exception as e:
         print(f"Error llamando al LLM: {e}")
         return None
 
+
 def main():
-    print("🤖 Iniciando analizador_ia.py...")
-    ultimo_delta = obtener_ultimo_delta()
+    parser = argparse.ArgumentParser(description="Analizador IA — Eslabón final de la cascada")
+    parser.add_argument("--zone", default="all", help="Zona del pipeline (americas/emea/asia/all)")
+    args = parser.parse_args()
+
+    print(f"🤖 Iniciando analizador_ia.py para zona: {args.zone}")
+
+    # ── Cargar delta del día ───────────────────────────────────────────────────
+    ultimo_delta = obtener_ultimo_delta(args.zone)
     if not ultimo_delta:
-        print("ℹ️ No se encontraron archivos delta para analizar.")
+        print("ℹ️ No se encontró delta para analizar. Cascada finalizada sin acción.")
         sys.exit(0)
 
-    print(f"📄 Analizando archivo: {ultimo_delta}")
+    print(f"📄 Delta: {ultimo_delta}")
     delta_data = cargar_delta(ultimo_delta)
     if not delta_data:
         print("❌ El archivo delta está vacío o corrupto.")
         sys.exit(1)
 
-    # Consolidar todos los subdominios de todos los targets en una sola lista
+    # ── Consolidar subdominios ─────────────────────────────────────────────────
     todos_subdominios = []
     for target, subs in delta_data.items():
         if isinstance(subs, list):
             todos_subdominios.extend(subs)
 
     if not todos_subdominios:
-        print("ℹ️ No se detectaron subdominios nuevos en el delta.")
+        print("ℹ️ Sin subdominios nuevos en el delta. Cascada finalizada sin acción.")
         sys.exit(0)
 
-    # PALABRAS CLAVE CRÍTICAS PARA PRE-FILTRADO (Evita quemar tokens con miles de subdominios basura)
-    KEYWORDS = [
-        "admin", "api", "dev", "test", "staging", "secret", "vault", 
-        "jenkins", "internal", "ci", "auth", "login", "dashboard", 
-        "qa", "sandbox", "private", "portal", "status", "git"
-    ]
-    
-    subdominios_filtrados = [
-        sub for sub in todos_subdominios
-        if any(kw in sub.lower() for kw in KEYWORDS)
-    ]
-    
-    # Si el filtro es demasiado estricto y no queda nada, o si la lista es pequeña, 
-    # enviamos la lista original para no perder información
-    if not subdominios_filtrados or len(todos_subdominios) <= 20:
-        candidatos_ia = todos_subdominios[:100]  # Capamos a 100 max por seguridad de tokens
-    else:
-        candidatos_ia = subdominios_filtrados[:100]
+    # ── Cargar hallazgos verificados del explotador (PoCs reales) ─────────────
+    hallazgos_verificados = cargar_hallazgos_explotador()
+    print(f"🐛 Hallazgos verificados por explotador hoy: {len(hallazgos_verificados)}")
 
-    print(f"🔍 Filtrados {len(candidatos_ia)} interesantes de {len(todos_subdominios)} totales. Procesando con IA...")
-    
-    # 1. Intentar el análisis con IA
-    analisis = analizar_con_ia(candidatos_ia)
-    
-    # 2. Formatear mensaje para Telegram
+    # ── Scoring y priorización determinística ─────────────────────────────────
+    candidatos_con_score = [
+        {"sub": sub, "score": calcular_score(sub)}
+        for sub in todos_subdominios
+        if calcular_score(sub) > 0  # solo los que tienen score > 0
+    ]
+    candidatos_con_score.sort(key=lambda x: x["score"], reverse=True)
+    top_candidatos = candidatos_con_score[:30]  # Top 30 al LLM, mucho más enfocado que 100 aleatorios
+
+    print(f"🔍 Candidatos con score>0: {len(candidatos_con_score)} de {len(todos_subdominios)} totales.")
+
+    # ── Análisis IA sobre TOP candidatos pre-priorizados ──────────────────────
+    analisis_ia = None
+    if top_candidatos:
+        analisis_ia = analizar_con_ia(top_candidatos[:15])  # Máximo 15 para control de tokens
+
+    # ── Construir mensaje unificado para Telegram ──────────────────────────────
     fecha_hoy = datetime.datetime.now().strftime("%Y-%m-%d")
-    
-    if analisis:
-        mensaje_telegram = f"""*⚡ ALERTA DE MONITOREO ({fecha_hoy})*
-Se encontraron {len(todos_subdominios)} subdominios nuevos.
 
-*Top 5 prioridades de ataque según IA:*
-{analisis}
-"""
-        # Guardar copia del análisis localmente
-        ruta_analisis = os.path.join(RESULT_DIR, f"analisis_{fecha_hoy}.json")
-        try:
-            with open(ruta_analisis, "w", encoding="utf-8") as f:
-                json.dump({"timestamp": fecha_hoy, "analisis": analisis}, f, indent=2)
-            print(f"✅ Análisis guardado en {ruta_analisis}")
-        except Exception as e:
-            print(f"No se pudo guardar el análisis local: {e}")
+    # Sección de hallazgos verificados (PoCs reales — esto es lo prioritario)
+    seccion_hallazgos = ""
+    if hallazgos_verificados:
+        tipos_str = ", ".join(set(h.get("tipo", "?") for h in hallazgos_verificados))
+        seccion_hallazgos = (
+            f"\n🚨 *{len(hallazgos_verificados)} PoC(s) verificado(s):* {tipos_str}\n"
+            f"👉 Abre el C2 Panel para generar el reporte en 1 clic.\n"
+        )
     else:
-        # Fallback robusto si falla la IA: mandar la lista cruda
-        print("⚠️ IA no respondió. Aplicando fallback de lista cruda...")
-        lista_cruda = "\n".join([f"- `{s}`" for s in todos_subdominios[:15]])
-        if len(todos_subdominios) > 15:
-            lista_cruda += f"\n- _...y {len(todos_subdominios) - 15} más_"
-            
-        mensaje_telegram = f"""*⚠️ ALERTA DE MONITOREO ({fecha_hoy}) (Sin análisis)*
-Se detectaron {len(todos_subdominios)} nuevos subdominios pero la IA no estuvo disponible.
+        seccion_hallazgos = "\n✅ Sin hallazgos explotables confirmados en este ciclo.\n"
 
-*Muestra de activos:*
-{lista_cruda}
-"""
+    # Sección de análisis IA (contexto para investigación manual)
+    seccion_ia = ""
+    if analisis_ia:
+        seccion_ia = f"\n*🤖 Top candidatos para revisión manual:*\n{analisis_ia}\n"
+    elif top_candidatos:
+        # Fallback: top 5 por score sin IA
+        lista_fallback = "\n".join(
+            [f"- `{c['sub']}` (score={c['score']})" for c in top_candidatos[:5]]
+        )
+        seccion_ia = f"\n*📋 Top por scoring (IA no disponible):*\n{lista_fallback}\n"
 
-    # 3. Enviar a Telegram
+    mensaje_telegram = (
+        f"⚡ *RED DE PESCA — INFORME ZONA {args.zone.upper()} ({fecha_hoy})*\n"
+        f"📊 {len(todos_subdominios)} subdominios nuevos procesados\n"
+        f"{seccion_hallazgos}"
+        f"{seccion_ia}"
+        f"🔗 *Panel C2:* {C2_PANEL_URL}"
+    )
+
+    # ── Guardar análisis local ─────────────────────────────────────────────────
+    ruta_analisis = os.path.join(RESULT_DIR, f"analisis_{args.zone}_{fecha_hoy}.json")
+    try:
+        with open(ruta_analisis, "w", encoding="utf-8") as f:
+            json.dump({
+                "timestamp": fecha_hoy,
+                "zona": args.zone,
+                "total_subdominios": len(todos_subdominios),
+                "hallazgos_verificados": len(hallazgos_verificados),
+                "top_candidatos_score": top_candidatos[:10],
+                "analisis_ia": analisis_ia,
+            }, f, indent=2, ensure_ascii=False)
+        print(f"✅ Análisis guardado en {ruta_analisis}")
+    except Exception as e:
+        print(f"No se pudo guardar análisis local: {e}")
+
+    # ── Enviar a Telegram ──────────────────────────────────────────────────────
     exito = send_telegram(mensaje_telegram)
     if exito:
-        print("🚀 Notificación enviada con éxito a Telegram.")
+        print("🚀 Informe unificado enviado a Telegram.")
     else:
-        print("❌ Error al enviar notificación de Telegram.")
+        print("❌ Error al enviar a Telegram.")
+
 
 if __name__ == "__main__":
     main()

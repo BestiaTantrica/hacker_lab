@@ -59,23 +59,11 @@ fi
 TOTAL_BUGS=$(python3 -c "import json; data=json.load(open('$REPORTE_HOY')); print(len(data))" 2>/dev/null || echo "N/A")
 log "✅ Eslabón 3 completado: $TOTAL_BUGS hallazgo(s) verificado(s)."
 
-# ── Eslabón 4: Notificación Telegram (link al C2 Panel) ───────────────────────
-log "Eslabón 4: Notificando a Telegram con link al C2 Panel."
-python3 -c "
-import sys
-sys.path.append('${BASE}/monitores')
-from notificador import send_telegram
-
-msg = (
-    '🎯 *RED DE PESCA — ALERTA DE VALOR*\n\n'
-    '🌐 *Zona:* ${ZONA^^}\n'
-    '🐛 *Bugs verificados:* ${TOTAL_BUGS}\n\n'
-    '📋 *Acción:* Abre el C2 Panel, revisa los hallazgos y genera el reporte H1 en 1 clic.\n\n'
-    '🔗 *Panel:* ${C2_PANEL_URL}'
-)
-send_telegram(msg)
-print('Telegram enviado.')
-" >> "$LOG" 2>&1 || log "⚠️  Telegram falló pero el pipeline finalizó correctamente."
+# ── Eslabón 4: Analizador IA + Notificación unificada a Telegram ──────────────
+log "Eslabón 4: Análisis IA y notificación a Telegram (analizador_ia.py)"
+$VENV "${BASE}/monitores/analizador_ia.py" --zone "$ZONA" >> "$LOG" 2>&1 \
+    || log "⚠️  analizador_ia.py falló pero el pipeline finalizó correctamente."
 
 log "🏁 CASCADA ZONA ${ZONA^^} COMPLETADA EXITOSAMENTE."
 log "============================================================"
+
