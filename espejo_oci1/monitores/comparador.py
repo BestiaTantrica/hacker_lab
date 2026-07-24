@@ -2,217 +2,118 @@
 """
 comparador.py
 --------------
-Etapa 2: Comparador de deltas para el pipeline de monitoreo pasivo de activos.
-
-Acepta --zone [americas|emea|asia|all] para comparar el archivo actual_{zone}.json
-generado por mass_recon.py contra el estado previo por zona.
-
-Sin dependencias de terceros: sólo librería estándar (json, os, sys, datetime, logging).
+Etapa 2: Comparador de deltas (Backend SQLite)
+Genera el delta_{zone}_FECHA.json consultando los subdominios nuevos 
+insertados en las últimas 24 horas en oci1_db.sqlite.
+Mantiene el 100% de compatibilidad con el resto del pipeline.
 """
 
 import os
 import sys
 import json
+import sqlite3
 import logging
 import argparse
 from datetime import datetime, timezone
 
-# ---------------------------------------------------------------------------
-# Argumentos de zona
-# ---------------------------------------------------------------------------
-parser = argparse.ArgumentParser(description="Comparador de deltas por zona")
+parser = argparse.ArgumentParser(description="Generador de deltas por zona desde SQLite")
 parser.add_argument("--zone", choices=["americas", "emea", "asia", "all"], default="all",
                     help="Zona geográfica a comparar (default: all)")
 args, _ = parser.parse_known_args()
 ZONA = args.zone
 
-# ---------------------------------------------------------------------------
-# Rutas del entorno (dinámicas según zona)
-# ---------------------------------------------------------------------------
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
-ACTUAL_FILE = os.path.join(BASE_DIR, "resultados", f"actual_{ZONA}.json")
-PREVIO_FILE = os.path.join(BASE_DIR, "estado", f"previo_{ZONA}.json")
+if not os.path.exists(BASE_DIR):
+    BASE_DIR = os.path.expanduser("~/WORKSPACE/LAB/espejo_oci1")
+DB_PATH = os.path.join(BASE_DIR, "resultados", "oci1_db.sqlite")
 LOG_FILE = os.path.join(BASE_DIR, "logs", "comparador.log")
 RESULTADOS_DIR = os.path.join(BASE_DIR, "resultados")
 
-
 def setup_logging():
-    """Configura logging a archivo y consola usando el módulo estándar logging."""
     os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-
     logger = logging.getLogger("comparador")
     logger.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter(
-        fmt="%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%Y-%m-%dT%H:%M:%S%z",
-    )
-
-    file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
-
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(formatter)
-
+    formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%dT%H:%M:%S%z")
     if not logger.handlers:
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
-
+        fh = logging.FileHandler(LOG_FILE, encoding="utf-8")
+        fh.setFormatter(formatter)
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setFormatter(formatter)
+        logger.addHandler(fh)
+        logger.addHandler(ch)
     return logger
 
-
-def ensure_directories():
-    """Crea los directorios necesarios (resultados, estado, logs) si no existen."""
-    for path in (ACTUAL_FILE, PREVIO_FILE, LOG_FILE):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-
-
-def load_json_file(path, logger, required=False):
+def consultar_nuevos(logger):
+    """Consulta SQLite para obtener subdominios insertados en las últimas 24h."""
+    if not os.path.exists(DB_PATH):
+        logger.error(f"Base de datos no encontrada: {DB_PATH}")
+        sys.exit(1)
+        
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    query = """
+        SELECT dominio_padre, subdominio 
+        FROM subdominios 
+        WHERE descubierto_el >= datetime('now', '-24 hours')
     """
-    Carga un archivo JSON de forma segura.
-    Devuelve el dict parseado, o None si no existe / está corrupto.
-    Si `required` es True y el archivo falta o está corrupto, termina el script
-    con código de salida distinto de 0 (actual.json siempre debe existir y ser válido).
-    """
-    if not os.path.exists(path):
-        if required:
-            logger.error("Archivo requerido no encontrado: %s", path)
-            sys.exit(1)
-        return None
-
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (json.JSONDecodeError, OSError) as e:
-        if required:
-            logger.error("No se pudo leer/parsear el archivo requerido %s: %s", path, e)
-            sys.exit(1)
-        logger.warning("No se pudo leer/parsear %s (%s); se ignora y se trata como inexistente", path, e)
-        return None
-
-
-def calcular_delta(dominios_actual, dominios_previo, logger):
-    """
-    Compara subdominios actuales contra previos, dominio por dominio.
-    Devuelve un dict {dominio: [nuevos_subdominios]} solo con dominios que tengan novedades.
-    """
+    params = []
+    
+    if ZONA != "all":
+        query += " AND zona = ?"
+        params.append(ZONA)
+        
+    cursor.execute(query, params)
+    filas = cursor.fetchall()
+    conn.close()
+    
     nuevos_activos = {}
     total_nuevos = 0
-
-    for dominio, subs_actuales in dominios_actual.items():
-        subs_previos = set(dominios_previo.get(dominio, []))
-        subs_actuales_set = set(subs_actuales)
-
-        nuevos = sorted(subs_actuales_set - subs_previos)
-
-        if nuevos:
-            nuevos_activos[dominio] = nuevos
-            total_nuevos += len(nuevos)
-            logger.info("Dominio '%s': %d subdominio(s) nuevo(s) detectado(s)", dominio, len(nuevos))
-        else:
-            logger.debug("Dominio '%s': sin novedades", dominio)
-
+    
+    for dominio, subdominio in filas:
+        if dominio not in nuevos_activos:
+            nuevos_activos[dominio] = []
+        nuevos_activos[dominio].append(subdominio)
+        total_nuevos += 1
+        
     return nuevos_activos, total_nuevos
 
-
 def guardar_delta(nuevos_activos, logger):
-    """Genera resultados/delta_{zone}_YYYY-MM-DD.json de forma atómica."""
+    """Genera resultados/delta_{zone}_YYYY-MM-DD.json manteniendo compatibilidad."""
     fecha_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     delta_file = os.path.join(RESULTADOS_DIR, f"delta_{ZONA}_{fecha_str}.json")
-    tmp_file = delta_file + ".tmp"
-
+    
     contenido = {
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "nuevos_activos": nuevos_activos,
     }
-
-    try:
-        os.makedirs(RESULTADOS_DIR, exist_ok=True)
-        with open(tmp_file, "w", encoding="utf-8") as f:
-            json.dump(contenido, f, indent=2, ensure_ascii=False)
-        os.replace(tmp_file, delta_file)
-        logger.info("Delta guardado en %s", delta_file)
-        return delta_file
-    except OSError as e:
-        logger.error("No se pudo escribir el archivo delta %s: %s", delta_file, e)
-        if os.path.exists(tmp_file):
-            try:
-                os.remove(tmp_file)
-            except OSError:
-                pass
-        return None
-
-
-def actualizar_estado_previo(actual_data, logger):
-    """
-    Actualiza estado/previo.json con el contenido de actual.json, de forma atómica,
-    para que la próxima ejecución compare contra este snapshot.
-
-    NOTA DE DISEÑO (asunción, no pedida explícitamente en el prompt): sin esto,
-    cada corrida futura volvería a marcar los mismos subdominios como "nuevos"
-    indefinidamente, ya que previo.json nunca reflejaría el estado actual.
-    Si preferís otro esquema de actualización de estado, decime y lo ajusto.
-    """
-    tmp_file = PREVIO_FILE + ".tmp"
-    try:
-        os.makedirs(os.path.dirname(PREVIO_FILE), exist_ok=True)
-        with open(tmp_file, "w", encoding="utf-8") as f:
-            json.dump(actual_data, f, indent=2, ensure_ascii=False)
-        os.replace(tmp_file, PREVIO_FILE)
-        logger.info("Estado histórico actualizado en %s", PREVIO_FILE)
-    except OSError as e:
-        logger.error("No se pudo actualizar el estado histórico %s: %s", PREVIO_FILE, e)
-        if os.path.exists(tmp_file):
-            try:
-                os.remove(tmp_file)
-            except OSError:
-                pass
-
+    
+    os.makedirs(RESULTADOS_DIR, exist_ok=True)
+    with open(delta_file, "w", encoding="utf-8") as f:
+        json.dump(contenido, f, indent=2, ensure_ascii=False)
+        
+    logger.info("Delta guardado en %s", delta_file)
+    return delta_file
 
 def main():
-    ensure_directories()
     logger = setup_logging()
-
     logger.info("=" * 60)
-    logger.info("Iniciando comparador.py")
-
-    actual_data = load_json_file(ACTUAL_FILE, logger, required=True)
-    dominios_actual = actual_data.get("dominios", {})
-
-    previo_data = load_json_file(PREVIO_FILE, logger, required=False)
-
-    if previo_data is None:
-        # Primera ejecución (o previo.json corrupto/faltante):
-        # se trata TODO lo actual como nuevo.
-        logger.info(
-            "No existe estado previo válido (%s); se tratan todos los subdominios "
-            "actuales como nuevos (primera ejecución)", PREVIO_FILE
-        )
-        dominios_previo = {}
-    else:
-        dominios_previo = previo_data.get("dominios", {})
-
-    nuevos_activos, total_nuevos = calcular_delta(dominios_actual, dominios_previo, logger)
-
+    logger.info(f"Iniciando generador de deltas SQLite (Zona: {ZONA})")
+    
+    nuevos_activos, total_nuevos = consultar_nuevos(logger)
+    
     if total_nuevos == 0:
-        logger.info("Sin cambios detectados")
-        # Aun sin novedades, actualizamos el estado por si actual.json trae
-        # datos frescos (ej. mismos subdominios pero timestamp nuevo).
-        actualizar_estado_previo(actual_data, logger)
-        logger.info("Finalizando comparador.py (sin novedades)")
+        logger.info("Sin subdominios nuevos en las últimas 24 horas.")
         logger.info("=" * 60)
         sys.exit(0)
-
-    logger.info("Total de activos nuevos detectados: %d", total_nuevos)
+        
+    logger.info("Total de activos nuevos detectados en la BD: %d", total_nuevos)
     guardar_delta(nuevos_activos, logger)
-    actualizar_estado_previo(actual_data, logger)
-
-    logger.info("Finalizando comparador.py (con novedades)")
+    
+    logger.info("Finalizando comparador.py (con novedades exportadas al JSON delta)")
     logger.info("=" * 60)
     sys.exit(0)
 
-
 if __name__ == "__main__":
     main()
+
