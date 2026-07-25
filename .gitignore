@@ -29,3 +29,7 @@ herramientas/
 
 llave_oci
 llave_ssh
+
+# Archivo de entorno con credenciales OCI-1
+**/entorno.env
+*.env
