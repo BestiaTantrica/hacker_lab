@@ -19,6 +19,17 @@ VENV="/home/ubuntu/workspace_lab/venv/bin/python3"
 LOG="${BASE}/logs/pipeline_${ZONA}.log"
 C2_PANEL_URL="${C2_PANEL_URL:-http://localhost:8000}"
 
+# ── ANTI-OVERLAP GUARD (flock) ────────────────────────────────────────────────
+# Previene que dos instancias del mismo pipeline de zona se ejecuten en paralelo.
+# Si el cron anterior sigue corriendo, este nuevo sale limpio sin matar al anterior.
+LOCKFILE="/tmp/pipeline_${ZONA}.lock"
+exec 200>"$LOCKFILE"
+flock -n 200 || {
+    echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [WARN] [$ZONA] Pipeline ya en ejecución (lockfile activo). Abortando para evitar colisión de RAM." | tee -a "$LOG"
+    exit 0
+}
+# ─────────────────────────────────────────────────────────────────────────────
+
 log() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [INFO] [$ZONA] $1" | tee -a "$LOG"; }
 error() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [ERROR] [$ZONA] $1" | tee -a "$LOG"; exit 1; }
 
