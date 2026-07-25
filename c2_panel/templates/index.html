@@ -73,9 +73,15 @@
                 <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Convierte evidencia cruda (requests/responses) en un reporte en inglés con pasos detallados y CVSS v3.1.</p>
                 <textarea id="prompt-evidence-input" placeholder="Pega aquí el request/response de Burp o la evidencia..." style="width: 100%; height: 90px; background: #111; color: #a9ff68; font-family: 'Fira Code', monospace; font-size: 11px; padding: 8px; border-radius: 4px; border: 1px solid #333; box-sizing: border-box;"></textarea>
                 
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <button class="btn btn-success" onclick="ejecutarPromptSkill('report_h1')" style="flex: 1; font-size: 11px; padding: 8px;">🚀 Generar Reporte H1</button>
-                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('takeover_analysis')" style="flex: 1; font-size: 11px; padding: 8px;">🔍 Analizar Takeover</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-success" onclick="ejecutarPromptSkill('report_h1')" style="font-size: 10px; padding: 8px;">🚀 Reporte H1</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('takeover_analysis')" style="font-size: 10px; padding: 8px;">🔍 Takeover</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('cors_analysis')" style="font-size: 10px; padding: 8px;">🌐 CORS</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('ssrf_analysis')" style="font-size: 10px; padding: 8px;">🔁 SSRF</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('aws_s3_leak')" style="font-size: 10px; padding: 8px;">🪣 S3 Leak</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('jwt_logic_bypass')" style="font-size: 10px; padding: 8px;">🔑 JWT Bypass</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('business_logic_api')" style="font-size: 10px; padding: 8px;">⚡ IDOR/API</button>
+                    <button class="btn btn-secondary" onclick="ejecutarPromptSkill('bounty_argentina_pyme')" style="font-size: 10px; padding: 8px;">🇦🇷 Informe PYME</button>
                 </div>
             </div>
 
@@ -87,6 +93,7 @@
                 <textarea id="prompt-result-output" style="width: 100%; height: 220px; background: #000; color: #fff; font-family: 'Fira Code', monospace; font-size: 11px; padding: 8px; border-radius: 4px; border: 1px solid #333; box-sizing: border-box;" readonly></textarea>
             </div>
         </section>
+
 
         <!-- VISTA CHAT PEGASO COPILOT -->
         <section id="view-chat" class="view">
@@ -111,6 +118,84 @@
             </div>
         </section>
 
+        <!-- VISTA PROPUESTA DE VALOR & DONACIONES -->
+        <section id="view-propuesta" class="view">
+            <h3 class="section-title">💡 Propuesta de Valor & Donaciones</h3>
+            <p class="view-desc">Monitoreo pasivo ético, transparente y abierto. Ayudá a sostener este proyecto.</p>
+
+            <!-- MÉTRICAS CON CONTADOR ANIMADO -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
+                <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(30,20,60,0.9)); border: 1px solid rgba(124,58,237,0.4); border-radius: 12px;">
+                    <div style="font-size: 26px; font-weight: 700; color: #a78bfa; font-family: 'Fira Code', monospace;" id="metric-dominios">0</div>
+                    <div style="font-size: 10px; color: #c4b5fd; margin-top: 4px;">🌐 Dominios Monitoreados</div>
+                </div>
+                <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(46,204,113,0.15), rgba(20,40,30,0.9)); border: 1px solid rgba(46,204,113,0.4); border-radius: 12px;">
+                    <div style="font-size: 26px; font-weight: 700; color: #2ecc71; font-family: 'Fira Code', monospace;">24/7</div>
+                    <div style="font-size: 10px; color: #86efac; margin-top: 4px;">🔍 Monitoreo Continuo</div>
+                </div>
+                <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(251,191,36,0.12), rgba(40,30,10,0.9)); border: 1px solid rgba(251,191,36,0.35); border-radius: 12px;">
+                    <div style="font-size: 26px; font-weight: 700; color: #fbbf24; font-family: 'Fira Code', monospace;" id="metric-meses">0</div>
+                    <div style="font-size: 10px; color: #fde68a; margin-top: 4px;">📅 Meses Activo</div>
+                </div>
+                <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(10,20,40,0.9)); border: 1px solid rgba(59,130,246,0.35); border-radius: 12px;">
+                    <div style="font-size: 26px; font-weight: 700; color: #60a5fa; font-family: 'Fira Code', monospace;">Open</div>
+                    <div style="font-size: 10px; color: #93c5fd; margin-top: 4px;">🛡️ Transparencia Técnica</div>
+                </div>
+            </div>
+
+            <!-- CARDS DE PROPUESTA -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+
+                <div style="background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.3); border-radius: 12px; padding: 14px; backdrop-filter: blur(8px);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <span style="font-size: 1.3em;">🌐</span>
+                        <strong style="color: #c4b5fd; font-size: 13px;">Monitoreo Pasivo Continuo</strong>
+                    </div>
+                    <p style="font-size: 11px; color: #a1a1aa; margin: 0;">Escaneamos subdominios y configuraciones expuestas de forma automatizada, sin intrusión ni acceso a sistemas. Solo observamos lo que ya es público.</p>
+                </div>
+
+                <div style="background: rgba(46,204,113,0.07); border: 1px solid rgba(46,204,113,0.3); border-radius: 12px; padding: 14px; backdrop-filter: blur(8px);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <span style="font-size: 1.3em;">🔬</span>
+                        <strong style="color: #86efac; font-size: 13px;">Transparencia Técnica</strong>
+                    </div>
+                    <p style="font-size: 11px; color: #a1a1aa; margin: 0;">Metodología documentada y abierta. Los hallazgos se reportan responsablemente a los programas de Bug Bounty antes de cualquier divulgación pública.</p>
+                </div>
+
+                <div style="background: rgba(251,191,36,0.07); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 14px; backdrop-filter: blur(8px);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <span style="font-size: 1.3em;">🤝</span>
+                        <strong style="color: #fde68a; font-size: 13px;">Auditorías Éticas para PYMEs</strong>
+                    </div>
+                    <p style="font-size: 11px; color: #a1a1aa; margin: 0;">Ofrecemos auditoría pasiva gratuita para empresas locales argentinas. Sin costo inicial. El objetivo es aprender, ayudar y construir confianza.</p>
+                </div>
+
+            </div>
+
+            <!-- CTAs DE DONACIÓN / AUDITORÍA -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="https://cafecito.app" target="_blank" rel="noopener" id="btn-cafecito"
+                   style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 10px; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-weight: 600; font-size: 13px; text-decoration: none; transition: opacity 0.2s; font-family: 'Inter', sans-serif;">
+                    ☕ Apoyar en Cafecito
+                </a>
+                <a href="mailto:contacto@tudominio.com?subject=Solicitud%20de%20Auditoría%20Pasiva%20Gratuita" id="btn-auditoria"
+                   style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(46,204,113,0.2), rgba(20,60,40,0.8)); border: 1px solid rgba(46,204,113,0.5); color: #2ecc71; font-weight: 600; font-size: 13px; text-decoration: none; transition: opacity 0.2s; font-family: 'Inter', sans-serif;">
+                    🛡️ Solicitar Auditoría Gratuita
+                </a>
+                <button onclick="document.getElementById('view-dashboard').scrollIntoView({behavior:'smooth'})" id="btn-metodologia"
+                   style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; background: transparent; border: 1px solid rgba(124,58,237,0.4); color: #a78bfa; font-weight: 600; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">
+                    📊 Ver Panel de Monitoreo en Vivo
+                </button>
+            </div>
+
+            <!-- BADGE LEGAL -->
+            <p style="font-size: 9px; color: #555; text-align: center; margin-top: 16px; font-family: 'Fira Code', monospace;">
+                ⚖️ Actividad realizada bajo programas de Bug Bounty autorizados (HackerOne / Bugcrowd).<br>No se realizan pruebas sin consentimiento explícito del propietario del sistema.
+            </p>
+        </section>
+
+
+
     </main>
 
     <!-- BOTTOM NAVIGATION BAR (Mobile First) -->
@@ -127,8 +212,45 @@
             <span class="nav-icon">💬</span>
             <span>Copiloto</span>
         </a>
+        <a href="#" class="nav-item" onclick="switchView('propuesta', this)">
+            <span class="nav-icon">💡</span>
+            <span>Propuesta</span>
+        </a>
     </nav>
 
-    <script src="/static/js/app.js?v=4"></script>
+    <script src="/static/js/app.js?v=5"></script>
+    <script>
+    // Contadores animados para la sección Propuesta de Valor
+    function animarContador(elementId, valorFinal, duracionMs) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        let inicio = 0;
+        const incremento = valorFinal / (duracionMs / 30);
+        const timer = setInterval(() => {
+            inicio = Math.min(inicio + incremento, valorFinal);
+            el.textContent = Math.floor(inicio);
+            if (inicio >= valorFinal) clearInterval(timer);
+        }, 30);
+    }
+
+    // Lanzar contadores cuando se activa la vista propuesta
+    const _origSwitchView = typeof switchView === 'function' ? switchView : null;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Parchear switchView para disparar animaciones
+        const navItems = document.querySelectorAll('[onclick*="propuesta"]');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                setTimeout(() => {
+                    animarContador('metric-dominios', 300, 1200);
+                    // Calcular meses desde julio 2025
+                    const inicio = new Date(2025, 6, 1);
+                    const ahora = new Date();
+                    const meses = Math.max(1, Math.floor((ahora - inicio) / (1000 * 60 * 60 * 24 * 30)));
+                    animarContador('metric-meses', meses, 800);
+                }, 150);
+            });
+        });
+    });
+    </script>
 </body>
 </html>
