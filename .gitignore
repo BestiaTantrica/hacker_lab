@@ -33,3 +33,8 @@ llave_ssh
 # Archivo de entorno con credenciales OCI-1
 **/entorno.env
 *.env
+
+# Bases de datos SQLite locales
+*.sqlite
+**/*.sqlite
+
