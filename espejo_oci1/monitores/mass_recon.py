@@ -20,6 +20,7 @@ import logging
 import subprocess
 import argparse
 import datetime
+import sqlite3
 import urllib.request
 import urllib.error
 import socket
@@ -156,10 +157,33 @@ def run_crtsh(dominio: str) -> set:
 # ORQUESTADOR SECUENCIAL (BATCHING CON SQLITE)
 # ─────────────────────────────────────────────────────────────────────────────
 def init_db():
-    """Inicializa la base de datos SQLite para la zona de recolección."""
+    """Inicializa la base de datos SQLite con PRAGMAs de alto rendimiento.
+    
+    Optimizaciones aplicadas:
+    - WAL mode: permite lecturas concurrentes sin bloquear escrituras.
+    - synchronous=NORMAL: seguro y 3-5x más rápido que FULL.
+    - cache_size=-32000: usa 32 MB de cache en RAM (negativo = KB).
+    - temp_store=MEMORY: tablas temporales en RAM, no en disco.
+    - mmap_size: mapeo de memoria para lecturas ultrarrápidas.
+    """
     db_path = os.path.join(RESULT_DIR, "oci1_db.sqlite")
-    conn = sqlite3.connect(db_path)
+    # timeout=30: espera hasta 30s si la DB está bloqueada antes de fallar
+    conn = sqlite3.connect(db_path, timeout=30)
     cursor = conn.cursor()
+
+    # ── PRAGMAs de rendimiento ──────────────────────────────────────────
+    # WAL permite que comparador.py lea mientras mass_recon escribe (sin locks)
+    cursor.execute("PRAGMA journal_mode = WAL")
+    # NORMAL: fsync solo en checkpoints, no en cada commit. Seguro + rápido.
+    cursor.execute("PRAGMA synchronous = NORMAL")
+    # 32 MB de cache de páginas en RAM
+    cursor.execute("PRAGMA cache_size = -32000")
+    # Tablas temporales en RAM (evita I/O en disco para queries intermedias)
+    cursor.execute("PRAGMA temp_store = MEMORY")
+    # 128 MB de memory-mapped I/O para lecturas masivas
+    cursor.execute("PRAGMA mmap_size = 134217728")
+
+    # ── Esquema de tabla ────────────────────────────────────────────────
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS subdominios (
             subdominio TEXT PRIMARY KEY,
@@ -168,8 +192,20 @@ def init_db():
             descubierto_el TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # ── Índices para queries del comparador ────────────────────────────
+    # idx_dominio: agrupa por empresa (dominio_padre) en O(log n)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_dominio ON subdominios(dominio_padre)")
+    # idx_zona: filtra por región geográfica
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_zona ON subdominios(zona)")
+    # idx_descubierto: clave para la query de 'últimas 24h' del comparador
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_descubierto ON subdominios(descubierto_el)")
+    # idx_zona_fecha: índice compuesto para la query más frecuente del comparador
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_zona_fecha "
+        "ON subdominios(zona, descubierto_el)"
+    )
+
     conn.commit()
     return conn
 
@@ -232,16 +268,25 @@ def main():
         batch_insert = [(sub, dominio, args.zone) for sub in subdominios]
         
         if batch_insert:
-            # Usamos INSERT OR IGNORE para que solo cuenten los que no existían previamente
+            # Contamos cuántos existían ANTES de insertar para calcular delta real.
+            # cursor.rowcount con executemany + INSERT OR IGNORE siempre devuelve -1
+            # en Python/SQLite, por eso contamos manualmente.
+            cursor.execute("SELECT COUNT(*) FROM subdominios WHERE subdominio IN (%s)"
+                           % ",".join("?" * len(batch_insert)),
+                           [row[0] for row in batch_insert])
+            ya_existian = cursor.fetchone()[0]
+
             cursor.executemany(
                 "INSERT OR IGNORE INTO subdominios (subdominio, dominio_padre, zona) VALUES (?, ?, ?)",
                 batch_insert
             )
-            # Frecuencia de impacto real (filas insertadas)
-            nuevos_insertados = cursor.rowcount
             conn.commit()
+
+            # Delta real: intentados - los que ya estaban
+            nuevos_insertados = len(batch_insert) - ya_existian
             total_nuevos_corrida += nuevos_insertados
-            log.info(f"💾 Guardados en SQLite: {len(batch_insert)} (Nuevos reales: {nuevos_insertados})")
+            log.info(f"💾 Guardados en SQLite: {len(batch_insert)} candidatos | "
+                     f"Nuevos reales: {nuevos_insertados} | Ya existían: {ya_existian}")
 
     conn.close()
     

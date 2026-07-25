@@ -44,13 +44,26 @@ def setup_logging():
     return logger
 
 def consultar_nuevos(logger):
-    """Consulta SQLite para obtener subdominios insertados en las últimas 24h."""
+    """Consulta SQLite para obtener subdominios insertados en las últimas 24h.
+    
+    Usa streaming por lotes (fetchmany) para evitar carga total en RAM
+    cuando hay cientos de miles de registros.
+    """
     if not os.path.exists(DB_PATH):
         logger.error(f"Base de datos no encontrada: {DB_PATH}")
         sys.exit(1)
         
-    conn = sqlite3.connect(DB_PATH)
+    # timeout=30: espera hasta 30s si mass_recon está en plena escritura
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     cursor = conn.cursor()
+
+    # ── PRAGMAs de lectura optimizada ───────────────────────────────
+    # WAL: permite leer mientras mass_recon escribe sin database locked
+    cursor.execute("PRAGMA journal_mode = WAL")
+    cursor.execute("PRAGMA synchronous = NORMAL")
+    cursor.execute("PRAGMA cache_size = -16000")  # 16 MB de cache en RAM
+    cursor.execute("PRAGMA temp_store = MEMORY")
+    cursor.execute("PRAGMA mmap_size = 67108864")  # 64 MB mmap
     
     query = """
         SELECT dominio_padre, subdominio 
@@ -64,18 +77,23 @@ def consultar_nuevos(logger):
         params.append(ZONA)
         
     cursor.execute(query, params)
-    filas = cursor.fetchall()
-    conn.close()
     
     nuevos_activos = {}
     total_nuevos = 0
     
-    for dominio, subdominio in filas:
-        if dominio not in nuevos_activos:
-            nuevos_activos[dominio] = []
-        nuevos_activos[dominio].append(subdominio)
-        total_nuevos += 1
-        
+    # Procesar en lotes de 5000 para no saturar RAM con 500k+ registros
+    CHUNK_SIZE = 5000
+    while True:
+        filas = cursor.fetchmany(CHUNK_SIZE)
+        if not filas:
+            break
+        for dominio, subdominio in filas:
+            if dominio not in nuevos_activos:
+                nuevos_activos[dominio] = []
+            nuevos_activos[dominio].append(subdominio)
+            total_nuevos += 1
+
+    conn.close()
     return nuevos_activos, total_nuevos
 
 def guardar_delta(nuevos_activos, logger):
