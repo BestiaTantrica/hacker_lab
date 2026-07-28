@@ -82,14 +82,20 @@ async function cargarHallazgos() {
         if (data.status === 'success' && data.findings.length > 0) {
             container.innerHTML = '';
             data.findings.forEach(f => {
+                let statusCol = '#3b82f6';
+                if (f.status_interno === 'Validado') statusCol = '#10b981';
+                else if (f.status_interno === 'Enviado') statusCol = '#8b5cf6';
+                else if (f.status_interno === 'FalsoPositivo') statusCol = '#ef4444';
+
+                const severityCol = f.severity === 'Critical' ? '#e74c3c' : (f.severity === 'High' ? '#f39c12' : '#2ecc71');
+                
                 const card = document.createElement('div');
-                const borderCol = f.severity === 'Critical' ? '#e74c3c' : (f.severity === 'High' ? '#f39c12' : '#2ecc71');
-                card.style = `background: #1e1e2e; border: 1px solid #333; border-left: 4px solid ${borderCol}; padding: 12px; border-radius: 5px; cursor: pointer; transition: transform 0.1s; position: relative;`;
+                card.style = `background: #1e1e2e; border: 1px solid #333; border-left: 4px solid ${statusCol}; padding: 12px; border-radius: 5px; cursor: pointer; transition: transform 0.1s; position: relative;`;
                 card.onmouseover = () => card.style.transform = 'scale(1.01)';
                 card.onmouseout = () => card.style.transform = 'scale(1)';
                 
                 let h1Badge = '';
-                if (f.reported) {
+                if (f.reported || f.status_interno === 'Enviado') {
                     const reportIdStr = f.h1_report_id ? `#${f.h1_report_id.replace(/^#/, '')}` : 'Enviado';
                     const statusStr = f.h1_status || 'Submitted';
                     const bountyStr = f.bounty_paid ? ` | Bounty: $${f.bounty_paid}` : '';
@@ -108,13 +114,30 @@ async function cargarHallazgos() {
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">
                         <h4 style="margin: 0; color: #fff; font-size: 12px;">${f.vuln_type} ${h1Badge}</h4>
-                        <span style="font-size: 10px; background: ${borderCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">ESTIMADO: ${displayBounty}</span>
+                        <span style="font-size: 10px; background: ${severityCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">ESTIMADO: ${displayBounty}</span>
                     </div>
                     <p style="font-size: 11px; color: #aaa; margin: 6px 0;" onclick="abrirAreaDeTrabajoFromCard(${f.id})"><strong>Target:</strong> ${f.target}</p>
                     <pre style="font-size: 10px; background: #000; color: #a9ff68; padding: 6px; border-radius: 3px; max-height: 80px; overflow-y: auto;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">${f.evidence}</pre>
                 `;
 
-                if (f.reported) {
+                if (current_tab === 'Pendiente') {
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.style = 'display: flex; gap: 8px; margin-top: 10px;';
+                    actionsDiv.innerHTML = `
+                        <button class="btn btn-success" style="flex: 1; font-size: 10px; padding: 6px; background: #10B981; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); cambiarEstadoInternoDesdeCard(${f.id}, 'Validado')">✅ Validar</button>
+                        <button class="btn btn-danger" style="flex: 1; font-size: 10px; padding: 6px; background: #EF4444; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); cambiarEstadoInternoDesdeCard(${f.id}, 'FalsoPositivo')">🗑️ Descartar</button>
+                    `;
+                    card.appendChild(actionsDiv);
+                } else if (current_tab === 'Validado') {
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.style = 'display: flex; gap: 8px; margin-top: 10px;';
+                    actionsDiv.innerHTML = `
+                        <button class="btn btn-primary" style="flex: 1; font-size: 10px; padding: 6px; background: #8b5cf6; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); abrirAreaDeTrabajoFromCard(${f.id})">🚀 Abrir para Reportar</button>
+                    `;
+                    card.appendChild(actionsDiv);
+                }
+
+                if (f.reported || f.status_interno === 'Enviado') {
                     const updateBtn = document.createElement('button');
                     updateBtn.className = 'btn btn-secondary';
                     updateBtn.style = 'font-size: 10px; padding: 4px 8px; margin-top: 8px; background: #374151; color: #fff; border: 1px solid #4b5563; border-radius: 4px; cursor: pointer; width: 100%;';
@@ -596,5 +619,22 @@ async function cambiarEstadoInterno(nuevoEstado) {
         }
     } catch (e) {
         alert("❌ Error de red al intentar cambiar el estado interno.");
+    }
+}
+
+// ACTUALIZACIÓN DE ESTADO INTERNO DESDE LA TARJETA DIRECTAMENTE
+async function cambiarEstadoInternoDesdeCard(findingId, nuevoEstado) {
+    try {
+        const res = await fetch(`/api/findings/${findingId}/internal_status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status_interno: nuevoEstado })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            cargarHallazgos(); // Recargar la lista actual sin recargar página
+        }
+    } catch(e) {
+        alert("Error de red al actualizar estado");
     }
 }
