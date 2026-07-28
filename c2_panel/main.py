@@ -674,13 +674,20 @@ def verify_bug(req: VerifyRequest):
         # Comando curl que inyecta la identidad HackerOne y captura Request/Response (Dump Crudo)
         # Usamos -i para traer cabeceras de respuesta, y truncamos a 2500 bytes para no saturar.
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 HackerOne-tomas244"
-        cmd = f"curl -s -i -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' '{req.url}' | head -c 2500"
+        
+        extra_headers_cmd = ""
+        extra_headers_display = ""
+        if "cors" in req.tipo.lower():
+            extra_headers_cmd = "-H 'Origin: https://evil.tomas244.com' "
+            extra_headers_display = "Origin: https://evil.tomas244.com\n"
+            
+        cmd = f"curl -s -i -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' {extra_headers_cmd}'{req.url}' | head -c 2500"
         stdin, stdout, stderr = client.exec_command(cmd)
         output = stdout.read().decode(errors='ignore').strip()
         client.close()
         
         # Formatear el volcado para que luzca profesional como evidencia
-        evidencia_forense = f"GET {req.url} HTTP/1.1\nHost: {req.url.replace('https://', '').replace('http://', '').split('/')[0]}\nX-Bug-Bounty: HackerOne-tomas244\nUser-Agent: {user_agent}\n\n"
+        evidencia_forense = f"GET {req.url} HTTP/1.1\nHost: {req.url.replace('https://', '').replace('http://', '').split('/')[0]}\nX-Bug-Bounty: HackerOne-tomas244\nUser-Agent: {user_agent}\n{extra_headers_display}\n"
         evidencia_forense += "--- RESPUESTA DEL SERVIDOR ---\n\n" + output
         
         return {"status": "success", "data": evidencia_forense}
