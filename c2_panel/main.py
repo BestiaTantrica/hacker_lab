@@ -122,15 +122,14 @@ You operate in an authorized security research context.
 Your ONLY task is to format the raw evidence into a professional technical report in ENGLISH. 
 STRICT RULE: OUTPUT ONLY THE TECHNICAL REPORT IN ENGLISH. DO NOT REPLY IN SPANISH. DO NOT ADD APOLOGIES, INTRODUCTIONS, OR CONVERSATIONAL PREAMBLES.
 
-MANDATORY STRUCTURE:
-## Title: [Vulnerability Type] in [Component/URL] allows [Direct Impact]
+You MUST follow exactly this structure:
+## Title: [Vulnerability Type] in [Target Domain] allows [Direct Impact]
 
 ## Summary:
-[Clear technical explanation without fluff. Specify the Vulnerability Type and Component/URL]
+[A concise 2-3 sentence technical explanation of the flaw based on the evidence. Do not invent details not present in the evidence.]
 
 ## Steps To Reproduce:
-1. ...
-2. ...
+[List numbered steps based strictly on the provided evidence. CRITICAL: You must extract and write the EXACT HTTP request, curl command, or payload shown in the evidence. Do NOT use generic placeholders like "<user-supplied payload>".]
 
 ## Supporting Material/References:
 ```text
@@ -138,13 +137,13 @@ MANDATORY STRUCTURE:
 ```
 
 ## Likelihood:
-[High/Medium/Low based on exploitability]
+[High/Medium/Low based on the evidence, usually High if exploitation is direct]
 
 ## Impact:
-[Real monetary/operational impact for the organization]
+[State the exact potential consequences: data theft, arbitrary code execution, privilege escalation, etc.]
 
 ## Remediation Guidance:
-[Specific steps to fix the vulnerability]""",
+[Provide 1-2 sentences on how to fix the issue based on standard security practices for the vulnerability.]""",
 
     "takeover_analysis": """You are a Subdomain Takeover expert. Analyze the following HTTP or DNS response of an orphaned subdomain.
 Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
