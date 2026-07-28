@@ -68,6 +68,8 @@ Para maximizar la productividad y no agotar las cuotas de tokens, el trabajo se 
 - **ESTADO DEL LABORATORIO:** El laboratorio opera **EXCLUSIVAMENTE EN PRODUCCIÓN REAL**.
 - **PROHIBICIÓN STRICTA:** Queda estrictamente prohibido referirse a hallazgos reales como "datos de prueba", o inyectar registros mock ficticios (`sub1.target-domain.com`, etc.) en la base de datos `c2_db.sqlite`.
 - **REPORTES DE HACKERONE:** Todos los reportes generados y vinculados al Panel C2 se tratan como **reportes reales de producción** asociados a números de reporte verificados de HackerOne.
+- **FUENTE ÚNICA DE VERDAD (SINGLE SOURCE OF TRUTH):** Nuestra verdad absoluta reside en los servidores OCI de producción (OCI-1 y OCI-2). El entorno local es únicamente el laboratorio de desarrollo. Al realizar reportes o escaneos, el agente **DEBE** alinear su contexto con la realidad de producción (por ejemplo, usando `scp` para descargar la base de datos más reciente de OCI-2, o consultando los logs directamente por SSH) antes de tomar decisiones. Asumir el estado local como la verdad es un error crítico.
+- **USO DE GIT OBLIGATORIO:** Mantener la sincronización y la trazabilidad del código a través de Git es de máxima importancia para asegurar que el entorno local esté siempre alineado y documentado.
 
 ---
 

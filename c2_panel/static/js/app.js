@@ -53,54 +53,7 @@ async function checkOciStatus() {
     }
 }
 
-// FILTRADO POR ZONA HORARIA
-async function filtrarZona(zone, btnElement) {
-    if (btnElement) {
-        document.querySelectorAll('.zone-btn').forEach(b => {
-            b.classList.remove('active');
-            b.style.background = '#1e293b';
-            b.style.color = '#94a3b8';
-        });
-        btnElement.classList.add('active');
-        btnElement.style.background = '#2563eb';
-        btnElement.style.color = '#fff';
-    }
 
-    const container = document.getElementById('findings-list');
-    
-    // Si elegimos "Todas", volvemos a mostrar la lista de hallazgos/bugs según la pestaña activa
-    if (zone === 'all') {
-        cargarHallazgos();
-        return;
-    }
-
-    container.innerHTML = `<div style="padding: 10px; color: #aaa; font-size: 11px;">Cargando deltas de recolección de zona: ${zone.toUpperCase()}...</div>`;
-
-    try {
-        const res = await fetch(`/api/deltas/${zone}?_t=${Date.now()}`);
-        const data = await res.json();
-        
-        if (data.status === 'success' && data.deltas.length > 0) {
-            container.innerHTML = '';
-            data.deltas.forEach(item => {
-                const card = document.createElement('div');
-                card.style = 'background: #1e1e2e; border: 1px solid #333; padding: 10px; border-radius: 4px; font-size: 11px; color: #fff; border-left: 3px solid var(--primary);';
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong>${item.subdomain}</strong>
-                        <span style="font-size: 9px; background: #333; padding: 2px 5px; border-radius: 3px; color: #2ecc71;">${item.zone.toUpperCase()}</span>
-                    </div>
-                    <div style="font-size: 10px; color: #888; margin-top: 4px;">Dominio base: ${item.domain} | Origen: ${item.source}</div>
-                `;
-                container.appendChild(card);
-            });
-        } else {
-            container.innerHTML = `<div style="padding: 10px; color: #888; font-size: 11px;">No hay deltas registrados en OCI-2 para la zona ${zone.toUpperCase()} aún.</div>`;
-        }
-    } catch (e) {
-        container.innerHTML = `<div style="padding: 10px; color: red; font-size: 11px;">Error cargando deltas de zona.</div>`;
-    }
-}
 
 // PESTAÑAS BUGS ACTIVOS VS HISTORIAL
 function cambiarTabFindings(tab, btnElement) {
@@ -139,10 +92,19 @@ async function cargarHallazgos() {
                     h1Badge = `<span style="font-size: 10px; background: #8b5cf6; padding: 2px 6px; border-radius: 3px; color: #fff; margin-left: 6px;">H1: ${reportIdStr} (${statusStr}${bountyStr})</span>`;
                 }
 
+                let displayBounty = f.estimated_bounty;
+                if (!displayBounty || displayBounty === '00-00' || displayBounty === '0' || displayBounty === '$00-00') {
+                    if (f.severity === 'Critical') displayBounty = '$1000-$3000+';
+                    else if (f.severity === 'High') displayBounty = '$500-$1000';
+                    else if (f.severity === 'Medium-High') displayBounty = '$300-$500';
+                    else if (f.severity === 'Medium') displayBounty = '$150-$300';
+                    else displayBounty = '$50-$100';
+                }
+
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">
                         <h4 style="margin: 0; color: #fff; font-size: 12px;">${f.vuln_type} ${h1Badge}</h4>
-                        <span style="font-size: 10px; background: ${borderCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">ESTIMADO: ${f.estimated_bounty}</span>
+                        <span style="font-size: 10px; background: ${borderCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">ESTIMADO: ${displayBounty}</span>
                     </div>
                     <p style="font-size: 11px; color: #aaa; margin: 6px 0;" onclick="abrirAreaDeTrabajoFromCard(${f.id})"><strong>Target:</strong> ${f.target}</p>
                     <pre style="font-size: 10px; background: #000; color: #a9ff68; padding: 6px; border-radius: 3px; max-height: 80px; overflow-y: auto;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">${f.evidence}</pre>
