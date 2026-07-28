@@ -55,7 +55,6 @@ async function checkOciStatus() {
 
 
 
-// PESTAÑAS BUGS TAXONOMÍA
 function cambiarTabFindings(tab, btnElement) {
     current_tab = tab;
     
@@ -65,7 +64,11 @@ function cambiarTabFindings(tab, btnElement) {
     });
     
     if (btnElement) {
-        btnElement.style.background = '#2563eb';
+        if (tab === 'FalsoPositivo') {
+            btnElement.style.background = '#ef4444';
+        } else {
+            btnElement.style.background = '#2563eb';
+        }
         btnElement.style.color = '#fff';
     }
 

@@ -2,7 +2,7 @@
 # Script para sincronizar (hacer espejo) del servidor OCI-1 al entorno local.
 # Ejecuta esto en TU terminal (no la mía) para que yo pueda ver los archivos del servidor sin bloqueos de red.
 
-DIR_LOCAL="/home/tomas2/WORKSPACE/tomas2/WORKSPACE/LAB/espejo_oci1"
+DIR_LOCAL="/home/tomas2/WORKSPACE/LAB/espejo_oci1"
 SERVER_IP="129.80.73.248"
 SSH_KEY="$HOME/.ssh/id_rsa"
 DIR_REMOTO="/home/ubuntu/plataforma_operativa/"

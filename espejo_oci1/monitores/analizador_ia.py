@@ -22,12 +22,12 @@ import glob
 import argparse
 import datetime
 from llm_client import completar
-from notificador import send_telegram
+from notificador import send_telegram, sync_to_c2_panel
 
 # Configuración de rutas
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
 RESULT_DIR = os.path.join(BASE_DIR, "resultados")
-C2_PANEL_URL = os.environ.get("C2_PANEL_URL", "http://localhost:8000")
+C2_PANEL_URL = os.environ.get("C2_PANEL_URL", "http://143.47.115.34:8000")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SCORING DETERMINÍSTICO — Priorizar antes de quemar tokens de IA
@@ -238,6 +238,10 @@ def main():
         print(f"✅ Análisis guardado en {ruta_analisis}")
     except Exception as e:
         print(f"No se pudo guardar análisis local: {e}")
+
+    # ── Enviar a OCI-2 (C2 Panel) ──────────────────────────────────────────────
+    print("🚀 Sincronizando hallazgos con OCI-2 (C2 Panel)...")
+    sync_to_c2_panel(args.zone, delta_data, hallazgos_verificados)
 
     # ── Enviar a Telegram ──────────────────────────────────────────────────────
     exito = send_telegram(mensaje_telegram)
