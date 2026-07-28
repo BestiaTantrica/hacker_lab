@@ -464,15 +464,13 @@ class UpdateStatusRequest(BaseModel):
     bounty_paid: Optional[str] = ""
 
 @app.get("/api/findings")
-def get_findings(status: Optional[str] = "active"):
+def get_findings(status: Optional[str] = "Pendiente"):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
-    if status == "active":
-        cursor.execute("SELECT * FROM findings WHERE reported = 0 ORDER BY id DESC LIMIT 50")
-    elif status == "reported" or status == "archived":
-        cursor.execute("SELECT * FROM findings WHERE reported = 1 ORDER BY id DESC LIMIT 50")
+    if status in ["Pendiente", "Validado", "Enviado", "FalsoPositivo"]:
+        cursor.execute("SELECT * FROM findings WHERE status_interno = ? ORDER BY id DESC LIMIT 50", (status,))
     else:
         cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 50")
         
@@ -509,6 +507,23 @@ def update_finding_status(finding_id: int, req: UpdateStatusRequest):
     conn.commit()
     conn.close()
     return {"status": "success", "message": f"Estado del hallazgo #{finding_id} actualizado a '{req.h1_status}'."}
+
+class InternalStatusRequest(BaseModel):
+    status_interno: str
+
+@app.post("/api/findings/{finding_id}/internal_status")
+def update_internal_status(finding_id: int, req: InternalStatusRequest):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE findings SET status_interno = ? WHERE id = ?", (req.status_interno, finding_id))
+    
+    # Si lo pasamos a Enviado, marcamos reported = 1 por retrocompatibilidad
+    if req.status_interno == "Enviado":
+        cursor.execute("UPDATE findings SET reported = 1 WHERE id = ?", (finding_id,))
+    
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": f"Estado interno actualizado a {req.status_interno}"}
 
 @app.get("/api/deltas/{zone}")
 def get_deltas_by_zone(zone: str):

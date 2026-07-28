@@ -1,7 +1,7 @@
 // app.js — Lógica de Interfaz del C2 Panel (OCI-2) - Rediseño Split-Screen
 
 let current_finding = null;
-let current_tab = 'active';
+let current_tab = 'Pendiente';
 
 document.addEventListener('DOMContentLoaded', () => {
     checkOciStatus();
@@ -55,15 +55,19 @@ async function checkOciStatus() {
 
 
 
-// PESTAÑAS BUGS ACTIVOS VS HISTORIAL
+// PESTAÑAS BUGS TAXONOMÍA
 function cambiarTabFindings(tab, btnElement) {
     current_tab = tab;
     
-    document.getElementById('tab-findings-active').style.background = tab === 'active' ? '#2563eb' : '#1e293b';
-    document.getElementById('tab-findings-active').style.color = tab === 'active' ? '#fff' : '#94a3b8';
+    document.querySelectorAll('[id^="tab-findings-"]').forEach(btn => {
+        btn.style.background = '#1e293b';
+        btn.style.color = '#94a3b8';
+    });
     
-    document.getElementById('tab-findings-reported').style.background = tab === 'reported' ? '#2563eb' : '#1e293b';
-    document.getElementById('tab-findings-reported').style.color = tab === 'reported' ? '#fff' : '#94a3b8';
+    if (btnElement) {
+        btnElement.style.background = '#2563eb';
+        btnElement.style.color = '#fff';
+    }
 
     cargarHallazgos();
 }
@@ -564,3 +568,33 @@ async function actualizarEstadoH1(findingId, currentStatus, currentReportId, cur
     }
 }
 
+// ACTUALIZACIÓN DE ESTADO INTERNO (TAXONOMÍA)
+async function cambiarEstadoInterno(nuevoEstado) {
+    if (!current_finding) return;
+
+    try {
+        const res = await fetch(`/api/findings/${current_finding.id}/internal_status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status_interno: nuevoEstado })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+            alert(`✅ Estado actualizado a: ${nuevoEstado}`);
+            switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
+            
+            // Simular clic en la pestaña correspondiente
+            const tabBtn = document.getElementById(`tab-findings-${nuevoEstado}`);
+            if(tabBtn) {
+                cambiarTabFindings(nuevoEstado, tabBtn);
+            } else {
+                cargarHallazgos();
+            }
+        } else {
+            alert(`❌ Error al cambiar estado: ${data.message}`);
+        }
+    } catch (e) {
+        alert("❌ Error de red al intentar cambiar el estado interno.");
+    }
+}

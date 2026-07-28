@@ -55,10 +55,12 @@
                         <button class="btn btn-primary" onclick="cargarHallazgos()" style="font-size: 10px; padding: 4px 8px; margin: 0; width: auto;">🔄 Refrescar</button>
                     </div>
                     
-                    <!-- PESTAÑAS DE ESTADO: ACTIVOS VS HISTORIAL -->
-                    <div style="display: flex; gap: 8px; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-                        <button id="tab-findings-active" class="btn btn-secondary active" onclick="cambiarTabFindings('active', this)" style="font-size: 11px; padding: 5px 10px; background: #2563eb; color: #fff;">🎯 Bugs Activos</button>
-                        <button id="tab-findings-reported" class="btn btn-secondary" onclick="cambiarTabFindings('reported', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">📦 Historial / Enviados</button>
+                    <!-- PESTAÑAS DE ESTADO: TAXONOMÍA DE HALLAZGOS -->
+                    <div style="display: flex; gap: 8px; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px; overflow-x: auto;">
+                        <button id="tab-findings-Pendiente" class="btn btn-secondary active" onclick="cambiarTabFindings('Pendiente', this)" style="font-size: 11px; padding: 5px 10px; background: #2563eb; color: #fff;">⏳ Pendientes</button>
+                        <button id="tab-findings-Validado" class="btn btn-secondary" onclick="cambiarTabFindings('Validado', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">✅ Validados</button>
+                        <button id="tab-findings-Enviado" class="btn btn-secondary" onclick="cambiarTabFindings('Enviado', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">🚀 Enviados (H1)</button>
+                        <button id="tab-findings-FalsoPositivo" class="btn btn-secondary" onclick="cambiarTabFindings('FalsoPositivo', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">🗑️ Descartados</button>
                     </div>
 
                     <p style="font-size: 11px; color: #aaa; margin-top: 5px;">Selecciona un hallazgo para generar el reporte automáticamente en el área de trabajo.</p>
@@ -97,9 +99,13 @@
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                         <div style="display: flex; gap: 10px;">
                             <button id="btn-verify-live" class="btn btn-primary" onclick="verificarBugEnVivo()" style="flex: 1; font-size: 12px; background-color: #3b82f6;">📥 Adjuntar Prueba Forense HTTP (OCI-1)</button>
+                            <button id="btn-mark-valid" class="btn btn-success" onclick="cambiarEstadoInterno('Validado')" style="flex: 1; font-size: 12px; background-color: #10B981; font-weight: bold; display: none;">🟢 Marcar como Validado</button>
+                            <button id="btn-mark-fp" class="btn btn-danger" onclick="cambiarEstadoInterno('FalsoPositivo')" style="flex: 1; font-size: 12px; background-color: #EF4444; font-weight: bold;">🔴 Marcar Falso Positivo</button>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
                             <button id="btn-launch-h1" class="btn btn-success" onclick="abrirHackerOneDirecto()" style="flex: 1; font-size: 12px; background-color: #8b5cf6; font-weight: bold;">🚀 Abrir e Inyectar en HackerOne</button>
                         </div>
-                        <button id="btn-archive-h1" class="btn btn-secondary" onclick="archivarHallazgoActual()" style="font-size: 12px; background-color: #059669; color: #fff; font-weight: bold; padding: 10px;">📦 Archivar y Vincular ID de HackerOne Real</button>
+                        <button id="btn-archive-h1" class="btn btn-secondary" onclick="archivarHallazgoActual()" style="font-size: 12px; background-color: #6B7280; color: #fff; font-weight: bold; padding: 10px;">📦 Mover a Enviados (Registrar ID HackerOne)</button>
                     </div>
                 </div>
             </section>
