@@ -219,8 +219,9 @@ def main():
         f"📊 {len(todos_subdominios)} subdominios nuevos procesados\n"
         f"{seccion_hallazgos}"
         f"{seccion_ia}"
-        f"🔗 *Panel C2:* {C2_PANEL_URL}"
+        f"🚀 [👉 ABRIR C2 PANEL]({C2_PANEL_URL})"
     )
+
 
     # ── Guardar análisis local ─────────────────────────────────────────────────
     ruta_analisis = os.path.join(RESULT_DIR, f"analisis_{args.zone}_{fecha_hoy}.json")

@@ -102,6 +102,9 @@ def sync_to_c2_panel(zone: str, deltas_dict: dict, findings: list) -> bool:
 
 def notificar_hallazgos_valor(findings: list):
     """Filtra y notifica a Telegram solo las vulnerabilidades verificadas con bounty ($50+ USD)."""
+    _cargar_dotenv()
+    c2_url = os.environ.get("C2_PANEL_PUBLIC_URL", os.environ.get("C2_PANEL_URL", "http://127.0.0.1:8000")).replace("/api/ingest_delta", "")
+
     for f in findings:
         target = f.get("target", "N/A")
         vuln_type = f.get("vuln_type", "Desconocida")
@@ -111,9 +114,10 @@ def notificar_hallazgos_valor(findings: list):
               f"📌 *Tipo:* {vuln_type}\n" \
               f"🌐 *Target:* `{target}`\n" \
               f"💰 *Estimado Bounty:* {estimated}\n\n" \
-              f"👉 _Entra al C2 Panel en OCI-2 para generar el reporte HackerOne en 1-clic._"
+              f"🚀 [👉 ABRIR C2 PANEL]({c2_url})"
         
         send_telegram(msg)
+
 
 if __name__ == "__main__":
     msg = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "🔔 Notificador de OCI-1 operativo."

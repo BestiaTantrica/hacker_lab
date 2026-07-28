@@ -13,13 +13,17 @@ import paramiko
 from dotenv import load_dotenv
 
 # Añadir el path para importar llm_client desde el directorio api/
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
+C2_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(C2_DIR)
+sys.path.append(os.path.join(C2_DIR, "..", "espejo_oci1", "api"))
+
+load_dotenv(os.path.join(C2_DIR, "..", "espejo_oci1", "config", "entorno.env"))
+load_dotenv(os.path.join(C2_DIR, ".env"))
+
 try:
-    from llm_client import completar, LLMError
+    from llm_client import completar
 except ImportError:
     completar = None
-
-load_dotenv()
 
 app = FastAPI(title="C2 Panel & Copilot Hub — HackerLab", version="2.0")
 
@@ -51,6 +55,30 @@ def init_db():
             evidence TEXT NOT NULL,
             verified BOOLEAN DEFAULT 1,
             reported BOOLEAN DEFAULT 0,
+            h1_report_id TEXT DEFAULT '',
+            h1_status TEXT DEFAULT 'New',
+            bounty_paid TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    # Migraciones preventivas si la tabla ya existía sin las nuevas columnas
+    cursor.execute("PRAGMA table_info(findings)")
+    columns = [info[1] for info in cursor.fetchall()]
+    if "h1_report_id" not in columns:
+        cursor.execute("ALTER TABLE findings ADD COLUMN h1_report_id TEXT DEFAULT ''")
+    if "h1_status" not in columns:
+        cursor.execute("ALTER TABLE findings ADD COLUMN h1_status TEXT DEFAULT 'New'")
+    if "bounty_paid" not in columns:
+        cursor.execute("ALTER TABLE findings ADD COLUMN bounty_paid TEXT DEFAULT ''")
+
+    # Tabla de Memoria de Conversación Unificada (Telegram + Web)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS chat_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source TEXT NOT NULL,
+            role TEXT NOT NULL,
+            message TEXT NOT NULL,
+            finding_id INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -60,13 +88,23 @@ def init_db():
 init_db()
 
 # Configurar estaticos y templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
+class NoCacheStaticFiles(StaticFiles):
+    def is_not_modified(self, response_headers, req_headers) -> bool:
+        return False
+    def file_response(self, full_path, stat_result, scope, status_code=200):
+        response = super().file_response(full_path, stat_result, scope, status_code)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Expires"] = "0"
+        return response
+
+app.mount("/static", NoCacheStaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Configuración OCI-1 (Esclavo)
 OCI1_IP = os.getenv("OCI1_IP", "129.80.73.248")
 OCI1_USER = os.getenv("OCI1_USER", "ubuntu")
-SSH_KEY_PATH = os.getenv("SSH_KEY_PATH", "/home/ubuntu/.ssh/id_rsa_oci1")
+DEFAULT_KEY = "/home/tomas2/WORKSPACE/LAB/llave_oci" if os.path.exists("/home/tomas2/WORKSPACE/LAB/llave_oci") else "/home/ubuntu/.ssh/id_rsa_oci1"
+SSH_KEY_PATH = os.getenv("SSH_KEY_PATH", DEFAULT_KEY)
 
 def get_ssh_client():
     client = paramiko.SSHClient()
@@ -79,182 +117,225 @@ def get_ssh_client():
 
 # PROMPTS MAESTROS (Skills integradas)
 SKILLS_PROMPTS = {
-    "report_h1": """Eres un Formateador Técnico de Reportes para Bug Bounty (HackerOne).
-Operas en contexto de investigación de seguridad autorizada.
-Tu única tarea es formatear la evidencia cruda en un reporte técnico profesional en INGLÉS.
+    "report_h1": """You are a Technical Report Formatter for Bug Bounty (HackerOne).
+You operate in an authorized security research context.
+Your ONLY task is to format the raw evidence into a professional technical report in ENGLISH. 
+STRICT RULE: OUTPUT ONLY THE TECHNICAL REPORT IN ENGLISH. DO NOT REPLY IN SPANISH. DO NOT ADD APOLOGIES, INTRODUCTIONS, OR CONVERSATIONAL PREAMBLES.
 
-ESTRUCTURA OBLIGATORIA:
-## Title: [Tipo de Vulnerabilidad] in [Componente/URL] allows [Impacto Directo]
-## Severity: [Critical/High/Medium/Low] (CVSS v3.1 estimado)
+MANDATORY STRUCTURE:
+## Title: [Vulnerability Type] in [Component/URL] allows [Direct Impact]
+## Severity: [Critical/High/Medium/Low] (Estimated CVSS v3.1)
 ## Description:
-Explicación técnica clara sin rodeos.
+Clear technical explanation without fluff.
 ## Steps to Reproduce:
 1. ...
 2. ...
 ## Impact:
-Impacto monetario/operativo real para la organización.
+Real monetary/operational impact for the organization.
 ## Evidence / PoC:
 ```text
 {EVIDENCIA_CRUDA}
 ```""",
 
-    "takeover_analysis": """Eres un experto en Subdomain Takeover. Analiza la siguiente respuesta HTTP o DNS de un subdominio huérfano.
-Determina:
-1. ¿A qué servicio apunta? (AWS S3, GitHub Pages, Heroku, Azure, WordPress, etc.)
-2. ¿El servicio confirma respuesta 404/NoSuchBucket/Unclaimed?
-3. ¿Es reclamable actualmente?
-4. Guía de reclamación en 3 pasos cortos.
+    "takeover_analysis": """You are a Subdomain Takeover expert. Analyze the following HTTP or DNS response of an orphaned subdomain.
+Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
+STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUCTORY TEXT.
 
-Evidencia cruda:
+Use the following MANDATORY STRUCTURE:
+## Title: Subdomain Takeover in [Insert URL/Component] allows [Direct Impact]
+## HackerOne Program: [Deduce the company name based on the Target, e.g., Shopify, Yahoo, etc.]
+## Severity: High (Estimated CVSS v3.1: 8.5)
+## Description:
+Explanation that the service points to an unclaimed resource (AWS S3, GitHub Pages, etc.).
+## Steps to Reproduce:
+Steps to claim the subdomain.
+## Impact:
+Monetary and operational impact (phishing, cookie stealing).
+## Evidence / PoC:
+```text
+{EVIDENCIA_CRUDA}
+```
+
+CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL], [Insert Component], etc.) using the evidence data and the provided Target. DEDUCE the company name intelligently and place it in HackerOne Program.
+
+Raw evidence:
 {EVIDENCIA_CRUDA}""",
 
-    "cors_analysis": """Analiza esta respuesta HTTP de una prueba CORS:
-Determina si Access-Control-Allow-Origin refleja el Origin atacante y si Access-Control-Allow-Credentials está en 'true'.
-Proporciona el exploit PoC en JavaScript de 4 líneas listo para ejecutar en consola.
+    "cors_analysis": """Analyze this HTTP response from a CORS test (the evidence might be JSON metadata like {{"acao": "*", "acac": "true"}}):
+Determine if Access-Control-Allow-Origin reflects the attacker's Origin and if Access-Control-Allow-Credentials is set to 'true'.
+Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
+STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUCTORY TEXT.
 
-Evidencia cruda:
+Use the following MANDATORY STRUCTURE:
+## Title: CORS Misconfiguration in [Insert URL] allows Sensitive Data Extraction
+## HackerOne Program: [Deduce the company name based on the Target, e.g., Shopify, Yahoo, etc.]
+## Severity: Medium (Estimated CVSS v3.1: 5.4)
+## Description:
+Explanation of the CORS misconfiguration flaw based on the evidence.
+## Steps to Reproduce:
+1. Open the browser console on any external attacker domain (e.g., https://example.com).
+2. Execute the following JavaScript PoC to demonstrate the CORS misconfiguration:
+```javascript
+var req = new XMLHttpRequest();
+req.onload = req.onerror = function() {
+    console.log(this.responseText);
+};
+req.open('GET', 'https://[Insert URL]', true);
+req.withCredentials = true;
+req.send();
+```
+## Impact:
+Explanation of the impact (sensitive data extraction, session hijacking).
+## Evidence / PoC:
+```text
+{EVIDENCIA_CRUDA}
+```
+
+CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL]) using the evidence data and the provided Target. DEDUCE the company name intelligently and place it in HackerOne Program.
+
+Raw evidence:
+{EVIDENCIA_CRUDA}""",
+
+    "openapi_exposure": """You are an expert at writing Bug Bounty reports for Information Disclosure vulnerabilities.
+The evidence provided is about an exposed OpenAPI/Swagger specification file (e.g., openapi.json, swagger.yml).
+STRICT SYSTEM RULE: DO NOT INVENT VULNERABILITIES. AN OPENAPI EXPOSURE DOES NOT MEAN CREDENTIALS WERE COMPROMISED. DO NOT CLAIM "Unauthorized Access to API Credentials".
+The actual impact is that it provides attackers with a complete map of the API's internal architecture, endpoints, and parameters, which greatly facilitates further attacks (like IDOR, mass assignment, or BOLA).
+
+Use the following MANDATORY STRUCTURE:
+## Title: Information Disclosure: Exposed OpenAPI/Swagger Specification in [Insert URL]
+## HackerOne Program: [Deduce the company name based on the Target]
+## Severity: Low (Estimated CVSS v3.1: 3.1)
+## Description:
+Explain that the OpenAPI specification file is publicly accessible. This file reveals the entire API schema.
+## Steps to Reproduce:
+1. Navigate to the following URL in a browser or use curl: [Insert URL]
+2. Observe that the full API documentation/schema is returned without authentication.
+## Impact:
+Explain that while this does not directly expose user data, it acts as a roadmap for attackers, revealing hidden endpoints, parameter names (like "secret", "token", "password" schemas), and API structures, significantly lowering the barrier for discovering more critical vulnerabilities like Broken Object Level Authorization (IDOR) or Mass Assignment.
+## Evidence / PoC:
+```text
+{EVIDENCIA_CRUDA}
+```
+
+CRITICAL INSTRUCTION: Automatically replace all placeholders using the evidence data and the provided Target. 
+
+Raw evidence:
 {EVIDENCIA_CRUDA}""",
 
     # ── SKILLS v2.1 — Derivadas de /skills/*.md ───────────────────────────────
 
-    "aws_s3_leak": """Eres un especialista en análisis de AWS S3 Buckets expuestos.
-Se te proporciona la respuesta cruda de un bucket S3 con listing público o un mensaje de error revelador (NoSuchBucket, ListBucketResult, etc.).
+    "aws_s3_leak": """You are an expert in analyzing exposed AWS S3 Buckets.
+You are provided with the raw response of an S3 bucket with public listing or a revealing error message (NoSuchBucket, ListBucketResult, etc.).
 
-ANALIZA y determina:
-1. TIPO DE EXPOSICIÓN: ¿Es listing público (ListBucketResult), CNAME huérfano (NoSuchBucket), o acceso directo a objeto?
-2. RECLAMABILIDAD: ¿El bucket puede ser tomado? → Si aparece "NoSuchBucket" en un CNAME activo, es Subdomain Takeover reclamable.
-3. DATOS SENSIBLES VISIBLES: Examina los nombres de archivos/keys listados. ¿Hay .env, backup, credentials, private, secret, key, token, dump, export, database?
-4. SEVERIDAD: Critical si hay datos sensibles accesibles. High si es takeover reclamable. Medium si es solo listing sin datos críticos.
-5. PASOS DE REPORTE H1:
-   - Title: S3 Bucket [nombre] publicly accessible / Subdomain Takeover via S3
-   - Evidence: URL del bucket + primeras keys listadas
-   - Impact: acceso a datos de usuarios / toma de subdominio del target
+ANALYZE and determine:
+1. EXPOSURE TYPE: Is it public listing (ListBucketResult), orphaned CNAME (NoSuchBucket), or direct object access?
+2. CLAIMABILITY: Can the bucket be taken over? -> If "NoSuchBucket" appears on an active CNAME, it is a claimable Subdomain Takeover.
+3. VISIBLE SENSITIVE DATA: Examine the listed files/keys. Are there .env, backup, credentials, private, secret, key, token, dump, export, database?
+4. SEVERITY: Critical if sensitive data is accessible. High if it's a claimable takeover. Medium if it's just listing without critical data.
+5. H1 REPORT STEPS:
+   - Title: S3 Bucket [name] publicly accessible / Subdomain Takeover via S3
+   - Evidence: URL of the bucket + first listed keys
+   - Impact: access to user data / target subdomain takeover
 
-Evidencia cruda (respuesta del bucket o curl):
+Raw evidence (bucket or curl response):
 {EVIDENCIA_CRUDA}""",
 
-    "jwt_logic_bypass": """Eres un analizador forense de tokens JWT para Bug Bounty.
-Se te proporciona un token JWT (puede ser en formato raw header.payload.signature o decodificado).
+    "jwt_logic_bypass": """You are a JWT token forensic analyzer for Bug Bounty.
+You are provided with a JWT token (it can be in raw header.payload.signature format or decoded).
 
-ANALIZA y ejecuta:
-1. DECODIFICA el header y payload (base64url). Extrae: alg, kid, typ, sub, role, exp, iat.
-2. DETECTA VULNERABILIDADES:
-   a) alg:none → El servidor puede no verificar la firma. CRÍTICO.
-   b) RS256 → HS256 downgrade: Si el servidor usa clave pública conocida como secret HMAC. ALTO.
-   c) kid injection: Si kid apunta a un path, intenta path traversal (kid: /dev/null).
-   d) Claims elevables: ¿Hay role:user que puedas cambiar a role:admin?
-3. GENERA PoC Python listo para ejecutar:
+ANALYZE and execute:
+1. DECODE the header and payload (base64url). Extract: alg, kid, typ, sub, role, exp, iat.
+2. DETECT VULNERABILITIES:
+   a) alg:none -> Server might not verify the signature. CRITICAL.
+   b) RS256 -> HS256 downgrade: If the server uses a known public key as HMAC secret. HIGH.
+   c) kid injection: If kid points to a path, attempt path traversal (kid: /dev/null).
+   d) Elevatable claims: Is there a role:user that you can change to role:admin?
+3. GENERATE Python PoC ready to run:
 
 ```python
 import base64, json, hmac, hashlib
 
-# Modificar payload
+# Modify payload
 payload = {PAYLOAD_MODIFICADO}
 
-# Construir JWT sin firma (alg:none)
-header = base64.urlsafe_b64encode(json.dumps({{"alg":"none","typ":"JWT"}}).encode()).rstrip(b'=').decode()
+# Build JWT without signature (alg:none)
+header = base64.urlsafe_b64encode(json.dumps({"alg":"none","typ":"JWT"}).encode()).rstrip(b'=').decode()
 body = base64.urlsafe_b64encode(json.dumps(payload).encode()).rstrip(b'=').decode()
-token_none = f"{{header}}.{{body}}."
+token_none = f"{header}.{body}."
 print("JWT alg:none:", token_none)
 ```
 
-4. REPORTE H1: Severity High/Critical. Pasos exactos para reproducir. Impacto: acceso como admin u otro usuario.
+4. H1 REPORT: Severity High/Critical. Exact steps to reproduce. Impact: access as admin or other user.
 
-Token JWT a analizar:
+JWT Token to analyze:
 {EVIDENCIA_CRUDA}""",
 
-    "bounty_argentina_pyme": """Eres un redactor técnico bilingüe especializado en auditorías de seguridad para PYMEs argentinas.
-Tu tarea es transformar evidencia técnica cruda en un INFORME EJECUTIVO PROFESIONAL en español rioplatense.
+    "traductor_espanol": """You are an expert technical translator.
+Your ONLY task is to strictly translate the provided Bug Bounty technical report from English to Spanish.
+DO NOT invent new vulnerabilities. DO NOT add conversational text. DO NOT add apologies.
+MAINTAIN the exact same technical structure, formatting, and code blocks.
 
-ESTRUCTURA DEL INFORME:
-
----
-## INFORME DE AUDITORÍA DE SEGURIDAD PASIVA
-**Cliente:** [Nombre de la empresa / dominio]
-**Fecha:** [Fecha actual]
-**Clasificación:** Confidencial — Solo para uso interno
-
-### RESUMEN EJECUTIVO
-(2-3 oraciones en lenguaje de negocios, sin jerga técnica. Qué se encontró y qué riesgo representa para la empresa.)
-
-### HALLAZGOS DETECTADOS
-Para cada vulnerabilidad:
-- **Hallazgo:** [Nombre claro]
-- **Severidad:** Crítica / Alta / Media / Baja
-- **Descripción simple:** (¿Qué está expuesto? ¿Qué puede hacer un atacante?)
-- **Impacto en el negocio:** (Pérdida de datos de clientes, multas GDPR/Ley 25.326, daño reputacional)
-- **Evidencia:** (URL o captura técnica resumida)
-
-### RECOMENDACIONES INMEDIATAS
-Lista priorizada de acciones concretas (no genéricas).
-
-### PROPUESTA DE PRÓXIMOS PASOS
-- Auditoría continua pasiva: monitoreo mensual de nuevos subdominios y exposiciones.
-- Costo estimado: desde $0 (voluntario) hasta contrato formal según alcance.
-- Contacto: [TU CONTACTO]
----
-
-Evidencia técnica cruda a transformar:
+Text to translate:
 {EVIDENCIA_CRUDA}""",
 
-    "business_logic_api": """Eres un experto en testing de escalación de privilegios e IDOR en APIs REST y GraphQL.
-Se te proporciona evidencia de un endpoint o flujo de negocio sospechoso.
+    "business_logic_api": """You are an expert in testing privilege escalation and IDOR in REST and GraphQL APIs.
+You are provided with evidence of a suspicious endpoint or business flow.
 
-GUÍA DE ANÁLISIS (checklist ejecutar en orden):
+ANALYSIS GUIDE (execute checklist in order):
 
-1. IDENTIFICAR OBJETO DE CONTROL:
-   - ¿Hay IDs numéricos, UUIDs o slugs en la URL, body o headers?
-   - Ejemplos: /api/users/{id}, body: {"org_id": "123"}, header: X-User-ID
+1. IDENTIFY CONTROL OBJECT:
+   - Are there numeric IDs, UUIDs, or slugs in the URL, body, or headers?
+   - Examples: /api/users/{id}, body: {"org_id": "123"}, header: X-User-ID
 
-2. TEST IDOR BÁSICO:
-   - Cuenta A (atacante) accede al recurso de Cuenta B cambiando el ID.
-   - Respuestas: 200+datos_B = VULNERABLE | 403/404 = protegido
+2. BASIC IDOR TEST:
+   - Account A (attacker) accesses Account B's resource by changing the ID.
+   - Responses: 200+data_B = VULNERABLE | 403/404 = protected
 
-3. VARIANTES SI EL IDOR DIRECTO FALLA:
-   a) Cambio de método HTTP: GET→POST, POST→PUT→DELETE
-   b) Parámetros ocultos: ?admin=true, ?debug=1, ?role=admin
-   c) ID en headers: X-User-ID: ID_B, X-Forwarded-For, X-Original-URL
+3. VARIANTS IF DIRECT IDOR FAILS:
+   a) HTTP Method change: GET->POST, POST->PUT->DELETE
+   b) Hidden parameters: ?admin=true, ?debug=1, ?role=admin
+   c) ID in headers: X-User-ID: ID_B, X-Forwarded-For, X-Original-URL
    d) Path traversal: /api/users/../ID_B, /api/v1/../v2/admin/users
-   e) GraphQL: introspection + query directo al objeto de otro usuario
+   e) GraphQL: introspection + direct query to another user's object
 
-4. IDOR EN OPERACIONES DESTRUCTIVAS (mayor bounty):
-   - DELETE /recurso/ID_B → CRÍTICO ($500-$5000)
-   - PUT /recurso/ID_B → ALTO ($300-$3000)
-   - GET /recurso/ID_B → MEDIO ($100-$500)
+4. IDOR IN DESTRUCTIVE OPERATIONS (higher bounty):
+   - DELETE /resource/ID_B -> CRITICAL ($500-$5000)
+   - PUT /resource/ID_B -> HIGH ($300-$3000)
+   - GET /resource/ID_B -> MEDIUM ($100-$500)
 
-5. REPORTE: Title formato "IDOR in [endpoint] allows [acción] of other users' [recurso]"
-   Incluir: request_A original, request_B modificado, ambas responses.
+5. REPORT: Title format "IDOR in [endpoint] allows [action] of other users' [resource]"
+   Include: original request_A, modified request_B, both responses.
 
-Endpoint / evidencia a analizar:
+Endpoint / evidence to analyze:
 {EVIDENCIA_CRUDA}""",
 
-    "ssrf_analysis": """Eres un especialista en SSRF (Server-Side Request Forgery) para Bug Bounty.
-Se te proporciona evidencia de un parámetro que acepta URLs o un callback recibido en un receptor externo.
+    "ssrf_analysis": """You are an SSRF (Server-Side Request Forgery) specialist for Bug Bounty.
+You are provided with evidence of a parameter that accepts URLs or a callback received on an external receiver.
 
-ANALIZA en orden:
+ANALYZE in order:
 
-1. CONFIRMAR SSRF: ¿El servidor hizo un request hacia tu receptor (DNS lookup / HTTP callback)?
-   - Si hay DNS hit pero no HTTP: SSRF Ciego (Blind) → Severidad Media
-   - Si hay HTTP response del servidor interno: SSRF Confirmado → Severidad Alta/Crítica
+1. CONFIRM SSRF: Did the server make a request to your receiver (DNS lookup / HTTP callback)?
+   - If there is a DNS hit but no HTTP: Blind SSRF -> Medium Severity
+   - If there is an HTTP response from the internal server: Confirmed SSRF -> High/Critical Severity
 
-2. CLASIFICAR IMPACTO:
-   a) CRÍTICO: Acceso a metadata cloud:
+2. CLASSIFY IMPACT:
+   a) CRITICAL: Access to cloud metadata:
       - AWS: http://169.254.169.254/latest/meta-data/iam/security-credentials/
       - GCP: http://metadata.google.internal/computeMetadata/v1/ (header: Metadata-Flavor: Google)
       - Azure: http://169.254.169.254/metadata/instance?api-version=2021-02-01 (header: Metadata: true)
-   b) ALTO: Acceso a servicios internos (localhost:8080, 192.168.x.x, 10.0.x.x)
-   c) MEDIO: Solo callback DNS externo sin acceso interno demostrable
+   b) HIGH: Access to internal services (localhost:8080, 192.168.x.x, 10.0.x.x)
+   c) MEDIUM: Only external DNS callback without demonstrable internal access
 
-3. BYPASS PAYLOADS si hay filtro:
+3. BYPASS PAYLOADS if there is a filter:
    - http://0.0.0.0, http://[::1], http://2130706433 (127.0.0.1 decimal)
    - http://127.0.0.1.nip.io, http://localtest.me
-   - Redirect: tu servidor redirige → target interno
+   - Redirect: your server redirects -> internal target
 
-4. REPORTE H1:
-   - Severity: Critical si hay credenciales cloud. High si hay acceso interno.
-   - Evidence: request original + respuesta del receptor + (si aplica) credenciales IAM obtenidas.
+4. H1 REPORT:
+   - Severity: Critical if cloud credentials exist. High if internal access exists.
+   - Evidence: original request + receiver's response + (if applicable) IAM credentials obtained.
 
-Evidencia a analizar (request, callback recibido, o respuesta):
+Evidence to analyze (request, callback received, or response):
 {EVIDENCIA_CRUDA}"""
 }
 
@@ -262,7 +343,7 @@ Evidencia a analizar (request, callback recibido, o respuesta):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "oci1_ip": OCI1_IP})
+    return templates.TemplateResponse(request=request, name="index.html", context={"oci1_ip": OCI1_IP})
 
 @app.get("/api/status")
 def get_status():
@@ -339,17 +420,62 @@ def ingest_delta(payload: IngestPayload):
         "inserted_findings": inserted_findings
     }
 
-# --- CONSULTAS DE DATOS ---
+# --- CONSULTAS Y CICLO DE VIDA DE DATOS ---
+
+class ArchiveRequest(BaseModel):
+    h1_report_id: Optional[str] = ""
+
+class UpdateStatusRequest(BaseModel):
+    h1_status: str
+    h1_report_id: Optional[str] = ""
+    bounty_paid: Optional[str] = ""
 
 @app.get("/api/findings")
-def get_findings():
+def get_findings(status: Optional[str] = "active"):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 50")
+    
+    if status == "active":
+        cursor.execute("SELECT * FROM findings WHERE reported = 0 ORDER BY id DESC LIMIT 50")
+    elif status == "reported" or status == "archived":
+        cursor.execute("SELECT * FROM findings WHERE reported = 1 ORDER BY id DESC LIMIT 50")
+    else:
+        cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 50")
+        
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return {"status": "success", "findings": rows}
+
+@app.post("/api/findings/{finding_id}/archive")
+def archive_finding(finding_id: int, req: ArchiveRequest):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE findings 
+        SET reported = 1, 
+            h1_report_id = COALESCE(NULLIF(?, ''), h1_report_id),
+            h1_status = CASE WHEN h1_status = 'New' OR h1_status = '' THEN 'Submitted' ELSE h1_status END
+        WHERE id = ?
+    """, (req.h1_report_id.strip(), finding_id))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": f"Hallazgo #{finding_id} archivado correctamente."}
+
+@app.post("/api/findings/{finding_id}/update_status")
+def update_finding_status(finding_id: int, req: UpdateStatusRequest):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE findings 
+        SET h1_status = ?,
+            h1_report_id = COALESCE(NULLIF(?, ''), h1_report_id),
+            bounty_paid = COALESCE(NULLIF(?, ''), bounty_paid)
+        WHERE id = ?
+    """, (req.h1_status.strip(), req.h1_report_id.strip(), req.bounty_paid.strip(), finding_id))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": f"Estado del hallazgo #{finding_id} actualizado a '{req.h1_status}'."}
 
 @app.get("/api/deltas/{zone}")
 def get_deltas_by_zone(zone: str):
@@ -370,40 +496,82 @@ class GenerateReportRequest(BaseModel):
     skill_key: str
     evidence: str
     target: Optional[str] = ""
+    vuln_type: Optional[str] = ""
 
 @app.post("/api/copilot/generate")
 def generate_copilot_prompt(req: GenerateReportRequest):
     if completar is None:
-        raise HTTPException(status_code=500, detail="LLM Client no disponible.")
+        return {"status": "error", "message": "Módulo llm_client no encontrado. Revisa que sys.path sea correcto."}
     
     template = SKILLS_PROMPTS.get(req.skill_key, SKILLS_PROMPTS["report_h1"])
     prompt = template.replace("{EVIDENCIA_CRUDA}", req.evidence)
+    
+    system_prefix = ""
+    if req.skill_key != "traductor_espanol":
+        system_prefix += "SYSTEM DIRECTIVE: YOU MUST OUTPUT THIS ENTIRE REPORT EXCLUSIVELY IN ENGLISH. ANY NON-ENGLISH WORD WILL CAUSE A CRITICAL SYSTEM FAILURE. DO NOT TRANSLATE HEADINGS TO SPANISH.\n"
+        system_prefix += "SYSTEM DIRECTIVE 2: DO NOT INVENT OR HALLUCINATE VULNERABILITIES (like SSRF, RCE, XSS, Path Traversal) OR ENDPOINTS (like /etc/passwd) THAT ARE NOT EXPLICITLY PRESENT IN THE RAW EVIDENCE. STICK EXACTLY TO THE PROVIDED EVIDENCE.\n"
+    else:
+        system_prefix += "REGLA CRÍTICA: TRADUCE EL TEXTO EXACTAMENTE AL ESPAÑOL. NO INVENTES NI AGREGUES NADA NUEVO.\n"
+        
+    if req.vuln_type:
+        system_prefix += f"SYSTEM DIRECTIVE 3: The specific vulnerability type is EXACTLY '{req.vuln_type}'. Replace any [Vulnerability Type] or [Hallazgo] placeholder exclusively with this value.\n"
+
+    prompt = system_prefix + "\n" + prompt
+
     if req.target:
-        prompt += f"\nTarget: {req.target}"
+        if req.skill_key != "traductor_espanol":
+            prompt += f"\n\nTarget: {req.target}"
+            prompt += f"\nSYSTEM DIRECTIVE 4: Automatically replace all placeholders (like [Insert Component], [Componente/URL], [Insert URL], [Insert S3 Bucket Name]) using EXACTLY this Target: {req.target}."
         
     try:
-        respuesta = completar(prompt, max_tokens=1500)
+        respuesta = completar(prompt, max_tokens=1500, temperature=0.1)
         return {"status": "success", "result": respuesta, "prompt_used": prompt}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
 class ChatRequest(BaseModel):
     message: str
+    finding_id: int = 0
+
+@app.get("/api/chat/history")
+def get_chat_history():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT source, role, message, created_at FROM chat_history ORDER BY id ASC LIMIT 50")
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return {"status": "success", "history": rows}
 
 @app.post("/api/chat")
 def chat_endpoint(req: ChatRequest):
     if completar is None:
         return {"status": "error", "data": "Módulo llm_client no encontrado."}
     
-    # Inyectar contexto reciente de la BD SQLite de OCI-2
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+    
+    # Cargar hallazgos recientes
     cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 5")
     recent_findings = [dict(r) for r in cursor.fetchall()]
+    
+    # Cargar historial de chat unificado reciente pero filtrado por finding_id (últimas 20 interacciones)
+    if req.finding_id > 0:
+        cursor.execute("SELECT source, role, message FROM chat_history WHERE finding_id = ? ORDER BY id DESC LIMIT 20", (req.finding_id,))
+    else:
+        cursor.execute("SELECT source, role, message FROM chat_history ORDER BY id DESC LIMIT 20")
+    past_chat = list(reversed([dict(r) for r in cursor.fetchall()]))
+    
     conn.close()
 
     context_str = json.dumps(recent_findings, indent=2) if recent_findings else "Sin hallazgos recientes."
+    
+    chat_history_formatted = ""
+    if past_chat:
+        chat_history_formatted = "\nHISTORIAL DE CONVERSACIÓN RECIENTE (TELEGRAM Y WEB):\n"
+        for item in past_chat:
+            chat_history_formatted += f"[{item['source'].upper()}] {item['role']}: {item['message']}\n"
 
     system_prompt = f"""Eres Pegaso, el copiloto IA del C2 Panel de Bug Bounty.
 Tu prioridad es ayudar a capitalizar vulnerabilidades rápidamente con un enfoque de volumen (Redes de Pesca).
@@ -411,14 +579,52 @@ Valoras reportes claros, PoCs reproducibles y maximizar bounties (incluso de $50
 
 HALLAZGOS VERIFICADOS RECIENTES:
 {context_str}
+{chat_history_formatted}
 
 Pregunta/Orden del usuario: {req.message}"""
     
     try:
         respuesta = completar(system_prompt, max_tokens=1024)
+        
+        # Guardar en la base de datos unificada SQLite
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO chat_history (source, role, message, finding_id) VALUES ('web', 'user', ?, ?)", (req.message, req.finding_id))
+        cursor.execute("INSERT INTO chat_history (source, role, message, finding_id) VALUES ('web', 'assistant', ?, ?)", (respuesta, req.finding_id))
+        conn.commit()
+        conn.close()
+
         return {"status": "success", "data": respuesta}
     except Exception as e:
         return {"status": "error", "data": str(e)}
+
+class NotifyTelegramRequest(BaseModel):
+    target: str
+    vuln_type: str
+    report: str
+
+@app.post("/api/notify_telegram")
+def notify_telegram(req: NotifyTelegramRequest):
+    import urllib.request
+    import json
+    token = os.environ.get('TELEGRAM_BOT_TOKEN')
+    chat_id = "6527908321" # Token y Chat ID conocidos del entorno
+    if not token:
+        return {"status": "error", "message": "TELEGRAM_BOT_TOKEN no configurado"}
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    text = f"🔥 NUEVO REPORTE CONFIRMADO 🔥\n\nTarget: {req.target}\nVulnerabilidad: {req.vuln_type}\n\nReporte H1:\n\n{req.report[:3500]}"
+    payload = {
+        "chat_id": chat_id,
+        "text": text
+    }
+    
+    try:
+        req_obj = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
+        urllib.request.urlopen(req_obj)
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 class VerifyRequest(BaseModel):
     url: str
@@ -432,18 +638,44 @@ def verify_bug(req: VerifyRequest):
         return {"status": "success", "data": f"✅ VERIFICADO LOCALMENTE. Endpoint {req.url} responde expuesto."}
     
     try:
-        cmd = f"curl -s -m 10 -I '{req.url}'"
+        # Comando curl que inyecta la identidad HackerOne y captura Request/Response (Dump Crudo)
+        # Usamos -i para traer cabeceras de respuesta, y truncamos a 2500 bytes para no saturar.
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 HackerOne-tomas244"
+        cmd = f"curl -s -i -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' '{req.url}' | head -c 2500"
         stdin, stdout, stderr = client.exec_command(cmd)
-        output = stdout.read().decode().strip()
+        output = stdout.read().decode(errors='ignore').strip()
         client.close()
         
-        if "200 OK" in output or "HTTP/2 200" in output or "404" in output:
-            return {"status": "success", "data": f"✅ VERIFICADO EN VIVO OCI-1:\n{output[:150]}"}
-        else:
-            return {"status": "success", "data": f"⚠️ Respuesta dudosa:\n{output[:150]}"}
+        # Formatear el volcado para que luzca profesional como evidencia
+        evidencia_forense = f"GET {req.url} HTTP/1.1\nHost: {req.url.replace('https://', '').replace('http://', '').split('/')[0]}\nX-Bug-Bounty: HackerOne-tomas244\nUser-Agent: {user_agent}\n\n"
+        evidencia_forense += "--- RESPUESTA DEL SERVIDOR ---\n\n" + output
+        
+        return {"status": "success", "data": evidencia_forense}
     except Exception as e:
         if client: client.close()
         return {"status": "error", "data": f"Error verificando: {str(e)}"}
+
+class ExplainErrorRequest(BaseModel):
+    error_text: str
+    target: str
+
+@app.post("/api/copilot/explain_error")
+def explain_error(req: ExplainErrorRequest):
+    if completar is None:
+        return {"status": "error", "message": "Módulo llm_client no encontrado."}
+    
+    prompt = f"""You are Pegaso, a Bug Bounty Copilot.
+The user tried to verify a vulnerability on the target {req.target} using an automated script (curl), but the target's firewall/WAF blocked the request.
+This is the raw HTTP error response received:
+{req.error_text}
+
+Provide a short, direct, and friendly explanation in SPANISH of why this happened (e.g., Cloudflare blocked the bot) and what the user should do manually to verify it (e.g., open it in a browser, use Burp Suite). Keep it concise.
+"""
+    try:
+        respuesta = completar(prompt, max_tokens=250, temperature=0.2)
+        return {"status": "success", "explanation": respuesta}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 if __name__ == "__main__":
     import uvicorn

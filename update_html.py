@@ -1,0 +1,135 @@
+import re
+
+with open('/home/tomas2/WORKSPACE/LAB/c2_panel/templates/index.html', 'r') as f:
+    content = f.read()
+
+new_main = """    <main class="main-content split-layout">
+        <div class="split-main">
+            <!-- VISTA DASHBOARD -->
+            <section id="view-dashboard" class="view active">
+                <!-- TARJETAS DE INDICADORES EN TIEMPO REAL -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <div class="card stat-card glow" style="padding: 15px; border-left: 4px solid var(--primary);">
+                        <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Subdominios Recogidos</h4>
+                        <h2 id="total-deltas-count" style="font-size: 24px; color: #fff; margin: 5px 0;">0</h2>
+                        <p style="font-size: 10px; color: #aaa; margin: 0;">Red de Pesca OCI-1</p>
+                    </div>
+                    <div class="card stat-card glow" style="padding: 15px; border-left: 4px solid var(--success);">
+                        <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Hallazgos ($50-$300+)</h4>
+                        <h2 id="total-findings-count" style="font-size: 24px; color: #2ecc71; margin: 5px 0;">0</h2>
+                        <p style="font-size: 10px; color: #aaa; margin: 0;">PoCs Verificados</p>
+                    </div>
+                </div>
+
+                <!-- FILTRO DE ZONAS HORARIAS -->
+                <h3 class="section-title">🌐 Cobertura por Zonas Horarias</h3>
+                <div class="zone-selector" style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <button class="btn btn-secondary zone-btn active" onclick="filtrarZona('all', this)" style="flex: 1; font-size: 11px; padding: 8px;">Todas</button>
+                    <button class="btn btn-secondary zone-btn" onclick="filtrarZona('americas', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌎 Américas</button>
+                    <button class="btn btn-secondary zone-btn" onclick="filtrarZona('emea', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌍 EMEA</button>
+                    <button class="btn btn-secondary zone-btn" onclick="filtrarZona('asia', this)" style="flex: 1; font-size: 11px; padding: 8px;">🌏 Asia</button>
+                </div>
+                
+                <div class="card action-card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="icon">🎯</span>
+                            <h3>Bugs Verificados & Oportunidades</h3>
+                        </div>
+                        <button class="btn btn-primary" onclick="cargarHallazgos()" style="font-size: 10px; padding: 4px 8px; margin: 0; width: auto;">🔄 Refrescar</button>
+                    </div>
+                    <p style="font-size: 11px; color: #aaa; margin-top: 5px;">Selecciona un hallazgo para generar el reporte automáticamente en el área de trabajo.</p>
+                    
+                    <div id="findings-list" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="padding: 10px; background: #1e1e2e; border-radius: 5px; color: #888; font-size: 11px;">Cargando hallazgos desde OCI-2 DB...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA WORKSPACE (Replaces view-prompts) -->
+            <section id="view-workspace" class="view">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 class="section-title" style="margin: 0;">📝 Área de Trabajo</h3>
+                    <button class="btn btn-secondary" onclick="switchView('dashboard', document.querySelectorAll('.nav-item')[0])" style="width: auto; padding: 6px 12px; font-size: 11px;">⬅ Volver</button>
+                </div>
+                
+                <div class="card kit-card" style="margin-bottom: 15px; background: #0d1117; border: 1px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <h4 style="color: #2ecc71; margin-bottom: 4px;" id="workspace-vuln-title">Selecciona un hallazgo...</h4>
+                            <p style="font-size: 11px; color: #aaa; margin: 0;" id="workspace-vuln-target">Target: -</p>
+                        </div>
+                        <span id="workspace-vuln-badge" style="background: #333; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #fff;">ESPERANDO</span>
+                    </div>
+
+                    <div id="workspace-actions" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                         <button class="btn btn-secondary" onclick="regenerarReporte('report_h1')" style="font-size: 10px; padding: 8px;">🔄 Regenerar H1 (Inglés)</button>
+                         <button class="btn btn-secondary" onclick="regenerarReporte('bounty_argentina_pyme')" style="font-size: 10px; padding: 8px;">🇦🇷 Generar Informe PYME (Español)</button>
+                    </div>
+
+                    <div style="position: relative;">
+                        <textarea id="prompt-result-output" style="width: 100%; height: 280px; background: #000; color: #fff; font-family: 'Fira Code', monospace; font-size: 11px; padding: 12px; border-radius: 4px; border: 1px solid #333; box-sizing: border-box;" placeholder="El reporte IA aparecerá aquí..."></textarea>
+                        <button class="btn btn-primary" onclick="copiarReporteGenerado()" style="position: absolute; top: 10px; right: 10px; font-size: 10px; padding: 4px 8px; width: auto; background: #2a2a4a; color: #fff; border: 1px solid #4a4a8a;">📋 Copiar</button>
+                    </div>
+                    
+                    <button id="btn-approve-telegram" class="btn btn-success" onclick="aprobarYEnviarTelegram()" style="margin-top: 15px; font-size: 13px; display: none;">✅ Aprobar y Enviar a Telegram</button>
+                </div>
+            </section>
+
+            <!-- VISTA PROPUESTA DE VALOR & DONACIONES -->
+            <section id="view-propuesta" class="view">
+                <h3 class="section-title">💡 Propuesta de Valor & Donaciones</h3>
+                <p class="view-desc">Monitoreo pasivo ético, transparente y abierto. Ayudá a sostener este proyecto.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
+                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(30,20,60,0.9)); border: 1px solid rgba(124,58,237,0.4); border-radius: 12px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #a78bfa; font-family: 'Fira Code', monospace;" id="metric-dominios">0</div>
+                        <div style="font-size: 10px; color: #c4b5fd; margin-top: 4px;">🌐 Dominios Monitoreados</div>
+                    </div>
+                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(46,204,113,0.15), rgba(20,40,30,0.9)); border: 1px solid rgba(46,204,113,0.4); border-radius: 12px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #2ecc71; font-family: 'Fira Code', monospace;">24/7</div>
+                        <div style="font-size: 10px; color: #86efac; margin-top: 4px;">🔍 Monitoreo Continuo</div>
+                    </div>
+                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(251,191,36,0.12), rgba(40,30,10,0.9)); border: 1px solid rgba(251,191,36,0.35); border-radius: 12px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #fbbf24; font-family: 'Fira Code', monospace;" id="metric-meses">0</div>
+                        <div style="font-size: 10px; color: #fde68a; margin-top: 4px;">📅 Meses Activo</div>
+                    </div>
+                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(10,20,40,0.9)); border: 1px solid rgba(59,130,246,0.35); border-radius: 12px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #60a5fa; font-family: 'Fira Code', monospace;">Open</div>
+                        <div style="font-size: 10px; color: #93c5fd; margin-top: 4px;">🛡️ Transparencia Técnica</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="split-sidebar">
+            <div class="terminal-container" style="display: flex; flex-direction: column; height: 100%; border-radius: 0; border: none; background: transparent;">
+                <div class="terminal-header" style="background: transparent; border-bottom: 1px solid var(--border); padding: 15px; font-size: 14px;">
+                    <span style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #fff;">
+                        <span class="icon" style="font-size: 1.2em;">🤖</span> 
+                        Pegaso Copiloto
+                    </span>
+                </div>
+                <div class="terminal-body" id="chat-messages" style="flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: transparent; min-height: 0; max-height: none;">
+                    <div class="chat-message assistant">
+                        <strong>Pegaso:</strong> ¡Hola Tomás! Estoy aquí. Cuando selecciones un hallazgo del panel, me encargaré de redactar el reporte automáticamente. Puedes hablarme para refinarlo.
+                    </div>
+                </div>
+                <div style="padding: 15px; background: transparent; border-top: 1px solid var(--border);">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="chat-input" placeholder="Ej: Cambia el impacto a Crítico..." style="flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0b1120; color: #fff; font-family: 'Inter', sans-serif; font-size: 12px;">
+                        <button class="btn btn-primary" onclick="enviarMensajeChat()" style="padding: 12px 16px; margin-top: 0; width: auto; font-size: 12px;">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>"""
+
+# Replace everything from <main class="main-content"> to </main>
+pattern = re.compile(r'<main class="main-content">.*?</main>', re.DOTALL)
+new_content = pattern.sub(new_main, content)
+
+with open('/home/tomas2/WORKSPACE/LAB/c2_panel/templates/index.html', 'w') as f:
+    f.write(new_content)
+
+print("index.html updated successfully")

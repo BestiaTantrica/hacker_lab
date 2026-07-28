@@ -239,3 +239,32 @@ textarea {
     max-width: 90%;
     border-left: 3px solid var(--accent);
 }
+
+/* SPLIT SCREEN LAYOUT */
+.split-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    min-height: calc(100vh - 40px);
+}
+.split-main {
+    flex: 2;
+    min-width: 300px;
+}
+.split-sidebar {
+    flex: 1.2;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    height: 600px; /* fixed height for sidebar if stacked */
+}
+.bottom-nav {
+    display: none !important;
+}
+body {
+    padding-bottom: 0;
+}
