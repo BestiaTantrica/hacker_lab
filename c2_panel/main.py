@@ -484,6 +484,7 @@ def archive_finding(finding_id: int, req: ArchiveRequest):
     cursor.execute("""
         UPDATE findings 
         SET reported = 1, 
+            status_interno = 'Enviado',
             h1_report_id = COALESCE(NULLIF(?, ''), h1_report_id),
             h1_status = CASE WHEN h1_status = 'New' OR h1_status = '' THEN 'Submitted' ELSE h1_status END
         WHERE id = ?

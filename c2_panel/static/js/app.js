@@ -551,7 +551,7 @@ async function archivarHallazgoActual() {
         if (data.status === 'success') {
             alert(`✅ Hallazgo #${current_finding.id} (${current_finding.target}) archivado correctamente y vinculado al reporte H1 #${reportId || 'N/A'}.`);
             switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
-            cambiarTabFindings('reported', document.getElementById('tab-findings-reported'));
+            cambiarTabFindings('Enviado', document.getElementById('tab-findings-Enviado'));
         } else {
             alert(`❌ Error al archivar: ${data.message}`);
         }
