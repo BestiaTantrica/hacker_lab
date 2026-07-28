@@ -7,6 +7,10 @@ LOG_FILE="${BASE_DIR}/logs/cron_output.log"
 ENV_FILE="${BASE_DIR}/config/entorno.env"
 VENV_ACTIVATE="/home/ubuntu/workspace_lab/venv/bin/activate"
 
+# 🔴 FIX CRÍTICO: Cron no tiene directorio de trabajo por defecto. 
+# Debemos forzar que se sitúe en la carpeta correcta antes de ejecutar los scripts relativos.
+cd "$BASE_DIR" || exit 1
+
 # Función de log en bash
 log() {
     echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [INFO] $1"
@@ -61,12 +65,24 @@ else
     log "analizador_ia.py finalizó exitosamente (código 0)"
 fi
 
-log "Pipeline finalizado exitosamente"
-log "============================================================"
+# 6. Motor de Dinero (Explotador + Extractor JS) y Mantenimiento
+log "=== Corriendo Explotador Automático ==="
 echo "=== Corriendo Explotador Automático ===" >> logs/cron.log
 python3 monitores/explotador_automatico.py >> logs/cron.log 2>&1
-find /home/ubuntu/plataforma_operativa/resultados/ -type f -mtime +7 -delete
+
+log "=== Corriendo Extractor de Secretos JS ==="
+echo "=== Corriendo Extractor de Secretos JS ===" >> logs/cron.log
+python3 monitores/extractor_secretos.py >> logs/cron.log 2>&1
+
+find "${BASE_DIR}/resultados/" -type f -mtime +7 -delete
+
+# 7. Escaneo con Nuclei
+log "Ejecutando escaneo masivo Nuclei..."
 bash monitores/escaneo_nuclei.sh
 
-# 6. Generar Contexto RAG
-python3 /home/ubuntu/plataforma_operativa/monitores/generar_contexto_rag.py
+# 8. Generar Contexto RAG para Pegaso
+log "Generando CEREBRO_CONTEXTO.txt para Pegaso..."
+python3 "${BASE_DIR}/monitores/generar_contexto_rag.py"
+
+log "Pipeline finalizado exitosamente"
+log "============================================================"

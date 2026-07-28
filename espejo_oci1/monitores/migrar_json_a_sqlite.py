@@ -13,14 +13,12 @@ import sqlite3
 from datetime import datetime, timezone
 
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
-# Para pruebas locales apuntamos a nuestro espejo
-BASE_DIR_LOCAL = os.path.expanduser("~/WORKSPACE/LAB/espejo_oci1")
+if not os.path.exists(BASE_DIR):
+    BASE_DIR = os.path.expanduser("~/WORKSPACE/LAB/espejo_oci1")
 
-# Si no existe en espejo local, usamos el mismo directorio (para testing)
-if not os.path.exists(os.path.join(BASE_DIR_LOCAL, "resultados")):
-    os.makedirs(os.path.join(BASE_DIR_LOCAL, "resultados"), exist_ok=True)
-    
-DB_PATH = os.path.join(BASE_DIR_LOCAL, "resultados", "oci1_db.sqlite")
+RESULT_DIR = os.path.join(BASE_DIR, "resultados")
+os.makedirs(RESULT_DIR, exist_ok=True)
+DB_PATH = os.path.join(RESULT_DIR, "oci1_db.sqlite")
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -49,10 +47,10 @@ def main():
     # Buscar archivos JSON de zonas
     zonas = ["americas", "emea", "asia", "all"]
     for zona in zonas:
-        json_path = os.path.join(BASE_DIR_LOCAL, "resultados", f"actual_{zona}.json")
+        json_path = os.path.join(RESULT_DIR, f"actual_{zona}.json")
         # Si no está ahí, buscar el legacy actual.json
         if zona == "all" and not os.path.exists(json_path):
-            json_path = os.path.join(BASE_DIR_LOCAL, "resultados", "actual.json")
+            json_path = os.path.join(RESULT_DIR, "actual.json")
             
         if not os.path.exists(json_path):
             continue

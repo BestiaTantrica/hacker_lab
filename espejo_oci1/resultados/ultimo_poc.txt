@@ -1,0 +1,24 @@
+=== ÚLTIMOS HALLAZGOS AUTOMÁTICOS ===
+{
+  "tipo": "cors",
+  "url": "https://etsy.com/api/v1/users",
+  "acao": "https://evil.tomas244.com",
+  "acac": "true"
+}
+
+{
+  "tipo": "exposed_file",
+  "url": "https://robinhood.com/robots.txt",
+  "keywords": [
+    "password"
+  ],
+  "preview": "User-agent: *\nAllow: /applink/.well-known/\nDisallow: /referral/\nDisallow: /user/\nDisallow: /subscriptions/\nDisallow: /reset_password/\nDisallow: /say-brokers/\nDisallow: /nexus/\nDisallow: /natedogg/\nSit"
+}
+
+{
+  "tipo": "cors",
+  "url": "https://agoda.com/graphql",
+  "acao": "https://evil.tomas244.com",
+  "acac": "true"
+}
+

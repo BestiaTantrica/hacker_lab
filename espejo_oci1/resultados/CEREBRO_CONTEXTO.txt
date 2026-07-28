@@ -1,0 +1,20 @@
+Última actualización de contexto: 2026-07-22 05:08:23
+- Se monitorean 0 targets con un total de 0 subdominios activos en actual.json.
+
+- Último Análisis de Subdominios (IA) [2026-07-22]:
+**Top 5 Subdominios con mayor interés para auditorías de seguridad**
+
+### 1. **admin-cushoncovers.shopify.com**
+El subdominio `admin-cushoncovers.shopify.com` llama la atención por su nombre sugerente de acceso de administrador al dominio `cushoncovers`.
+
+### 2. **admin1-cushoncovers.shopify.com**
+Similar a la anterior, el subdominio `admin1-cushoncovers.shopify.com` sugiere otro acceso de administrador al dominio `cushoncovers`.
+
+### 3. **ci.checkout.shopify.com**
+El subdominio `ci.checkout.shopify.com` parece relacionado con la integración continua (CI), lo que podría ser un indicio de una posible configuración de integración de credenciales o objetos sensibles.
+
+### 4. **api-ext.shopify.com**
+El subdominio `api-ext.shopify.com` sugiere un acceso API externo o remoto, lo que podría ser u...
+(truncado)
+
+- Escaneo Masivo (Nuclei): Aún no hay resultados de Nuclei guardados.

@@ -1,3 +1,4 @@
+import re
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -102,33 +103,36 @@ def run_subfinder(dominio: str) -> set:
     return subdominios
 
 
+import re
+
 def run_wayback(dominio: str) -> set:
-    """Extrae hosts antiguos de la Wayback Machine. Mina de oro para APIs legacy."""
+    """Extrae hosts antiguos de Wayback Machine de forma ultra rápida via Streaming (Regex por líneas)."""
     subdominios = set()
     url = f"http://web.archive.org/cdx/search/cdx?url=*.{dominio}/*&output=json&fl=original&collapse=urlkey"
     
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
-        with urllib.request.urlopen(req, timeout=45) as r:
-            data = json.loads(r.read().decode("utf-8"))
-            
-            # El primer elemento es el header ['original']
-            if len(data) > 1:
-                for row in data[1:]:
-                    try:
-                        # Limpiar barras dobles raras en urls de Wayback: //subdomain.com/
-                        raw_url = row[0].replace("///", "//")
-                        parsed = urlparse(raw_url)
-                        if parsed.hostname:
-                            # Eliminar puerto si existe (ej. subdomain.com:8080)
-                            clean_host = parsed.hostname.split(":")[0].lower().strip()
-                            if clean_host.endswith(dominio):
-                                subdominios.add(clean_host)
-                    except:
-                        pass
-        log.info(f"[{dominio}] Wayback Machine: {len(subdominios)} hosts extraídos.")
+        # Stream directo línea por línea sin cargar 300MB en memoria
+        with urllib.request.urlopen(req, timeout=20) as response:
+            count = 0
+            for line in response:
+                try:
+                    line_str = line.decode("utf-8", errors="ignore")
+                    # Extraer host con Regex veloz sobre la línea
+                    match = re.search(r'https?://([^/":]+)', line_str)
+                    if match:
+                        clean_host = match.group(1).lower().strip()
+                        if clean_host.endswith(dominio):
+                            subdominios.add(clean_host)
+                            count += 1
+                            if len(subdominios) >= 50000: # Cap de seguridad inteligente
+                                log.info(f"[{dominio}] Wayback Cap alcanzado: 50,000 subdominios.")
+                                break
+                except Exception:
+                    continue
+        log.info(f"[{dominio}] Wayback Machine (Streaming): {len(subdominios)} hosts extraídos.")
     except Exception as e:
-        log.warning(f"[{dominio}] Wayback Machine Falló (Posible Rate Limit): {e}")
+        log.warning(f"[{dominio}] Wayback Machine Falló (Posible Rate Limit/Timeout): {e}")
 
     return subdominios
 

@@ -57,7 +57,7 @@ class LLMProvider(ABC):
         pass
 
     @abstractmethod
-    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.1) -> str:
+    def completar(self, prompt: str, max_tokens: int = 512) -> str:
         """Realiza la llamada HTTP al proveedor y retorna el texto limpio."""
         pass
 
@@ -96,7 +96,7 @@ class GroqProvider(LLMProvider):
     def is_available(self) -> bool:
         return bool(self.api_key)
 
-    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.1) -> str:
+    def completar(self, prompt: str, max_tokens: int = 512) -> str:
         url = "https://api.groq.com/openai/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -105,8 +105,7 @@ class GroqProvider(LLMProvider):
         payload = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens,
-            "temperature": temperature
+            "max_tokens": max_tokens
         }
         
         data = _post_json(url, headers, payload, timeout=20)
@@ -126,7 +125,7 @@ class GeminiProvider(LLMProvider):
     def is_available(self) -> bool:
         return bool(self.api_key)
 
-    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.1) -> str:
+    def completar(self, prompt: str, max_tokens: int = 512) -> str:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
         headers = {
             "Content-Type": "application/json"
@@ -136,8 +135,7 @@ class GeminiProvider(LLMProvider):
                 "parts": [{"text": prompt}]
             }],
             "generationConfig": {
-                "maxOutputTokens": max_tokens,
-                "temperature": temperature
+                "maxOutputTokens": max_tokens
             }
         }
 
@@ -161,7 +159,7 @@ PROVIDER_CHAIN: list[LLMProvider] = [
     PROVIDERS["gemini"]
 ]
 
-def completar(prompt: str, max_tokens: int = 512, temperature: float = 0.1, provider_name: str = None) -> str:
+def completar(prompt: str, max_tokens: int = 512, provider_name: str = None) -> str:
     """
     Intenta resolver la petición.
     - Si se especifica provider_name, llama directamente a ese proveedor sin fallback.
@@ -177,7 +175,7 @@ def completar(prompt: str, max_tokens: int = 512, temperature: float = 0.1, prov
             raise LLMError(f"El proveedor '{provider_name}' fue invocado directamente pero no tiene API Key configurada.")
         
         logger.info("[%s] Invocación directa...", provider.name)
-        return provider.completar(prompt, max_tokens=max_tokens, temperature=temperature)
+        return provider.completar(prompt, max_tokens=max_tokens)
 
     # Comportamiento por defecto: cascada/fallback
     errors = []
@@ -192,7 +190,7 @@ def completar(prompt: str, max_tokens: int = 512, temperature: float = 0.1, prov
         while intentos < MAX_RETRIES:
             try:
                 logger.info("[%s] intentando completado... (Intento %d/%d)", provider.name, intentos + 1, MAX_RETRIES)
-                respuesta = provider.completar(prompt, max_tokens=max_tokens, temperature=temperature)
+                respuesta = provider.completar(prompt, max_tokens=max_tokens)
                 logger.info("[%s] completado con éxito (%d caracteres)", provider.name, len(respuesta))
                 return respuesta
             except Exception as exc:

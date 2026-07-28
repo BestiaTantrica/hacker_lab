@@ -70,30 +70,11 @@ fi
 TOTAL_BUGS=$(python3 -c "import json; data=json.load(open('$REPORTE_HOY')); print(len(data))" 2>/dev/null || echo "N/A")
 log "✅ Eslabón 3 completado: $TOTAL_BUGS hallazgo(s) verificado(s)."
 
-# ── Eslabón 4: Telemetría a OCI-2, Análisis IA + Notificación unificada ───────
-log "Eslabón 4: Sincronización con OCI-2 (Panel C2) y Análisis IA (analizador_ia.py)"
-$VENV -c "
-import json, sys
-sys.path.append('${BASE}/monitores')
-from notificador import sync_to_c2_panel
-
-try:
-    with open('$DELTA_FILE') as f:
-        delta_data = json.load(f)
-    deltas_dict = delta_data.get('nuevos_activos', delta_data.get('dominios', {}))
-    findings = []
-    if open('$REPORTE_HOY').read().strip() != '[]':
-        with open('$REPORTE_HOY') as f:
-            findings = json.load(f)
-    sync_to_c2_panel('$ZONA', deltas_dict, findings)
-except Exception as e:
-    print('⚠️ Error enviando telemetría C2:', e)
-" >> "$LOG" 2>&1 || log "⚠️  Fallo en la sincronización C2."
-
+# ── Eslabón 4: Analizador IA + Notificación unificada a Telegram ──────────────
+log "Eslabón 4: Análisis IA y notificación a Telegram (analizador_ia.py)"
 $VENV "${BASE}/monitores/analizador_ia.py" --zone "$ZONA" >> "$LOG" 2>&1 \
     || log "⚠️  analizador_ia.py falló pero el pipeline finalizó correctamente."
 
 log "🏁 CASCADA ZONA ${ZONA^^} COMPLETADA EXITOSAMENTE."
 log "============================================================"
-
 
