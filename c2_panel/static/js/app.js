@@ -635,7 +635,13 @@ async function cambiarEstadoInternoDesdeCard(findingId, nuevoEstado) {
         });
         const data = await res.json();
         if (data.status === 'success') {
-            cargarHallazgos(); // Recargar la lista actual sin recargar página
+            // Cambiar automáticamente a la pestaña del nuevo estado para que el usuario no se pierda
+            const tabBtn = document.getElementById(`tab-findings-${nuevoEstado}`);
+            if(tabBtn) {
+                cambiarTabFindings(nuevoEstado, tabBtn);
+            } else {
+                cargarHallazgos(); 
+            }
         }
     } catch(e) {
         alert("Error de red al actualizar estado");
