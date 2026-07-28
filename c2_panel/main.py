@@ -124,18 +124,27 @@ STRICT RULE: OUTPUT ONLY THE TECHNICAL REPORT IN ENGLISH. DO NOT REPLY IN SPANIS
 
 MANDATORY STRUCTURE:
 ## Title: [Vulnerability Type] in [Component/URL] allows [Direct Impact]
-## Severity: [Critical/High/Medium/Low] (Estimated CVSS v3.1)
-## Description:
-Clear technical explanation without fluff.
-## Steps to Reproduce:
+
+## Summary:
+[Clear technical explanation without fluff. Specify the Vulnerability Type and Component/URL]
+
+## Steps To Reproduce:
 1. ...
 2. ...
-## Impact:
-Real monetary/operational impact for the organization.
-## Evidence / PoC:
+
+## Supporting Material/References:
 ```text
 {EVIDENCIA_CRUDA}
-```""",
+```
+
+## Likelihood:
+[High/Medium/Low based on exploitability]
+
+## Impact:
+[Real monetary/operational impact for the organization]
+
+## Remediation Guidance:
+[Specific steps to fix the vulnerability]""",
 
     "takeover_analysis": """You are a Subdomain Takeover expert. Analyze the following HTTP or DNS response of an orphaned subdomain.
 Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
@@ -143,20 +152,28 @@ STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUC
 
 Use the following MANDATORY STRUCTURE:
 ## Title: Subdomain Takeover in [Insert URL/Component] allows [Direct Impact]
-## HackerOne Program: [Deduce the company name based on the Target, e.g., Shopify, Yahoo, etc.]
-## Severity: High (Estimated CVSS v3.1: 8.5)
-## Description:
-Explanation that the service points to an unclaimed resource (AWS S3, GitHub Pages, etc.).
-## Steps to Reproduce:
-Steps to claim the subdomain.
-## Impact:
-Monetary and operational impact (phishing, cookie stealing).
-## Evidence / PoC:
+
+## Summary:
+Subdomain Takeover in [Insert URL/Component]. The service points to an unclaimed resource (AWS S3, GitHub Pages, etc.).
+
+## Steps To Reproduce:
+1. Steps to claim the subdomain.
+
+## Supporting Material/References:
 ```text
 {EVIDENCIA_CRUDA}
 ```
 
-CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL], [Insert Component], etc.) using the evidence data and the provided Target. DEDUCE the company name intelligently and place it in HackerOne Program.
+## Likelihood:
+High
+
+## Impact:
+Monetary and operational impact (phishing, cookie stealing).
+
+## Remediation Guidance:
+Remove the DNS record pointing to the unclaimed service, or claim the resource on the provider.
+
+CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL], [Insert Component], etc.) using the evidence data and the provided Target.
 
 Raw evidence:
 {EVIDENCIA_CRUDA}""",
@@ -168,11 +185,11 @@ STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUC
 
 Use the following MANDATORY STRUCTURE:
 ## Title: CORS Misconfiguration in [Insert URL] allows Sensitive Data Extraction
-## HackerOne Program: [Deduce the company name based on the Target, e.g., Shopify, Yahoo, etc.]
-## Severity: Medium (Estimated CVSS v3.1: 5.4)
-## Description:
-Explanation of the CORS misconfiguration flaw based on the evidence.
-## Steps to Reproduce:
+
+## Summary:
+CORS Misconfiguration in [Insert URL]. [Explanation of the CORS misconfiguration flaw based on the evidence.]
+
+## Steps To Reproduce:
 1. Open the browser console on any external attacker domain (e.g., https://example.com).
 2. Execute the following JavaScript PoC to demonstrate the CORS misconfiguration:
 ```javascript
@@ -184,14 +201,22 @@ req.open('GET', 'https://[Insert URL]', true);
 req.withCredentials = true;
 req.send();
 ```
-## Impact:
-Explanation of the impact (sensitive data extraction, session hijacking).
-## Evidence / PoC:
+
+## Supporting Material/References:
 ```text
 {EVIDENCIA_CRUDA}
 ```
 
-CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL]) using the evidence data and the provided Target. DEDUCE the company name intelligently and place it in HackerOne Program.
+## Likelihood:
+Medium
+
+## Impact:
+Explanation of the impact (sensitive data extraction, session hijacking).
+
+## Remediation Guidance:
+Configure the server to only trust allowed origins. Do not use a wildcard or dynamically reflect the Origin header when credentials are permitted.
+
+CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL]) using the evidence data and the provided Target.
 
 Raw evidence:
 {EVIDENCIA_CRUDA}""",
@@ -203,19 +228,27 @@ The actual impact is that it provides attackers with a complete map of the API's
 
 Use the following MANDATORY STRUCTURE:
 ## Title: Information Disclosure: Exposed OpenAPI/Swagger Specification in [Insert URL]
-## HackerOne Program: [Deduce the company name based on the Target]
-## Severity: Low (Estimated CVSS v3.1: 3.1)
-## Description:
-Explain that the OpenAPI specification file is publicly accessible. This file reveals the entire API schema.
-## Steps to Reproduce:
+
+## Summary:
+Information Disclosure: Exposed OpenAPI/Swagger Specification in [Insert URL]. The file reveals the entire API schema, including endpoints and parameters.
+
+## Steps To Reproduce:
 1. Navigate to the following URL in a browser or use curl: [Insert URL]
 2. Observe that the full API documentation/schema is returned without authentication.
-## Impact:
-Explain that while this does not directly expose user data, it acts as a roadmap for attackers, revealing hidden endpoints, parameter names (like "secret", "token", "password" schemas), and API structures, significantly lowering the barrier for discovering more critical vulnerabilities like Broken Object Level Authorization (IDOR) or Mass Assignment.
-## Evidence / PoC:
+
+## Supporting Material/References:
 ```text
 {EVIDENCIA_CRUDA}
 ```
+
+## Likelihood:
+High
+
+## Impact:
+While this does not directly expose user data, it acts as a roadmap for attackers, revealing hidden endpoints, parameter names (like "secret", "token", "password" schemas), and API structures, significantly lowering the barrier for discovering more critical vulnerabilities like Broken Object Level Authorization (IDOR) or Mass Assignment.
+
+## Remediation Guidance:
+Restrict access to the OpenAPI specification file. If it is intended for internal use, block public access or require authentication.
 
 CRITICAL INSTRUCTION: Automatically replace all placeholders using the evidence data and the provided Target. 
 

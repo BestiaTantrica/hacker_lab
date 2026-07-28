@@ -16,31 +16,27 @@ Al abrirse la pestaña de HackerOne:
 
 ### B. Weakness (Debilidad / CWE)
 - Usa el buscador **"Select the type of the potential issue"**.
-- Si es un Subdomain Takeover y no aparece, busca y selecciona:
-  - `Improper Access Control - Generic (CWE-284)`
-  - o `Security Misconfiguration`
+- Busca la debilidad correspondiente (ej. `Information Disclosure` para archivos OpenAPI, o `Improper Access Control` para Takeovers).
 - *Nota:* Los analistas corrigen esta categoría durante el triaje, por lo que una aproximación razonable es suficiente.
 
 ### C. Severity (Gravedad)
-- Selecciona la opción **"Submit report with severity"**.
-- En la calculadora CVSS o selector rápido, elige la criticidad acorde (ej. **High** para Subdomain Takeovers).
-- Si la calculadora CVSS es muy compleja, simplemente selecciona "Submit report without severity" y deja que el equipo interno lo calcule.
+- Selecciona la opción **"Submit report with severity"** (si aplica y la conoces) o **"Submit report without severity"** (recomendado para Information Disclosure, dejando que el equipo interno lo calcule).
 
-### D. Título y Descripción (Proof of Concept)
-- **Title:** Copia el título generado por la IA (ej. `Subdomain Takeover on dev-staging.shopify.com via Unclaimed AWS S3 Bucket`) y pégalo en el recuadro pequeño **"Title *"**.
+### D. Título y Descripción
+- **Title:** El portapapeles pegará el reporte completo. **Corta** la primera línea que dice `## Title: ...` y pégala en el recuadro pequeño **"Title *"**.
 - **Description:** 
   1. Haz clic en la caja grande blanca.
-  2. Presiona `Ctrl + V` para pegar el reporte completo de la IA.
+  2. El resto del reporte ya debería estar pegado ahí, estructurado perfectamente con los bloques `## Summary:`, `## Steps To Reproduce:`, `## Supporting Material/References:`, `## Likelihood:`, `## Impact:`, y `## Remediation Guidance:`.
   3. **¡MUY IMPORTANTE! Limpieza:**
-     - Si aparece texto basura al principio (ej. `## Summary: [add sum##`), **bórralo**. El reporte debe empezar limpio.
-     - Ve al fondo de la caja de descripción y **borra TODA la plantilla predeterminada de la empresa** (ej. "Shops Used to Test", "Relevant Request IDs"). Tu reporte debe terminar exactamente donde termina nuestra sección de "Evidence / PoC".
+     - El reporte generado por el C2 Panel incluye TODAS las secciones recomendadas. **Esto sobrescribe cualquier plantilla predeterminada de la empresa**, asegurando que entregamos la información más completa posible (Over-Delivered).
+     - Si la empresa tenía una plantilla por defecto en la caja (ej. "Shops Used to Test"), **bórrala**. Tu reporte debe ser el único texto en la caja.
 
-### E. Impact (Impacto)
-- Algunas empresas tienen una caja separada al final obligatoria llamada **"Impact *"**.
-- Si existe, corta el texto debajo de nuestro título `## Impact:` en la descripción principal y pégalo allí.
+### E. Falsos Positivos de la Interfaz
+- A veces, HackerOne lee la evidencia (ej. `x-frame-options: SAMEORIGIN`) y lanza advertencias amarillas: *"Parece que estás a punto de enviar un informe de clickjacking..."*.
+- **Ignóralas con confianza.** Marca la casilla *"Entiendo que enviar este informe podría afectar mis puntos de reputación"* y continúa. Es un robot básico leyendo logs; los analistas humanos leerán tu excelente `## Summary`.
 
 ### F. Evidencias Adjuntas (Imágenes/Videos)
-- **Vulnerabilidades de Infraestructura (Takeovers, CORS, S3 Leaks):** No se requieren imágenes. El texto con los comandos (`curl`, `dig`) es superior y más rápido para el analista.
+- **Vulnerabilidades de Infraestructura (Takeovers, CORS, S3 Leaks, OpenAPI):** No se requieren imágenes. El bloque de código con los comandos HTTP reales (inyectado desde OCI-1) es la prueba de oro definitiva.
 - **Vulnerabilidades Lógicas/Web (XSS, IDOR):** Sí requieren videos o capturas para demostrar el impacto visual. (Se automatizará en el futuro).
 
 ## 3. Advertencias de la Plataforma

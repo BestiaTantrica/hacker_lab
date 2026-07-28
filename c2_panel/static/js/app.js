@@ -400,7 +400,37 @@ async function verificarBugEnVivo() {
         
         const data = await res.json();
         if (data.status === 'success') {
-            agregarMensajePegaso(`<strong>Evidencia Forense Capturada (HackerOne PoC):</strong><br><pre style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: 12px; margin-top: 8px; white-space: pre-wrap; font-family: monospace; max-height: 400px; overflow-y: auto;">${data.data}</pre><br><em>💡 Puedes copiar y pegar este bloque directamente en tu reporte de HackerOne como evidencia técnica.</em>`);
+            let infoMsg = `<strong>Evidencia Forense Capturada (HackerOne PoC):</strong><br><pre style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: 12px; margin-top: 8px; white-space: pre-wrap; font-family: monospace; max-height: 400px; overflow-y: auto;">${data.data}</pre>`;
+            
+            const area = document.getElementById('prompt-result-output');
+            if (area && area.value) {
+                let currentText = area.value;
+                const marker = "## Supporting Material/References:\n```text\n";
+                const endMarker = "\n```";
+                
+                let markerIndex = currentText.indexOf(marker);
+                if (markerIndex !== -1) {
+                    let textBefore = currentText.substring(0, markerIndex + marker.length);
+                    let rest = currentText.substring(markerIndex + marker.length);
+                    let endMarkerIndex = rest.indexOf(endMarker);
+                    
+                    if (endMarkerIndex !== -1) {
+                        let textAfter = rest.substring(endMarkerIndex);
+                        area.value = textBefore + data.data + textAfter;
+                        infoMsg += `<br><strong style="color: #10B981;">✅ Evidencia inyectada automáticamente en el reporte (se reemplazó el JSON viejo).</strong>`;
+                    } else {
+                        area.value += "\n\n## Supporting Material/References:\n```text\n" + data.data + "\n```";
+                        infoMsg += `<br><strong style="color: #10B981;">✅ Evidencia añadida al final del reporte.</strong>`;
+                    }
+                } else {
+                    area.value += "\n\n## Supporting Material/References:\n```text\n" + data.data + "\n```";
+                    infoMsg += `<br><strong style="color: #10B981;">✅ Evidencia añadida al final del reporte.</strong>`;
+                }
+            } else {
+                infoMsg += `<br><em>💡 Puedes copiar y pegar este bloque directamente en tu reporte de HackerOne como evidencia técnica.</em>`;
+            }
+            
+            agregarMensajePegaso(infoMsg);
         } else {
             agregarMensajePegaso(`<strong>Error en Verificación (OCI-1):</strong><br><span style="color: red;">${data.data}</span>`);
         }
