@@ -560,7 +560,6 @@ async function archivarHallazgoActual() {
     }
 }
 
-// ACTUALIZACIÓN DE ESTADO / RECOMPENSA DESDE EL HISTORIAL
 async function actualizarEstadoH1(findingId, currentStatus, currentReportId, currentBounty) {
     const reportId = prompt("Número de Reporte en HackerOne:", currentReportId || "");
     if (reportId === null) return;
@@ -571,7 +570,18 @@ async function actualizarEstadoH1(findingId, currentStatus, currentReportId, cur
     const bounty = prompt("Monto cobrado en USD (ingresar 0 si aún no fue pagado o fue duplicado):", currentBounty || "");
     if (bounty === null) return;
 
+    // AUTO-TAXONOMIA: Decidir a qué pestaña debe ir según el estado de H1
+    let autoInternalStatus = null;
+    const finalStatus = newStatus.trim().toLowerCase();
+    
+    if (["informative", "duplicate", "n/a", "not applicable", "spam", "cerrado"].includes(finalStatus)) {
+        autoInternalStatus = 'FalsoPositivo'; // Mover a Descartados
+    } else if (["submitted", "triaged", "resolved", "bounty paid", "new"].includes(finalStatus)) {
+        autoInternalStatus = 'Enviado'; // Mover a Enviados (H1)
+    }
+
     try {
+        // 1. Actualizar datos de H1
         const res = await fetch(`/api/findings/${findingId}/update_status`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -581,11 +591,28 @@ async function actualizarEstadoH1(findingId, currentStatus, currentReportId, cur
                 bounty_paid: bounty.trim()
             })
         });
-
         const data = await res.json();
+        
         if (data.status === 'success') {
-            alert(`✅ Estado del reporte #${findingId} actualizado a '${newStatus}'.`);
-            cargarHallazgos();
+            // 2. Si hay que moverlo de pestaña, actualizamos el status interno
+            if (autoInternalStatus) {
+                await fetch(`/api/findings/${findingId}/internal_status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status_interno: autoInternalStatus })
+                });
+                
+                // Mover al usuario a la pestaña correcta automáticamente
+                const tabBtn = document.getElementById(`tab-findings-${autoInternalStatus}`);
+                if (tabBtn) {
+                    cambiarTabFindings(autoInternalStatus, tabBtn);
+                } else {
+                    cargarHallazgos();
+                }
+            } else {
+                alert(`✅ Estado del reporte #${findingId} actualizado a '${newStatus}'.`);
+                cargarHallazgos();
+            }
         } else {
             alert(`❌ Error: ${data.message}`);
         }
