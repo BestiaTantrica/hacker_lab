@@ -681,7 +681,7 @@ def verify_bug(req: VerifyRequest):
             extra_headers_cmd = "-H 'Origin: https://evil.tomas244.com' "
             extra_headers_display = "Origin: https://evil.tomas244.com\n"
             
-        cmd = f"curl -s -i -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' {extra_headers_cmd}'{req.url}' | head -c 2500"
+        cmd = f"curl -s -i -L -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' {extra_headers_cmd}'{req.url}' | head -c 2500"
         stdin, stdout, stderr = client.exec_command(cmd)
         output = stdout.read().decode(errors='ignore').strip()
         client.close()
