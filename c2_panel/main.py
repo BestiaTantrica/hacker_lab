@@ -572,6 +572,27 @@ def generate_copilot_prompt(req: GenerateReportRequest):
         
     try:
         respuesta = completar(prompt, max_tokens=1500, temperature=0.1)
+        
+        # POST-PROCESAMIENTO DETERMINÍSTICO: 
+        # La IA a veces reescribe ## Supporting Material/References: con texto propio.
+        # Forzamos que SIEMPRE contenga el bloque de evidencia cruda en formato predecible
+        # para que el botón de "Prueba Forense" pueda encontrar el marcador y reemplazarlo.
+        if req.skill_key != "traductor_espanol" and req.evidence:
+            import re
+            # Eliminar TODAS las secciones Supporting Material que haya generado la IA
+            respuesta = re.sub(
+                r'\n*## Supporting Material/References:.*?(?=\n## |\Z)',
+                '',
+                respuesta,
+                flags=re.DOTALL
+            ).rstrip()
+            # Insertar la sección limpia antes de ## Likelihood: si existe, o al final
+            clean_block = f"\n\n## Supporting Material/References:\n```text\n{req.evidence}\n```"
+            if '## Likelihood:' in respuesta:
+                respuesta = respuesta.replace('## Likelihood:', clean_block + '\n\n## Likelihood:', 1)
+            else:
+                respuesta = respuesta + clean_block
+
         return {"status": "success", "result": respuesta, "prompt_used": prompt}
     except Exception as e:
         return {"status": "error", "message": str(e)}
