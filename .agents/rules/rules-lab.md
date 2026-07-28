@@ -18,6 +18,7 @@ trigger: always_on
 2. **[MASTER_PROJECT.md](file:///home/tomas2/WORKSPACE/LAB/MASTER_PROJECT.md):** Fuente Única de Verdad (Single Source of Truth), estado maestro global y filosofía del laboratorio.
 3. **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado de la "Red de Pesca" automatizada en OCI-1 (SQLite WAL, mass_recon, comparador, cron jobs).
 4. **[ESTADO_OPERATIVO_OCI2.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI2.md):** Estado de la Consola C2 y Copilot Hub en OCI-2 (FastAPI, `c2_db.sqlite`, Skills de IA, Ingesta Telemetría).
+5. **[HACKERONE_MANUAL_CHEATSHEET.md](file:///home/tomas2/WORKSPACE/LAB/HACKERONE_MANUAL_CHEATSHEET.md):** (Obligatorio SOLO en fase de Reportería). Plantilla estandarizada "Over-Delivered" e instrucciones de mitigación de falsos positivos en el formulario.
 
 ---
 
@@ -68,3 +69,9 @@ Para maximizar la productividad y no agotar las cuotas de tokens, el trabajo se 
 - **PROHIBICIÓN STRICTA:** Queda estrictamente prohibido referirse a hallazgos reales como "datos de prueba", o inyectar registros mock ficticios (`sub1.target-domain.com`, etc.) en la base de datos `c2_db.sqlite`.
 - **REPORTES DE HACKERONE:** Todos los reportes generados y vinculados al Panel C2 se tratan como **reportes reales de producción** asociados a números de reporte verificados de HackerOne.
 
+---
+
+## ⚙️ 7. REGLAS DE ARQUITECTURA C2 Y SINCRONIZACIÓN OCI-2
+- **INYECCIÓN AUTOMÁTICA H1:** El Panel C2 está configurado para inyectar automáticamente la evidencia forense en vivo dentro del bloque `## Supporting Material/References:` y generar los reportes con la plantilla estandarizada "Over-Delivered". Queda **PROHIBIDO** alterar los prompts en `main.py` para usar formatos personalizados por empresa, a menos que el usuario lo ordene explícitamente.
+- **DESPLIEGUE CONTINUO OBLIGATORIO:** Si el agente modifica CUALQUIER archivo del backend o frontend del C2 (`main.py`, `app.js`, HTML), **DEBE** sincronizar los cambios de inmediato con OCI-2 (`143.47.115.34`) utilizando `scp` para no romper la experiencia en vivo del usuario.
+- **REINICIO DE UVICORN:** Después de usar `scp` para mover `main.py`, el agente **DEBE** ejecutar un comando SSH para reiniciar la API remota: `ssh -i llave_oci ubuntu@143.47.115.34 "pkill -f uvicorn; sleep 3; cd /home/ubuntu/c2_panel && nohup ./venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &"`
