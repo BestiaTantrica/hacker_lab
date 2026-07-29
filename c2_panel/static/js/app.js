@@ -132,11 +132,11 @@ async function cargarHallazgos() {
 
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">
-                        <h4 style="margin: 0; color: #fff; font-size: 12px;">${f.vuln_type} ${h1Badge}</h4>
-                        <span style="font-size: 10px; background: ${severityCol}; padding: 2px 6px; border-radius: 3px; color: #fff;">ESTIMADO: ${displayBounty}</span>
+                        <h4 style="margin: 0; color: #fff; font-size: 13px;">${f.vuln_type} ${h1Badge}</h4>
+                        <span style="font-size: 10px; color: ${severityCol}; font-weight: bold;">ESTIMADO: ${displayBounty}</span>
                     </div>
-                    <p style="font-size: 11px; color: #aaa; margin: 6px 0;" onclick="abrirAreaDeTrabajoFromCard(${f.id})"><strong>Target:</strong> ${f.target}</p>
-                    <pre style="font-size: 10px; background: #000; color: #a9ff68; padding: 6px; border-radius: 3px; max-height: 80px; overflow-y: auto;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">${f.evidence}</pre>
+                    <p style="font-size: 12px; color: #e2e8f0; margin: 6px 0;" onclick="abrirAreaDeTrabajoFromCard(${f.id})"><strong>Target:</strong> <span style="color: #93c5fd;">${f.target}</span></p>
+                    <pre style="font-size: 11px; background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 8px; border-radius: 4px; max-height: 80px; overflow-y: auto;" onclick="abrirAreaDeTrabajoFromCard(${f.id})">${f.evidence}</pre>
                 `;
 
                 if (current_tab === 'Pendiente') {
