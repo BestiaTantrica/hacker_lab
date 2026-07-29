@@ -17,10 +17,11 @@ import argparse
 from datetime import datetime, timezone
 
 parser = argparse.ArgumentParser(description="Generador de deltas por zona desde SQLite")
-parser.add_argument("--zone", choices=["americas", "emea", "asia", "all"], default="all",
-                    help="Zona geográfica a comparar (default: all)")
+parser.add_argument("--zone", default="all",
+                    help="Zona geográfica a comparar (ej: americas_1, emea_2, all)")
 args, _ = parser.parse_known_args()
-ZONA = args.zone
+ZONA_ARG = args.zone
+ZONA = ZONA_ARG.split('_')[0] if ZONA_ARG != "all" else "all"
 
 BASE_DIR = os.path.expanduser("~/plataforma_operativa")
 if not os.path.exists(BASE_DIR):

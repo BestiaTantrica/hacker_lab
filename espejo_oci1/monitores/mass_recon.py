@@ -37,13 +37,7 @@ CONFIG_DIR = os.path.join(BASE_DIR, "config")
 RESULT_DIR = os.path.join(BASE_DIR, "resultados")
 LOG_DIR    = os.path.join(BASE_DIR, "logs")
 
-# Mapeo de zonas horarias a archivos de objetivos
-ZONE_FILES = {
-    "americas": os.path.join(CONFIG_DIR, "objetivos_americas.txt"),
-    "emea":     os.path.join(CONFIG_DIR, "objetivos_emea.txt"),
-    "asia":     os.path.join(CONFIG_DIR, "objetivos_asia.txt"),
-    "all":      os.path.join(CONFIG_DIR, "objetivos.txt"),  # Legado
-}
+# Los archivos se resuelven dinámicamente: objetivos_{zone}.txt
 
 RESULTADO_FILE = os.path.join(RESULT_DIR, "actual.json")
 LOG_FILE       = os.path.join(LOG_DIR, "mass_recon.log")
@@ -234,15 +228,19 @@ def descubrir_dominio(dominio: str) -> list[str]:
 
 def main():
     parser = argparse.ArgumentParser(description="Mass Recon — Red de Pesca Fase 2 (SQLite Backend)")
-    parser.add_argument("--zone", choices=["americas", "emea", "asia", "all"], default="all",
-                        help="Zona geográfica a escanear (default: all)")
+    parser.add_argument("--zone", default="all",
+                        help="Zona geográfica a escanear (ej: americas_1, emea_2, all)")
     args = parser.parse_args()
 
     log.info("=" * 70)
     log.info(f"🌐 INICIANDO MASS_RECON (FASE 2 RED DE PESCA) — ZONA: {args.zone.upper()} 🌐")
 
-    objetivos_file = ZONE_FILES.get(args.zone)
-    if not objetivos_file or not os.path.isfile(objetivos_file):
+    if args.zone == "all":
+        objetivos_file = os.path.join(CONFIG_DIR, "objetivos.txt")
+    else:
+        objetivos_file = os.path.join(CONFIG_DIR, f"objetivos_{args.zone}.txt")
+
+    if not os.path.isfile(objetivos_file):
         log.error(f"Falta archivo de objetivos para zona '{args.zone}': {objetivos_file}")
         sys.exit(1)
 
@@ -268,8 +266,9 @@ def main():
         # Obtener los subdominios
         subdominios = descubrir_dominio(dominio)
         
-        # Preparamos el batch para insertar
-        batch_insert = [(sub, dominio, args.zone) for sub in subdominios]
+        # Extraer base zone (americas_1 -> americas) para DB
+        base_zone = args.zone.split('_')[0] if args.zone != "all" else "all"
+        batch_insert = [(sub, dominio, base_zone) for sub in subdominios]
         
         if batch_insert:
             # Contamos cuántos existían ANTES de insertar para calcular delta real.
