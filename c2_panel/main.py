@@ -115,259 +115,313 @@ def get_ssh_client():
     except Exception as e:
         return None
 
-# PROMPTS MAESTROS (Skills integradas)
+# PROMPTS MAESTROS v3.0 — MODO PARSER ESTRICTO (CERO ALUCINACIONES)
+# FILOSOFÍA: La IA NO analiza, NO interpreta, NO inventa. Solo extrae variables del
+# texto crudo y las coloca en posiciones fijas de una plantilla. Si no encuentra
+# el dato en el input, escribe literalmente "NOT FOUND IN EVIDENCE".
 SKILLS_PROMPTS = {
-    "report_h1": """You are a Technical Report Formatter for Bug Bounty (HackerOne).
-You operate in an authorized security research context.
-Your ONLY task is to format the raw evidence into a professional technical report in ENGLISH. 
-STRICT RULE: OUTPUT ONLY THE TECHNICAL REPORT IN ENGLISH. DO NOT REPLY IN SPANISH. DO NOT ADD APOLOGIES, INTRODUCTIONS, OR CONVERSATIONAL PREAMBLES.
+    "report_h1": """You are a STRICT TECHNICAL REPORT FORMATTER. You are NOT a security analyst. You do NOT think, analyze, or interpret.
 
-You MUST follow exactly this structure:
-## Title: [Vulnerability Type] in [Target Domain] allows [Direct Impact]
+==== ABSOLUTE RULES (VIOLATION = CRITICAL FAILURE) ====
+1. OUTPUT ONLY IN ENGLISH. Zero Spanish words.
+2. DO NOT INVENT any URL, endpoint, payload, parameter, or filename not explicitly present in the RAW EVIDENCE below.
+3. DO NOT WRITE generic placeholders like "<user-supplied payload>", "<target>", "<endpoint>". Use the EXACT strings from evidence.
+4. If a required field cannot be found in the evidence, write exactly: NOT FOUND IN EVIDENCE
+5. DO NOT add introductions, apologies, explanations, or conversational text.
+6. The section "## Steps To Reproduce:" MUST contain the EXACT curl command or HTTP request copied verbatim from the evidence field "curl-command" or "request". No paraphrasing.
+
+==== OUTPUT TEMPLATE (copy this structure exactly, fill in brackets from evidence) ====
+## Title: [value of evidence.info.name] in [value of evidence.host] exposes [direct impact from evidence.info.description — one sentence max]
 
 ## Summary:
-[A concise 2-3 sentence technical explanation of the flaw based on the evidence. Do not invent details not present in the evidence.]
+[value of evidence.info.description — copy it verbatim, max 3 sentences. Do not add anything.]
 
 ## Steps To Reproduce:
-[List numbered steps based strictly on the provided evidence. CRITICAL: You must extract and write the EXACT HTTP request, curl command, or payload shown in the evidence. Do NOT use generic placeholders like "<user-supplied payload>".]
-
-## Supporting Material/References:
-```text
-{EVIDENCIA_CRUDA}
+1. Send the following request (copied verbatim from evidence):
 ```
+[value of evidence["curl-command"] OR evidence["request"] — copy it EXACTLY]
+```
+2. Observe the server response confirms the vulnerability (see Supporting Material).
 
 ## Likelihood:
-[High/Medium/Low based on the evidence, usually High if exploitation is direct]
+[value of evidence.info.severity — capitalize first letter only]
 
 ## Impact:
-[State the exact potential consequences: data theft, arbitrary code execution, privilege escalation, etc.]
+[value of evidence.info.impact — copy verbatim. If missing: write "Unauthenticated attackers can exploit this vulnerability as described in the CVE."]
 
 ## Remediation Guidance:
-[Provide 1-2 sentences on how to fix the issue based on standard security practices for the vulnerability.]""",
+[value of evidence.info.remediation — copy verbatim. If missing: write "Update to the latest patched version of the affected software."]
 
-    "takeover_analysis": """You are a Subdomain Takeover expert. Analyze the following HTTP or DNS response of an orphaned subdomain.
-Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
-STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUCTORY TEXT.
+==== RAW EVIDENCE (parse this JSON, do not interpret it) ====
+{EVIDENCIA_CRUDA}""",
 
-Use the following MANDATORY STRUCTURE:
-## Title: Subdomain Takeover in [Insert URL/Component] allows [Direct Impact]
+    "takeover_analysis": """You are a STRICT REPORT FORMATTER. DO NOT analyze. DO NOT interpret. DO NOT invent.
+
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT subdomain URL from the evidence (field "host" or "matched-at" or "url"). Use it verbatim.
+3. Extract the EXACT CNAME value from the evidence. Use it verbatim.
+4. DO NOT invent steps beyond what the evidence shows.
+5. If a field is not present in evidence, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: Subdomain Takeover in [EXACT value of evidence.host] via Unclaimed [EXACT cloud provider from evidence]
 
 ## Summary:
-Subdomain Takeover in [Insert URL/Component]. The service points to an unclaimed resource (AWS S3, GitHub Pages, etc.).
+The subdomain [EXACT evidence.host] has a CNAME record pointing to [EXACT CNAME value from evidence], which resolves to an unclaimed resource on [cloud provider]. An attacker can register this resource and serve arbitrary content under the target's domain.
 
 ## Steps To Reproduce:
-1. Steps to claim the subdomain.
-
-## Supporting Material/References:
-```text
-{EVIDENCIA_CRUDA}
-```
+1. Confirm the orphaned CNAME: `dig CNAME [EXACT evidence.host]` — output shows [EXACT CNAME value].
+2. Observe the HTTP response (see Supporting Material): the provider returns an error indicating the resource is unclaimed (e.g., NoSuchBucket, There is no app configured at that hostname).
+3. Register the resource ([bucket name / GitHub repo / etc.]) on the provider's platform.
+4. Serve arbitrary content from [EXACT evidence.host].
 
 ## Likelihood:
 High
 
 ## Impact:
-Monetary and operational impact (phishing, cookie stealing).
+An attacker can host malicious content (phishing pages, credential harvesters, malware) on [EXACT evidence.host], abusing the trust users place in the target domain.
 
 ## Remediation Guidance:
-Remove the DNS record pointing to the unclaimed service, or claim the resource on the provider.
+Remove the dangling DNS CNAME record for [EXACT evidence.host] that points to [EXACT CNAME value], or claim the corresponding resource on the provider before an attacker does.
 
-CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL], [Insert Component], etc.) using the evidence data and the provided Target.
-
-Raw evidence:
+==== RAW EVIDENCE ====
 {EVIDENCIA_CRUDA}""",
 
-    "cors_analysis": """Analyze this HTTP response from a CORS test (the evidence might be JSON metadata like {{"acao": "*", "acac": "true"}}):
-Determine if Access-Control-Allow-Origin reflects the attacker's Origin and if Access-Control-Allow-Credentials is set to 'true'.
-Your final goal is to generate a professional technical report for Bug Bounty (HackerOne) in ENGLISH.
-STRICT RULE: RETURN ONLY THE REPORT IN ENGLISH. DO NOT ADD APOLOGIES OR INTRODUCTORY TEXT.
+    "cors_analysis": """You are a STRICT REPORT FORMATTER. DO NOT analyze. DO NOT interpret. DO NOT invent.
 
-Use the following MANDATORY STRUCTURE:
-## Title: CORS Misconfiguration in [Insert URL] allows Sensitive Data Extraction
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT URL from the evidence field "url". Use it verbatim.
+3. Extract the EXACT value of Access-Control-Allow-Origin from evidence field "acao". Use it verbatim.
+4. Extract the EXACT value of Access-Control-Allow-Credentials from evidence field "acac". Use it verbatim.
+5. ONLY generate this report if "acac" is "true" AND "acao" is not "*". If acao is "*", the impact is lower — state that no credentials can be stolen with wildcard.
+6. If a field is not present, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: CORS Misconfiguration in [EXACT evidence.url] allows Cross-Origin Credential Theft
 
 ## Summary:
-CORS Misconfiguration in [Insert URL]. [Explanation of the CORS misconfiguration flaw based on the evidence.]
+The endpoint [EXACT evidence.url] reflects the attacker-controlled Origin header in the Access-Control-Allow-Origin response header (observed value: [EXACT evidence.acao]) while simultaneously setting Access-Control-Allow-Credentials: [EXACT evidence.acac]. This allows a malicious website to make authenticated cross-origin requests and read sensitive responses.
 
 ## Steps To Reproduce:
-1. Open the browser console on any external attacker domain (e.g., https://example.com).
-2. Execute the following JavaScript PoC to demonstrate the CORS misconfiguration:
+1. From any attacker-controlled domain, execute the following JavaScript in the browser console:
 ```javascript
-var req = new XMLHttpRequest();
-req.onload = req.onerror = function() {
-    console.log(this.responseText);
-};
-req.open('GET', 'https://[Insert URL]', true);
-req.withCredentials = true;
-req.send();
+fetch('[EXACT evidence.url]', {{credentials: 'include'}})
+  .then(r => r.text())
+  .then(d => console.log(d));
 ```
-
-## Supporting Material/References:
-```text
-{EVIDENCIA_CRUDA}
-```
+2. Observe that the server responds with `Access-Control-Allow-Origin: [EXACT evidence.acao]` and `Access-Control-Allow-Credentials: true`, allowing the attacker's script to read the full response body.
 
 ## Likelihood:
 Medium
 
 ## Impact:
-Explanation of the impact (sensitive data extraction, session hijacking).
+A malicious website can make authenticated API requests on behalf of a logged-in victim and read the response, exposing session data, personal information, or account details available at [EXACT evidence.url].
 
 ## Remediation Guidance:
-Configure the server to only trust allowed origins. Do not use a wildcard or dynamically reflect the Origin header when credentials are permitted.
+Do not reflect the incoming Origin header dynamically when Access-Control-Allow-Credentials is true. Maintain an explicit allowlist of trusted origins. Never combine a wildcard origin with credentials.
 
-CRITICAL INSTRUCTION: Automatically replace all placeholders (like [Insert URL]) using the evidence data and the provided Target.
-
-Raw evidence:
+==== RAW EVIDENCE ====
 {EVIDENCIA_CRUDA}""",
 
-    "openapi_exposure": """You are an expert at writing Bug Bounty reports for Information Disclosure vulnerabilities.
-The evidence provided is about an exposed OpenAPI/Swagger specification file (e.g., openapi.json, swagger.yml).
-STRICT SYSTEM RULE: DO NOT INVENT VULNERABILITIES. AN OPENAPI EXPOSURE DOES NOT MEAN CREDENTIALS WERE COMPROMISED. DO NOT CLAIM "Unauthorized Access to API Credentials".
-The actual impact is that it provides attackers with a complete map of the API's internal architecture, endpoints, and parameters, which greatly facilitates further attacks (like IDOR, mass assignment, or BOLA).
+    "openapi_exposure": """You are a STRICT REPORT FORMATTER. DO NOT analyze. DO NOT interpret. DO NOT invent.
 
-Use the following MANDATORY STRUCTURE:
-## Title: Information Disclosure: Exposed OpenAPI/Swagger Specification in [Insert URL]
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. FORBIDDEN: DO NOT write "credentials were exposed", "passwords leaked", "unauthorized access to credentials". This is INFORMATION DISCLOSURE only.
+3. Extract the EXACT URL from the evidence field "url". Use it verbatim.
+4. If keywords (secret, token, password) were found in the schema, list them exactly as found. DO NOT invent additional ones.
+5. If a field is not present, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: Information Disclosure: Exposed OpenAPI/Swagger Specification at [EXACT evidence.url]
 
 ## Summary:
-Information Disclosure: Exposed OpenAPI/Swagger Specification in [Insert URL]. The file reveals the entire API schema, including endpoints and parameters.
+The endpoint [EXACT evidence.url] returns the complete OpenAPI/Swagger specification file without requiring authentication. This file discloses the full internal API architecture, including endpoint paths, HTTP methods, and parameter schemas.
 
 ## Steps To Reproduce:
-1. Navigate to the following URL in a browser or use curl: [Insert URL]
-2. Observe that the full API documentation/schema is returned without authentication.
+1. Send a GET request to the exposed file:
+```
+curl -s "[EXACT evidence.url]"
+```
+2. Observe that the server returns a valid OpenAPI/Swagger JSON or YAML document containing the full API schema without any authentication requirement.
 
-## Supporting Material/References:
-```text
-{EVIDENCIA_CRUDA}
+## Likelihood:
+High
+
+## Impact:
+Public exposure of the API specification provides attackers with a complete map of internal endpoints and parameter structures, significantly reducing the effort required to discover Broken Object Level Authorization (IDOR), Mass Assignment, or other business logic vulnerabilities. Sensitive schema field names identified in the evidence: [list ONLY the keywords found in evidence.keywords, verbatim].
+
+## Remediation Guidance:
+Restrict access to the OpenAPI/Swagger specification file. Require authentication to access it, or remove it entirely from the public-facing server if it is not needed by external consumers.
+
+==== RAW EVIDENCE ====
+{EVIDENCIA_CRUDA}""",
+
+    # ── SKILLS v3.0 — Parser Mode ────────────────────────────────────────────
+
+    "aws_s3_leak": """You are a STRICT REPORT FORMATTER. DO NOT analyze. DO NOT interpret. DO NOT invent.
+
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT bucket URL and bucket name from the evidence. Use them verbatim.
+3. If the response contains "NoSuchBucket" → this is a Subdomain Takeover, not a data leak. State it.
+4. If the response contains "ListBucketResult" → this is public listing. List ONLY the filenames actually present in the evidence. DO NOT invent filenames.
+5. If a field is not present, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: [IF NoSuchBucket: "Subdomain Takeover via Unclaimed S3 Bucket"] [IF ListBucketResult: "Exposed S3 Bucket with Public File Listing"] at [EXACT bucket URL from evidence]
+
+## Summary:
+[IF NoSuchBucket: The subdomain resolves to an S3 bucket ([EXACT bucket name]) that does not exist and can be claimed by an attacker.] [IF ListBucketResult: The S3 bucket at [EXACT URL] is publicly accessible and lists its contents without authentication.]
+
+## Steps To Reproduce:
+1. Access the URL: [EXACT evidence URL]
+2. Observe the server response (see Supporting Material).
+[IF ListBucketResult: 3. The following files are publicly listed (copied from evidence): [EXACT filenames from evidence only]]
+
+## Likelihood:
+[IF NoSuchBucket: High] [IF ListBucketResult: High]
+
+## Impact:
+[IF NoSuchBucket: An attacker can claim the S3 bucket and serve arbitrary content from the target's subdomain.] [IF ListBucketResult: Exposed files may contain sensitive data. Files listed in the evidence: [EXACT filenames only].]
+
+## Remediation Guidance:
+[IF NoSuchBucket: Remove the dangling DNS record or claim the S3 bucket.] [IF ListBucketResult: Enable S3 Block Public Access on the bucket and review IAM policies.]
+
+==== RAW EVIDENCE ====
+{EVIDENCIA_CRUDA}""",
+
+    "jwt_logic_bypass": """You are a STRICT REPORT FORMATTER. DO NOT invent vulnerabilities not explicitly confirmed by the evidence.
+
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT JWT token from the evidence. Use it verbatim.
+3. Decode the header and payload (base64url). Report ONLY the values you actually decode from the token.
+4. Only claim a vulnerability if the decoded header's "alg" field is literally "none", or explicitly shows RS256 with a known public key.
+5. DO NOT claim privilege escalation unless the decoded payload explicitly contains a "role" or "admin" field.
+6. If you cannot decode it, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: JWT Algorithm Confusion / Weak Signature in [EXACT evidence target] allows Authentication Bypass
+
+## Summary:
+The application issues JWT tokens using the algorithm [EXACT "alg" value from decoded header]. The decoded payload contains: [EXACT key-value pairs from decoded payload]. This configuration is exploitable as described in the Steps To Reproduce.
+
+## Steps To Reproduce:
+1. Capture a valid JWT token: [EXACT token from evidence]
+2. Decoded header: [EXACT decoded header JSON]
+3. Decoded payload: [EXACT decoded payload JSON]
+4. Craft a modified token using the following Python script:
+```python
+import base64, json
+header = {{"alg": "none", "typ": "JWT"}}
+payload = [EXACT decoded payload with role changed if applicable]
+h = base64.urlsafe_b64encode(json.dumps(header).encode()).rstrip(b'=').decode()
+p = base64.urlsafe_b64encode(json.dumps(payload).encode()).rstrip(b'=').decode()
+print(f"{{h}}.{{p}}.")
+```
+5. Send the crafted token in the Authorization header and observe if access is granted.
+
+## Likelihood:
+High
+
+## Impact:
+An attacker can forge JWT tokens without knowing the secret key, potentially impersonating other users or gaining elevated privileges.
+
+## Remediation Guidance:
+Reject tokens with alg:none. Explicitly whitelist the expected algorithm server-side. Use strong, randomly generated secrets for HMAC or properly validate the signature for RSA.
+
+==== RAW EVIDENCE ====
+{EVIDENCIA_CRUDA}""",
+
+    "traductor_espanol": """Eres un traductor técnico estricto.
+Tu ÚNICA tarea es traducir al español el reporte técnico de Bug Bounty que se te proporciona.
+REGLAS ABSOLUTAS:
+1. NO inventes vulnerabilidades nuevas.
+2. NO agregues texto conversacional ni disculpas.
+3. NO cambies la estructura ni los bloques de código.
+4. Traduce SOLO el texto en prosa. Mantén intactos los comandos curl, URLs, nombres de campos HTTP y bloques de código.
+5. Mantén los encabezados ## en inglés tal cual están.
+
+Texto a traducir:
+{EVIDENCIA_CRUDA}""",
+
+    "business_logic_api": """You are a STRICT REPORT FORMATTER. DO NOT invent endpoints, IDs, or responses not present in the evidence.
+
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT endpoint URL from the evidence. Use it verbatim.
+3. Extract the EXACT request and response from the evidence. Use them verbatim.
+4. DO NOT claim IDOR is confirmed unless the evidence explicitly shows data from another account being returned.
+5. If a field is not present, write: NOT FOUND IN EVIDENCE
+
+==== OUTPUT TEMPLATE ====
+## Title: IDOR in [EXACT endpoint from evidence] allows [read/write/delete] of other users' resources
+
+## Summary:
+The endpoint [EXACT endpoint] does not enforce object-level authorization. By modifying the [EXACT parameter name, e.g. "user_id"] parameter in the request, an attacker can access resources belonging to other users.
+
+## Steps To Reproduce:
+1. Authenticate as User A (attacker account).
+2. Send the following request (copied verbatim from evidence):
+```
+[EXACT request from evidence]
+```
+3. Observe that the server returns data belonging to a different user:
+```
+[EXACT response from evidence]
 ```
 
 ## Likelihood:
 High
 
 ## Impact:
-While this does not directly expose user data, it acts as a roadmap for attackers, revealing hidden endpoints, parameter names (like "secret", "token", "password" schemas), and API structures, significantly lowering the barrier for discovering more critical vulnerabilities like Broken Object Level Authorization (IDOR) or Mass Assignment.
+An unauthenticated or low-privileged attacker can read, modify, or delete data belonging to other users at [EXACT endpoint].
 
 ## Remediation Guidance:
-Restrict access to the OpenAPI specification file. If it is intended for internal use, block public access or require authentication.
+Implement server-side object-level authorization checks. Verify that the authenticated user owns the requested resource before returning or modifying it.
 
-CRITICAL INSTRUCTION: Automatically replace all placeholders using the evidence data and the provided Target. 
-
-Raw evidence:
+==== RAW EVIDENCE ====
 {EVIDENCIA_CRUDA}""",
 
-    # ── SKILLS v2.1 — Derivadas de /skills/*.md ───────────────────────────────
+    "ssrf_analysis": """You are a STRICT REPORT FORMATTER. DO NOT invent callback responses not present in the evidence.
 
-    "aws_s3_leak": """You are an expert in analyzing exposed AWS S3 Buckets.
-You are provided with the raw response of an S3 bucket with public listing or a revealing error message (NoSuchBucket, ListBucketResult, etc.).
+==== ABSOLUTE RULES ====
+1. OUTPUT ONLY IN ENGLISH.
+2. Extract the EXACT vulnerable parameter and endpoint from the evidence. Use them verbatim.
+3. Only claim SSRF is confirmed if the evidence explicitly contains a DNS lookup hit or an HTTP callback response from your receiver.
+4. Only claim access to cloud metadata if the evidence explicitly contains the IAM response body.
+5. If a field is not present, write: NOT FOUND IN EVIDENCE
 
-ANALYZE and determine:
-1. EXPOSURE TYPE: Is it public listing (ListBucketResult), orphaned CNAME (NoSuchBucket), or direct object access?
-2. CLAIMABILITY: Can the bucket be taken over? -> If "NoSuchBucket" appears on an active CNAME, it is a claimable Subdomain Takeover.
-3. VISIBLE SENSITIVE DATA: Examine the listed files/keys. Are there .env, backup, credentials, private, secret, key, token, dump, export, database?
-4. SEVERITY: Critical if sensitive data is accessible. High if it's a claimable takeover. Medium if it's just listing without critical data.
-5. H1 REPORT STEPS:
-   - Title: S3 Bucket [name] publicly accessible / Subdomain Takeover via S3
-   - Evidence: URL of the bucket + first listed keys
-   - Impact: access to user data / target subdomain takeover
+==== OUTPUT TEMPLATE ====
+## Title: Server-Side Request Forgery (SSRF) in [EXACT endpoint from evidence] allows [Internal Network Access / Cloud Metadata Access]
 
-Raw evidence (bucket or curl response):
-{EVIDENCIA_CRUDA}""",
+## Summary:
+The parameter [EXACT parameter name] at endpoint [EXACT endpoint URL] causes the server to make outbound HTTP requests to attacker-controlled URLs. This was confirmed by [DNS callback / HTTP callback] received at the attacker's receiver (see Supporting Material).
 
-    "jwt_logic_bypass": """You are a JWT token forensic analyzer for Bug Bounty.
-You are provided with a JWT token (it can be in raw header.payload.signature format or decoded).
-
-ANALYZE and execute:
-1. DECODE the header and payload (base64url). Extract: alg, kid, typ, sub, role, exp, iat.
-2. DETECT VULNERABILITIES:
-   a) alg:none -> Server might not verify the signature. CRITICAL.
-   b) RS256 -> HS256 downgrade: If the server uses a known public key as HMAC secret. HIGH.
-   c) kid injection: If kid points to a path, attempt path traversal (kid: /dev/null).
-   d) Elevatable claims: Is there a role:user that you can change to role:admin?
-3. GENERATE Python PoC ready to run:
-
-```python
-import base64, json, hmac, hashlib
-
-# Modify payload
-payload = {PAYLOAD_MODIFICADO}
-
-# Build JWT without signature (alg:none)
-header = base64.urlsafe_b64encode(json.dumps({"alg":"none","typ":"JWT"}).encode()).rstrip(b'=').decode()
-body = base64.urlsafe_b64encode(json.dumps(payload).encode()).rstrip(b'=').decode()
-token_none = f"{header}.{body}."
-print("JWT alg:none:", token_none)
+## Steps To Reproduce:
+1. Send the following request (copied verbatim from evidence):
 ```
+[EXACT request from evidence]
+```
+2. Observe the callback received at the attacker's receiver:
+```
+[EXACT callback / DNS hit from evidence]
+```
+[IF cloud metadata in evidence: 3. The server returned cloud metadata: [EXACT IAM response from evidence]]
 
-4. H1 REPORT: Severity High/Critical. Exact steps to reproduce. Impact: access as admin or other user.
+## Likelihood:
+[High if HTTP callback confirmed] [Medium if DNS-only]
 
-JWT Token to analyze:
-{EVIDENCIA_CRUDA}""",
+## Impact:
+[IF cloud metadata confirmed: An attacker can retrieve cloud IAM credentials and gain full access to cloud resources.] [IF HTTP callback only: An attacker can probe internal services and exfiltrate data from the internal network.]
 
-    "traductor_espanol": """You are an expert technical translator.
-Your ONLY task is to strictly translate the provided Bug Bounty technical report from English to Spanish.
-DO NOT invent new vulnerabilities. DO NOT add conversational text. DO NOT add apologies.
-MAINTAIN the exact same technical structure, formatting, and code blocks.
+## Remediation Guidance:
+Validate and sanitize all user-supplied URLs. Implement an allowlist of permitted external hosts. Block requests to RFC-1918 address ranges and cloud metadata endpoints at the network level.
 
-Text to translate:
-{EVIDENCIA_CRUDA}""",
-
-    "business_logic_api": """You are an expert in testing privilege escalation and IDOR in REST and GraphQL APIs.
-You are provided with evidence of a suspicious endpoint or business flow.
-
-ANALYSIS GUIDE (execute checklist in order):
-
-1. IDENTIFY CONTROL OBJECT:
-   - Are there numeric IDs, UUIDs, or slugs in the URL, body, or headers?
-   - Examples: /api/users/{id}, body: {"org_id": "123"}, header: X-User-ID
-
-2. BASIC IDOR TEST:
-   - Account A (attacker) accesses Account B's resource by changing the ID.
-   - Responses: 200+data_B = VULNERABLE | 403/404 = protected
-
-3. VARIANTS IF DIRECT IDOR FAILS:
-   a) HTTP Method change: GET->POST, POST->PUT->DELETE
-   b) Hidden parameters: ?admin=true, ?debug=1, ?role=admin
-   c) ID in headers: X-User-ID: ID_B, X-Forwarded-For, X-Original-URL
-   d) Path traversal: /api/users/../ID_B, /api/v1/../v2/admin/users
-   e) GraphQL: introspection + direct query to another user's object
-
-4. IDOR IN DESTRUCTIVE OPERATIONS (higher bounty):
-   - DELETE /resource/ID_B -> CRITICAL ($500-$5000)
-   - PUT /resource/ID_B -> HIGH ($300-$3000)
-   - GET /resource/ID_B -> MEDIUM ($100-$500)
-
-5. REPORT: Title format "IDOR in [endpoint] allows [action] of other users' [resource]"
-   Include: original request_A, modified request_B, both responses.
-
-Endpoint / evidence to analyze:
-{EVIDENCIA_CRUDA}""",
-
-    "ssrf_analysis": """You are an SSRF (Server-Side Request Forgery) specialist for Bug Bounty.
-You are provided with evidence of a parameter that accepts URLs or a callback received on an external receiver.
-
-ANALYZE in order:
-
-1. CONFIRM SSRF: Did the server make a request to your receiver (DNS lookup / HTTP callback)?
-   - If there is a DNS hit but no HTTP: Blind SSRF -> Medium Severity
-   - If there is an HTTP response from the internal server: Confirmed SSRF -> High/Critical Severity
-
-2. CLASSIFY IMPACT:
-   a) CRITICAL: Access to cloud metadata:
-      - AWS: http://169.254.169.254/latest/meta-data/iam/security-credentials/
-      - GCP: http://metadata.google.internal/computeMetadata/v1/ (header: Metadata-Flavor: Google)
-      - Azure: http://169.254.169.254/metadata/instance?api-version=2021-02-01 (header: Metadata: true)
-   b) HIGH: Access to internal services (localhost:8080, 192.168.x.x, 10.0.x.x)
-   c) MEDIUM: Only external DNS callback without demonstrable internal access
-
-3. BYPASS PAYLOADS if there is a filter:
-   - http://0.0.0.0, http://[::1], http://2130706433 (127.0.0.1 decimal)
-   - http://127.0.0.1.nip.io, http://localtest.me
-   - Redirect: your server redirects -> internal target
-
-4. H1 REPORT:
-   - Severity: Critical if cloud credentials exist. High if internal access exists.
-   - Evidence: original request + receiver's response + (if applicable) IAM credentials obtained.
-
-Evidence to analyze (request, callback received, or response):
+==== RAW EVIDENCE ====
 {EVIDENCIA_CRUDA}"""
 }
 
@@ -550,30 +604,47 @@ class GenerateReportRequest(BaseModel):
 def generate_copilot_prompt(req: GenerateReportRequest):
     if completar is None:
         return {"status": "error", "message": "Módulo llm_client no encontrado. Revisa que sys.path sea correcto."}
-    
+
+    # ── GUARDRAIL PRE-LLM: Validación mínima de evidencia ──────────────────
+    # Si la evidencia no contiene ningún campo mínimo reconocible, abortamos.
+    # Esto previene que la IA intente "completar" un reporte vacío con alucinaciones.
+    if req.skill_key != "traductor_espanol":
+        evidence_lower = req.evidence.lower() if req.evidence else ""
+        has_minimum_evidence = any(k in evidence_lower for k in [
+            "curl-command", "curl_command", '"request"', '"host"',
+            '"url"', '"matched-at"', '"cname"', '"acao"',
+            "http/1.", "post ", "get ", "authorization:", "content-type:"
+        ])
+        if not has_minimum_evidence:
+            return {
+                "status": "error",
+                "message": "⛔ GENERACIÓN ABORTADA: La evidencia proporcionada no contiene datos HTTP mínimos reconocibles (curl-command, request, host, url). No se puede generar un reporte sin evidencia verificable. Adjunta primero la Prueba Forense HTTP usando el botón correspondiente."
+            }
+    # ── FIN GUARDRAIL ───────────────────────────────────────────────────────
+
     template = SKILLS_PROMPTS.get(req.skill_key, SKILLS_PROMPTS["report_h1"])
     prompt = template.replace("{EVIDENCIA_CRUDA}", req.evidence)
-    
+
     system_prefix = ""
     if req.skill_key != "traductor_espanol":
-        system_prefix += "SYSTEM DIRECTIVE: YOU MUST OUTPUT THIS ENTIRE REPORT EXCLUSIVELY IN ENGLISH. ANY NON-ENGLISH WORD WILL CAUSE A CRITICAL SYSTEM FAILURE. DO NOT TRANSLATE HEADINGS TO SPANISH.\n"
-        system_prefix += "SYSTEM DIRECTIVE 2: DO NOT INVENT OR HALLUCINATE VULNERABILITIES (like SSRF, RCE, XSS, Path Traversal) OR ENDPOINTS (like /etc/passwd) THAT ARE NOT EXPLICITLY PRESENT IN THE RAW EVIDENCE. STICK EXACTLY TO THE PROVIDED EVIDENCE.\n"
+        system_prefix += "SYSTEM DIRECTIVE: OUTPUT ONLY IN ENGLISH. ZERO SPANISH WORDS.\n"
+        system_prefix += "SYSTEM DIRECTIVE 2: YOU ARE A STRICT PARSER. DO NOT INVENT ANY URL, ENDPOINT, PAYLOAD, HEADER, OR FILENAME NOT EXPLICITLY PRESENT IN THE RAW EVIDENCE. IF A FIELD IS MISSING, WRITE: NOT FOUND IN EVIDENCE\n"
+        system_prefix += "SYSTEM DIRECTIVE 3: DO NOT HALLUCINATE. DO NOT ADD CONTEXT. DO NOT EXPLAIN CONCEPTS. ONLY EXTRACT AND FORMAT.\n"
     else:
         system_prefix += "REGLA CRÍTICA: TRADUCE EL TEXTO EXACTAMENTE AL ESPAÑOL. NO INVENTES NI AGREGUES NADA NUEVO.\n"
-        
+
     if req.vuln_type:
-        system_prefix += f"SYSTEM DIRECTIVE 3: The specific vulnerability type is EXACTLY '{req.vuln_type}'. Replace any [Vulnerability Type] or [Hallazgo] placeholder exclusively with this value.\n"
+        system_prefix += f"SYSTEM DIRECTIVE 4: The vulnerability type is EXACTLY '{req.vuln_type}'. Use this exact string wherever the report refers to the vulnerability name.\n"
+
+    if req.target:
+        system_prefix += f"SYSTEM DIRECTIVE 5: The target is EXACTLY '{req.target}'. Use this exact string wherever the report refers to the target domain or host. DO NOT alter this value.\n"
 
     prompt = system_prefix + "\n" + prompt
 
-    if req.target:
-        if req.skill_key != "traductor_espanol":
-            prompt += f"\n\nTarget: {req.target}"
-            prompt += f"\nSYSTEM DIRECTIVE 4: Automatically replace all placeholders (like [Insert Component], [Componente/URL], [Insert URL], [Insert S3 Bucket Name]) using EXACTLY this Target: {req.target}."
-        
     try:
         respuesta = completar(prompt, max_tokens=1500, temperature=0.1)
-        
+
+
         # POST-PROCESAMIENTO DETERMINÍSTICO: 
         # La IA a veces reescribe ## Supporting Material/References: con texto propio.
         # Forzamos que SIEMPRE contenga el bloque de evidencia cruda en formato predecible
@@ -698,6 +769,7 @@ def notify_telegram(req: NotifyTelegramRequest):
 class VerifyRequest(BaseModel):
     url: str
     tipo: str
+    evidence: Optional[str] = ""
 
 @app.post("/api/verify_bug")
 def verify_bug(req: VerifyRequest):
@@ -711,19 +783,48 @@ def verify_bug(req: VerifyRequest):
         # Usamos -i para traer cabeceras de respuesta, y truncamos a 2500 bytes para no saturar.
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 HackerOne-tomas244"
         
-        extra_headers_cmd = ""
-        extra_headers_display = ""
-        if "cors" in req.tipo.lower():
-            extra_headers_cmd = "-H 'Origin: https://evil.tomas244.com' "
-            extra_headers_display = "Origin: https://evil.tomas244.com\n"
-            
-        cmd = f"curl -s -i -L -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' {extra_headers_cmd}'{req.url}' | head -c 2500"
+        # Procesar evidencia para extraer el curl-command real si existe
+        import json
+        ev_data = {}
+        try:
+            if req.evidence:
+                ev_data = json.loads(req.evidence)
+        except:
+            pass
+
+        base_url = req.url
+        if "matched-at" in ev_data:
+            base_url = ev_data["matched-at"]
+        elif "url" in ev_data:
+            base_url = ev_data["url"]
+
+        cmd = ""
+        if "curl-command" in ev_data:
+            # Usar el comando curl real de Nuclei, inyectando nuestro User-Agent y Header
+            cmd_nuclei = ev_data["curl-command"]
+            cmd = cmd_nuclei.replace("curl ", f"curl -s -i -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' ", 1)
+            cmd += " | head -c 2500"
+        else:
+            extra_headers_cmd = ""
+            if "cors" in req.tipo.lower():
+                extra_headers_cmd = "-H 'Origin: https://evil.tomas244.com' "
+                
+            cmd = f"curl -s -i -L -m 10 -A '{user_agent}' -H 'X-Bug-Bounty: HackerOne-tomas244' -H 'Accept: */*' {extra_headers_cmd}'{base_url}' | head -c 2500"
+
         stdin, stdout, stderr = client.exec_command(cmd)
         output = stdout.read().decode(errors='ignore').strip()
         client.close()
         
-        # Formatear el volcado para que luzca profesional como evidencia
-        evidencia_forense = f"GET {req.url} HTTP/1.1\nHost: {req.url.replace('https://', '').replace('http://', '').split('/')[0]}\nX-Bug-Bounty: HackerOne-tomas244\nUser-Agent: {user_agent}\n{extra_headers_display}\n"
+        evidencia_forense = ""
+        
+        # Guardrail: Detectar falsos positivos por respuestas WAF o redirecciones
+        first_line = output.split('\n')[0].upper() if output else ""
+        if any(code in first_line for code in [" 404 ", " 301 ", " 302 ", " 403 ", " 406 "]):
+            evidencia_forense += "⚠️ ADVERTENCIA DE FALSO POSITIVO: El servidor respondió con 404/403/301/302. El endpoint no existe, fue bloqueado por WAF, o redirige. Nuclei generó un falso positivo. NO REPORTAR ESTO.\n\n"
+        
+        if "request" in ev_data:
+            evidencia_forense += "--- PETICIÓN ENVIADA ---\n\n" + ev_data["request"] + "\n\n"
+            
         evidencia_forense += "--- RESPUESTA DEL SERVIDOR ---\n\n" + output
         
         return {"status": "success", "data": evidencia_forense}

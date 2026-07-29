@@ -386,7 +386,8 @@ async function verificarBugEnVivo() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 url: url,
-                tipo: current_finding.vuln_type
+                tipo: current_finding.vuln_type,
+                evidence: current_finding.evidence
             })
         });
         
