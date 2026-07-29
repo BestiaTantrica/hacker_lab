@@ -1,7 +1,11 @@
-# Crontab de OCI-1 — Cascada de Pesca por Zonas Horarias
+# Crontab de OCI-1 — Cascada de Pesca por Zonas Horarias (6 Rondas / Escaneo cada 4 Horas)
 # Orquestador: run_zone_pipeline.sh (mass_recon → comparador → explotador → telegram)
 # Solo notifica Telegram si hay bugs verificados con PoC real.
-0 1 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh emea >> /home/ubuntu/plataforma_operativa/logs/cron_emea.log 2>&1
-0 9 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh americas >> /home/ubuntu/plataforma_operativa/logs/cron_americas.log 2>&1
-0 19 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh asia >> /home/ubuntu/plataforma_operativa/logs/cron_asia.log 2>&1
+0 0 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh americas >> /home/ubuntu/plataforma_operativa/logs/cron_americas.log 2>&1
+0 4 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh emea >> /home/ubuntu/plataforma_operativa/logs/cron_emea.log 2>&1
+0 8 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh asia >> /home/ubuntu/plataforma_operativa/logs/cron_asia.log 2>&1
+0 12 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh americas >> /home/ubuntu/plataforma_operativa/logs/cron_americas.log 2>&1
+0 16 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh emea >> /home/ubuntu/plataforma_operativa/logs/cron_emea.log 2>&1
+0 20 * * * bash /home/ubuntu/plataforma_operativa/run_zone_pipeline.sh asia >> /home/ubuntu/plataforma_operativa/logs/cron_asia.log 2>&1
 0 3 * * 0 find /home/ubuntu/plataforma_operativa/resultados/ -name "delta_*.json" -mtime +14 -delete
+

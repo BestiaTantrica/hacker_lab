@@ -43,6 +43,7 @@ async function checkOciStatus() {
             text.textContent = data.status === 'online' ? 'OCI-1 ONLINE' : 'MODO LOCAL / OCI-2';
             if (deltasCount) deltasCount.textContent = data.total_deltas || '0';
             if (findingsCount) findingsCount.textContent = data.total_findings || '0';
+            cargarSaludZonas();
         } else {
             dot.className = 'dot red';
             text.textContent = 'SISTEMA OFFLINE';
@@ -51,6 +52,21 @@ async function checkOciStatus() {
         dot.className = 'dot red';
         text.textContent = 'API ERROR';
     }
+}
+
+async function cargarSaludZonas() {
+    try {
+        const res = await fetch(`/api/zones_health?_t=${Date.now()}`);
+        const data = await res.json();
+        if (data.status === 'success' && data.zones) {
+            ['americas', 'emea', 'asia'].forEach(z => {
+                const el = document.getElementById(`zone-${z}-info`);
+                if (el && data.zones[z]) {
+                    el.textContent = `Deltas hoy: ${data.zones[z].count_today}`;
+                }
+            });
+        }
+    } catch (e) {}
 }
 
 

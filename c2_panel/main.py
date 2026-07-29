@@ -462,6 +462,31 @@ def get_status():
         "total_findings": total_findings
     }
 
+@app.get("/api/zones_health")
+def get_zones_health():
+    """Retorna el contador de deltas hoy por zona y el último descubrimiento."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    zones = ["americas", "emea", "asia"]
+    result = {}
+    
+    for z in zones:
+        cursor.execute("SELECT COUNT(*) FROM deltas WHERE zone = ? AND DATE(discovered_at) = DATE(?)", (z, today))
+        count_today = cursor.fetchone()[0]
+        cursor.execute("SELECT discovered_at FROM deltas WHERE zone = ? ORDER BY id DESC LIMIT 1", (z,))
+        last_row = cursor.fetchone()
+        last_scan = last_row["discovered_at"] if last_row else "Sin datos"
+        result[z] = {
+            "count_today": count_today,
+            "last_scan": last_scan
+        }
+        
+    conn.close()
+    return {"status": "success", "zones": result}
+
 # --- INGESTA DESDE OCI-1 ---
 
 class IngestPayload(BaseModel):
@@ -642,7 +667,7 @@ def generate_copilot_prompt(req: GenerateReportRequest):
     prompt = system_prefix + "\n" + prompt
 
     try:
-        respuesta = completar(prompt, max_tokens=1500, temperature=0.1)
+        respuesta = completar(prompt, max_tokens=1500)
 
 
         # POST-PROCESAMIENTO DETERMINÍSTICO: 

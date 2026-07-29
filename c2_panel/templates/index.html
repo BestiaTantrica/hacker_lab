@@ -32,7 +32,7 @@
             <!-- VISTA DASHBOARD -->
             <section id="view-dashboard" class="view active">
                 <!-- TARJETAS DE INDICADORES EN TIEMPO REAL -->
-                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
                     <div class="card stat-card glow" style="padding: 15px; border-left: 4px solid var(--primary);">
                         <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Subdominios Recogidos</h4>
                         <h2 id="total-deltas-count" style="font-size: 24px; color: #fff; margin: 5px 0;">0</h2>
@@ -42,6 +42,27 @@
                         <h4 style="font-size: 11px; text-transform: uppercase; color: #888; margin: 0;">Hallazgos ($50-$300+)</h4>
                         <h2 id="total-findings-count" style="font-size: 24px; color: #2ecc71; margin: 5px 0;">0</h2>
                         <p style="font-size: 10px; color: #aaa; margin: 0;">PoCs Verificados</p>
+                    </div>
+                </div>
+
+                <!-- BARRA DE ESTADO DE ZONAS (6 RONDAS) -->
+                <div class="card" style="padding: 12px; margin-bottom: 20px; background: #0f172a; border: 1px solid #334155;">
+                    <h4 style="font-size: 11px; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px;">
+                        <span>🌐</span> Monitoreo por Zonas Horarias (6 Rondas/Día)
+                    </h4>
+                    <div id="zones-health-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-weight: bold; font-size: 11px; color: #60a5fa;">🌎 Americas</span>
+                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-americas-info">Deltas hoy: -</div>
+                        </div>
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-weight: bold; font-size: 11px; color: #a78bfa;">🌍 EMEA</span>
+                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-emea-info">Deltas hoy: -</div>
+                        </div>
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="font-weight: bold; font-size: 11px; color: #f59e0b;">🌏 Asia</span>
+                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-asia-info">Deltas hoy: -</div>
+                        </div>
                     </div>
                 </div>
 
