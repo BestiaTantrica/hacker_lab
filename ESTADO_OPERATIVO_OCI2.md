@@ -22,7 +22,7 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 ---
 
 ## 2. Endpoints de Ingesta, Comunicación y Monitoreo
-- `POST /api/ingest_delta`: Ingesta directa de telemetría desde OCI-1 (`deltas` y `findings`).
+- `POST /api/ingest_delta`: Ingesta directa de telemetría desde OCI-1 (`deltas` y `findings`). Evidence ahora incluye `triager_poc`, `poc_quality`, `scope_program`.
 - `POST /api/heartbeat`: Recibe el latido pasivo desde OCI-1 al finalizar cada pipeline de forma segura. Si el background loop (Dead Man's Switch) detecta >12h sin latidos, envía alerta a Telegram.
 - `GET /api/status`: Diagnóstico SSH en tiempo real hacia OCI-1.
 - `GET /api/findings` & `GET /api/deltas/{zone}`: Consultas de telemetría para la interfaz web.
@@ -30,6 +30,10 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 - `POST /api/chat`: Chat interactivo con **Pegaso**, aislado por `finding_id` con ventana de memoria de hasta 20 mensajes.
 - `POST /api/verify_bug`: Verificación en vivo de objetivos mediante invocaciones SSH `curl` contra OCI-1.
 - `POST /api/notify_telegram`: Envío limpio de reportes aprobados en Markdown directamente al bot de Telegram.
+- **M3-B `POST /api/findings/{id}/validate_scope`**: Valida si el target está in-scope H1. Actualiza `status_interno` a Validado/FalsoPositivo. Cachea en tabla `scope_cache`.
+- **M3-A `POST /api/findings/{id}/generate_poc`**: Sanitiza curl de Nuclei → `triager_poc` copiable. Persiste `poc_quality` en la DB.
+- **M3-C `POST /api/findings/{id}/waf_probe`**: Sonda live via SSH curl con hasta 2 intentos (WAF headers rotation). Retorna el curl exacto listo para el reporte H1.
+
 
 ---
 
