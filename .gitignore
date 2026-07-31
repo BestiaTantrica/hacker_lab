@@ -20,6 +20,7 @@ estado/*.json
 api/scratch/
 *.xml
 *.json
+*.jsonl
 fix_desktop.sh
 # Archivos de despliegue al servidor OCI (copias locales de staging)
 api/discovery_pasivo_nuevo.py
