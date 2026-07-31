@@ -22,7 +22,7 @@ LOG="${BASE}/logs/pipeline_${ZONA}.log"
 FECHA=$(date -u +%Y-%m-%d)
 RESULTADO_DIR="${BASE}/resultados"
 
-# ── Variables de entorno ──────────────────────────────────────────────────────
+# -- Variables de entorno ------------------------------------------------------
 # Cargar desde entorno.env sin usar 'source' (set -euo pipefail friendly)
 if [ -f "${BASE}/config/entorno.env" ]; then
     while IFS='=' read -r key val; do
@@ -38,14 +38,14 @@ fi
 
 C2_PANEL_URL="${C2_PANEL_URL:-http://localhost:8000}"
 
-# ── ANTI-OVERLAP GUARD (flock) ────────────────────────────────────────────────
+# -- ANTI-OVERLAP GUARD (flock) ------------------------------------------------
 LOCKFILE="/tmp/pipeline_${ZONA}.lock"
 exec 200>"$LOCKFILE"
 flock -n 200 || {
     echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [WARN] [$ZONA] Pipeline ya en ejecución (lockfile activo). Abortando para evitar colisión de RAM." | tee -a "$LOG"
     exit 0
 }
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 log()   { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [INFO]  [$ZONA] $1" | tee -a "$LOG"; }
 warn()  { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [WARN]  [$ZONA] $1" | tee -a "$LOG"; }
@@ -54,13 +54,13 @@ error() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [ERROR] [$ZONA] $1" | tee -a "$
 log "============================================================"
 log "🌐 INICIANDO CASCADA v2 — ZONA: ${ZONA^^}"
 
-# ── Eslabón 1: Descubrimiento Masivo (mass_recon.py → SQLite) ────────────────
+# -- Eslabón 1: Descubrimiento Masivo (mass_recon.py → SQLite) ----------------
 log "Eslabón 1/5: Descubrimiento masivo (mass_recon.py)"
 $VENV "${BASE}/monitores/mass_recon.py" --zone "$ZONA" >> "$LOG" 2>&1 \
     || error "❌ mass_recon.py falló. Cascada detenida."
 log "✅ Eslabón 1 completado."
 
-# ── Eslabón 2: Comparador de Deltas → delta JSON ──────────────────────────────
+# -- Eslabón 2: Comparador de Deltas → delta JSON ------------------------------
 log "Eslabón 2/5: Comparador de deltas (comparador.py)"
 $VENV "${BASE}/monitores/comparador.py" --zone "$ZONA" >> "$LOG" 2>&1 \
     || error "❌ comparador.py falló. Cascada detenida."
@@ -73,7 +73,7 @@ if [ ! -f "$DELTA_FILE" ]; then
 fi
 log "✅ Eslabón 2 completado: delta encontrado → ${DELTA_FILE}"
 
-# ── Extraer lista de subdominios del delta JSON ───────────────────────────────
+# -- Extraer lista de subdominios del delta JSON -------------------------------
 SUBS_RAW="${RESULTADO_DIR}/subs_raw_${ZONA}_${FECHA}.txt"
 python3 -c "
 import json, sys
@@ -94,7 +94,7 @@ if [ "$TOTAL_SUBS" -eq 0 ]; then
 fi
 log "📋 Subdominios extraídos del delta: ${TOTAL_SUBS}"
 
-# ── Eslabón 3: Filtro DNS + HTTP Probing (dnsx | httpx) ──────────────────────
+# -- Eslabón 3: Filtro DNS + HTTP Probing (dnsx | httpx) ----------------------
 # Objetivo: Eliminar dominios muertos (NXDOMAIN) antes de escanear.
 #           Esto reduce el ruido del 70% al ~0% en falsos positivos por timeout.
 log "Eslabón 3/5: Filtro DNS y HTTP Probing (dnsx → httpx)"
@@ -170,7 +170,7 @@ fi
 TOTAL_HTTP=$(wc -l < "$LIVE_HTTP" | tr -d ' ')
 log "✅ Eslabón 3 completado: ${TOTAL_HTTP} hosts HTTP activos listos para escanear."
 
-# ── Eslabón 4: Escaneo de Vulnerabilidades (nuclei) ──────────────────────────
+# -- Eslabón 4: Escaneo de Vulnerabilidades (nuclei) --------------------------
 # Objetivo: Detectar vulnerabilidades reales con PoC determinista.
 # Categorías seleccionadas para Bug Bounty de alto valor:
 #   - takeovers/  → Subdomain Takeovers ($300-$3000)
@@ -207,14 +207,14 @@ TOTAL_BUGS=$(wc -l < "$NUCLEI_JSON" | tr -d ' ')
 log "🚨 Nuclei encontró ${TOTAL_BUGS} hallazgo(s) verificado(s)."
 log "✅ Eslabón 4 completado."
 
-# ── Eslabón 5: Parsear + Sincronizar C2 Panel + Notificar Telegram ────────────
+# -- Eslabón 5: Parsear + Sincronizar C2 Panel + Notificar Telegram ------------
 log "Eslabón 5/5: Sincronizando con C2 Panel y notificando Telegram (parsear_nuclei.py)"
 $VENV "${BASE}/monitores/parsear_nuclei.py" \
     --nuclei-json "$NUCLEI_JSON" \
     --zone "$ZONA" \
     >> "$LOG" 2>&1 || warn "⚠️  parsear_nuclei.py falló, pero el escaneo fue exitoso."
 
-# ── Limpieza de archivos temporales de trabajo ────────────────────────────────
+# -- Limpieza de archivos temporales de trabajo --------------------------------
 # Se mantienen: NUCLEI_JSON (evidencia forense), DELTA_FILE (historial)
 # Se eliminan: archivos temporales del proceso de filtrado
 rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON"

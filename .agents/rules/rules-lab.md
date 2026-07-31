@@ -157,6 +157,8 @@ La **verdad absoluta** reside en los servidores OCI en producción. El entorno l
 2. **Complejidad Incremental:** No agregar componentes que no se necesiten hoy.
 3. **Un Único Objetivo Funcional:** No iniciar componente nuevo hasta que el anterior funcione y esté validado.
 4. **Optimización OCI Free Tier:** Código ligero, sin loops de polling agresivos, sin concurrencia desbordada.
+5. **Estándar Go-Stack (ProjectDiscovery):** Priorizar siempre el uso de `subfinder`, `dnsx`, `httpx` y `nuclei` nativos en lugar de scripts Python para escaneo.
+6. **Regla de Compatibilidad Cron (Locale C):** **Prohibido usar caracteres Unicode no-ASCII** (como guiones gráficos `─`, emojis o comillas tipográficas) en scripts de bash destinados a Crontab (`run_zone_pipeline.sh`). Cron opera bajo locale `C` y abortará la ejecución con errores de sintaxis (`$'\200...'`). Usar siempre ASCII puro (`# ------`).
 
 ---
 
