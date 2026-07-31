@@ -1,19 +1,23 @@
 # Estado Operativo de OCI-1 (Espejo Local)
 
-> Auditoría de automatización (Redes de Pesca) - 2026-07-22
+> **Actualización:** 2026-07-31 — Pipeline v2 con Go-Stack ProjectDiscovery activo.
 
 El directorio `espejo_oci1/` refleja la estructura del servidor remoto encargado de la recolección masiva automatizada.
 
-## 1. Arquitectura de Eslabones Presente
-En `espejo_oci1/monitores/` se encuentran los eslabones clave del pipeline automatizado:
-- `discovery_pasivo.py`: Primer eslabón. Descubre subdominios sin autenticación usando herramientas como subfinder o crt.sh.
-- `comparador.py`: Segundo eslabón. Compara el `actual.json` con el `previo.json` para generar deltas diarios.
-- `analizador_ia.py` & `analizar_delta.py`: Tercer eslabón. Procesa los deltas con modelos de lenguaje para clasificar los objetivos.
-- `notificador.py`: Envía alertas (Telegram) con los resúmenes del analizador.
-- `explotador_automatico.py`: Script para intentar cobrar vulnerabilidades rápidas (takeovers, CORS, etc.).
-- `escaneo_nuclei.sh`: Script de bash para ejecutar plantillas Nuclei masivamente sobre los deltas.
+## 1. Arquitectura de Eslabones Presente (Pipeline v2 — Go-Stack)
+En `espejo_oci1/monitores/` y `espejo_oci1/` se encuentran los eslabones del nuevo pipeline automatizado:
+- `mass_recon.py`: Eslabón 1. Descubre subdominios usando `subfinder` (en PATH `/usr/local/bin`) + crt.sh como fallback. Guarda en `oci1_db.sqlite` (WAL mode).
+- `comparador.py`: Eslabón 2. Consulta SQLite las últimas 24h y genera `delta_{zona}_FECHA.json`.
+- `dnsx` + `httpx` (binarios Go): Eslabón 3. Filtran subdominios sin DNS real y hacen probing HTTP masivo para sacar CNAMEs, titles y tech-stack. **Elimina la causa raíz de los falsos positivos.**
+- `nuclei` (v3.3.0): Eslabón 4. Escanea únicamente hosts HTTP vivos con plantillas `takeovers/`, `exposures/`, `misconfiguration/` en severidad `critical,high,medium`. Genera `nuclei_{zona}_FECHA.json`.
+- `parsear_nuclei.py`: Eslabón 5. Lee el JSONL de nuclei, aplica guardrails anti-falso-positivo, sincroniza con OCI-2 (`POST /api/ingest_delta`) y notifica a Telegram.
 
-*Nota de limpieza:* Existen scripts residuales de la etapa manual (caza con lanza) que accidentalmente están en este espejo (`auditor_freshdesk.py`, `idor_cross_tenant.py`). Estos deberían eliminarse en la próxima sincronización para mantener el servidor enfocado únicamente en la automatización a gran escala.
+### Herramientas instaladas en OCI-1 (`/usr/local/bin/`):
+- `subfinder` v2.14.0 ✅
+- `dnsx` v1.2.1 ✅ (**nuevo**)
+- `httpx` v1.6.8 ✅ (**nuevo, binario Go - no el wrapper Python**)
+- `katana` v1.1.0 ✅ (**nuevo** — disponible para crawling, no integrado aún en pipeline)
+- `nuclei` v3.3.0 ✅ (ya existía, **ahora integrado** en el pipeline v2)
 
 ## 2. Volumen de Datos Generados
 El pipeline está generando volúmenes masivos de inteligencia en `espejo_oci1/resultados/`:
