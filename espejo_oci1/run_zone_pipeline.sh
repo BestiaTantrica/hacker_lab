@@ -56,7 +56,7 @@ error() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [ERROR] [$ZONA] $1" | tee -a "$
 # Previene OOM Killers catastróficos si dnsx/httpx/nuclei desbordan la memoria.
 watchdog_ram() {
     while true; do
-        for p in "dnsx" "httpx" "nuclei"; do
+        for p in "dnsx" "httpx" "nuclei" "alterx" "katana"; do
             PID=$(pgrep -x "$p" | head -n 1)
             if [ -n "$PID" ]; then
                 # Obtener Resident Set Size (memoria física usada en KB)
@@ -127,17 +127,10 @@ log "Eslabón 3/5: Filtro DNS y HTTP Probing (dnsx → httpx)"
 LIVE_DNS="${RESULTADO_DIR}/live_dns_${ZONA}_${FECHA}.txt"
 LIVE_HTTP="${RESULTADO_DIR}/live_http_${ZONA}_${FECHA}.txt"
 
-# dnsx: Filtro DNS. Solo pasa subdominios con resolución IP real.
-# -resp-only: solo los que resolvieron. -retry 2: evita falsos negativos.
-# -t 150: 150 goroutines concurrentes (ajustado a la RAM de OCI-1).
-timeout 2h dnsx \
-    -list "$SUBS_RAW" \
-    -resp-only \
-    -retry 2 \
-    -t 100 \
-    -silent \
-    -o "$LIVE_DNS" \
-    >> "$LOG" 2>&1 || warn "⚠️  dnsx falló o superó el timeout de 2h. Usando lista raw sin filtro DNS."
+# dnsx: Filtro DNS con Alterx (Permutaciones dinámicas TITLE-M2-C).
+# piping in-memory evita escritura masiva en disco. Watchdog controla memoria de dnsx/alterx.
+timeout 2h bash -c "cat \"$SUBS_RAW\" | alterx -silent | dnsx -resp-only -retry 2 -t 100 -silent -o \"$LIVE_DNS\"" \
+    >> "$LOG" 2>&1 || warn "⚠️  alterx/dnsx falló o superó el timeout de 2h. Usando lista raw sin filtro DNS."
 
 if [ ! -s "$LIVE_DNS" ]; then
     warn "⚠️  dnsx no resolvió ningún host vivo. Sin objetivos para escanear."
@@ -195,18 +188,47 @@ fi
 TOTAL_HTTP=$(wc -l < "$LIVE_HTTP" | tr -d ' ')
 log "✅ Eslabón 3 completado: ${TOTAL_HTTP} hosts HTTP activos listos para escanear."
 
-# -- Eslabón 4: Escaneo de Vulnerabilidades (nuclei) --------------------------
+# -- Eslabón 3.5: Katana Crawling & JS Extraction (TITLE-M2-A) ----------------
+# Extraemos rutas y archivos JS dinámicos desde los hosts vivos.
+log "Eslabón 3.5/5: Extracción dinámica y JS Crawling (katana)"
+KATANA_RAW="${RESULTADO_DIR}/katana_raw_${ZONA}_${FECHA}.txt"
+KATANA_JS="${RESULTADO_DIR}/katana_js_${ZONA}_${FECHA}.txt"
+
+# -depth 2 -js-crawl para escarbar en JS.
+# Throttling OCI Free Tier: -c 5 -rate-limit 30
+timeout 1h katana \
+    -list "$LIVE_HTTP" \
+    -depth 2 \
+    -js-crawl \
+    -jsluice \
+    -c 5 \
+    -rate-limit 30 \
+    -silent \
+    -o "$KATANA_RAW" \
+    >> "$LOG" 2>&1 || warn "⚠️ katana falló o superó timeout de 1h."
+
+if [ -f "$KATANA_RAW" ]; then
+    grep -iE "\.js$" "$KATANA_RAW" | sort -u > "$KATANA_JS" || true
+    TOTAL_JS=$(wc -l < "$KATANA_JS" 2>/dev/null | tr -d ' ')
+    log "🔍 Rutas JS extraídas por Katana: ${TOTAL_JS:-0}"
+else
+    touch "$KATANA_JS"
+fi
+
+# -- Eslabón 4: Escaneo de Vulnerabilidades (nuclei + Passive JS Scanner) -----
 # Objetivo: Detectar vulnerabilidades reales con PoC determinista.
 # Categorías seleccionadas para Bug Bounty de alto valor:
 #   - takeovers/  → Subdomain Takeovers ($300-$3000)
 #   - exposures/  → Secretos, .env, tokens ($100-$500)
 #   - misconfiguration/ → CORS, headers mal configurados ($100-$300)
 # Severidades: critical, high, medium (sin "low" ni "info" que generan ruido)
-log "Eslabón 4/5: Escaneo de vulnerabilidades (nuclei)"
+log "Eslabón 4/5: Escaneo de vulnerabilidades y secretos en JS (nuclei)"
 
 NUCLEI_JSON="${RESULTADO_DIR}/nuclei_${ZONA}_${FECHA}.json"
+NUCLEI_JS_JSON="${RESULTADO_DIR}/nuclei_js_${ZONA}_${FECHA}.json"
 
-timeout 3h nuclei \
+# Pasada base (takeovers, misconfigurations, exposures genéricos) sobre hosts
+timeout 2h nuclei \
     -list "$LIVE_HTTP" \
     -t /home/ubuntu/nuclei-templates/http/takeovers/ \
     -t /home/ubuntu/nuclei-templates/http/exposures/ \
@@ -220,7 +242,29 @@ timeout 3h nuclei \
     -jsonl \
     -o "$NUCLEI_JSON" \
     -silent \
-    >> "$LOG" 2>&1 || warn "⚠️  nuclei finalizó con errores parciales o superó timeout de 3h. Revisando resultados disponibles."
+    >> "$LOG" 2>&1 || warn "⚠️  nuclei base finalizó con errores o superó timeout de 2h."
+
+# Pasada focalizada (TITLE-M2-B) en búsqueda de tokens/secretos sobre los .js extraídos
+if [ -s "$KATANA_JS" ]; then
+    log "Eslabón 4.5/5: Passive JS Secret Scanner (nuclei sobre .js)"
+    timeout 1h nuclei \
+        -list "$KATANA_JS" \
+        -t /home/ubuntu/nuclei-templates/http/exposures/ \
+        -severity critical,high,medium \
+        -rate-limit 50 \
+        -bulk-size 25 \
+        -concurrency 10 \
+        -timeout 8 \
+        -jsonl \
+        -o "$NUCLEI_JS_JSON" \
+        -silent \
+        >> "$LOG" 2>&1 || warn "⚠️  nuclei JS finalizó con errores o superó timeout de 1h."
+        
+    # Unificar hallazgos de JS con el JSON principal para C2
+    if [ -s "$NUCLEI_JS_JSON" ]; then
+        cat "$NUCLEI_JS_JSON" >> "$NUCLEI_JSON"
+    fi
+fi
 
 if [ ! -s "$NUCLEI_JSON" ]; then
     log "ℹ️  Nuclei no encontró vulnerabilidades reales en zona ${ZONA}. Cascada finalizada limpiamente."
@@ -242,7 +286,7 @@ $VENV "${BASE}/monitores/parsear_nuclei.py" \
 # -- Limpieza de archivos temporales de trabajo --------------------------------
 # Se mantienen: NUCLEI_JSON (evidencia forense), DELTA_FILE (historial)
 # Se eliminan: archivos temporales del proceso de filtrado
-rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON"
+rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON" "$KATANA_RAW" "$KATANA_JS" "$NUCLEI_JS_JSON"
 log "🧹 Archivos temporales directos limpiados."
 
 # -- Eslabón 6: Garbage Collection Dinámico y Heartbeat (M1-B & M1-C) -----------

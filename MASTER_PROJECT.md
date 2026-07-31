@@ -47,11 +47,11 @@ El laboratorio se divide físicamente en dos entornos de ejecución:
 ## 📂 4. Estructura de Documentación Maestra — Columna Vertebral (`/LAB/`)
 Toda la documentación estratégica y gobernanza reside en `/home/tomas2/WORKSPACE/LAB/`:
 - **[MASTER_PROJECT.md](file:///home/tomas2/WORKSPACE/LAB/MASTER_PROJECT.md):** Portal maestro y estado global del laboratorio.
-- **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado operativo de OCI-1 (Red de Pesca automatizada, SQLite WAL, mass_recon).
-- **[ESTADO_OPERATIVO_OCI2.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI2.md):** Estado operativo de OCI-2 (Panel C2, FastAPI, Skills Hub, Ingesta Telemetría).
+- **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado operativo de OCI-1 (Pipeline Go-Stack v2, Katana/Alterx, Motor Anti-FP M3, Resiliencia M1).
+- **[ESTADO_OPERATIVO_OCI2.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI2.md):** Estado operativo de OCI-2 (Panel C2 FastAPI, Taxonomía M4, Exportación Forense, Hub Skills IA).
 - **[.agents/rules](file:///home/tomas2/WORKSPACE/LAB/.agents/rules):** Reglas operativas obligatorias del agente de IA, mapa de la columna vertebral y protocolo de eficiencia de tokens.
-- **[espejo_oci1/](file:///home/tomas2/WORKSPACE/LAB/espejo_oci1/):** Réplica de la infraestructura de ingestión pasiva y escaneo masivo (OCI-1).
-- **[c2_panel/](file:///home/tomas2/WORKSPACE/LAB/c2_panel/):** Código fuente de la consola Web / Cerebro en OCI-2 (FastAPI + `c2_db.sqlite` + Skills IA).
+- **[espejo_oci1/](file:///home/tomas2/WORKSPACE/LAB/espejo_oci1/):** Réplica de la infraestructura de recolección masiva Go-Stack, validadores de scope y generadores PoC.
+- **[c2_panel/](file:///home/tomas2/WORKSPACE/LAB/c2_panel/):** Código fuente de la consola Web (C2) con UI de ciclo de vida (Pending/Validated/Archived).
 - **[skills/](file:///home/tomas2/WORKSPACE/LAB/skills/):** Plantillas de Prompts de IA para formateo de reportes y análisis automático.
 
 ---
@@ -59,8 +59,10 @@ Toda la documentación estratégica y gobernanza reside en `/home/tomas2/WORKSPA
 ## 🚦 5. Estado de Integración y Modo Operativo
 El pipeline de recolección masiva en **OCI-1** está formalmente conectado con el **Panel C2 (OCI-2)**.
 
-**Estado Operativo Actual:**
-- **Telemetría Automática:** `run_zone_pipeline.sh` (Eslabón 4) ejecuta `sync_to_c2_panel()` transmitiendo subdominios y hallazgos verificados directamente a `POST /api/ingest_delta` en OCI-2.
-- **Base de Datos Unificada:** Los deltas e historiales quedan respaldados en `c2_db.sqlite` para su visualización centralizada y análisis mediante el Hub de Skills.
-- **Notificaciones por Filtrado de Valor:** Telegram alerta únicamente ante descubrimientos verificados ($50+ USD), redirigiendo al operador a la consola C2 para generar reportes HackerOne en 1 solo clic.
+**Estado Operativo Actual (Pipeline v2 + 4 Módulos Integrados):**
+- **M1 - Resiliencia Activa:** OCI-1 cuenta con Watchdog RAM asíncrono y Heartbeat pasivo hacia OCI-2 para prevenir bloqueos por OOM (Out Of Memory).
+- **M2 - Reconocimiento Avanzado:** `run_zone_pipeline.sh` orquesta 6 eslabones que incluyen `alterx`/`dnsx` para permutaciones in-memory y `katana` para recolección dinámica de endpoints JS y extracción pasiva de secretos.
+- **M3 - Validación Forense:** Motor Anti-Falsos Positivos integrado. Valida targets contra HackerOne, purifica comandos `curl` (PoC Generator) y rota headers WAF antes de enviar a C2.
+- **M4 - C2 Lifecycle & Exportación:** `sync_to_c2_panel()` inyecta vulnerabilidades en `c2_db.sqlite`. La UI permite gestionar la máquina de estados (`Pendiente` -> `Validado` -> `Archivado`) y exportar reportes Markdown/PDF con cero overhead.
+- **Notificaciones por Filtrado de Valor:** Telegram alerta de latidos perdidos y hallazgos verificados de alta calidad.
 

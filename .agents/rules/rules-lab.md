@@ -16,13 +16,13 @@ Al iniciar CUALQUIER sesión, el agente **DEBE REPASAR** la Columna Vertebral an
 ### 📍 Archivos Fundamentales (rutas absolutas verificadas):
 1. **[.agents/rules/rules-lab.md](file:///home/tomas2/WORKSPACE/LAB/.agents/rules/rules-lab.md):** (Este archivo) Directrices, gobernanza de tokens e identidad operativa.
 2. **[MASTER_PROJECT.md](file:///home/tomas2/WORKSPACE/LAB/MASTER_PROJECT.md):** Fuente Única de Verdad. Filosofía, nodos del laboratorio (PC local + OCI), inventario de componentes y estado global.
-3. **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado de la "Red de Pesca" en OCI-1 (SQLite WAL, `mass_recon.py`, `comparador.py`, `run_zone_pipeline.sh`, cron jobs).
-4. **[ESTADO_OPERATIVO_OCI2.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI2.md):** Estado del Panel C2 en OCI-2 (FastAPI `main.py`, `c2_db.sqlite`, Skills Hub, chat Pegaso, ingesta telemetría vía `/api/ingest_delta`).
+3. **[ESTADO_OPERATIVO_OCI1.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI1.md):** Estado de la "Red de Pesca" en OCI-1 (Go-Stack v2, Katana/Alterx, M3 Anti-FP, `run_zone_pipeline.sh`, Cron).
+4. **[ESTADO_OPERATIVO_OCI2.md](file:///home/tomas2/WORKSPACE/LAB/ESTADO_OPERATIVO_OCI2.md):** Estado del Panel C2 en OCI-2 (FastAPI `main.py`, Taxonomía M4, Exportación Forense, `c2_db.sqlite`, Skills Hub).
 5. **[HACKERONE_MANUAL_CHEATSHEET.md](file:///home/tomas2/WORKSPACE/LAB/HACKERONE_MANUAL_CHEATSHEET.md):** (Activar SOLO en fase de Reportería). Pasos manuales post-generación, manejo de falsos positivos del formulario H1 y política "Over-Delivered".
 
 ### 🗺️ Estructura de Directorios Clave:
-- `espejo_oci1/monitores/` → Scripts del pipeline OCI-1: `discovery_pasivo.py`, `comparador.py`, `analizador_ia.py`, `explotador_automatico.py`, `escaneo_nuclei.sh`
-- `espejo_oci1/run_zone_pipeline.sh` → Orquestador principal con `sync_to_c2_panel()`
+- `espejo_oci1/monitores/` → Scripts del pipeline OCI-1: Go-Stack wrappers, `poc_generator.py` (M3-A), `scope_validator.py` (M3-B), `waf_mutator.py` (M3-C).
+- `espejo_oci1/run_zone_pipeline.sh` → Orquestador principal de 6 Eslabones (Watchdog RAM + Sync C2).
 - `c2_panel/main.py` → Backend FastAPI OCI-2 (porta `8000`, Uvicorn)
 - `c2_panel/static/js/app.js` → Frontend JS del panel
 - `c2_panel/c2_db.sqlite` → DB central (tablas: `deltas`, `findings`, `chat_history`)
@@ -81,7 +81,7 @@ Respuestas técnicas y breves por defecto. Si el usuario muestra dudas repetidas
 ### Filosofía de Escala (Anti-Lanza)
 - **Cero cacería manual:** Prohibido diseñar para Burp Suite manual, bypasses uno a uno o sesiones SSH interactivas para explotar.
 - **Enfoque en volumen:** Todo apunta a pesca masiva automatizada → Subdomain Takeovers, CORS misconfigurations, leakeos S3/env, secretos expuestos en endpoints públicos.
-- **Cloud First / Lightweight:** Código para OCI Free Tier (1 OCPU AMD EPYC 7551, 1 GB RAM). Sin dependencias pesadas innecesarias, sin concurrencia desbordada.
+- **Cloud First / Lightweight:** Código para OCI Free Tier (1 OCPU AMD EPYC 7551, 1 GB RAM). Sin dependencias pesadas, Throttling Obligatorio (ej. Katana/Nuclei SIEMPRE con `-c` y `-rate-limit`).
 
 ### 🚨 PRODUCCIÓN REAL ABSOLUTA
 - **Prohibido** inyectar, proponer o ejecutar registros mock ficticios (`sub1.target-domain.com`, dominios de ejemplo, IPs inventadas) en `c2_db.sqlite`, pipelines de OCI-1 o en cualquier output sin **AUTORIZACIÓN EXPRESA** del usuario.
@@ -137,11 +137,13 @@ La **verdad absoluta** reside en los servidores OCI en producción. El entorno l
 ### Endpoints Críticos del C2 (para verificación post-deploy):
 - `GET /api/findings` — Lista de hallazgos activos
 - `GET /api/status` — Diagnóstico SSH en tiempo real hacia OCI-1
-- `POST /api/ingest_delta` — Ingesta desde OCI-1
-- `POST /api/copilot/generate` — Ejecución de Skills IA
-- `POST /api/chat` — Chat Pegaso aislado por `finding_id`
-- `POST /api/verify_bug` — Verificación live via SSH curl en OCI-1
-- `POST /api/notify_telegram` — Envío de reporte aprobado a Telegram
+- `POST /api/ingest_delta` — Ingesta masiva desde OCI-1 (soporta atributos forenses `triager_poc`, `scope_program`).
+- `POST /api/copilot/generate` — Ejecución de Skills IA.
+- `POST /api/chat` — Chat interactivo Pegaso por `finding_id`.
+- `POST /api/verify_bug` y `POST /api/findings/{id}/waf_probe` — Verificación live via SSH curl en OCI-1 con rotación WAF (M3-C).
+- `POST /api/findings/{id}/validate_scope` — Motor Anti-FP M3-B contra Scope DB.
+- `POST /api/notify_telegram` — Envío de reporte aprobado a Telegram.
+- `GET /api/findings/{id}/export/*` — Exportación de reportes locales Zero-Overhead (MD/PDF).
 
 ---
 
@@ -157,8 +159,9 @@ La **verdad absoluta** reside en los servidores OCI en producción. El entorno l
 2. **Complejidad Incremental:** No agregar componentes que no se necesiten hoy.
 3. **Un Único Objetivo Funcional:** No iniciar componente nuevo hasta que el anterior funcione y esté validado.
 4. **Optimización OCI Free Tier:** Código ligero, sin loops de polling agresivos, sin concurrencia desbordada.
-5. **Estándar Go-Stack (ProjectDiscovery):** Priorizar siempre el uso de `subfinder`, `dnsx`, `httpx` y `nuclei` nativos en lugar de scripts Python para escaneo.
-6. **Regla de Compatibilidad Cron (Locale C):** **Prohibido usar caracteres Unicode no-ASCII** (como guiones gráficos `─`, emojis o comillas tipográficas) en scripts de bash destinados a Crontab (`run_zone_pipeline.sh`). Cron opera bajo locale `C` y abortará la ejecución con errores de sintaxis (`$'\200...'`). Usar siempre ASCII puro (`# ------`).
+5. **Estándar Go-Stack (ProjectDiscovery):** Priorizar siempre el uso de `subfinder`, `dnsx`, `httpx`, `alterx`, `katana` y `nuclei` nativos con límites de concurrencia estrictos (`-c 5`) sobre scripts iterativos en Python.
+6. **Transición Determinista de Estados (M4):** Cualquier script/Panel que manipule hallazgos debe respetar la taxonomía: `pending` (Reciente) → `validated` (Validado/Falso Positivo) → `archived` (Histórico/Enviado). No crear estados huérfanos.
+7. **Regla de Compatibilidad Cron (Locale C):** **Prohibido usar caracteres Unicode no-ASCII** (como guiones gráficos `─`, emojis o comillas tipográficas) en scripts de bash destinados a Crontab (`run_zone_pipeline.sh`). Cron opera bajo locale `C` y abortará la ejecución con errores de sintaxis (`$'\200...'`). Usar siempre ASCII puro (`# ------`).
 
 ---
 
