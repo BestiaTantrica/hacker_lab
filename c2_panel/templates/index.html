@@ -80,8 +80,7 @@
                     <div style="display: flex; gap: 8px; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px; overflow-x: auto;">
                         <button id="tab-findings-Pendiente" class="btn btn-secondary active" onclick="cambiarTabFindings('Pendiente', this)" style="font-size: 11px; padding: 5px 10px; background: #2563eb; color: #fff;">⏳ Pendientes</button>
                         <button id="tab-findings-Validado" class="btn btn-secondary" onclick="cambiarTabFindings('Validado', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">✅ Validados</button>
-                        <button id="tab-findings-Enviado" class="btn btn-secondary" onclick="cambiarTabFindings('Enviado', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">🚀 Enviados (H1)</button>
-                        <button id="tab-findings-FalsoPositivo" class="btn btn-secondary" onclick="cambiarTabFindings('FalsoPositivo', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">🗑️ Descartados</button>
+                        <button id="tab-findings-Historico" class="btn btn-secondary" onclick="cambiarTabFindings('Historico', this)" style="font-size: 11px; padding: 5px 10px; background: #1e293b; color: #94a3b8;">🗄️ Histórico</button>
                     </div>
 
                     <p style="font-size: 11px; color: #aaa; margin-top: 5px;">Selecciona un hallazgo para generar el reporte automáticamente en el área de trabajo.</p>
@@ -108,8 +107,10 @@
                         <span id="workspace-vuln-badge" style="background: #333; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #fff;">ESPERANDO</span>
                     </div>
 
-                    <div id="workspace-actions" style="display: none; grid-template-columns: 1fr; gap: 8px; margin-bottom: 15px;">
-                         <button class="btn btn-secondary" onclick="traducirAEspanol()" style="font-size: 10px; padding: 8px;">🇦🇷 Traducir Reporte al Español</button>
+                    <div id="workspace-actions" style="display: none; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                         <button class="btn btn-secondary" onclick="traducirAEspanol()" style="font-size: 10px; padding: 8px;">🇦🇷 Traducir al Español</button>
+                         <button class="btn btn-secondary" onclick="descargarReporteMD()" style="font-size: 10px; padding: 8px; background: #374151;">⬇️ Descargar Reporte (.md)</button>
+                         <button class="btn btn-secondary" onclick="imprimirPDF()" style="font-size: 10px; padding: 8px; background: #374151;">🖨️ Imprimir a PDF</button>
                     </div>
 
                     <div style="position: relative;">

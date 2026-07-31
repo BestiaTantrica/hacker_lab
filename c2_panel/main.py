@@ -132,6 +132,8 @@ def init_db():
         cursor.execute("ALTER TABLE findings ADD COLUMN scope_program TEXT DEFAULT ''")
     if "poc_quality" not in cols_findings:
         cursor.execute("ALTER TABLE findings ADD COLUMN poc_quality TEXT DEFAULT 'MEDIUM'")
+    if "status_interno" not in cols_findings:
+        cursor.execute("ALTER TABLE findings ADD COLUMN status_interno TEXT DEFAULT 'Pendiente'")
     conn.commit()
     conn.close()
 
@@ -644,7 +646,9 @@ def get_findings(status: Optional[str] = "Pendiente"):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
-    if status in ["Pendiente", "Validado", "Enviado", "FalsoPositivo"]:
+    if status == "Historico":
+        cursor.execute("SELECT * FROM findings WHERE status_interno IN ('Enviado', 'FalsoPositivo', 'Archivado') ORDER BY id DESC LIMIT 50")
+    elif status in ["Pendiente", "Validado"]:
         cursor.execute("SELECT * FROM findings WHERE status_interno = ? ORDER BY id DESC LIMIT 50", (status,))
     else:
         cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 50")
@@ -660,7 +664,7 @@ def archive_finding(finding_id: int, req: ArchiveRequest):
     cursor.execute("""
         UPDATE findings 
         SET reported = 1, 
-            status_interno = 'Enviado',
+            status_interno = 'Archivado',
             h1_report_id = COALESCE(NULLIF(?, ''), h1_report_id),
             h1_status = CASE WHEN h1_status = 'New' OR h1_status = '' THEN 'Submitted' ELSE h1_status END
         WHERE id = ?
@@ -693,8 +697,8 @@ def update_internal_status(finding_id: int, req: InternalStatusRequest):
     cursor = conn.cursor()
     cursor.execute("UPDATE findings SET status_interno = ? WHERE id = ?", (req.status_interno, finding_id))
     
-    # Si lo pasamos a Enviado, marcamos reported = 1 por retrocompatibilidad
-    if req.status_interno == "Enviado":
+    # Si lo pasamos a Enviado o Archivado, marcamos reported = 1 por retrocompatibilidad
+    if req.status_interno in ["Enviado", "Archivado"]:
         cursor.execute("UPDATE findings SET reported = 1 WHERE id = ?", (finding_id,))
     
     conn.commit()

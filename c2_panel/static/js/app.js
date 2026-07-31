@@ -80,11 +80,7 @@ function cambiarTabFindings(tab, btnElement) {
     });
     
     if (btnElement) {
-        if (tab === 'FalsoPositivo') {
-            btnElement.style.background = '#ef4444';
-        } else {
-            btnElement.style.background = '#2563eb';
-        }
+        btnElement.style.background = '#2563eb';
         btnElement.style.color = '#fff';
     }
 
@@ -103,7 +99,7 @@ async function cargarHallazgos() {
             data.findings.forEach(f => {
                 let statusCol = '#3b82f6';
                 if (f.status_interno === 'Validado') statusCol = '#10b981';
-                else if (f.status_interno === 'Enviado') statusCol = '#8b5cf6';
+                else if (f.status_interno === 'Enviado' || f.status_interno === 'Archivado') statusCol = '#8b5cf6';
                 else if (f.status_interno === 'FalsoPositivo') statusCol = '#ef4444';
 
                 const severityCol = f.severity === 'Critical' ? '#e74c3c' : (f.severity === 'High' ? '#f39c12' : '#2ecc71');
@@ -156,7 +152,7 @@ async function cargarHallazgos() {
                     card.appendChild(actionsDiv);
                 }
 
-                if (f.reported || f.status_interno === 'Enviado') {
+                if (f.reported || f.status_interno === 'Enviado' || f.status_interno === 'Archivado') {
                     const updateBtn = document.createElement('button');
                     updateBtn.className = 'btn btn-secondary';
                     updateBtn.style = 'font-size: 10px; padding: 4px 8px; margin-top: 8px; background: #374151; color: #fff; border: 1px solid #4b5563; border-radius: 4px; cursor: pointer; width: 100%;';
@@ -568,7 +564,7 @@ async function archivarHallazgoActual() {
         if (data.status === 'success') {
             alert(`✅ Hallazgo #${current_finding.id} (${current_finding.target}) archivado correctamente y vinculado al reporte H1 #${reportId || 'N/A'}.`);
             switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
-            cambiarTabFindings('Enviado', document.getElementById('tab-findings-Enviado'));
+            cambiarTabFindings('Historico', document.getElementById('tab-findings-Historico'));
         } else {
             alert(`❌ Error al archivar: ${data.message}`);
         }
@@ -592,9 +588,9 @@ async function actualizarEstadoH1(findingId, currentStatus, currentReportId, cur
     const finalStatus = newStatus.trim().toLowerCase();
     
     if (["informative", "duplicate", "n/a", "not applicable", "spam", "cerrado"].includes(finalStatus)) {
-        autoInternalStatus = 'FalsoPositivo'; // Mover a Descartados
+        autoInternalStatus = 'FalsoPositivo';
     } else if (["submitted", "triaged", "resolved", "bounty paid", "new"].includes(finalStatus)) {
-        autoInternalStatus = 'Enviado'; // Mover a Enviados (H1)
+        autoInternalStatus = 'Archivado';
     }
 
     try {
@@ -620,9 +616,9 @@ async function actualizarEstadoH1(findingId, currentStatus, currentReportId, cur
                 });
                 
                 // Mover al usuario a la pestaña correcta automáticamente
-                const tabBtn = document.getElementById(`tab-findings-${autoInternalStatus}`);
+                const tabBtn = document.getElementById('tab-findings-Historico');
                 if (tabBtn) {
-                    cambiarTabFindings(autoInternalStatus, tabBtn);
+                    cambiarTabFindings('Historico', tabBtn);
                 } else {
                     cargarHallazgos();
                 }
@@ -690,4 +686,137 @@ async function cambiarEstadoInternoDesdeCard(findingId, nuevoEstado) {
     } catch(e) {
         alert("Error de red al actualizar estado");
     }
+}
+
+// M4-B: EXPORTACIÓN FORMAL DE REPORTES
+function descargarReporteMD() {
+    if (!current_finding) return;
+    const output = document.getElementById('prompt-result-output').value;
+    if (!output || output.trim() === "") {
+        alert("El reporte está vacío. Genera uno primero.");
+        return;
+    }
+    
+    const dateStr = new Date().toISOString().split('T')[0];
+    const targetClean = current_finding.target.replace(/[^a-zA-Z0-9]/g, '_');
+    const filename = `H1_Report_${targetClean}_${dateStr}.md`;
+    
+    const blob = new Blob([output], { type: 'text/markdown' });
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    agregarMensajePegaso("✅ Se ha descargado el reporte en formato Markdown (.md).");
+}
+
+function imprimirPDF() {
+    if (!current_finding) return;
+    const output = document.getElementById('prompt-result-output').value;
+    if (!output || output.trim() === "") {
+        alert("El reporte está vacío. Genera uno primero.");
+        return;
+    }
+    
+    const targetClean = current_finding.target;
+    const dateStr = new Date().toISOString().split('T')[0];
+    
+    // Crear una ventana temporal para la impresión nativa sin afectar la interfaz C2
+    const printWindow = window.open('', '_blank', 'width=800,height=900');
+    if(!printWindow) {
+        alert("El navegador bloqueó la ventana emergente. Por favor permítelas e intenta de nuevo.");
+        return;
+    }
+    
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Vulnerability Report - ${targetClean}</title>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                pre {
+                    background-color: #f6f8fa;
+                    border-radius: 6px;
+                    padding: 16px;
+                    overflow: auto;
+                    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+                    font-size: 85%;
+                    border: 1px solid #e1e4e8;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                }
+                code {
+                    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+                    background-color: rgba(27,31,35,0.05);
+                    padding: .2em .4em;
+                    border-radius: 6px;
+                }
+                h1, h2, h3 {
+                    border-bottom: 1px solid #eaecef;
+                    padding-bottom: .3em;
+                    margin-top: 24px;
+                    margin-bottom: 16px;
+                }
+                .header {
+                    border-bottom: 2px solid #0366d6;
+                    margin-bottom: 30px;
+                    padding-bottom: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                }
+                @media print {
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+                <button onclick="window.print()" style="padding: 10px 20px; background: #0366d6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Imprimir a PDF</button>
+            </div>
+            
+            <div class="header">
+                <div>
+                    <h2 style="margin: 0; border: none;">Reporte de Seguridad Forense</h2>
+                    <p style="margin: 5px 0 0 0; color: #586069;">Target: <strong>${targetClean}</strong></p>
+                </div>
+                <div style="text-align: right; color: #586069; font-size: 14px;">
+                    Generado el: ${dateStr}<br>
+                    C2 Copilot Hub
+                </div>
+            </div>
+            
+            <!-- Renderizamos el contenido crudo, pero conservando los saltos de línea y formateo base -->
+            <div style="white-space: pre-wrap;">${output
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+                .replace(/```[a-z]*\n([\s\S]*?)```/g, '<pre>$1</pre>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+            }</div>
+            
+            <script>
+                // Auto-print al cargar
+                setTimeout(() => {
+                    window.print();
+                }, 500);
+            </script>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    agregarMensajePegaso("✅ Se ha abierto una ventana limpia para Imprimir a PDF. Puedes guardar el reporte nativamente.");
 }
