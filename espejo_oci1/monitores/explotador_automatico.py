@@ -33,6 +33,20 @@ import urllib3
 
 urllib3.disable_warnings()
 
+# M3-C: WAF Bypass Mutator
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from waf_mutator import rotate_headers, build_triager_curl
+    _WAF_MUTATOR_AVAILABLE = True
+except ImportError:
+    _WAF_MUTATOR_AVAILABLE = False
+    def rotate_headers(attempt=1):
+        return {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"}
+    def build_triager_curl(url, headers):
+        return "curl -s -i --max-time 10 {}".format(url)
+
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURACIÓN
 # ─────────────────────────────────────────────────────────────────────────────
@@ -53,11 +67,8 @@ DELTA_DIR_LOCAL = str(Path(__file__).parent.parent / "resultados")
 
 # Request settings
 TIMEOUT = 8
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
-    "X-Bug-Bounty": "HackerOne-tomas244",
-}
-MAX_SUBDOMINIOS = 500  # Límite por ejecución para no exceder rate limits
+# NOTA M3-C: HEADERS estatico eliminado. Se usa rotate_headers(attempt) dinamicamente.
+MAX_SUBDOMINIOS = 500  # Limite por ejecucion para no exceder rate limits
 
 # ─────────────────────────────────────────────────────────────────────────────
 # FINGERPRINTS DE SUBDOMAIN TAKEOVER
@@ -187,18 +198,30 @@ def get_cname(dominio):
 
 
 def http_probe(url, extra_headers=None, allow_redirects=True):
-    """Hacer GET y devolver (status, headers, body[:2000], url_final)."""
-    h = {**HEADERS, **(extra_headers or {})}
-    try:
-        r = requests.get(url, headers=h, timeout=TIMEOUT,
-                         verify=False, allow_redirects=allow_redirects)
-        return r.status_code, dict(r.headers), r.text[:3000], r.url
-    except requests.exceptions.ConnectionError:
-        return None, {}, "", url
-    except requests.exceptions.Timeout:
-        return None, {}, "", url
-    except Exception:
-        return None, {}, "", url
+    """
+    M3-C: GET con retry automatico en 403/406/429.
+    Intento 1: headers conservadores.
+    Intento 2: headers con X-Forwarded-For (WAF bypass).
+    Retorna (status, headers, body[:3000], url_final).
+    """
+    for attempt in [1, 2]:
+        h = rotate_headers(attempt)
+        if extra_headers:
+            h.update(extra_headers)
+        try:
+            r = requests.get(url, headers=h, timeout=TIMEOUT,
+                             verify=False, allow_redirects=allow_redirects)
+            if r.status_code in (403, 406, 429) and attempt == 1:
+                log("[M3-C] {} respondio {}. Reintentando con headers WAF-bypass...".format(url, r.status_code))
+                continue
+            return r.status_code, dict(r.headers), r.text[:3000], r.url
+        except requests.exceptions.ConnectionError:
+            return None, {}, "", url
+        except requests.exceptions.Timeout:
+            return None, {}, "", url
+        except Exception:
+            return None, {}, "", url
+    return None, {}, "", url
 
 
 def cargar_delta(path=None):

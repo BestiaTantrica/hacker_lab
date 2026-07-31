@@ -26,6 +26,30 @@ try:
 except ImportError:
     completar = None
 
+# M3: Modulos de Validacion Forense (graceful fallback si no estan desplegados)
+try:
+    from scope_validator import scope_check, SCOPE_DB
+    _SCOPE_AVAILABLE = True
+except ImportError:
+    _SCOPE_AVAILABLE = False
+    def scope_check(h, s): return {"valid": None, "reason": "scope_validator_not_deployed", "program_slug": "", "h1_report_url": ""}
+
+try:
+    from poc_generator import sanitize_poc, QUALITY_UNVERIFIABLE
+    _POC_AVAILABLE = True
+except ImportError:
+    _POC_AVAILABLE = False
+    def sanitize_poc(ev): return ev
+    QUALITY_UNVERIFIABLE = "UNVERIFIABLE"
+
+try:
+    from waf_mutator import rotate_headers, build_triager_curl
+    _WAF_AVAILABLE = True
+except ImportError:
+    _WAF_AVAILABLE = False
+    def rotate_headers(attempt=1): return {"User-Agent": "Mozilla/5.0"}
+    def build_triager_curl(url, h): return "curl -s -i --max-time 10 {}".format(url)
+
 app = FastAPI(title="C2 Panel & Copilot Hub — HackerLab", version="2.0")
 
 # Base de datos local SQLite para OCI-2
@@ -90,6 +114,24 @@ def init_db():
             last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    # Tabla scope_cache — M3-B: cache de validaciones de scope H1
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS scope_cache (
+            host TEXT PRIMARY KEY,
+            valid INTEGER,
+            reason TEXT,
+            program_slug TEXT,
+            h1_report_url TEXT,
+            checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    # Migracion preventiva: columna scope_program en findings
+    cursor.execute("PRAGMA table_info(findings)")
+    cols_findings = [r[1] for r in cursor.fetchall()]
+    if "scope_program" not in cols_findings:
+        cursor.execute("ALTER TABLE findings ADD COLUMN scope_program TEXT DEFAULT ''")
+    if "poc_quality" not in cols_findings:
+        cursor.execute("ALTER TABLE findings ADD COLUMN poc_quality TEXT DEFAULT 'MEDIUM'")
     conn.commit()
     conn.close()
 
@@ -911,6 +953,176 @@ def verify_bug(req: VerifyRequest):
     except Exception as e:
         if client: client.close()
         return {"status": "error", "data": f"Error verificando: {str(e)}"}
+
+
+# ============================================================
+# M3-B: Endpoint — Validar scope H1 de un finding
+# ============================================================
+@app.post("/api/findings/{finding_id}/validate_scope")
+def validate_scope_endpoint(finding_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT target, severity, vuln_type FROM findings WHERE id = ?", (finding_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Finding no encontrado")
+
+    target   = row["target"]
+    severity = row["severity"].lower()
+    result   = scope_check(target, severity)
+
+    # Actualizar status_interno segun scope
+    new_status = "Validado" if result["valid"] else "FalsoPositivo"
+    cursor.execute(
+        "UPDATE findings SET status_interno = ?, scope_program = ? WHERE id = ?",
+        (new_status, result.get("program_slug", ""), finding_id)
+    )
+    # Guardar en scope_cache
+    cursor.execute("""
+        INSERT OR REPLACE INTO scope_cache (host, valid, reason, program_slug, h1_report_url)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        target,
+        1 if result["valid"] else 0,
+        result["reason"],
+        result.get("program_slug", ""),
+        result.get("h1_report_url", ""),
+    ))
+    conn.commit()
+    conn.close()
+    return {"status": "success", **result, "new_internal_status": new_status}
+
+
+# ============================================================
+# M3-A: Endpoint — Generar / refrescar PoC del finding
+# ============================================================
+@app.post("/api/findings/{finding_id}/generate_poc")
+def generate_poc_endpoint(finding_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT evidence, target, vuln_type FROM findings WHERE id = ?", (finding_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Finding no encontrado")
+
+    try:
+        evidence = json.loads(row["evidence"]) if row["evidence"] else {}
+    except Exception:
+        evidence = {}
+
+    evidence["vuln_type"] = evidence.get("vuln_type", row["vuln_type"])
+    enriched = sanitize_poc(evidence)
+
+    # Persistir evidence enriquecida
+    cursor.execute(
+        "UPDATE findings SET evidence = ?, poc_quality = ? WHERE id = ?",
+        (json.dumps(enriched, ensure_ascii=False), enriched.get("poc_quality", "MEDIUM"), finding_id)
+    )
+    conn.commit()
+    conn.close()
+    return {
+        "status": "success",
+        "triager_poc": enriched.get("triager_poc", ""),
+        "poc_quality": enriched.get("poc_quality", "MEDIUM"),
+        "poc_source": enriched.get("poc_source", ""),
+    }
+
+
+# ============================================================
+# M3-C: Endpoint — WAF Bypass Probe con retry automatico
+# ============================================================
+class WafProbeRequest(BaseModel):
+    finding_id: int
+
+@app.post("/api/findings/{finding_id}/waf_probe")
+def waf_probe_endpoint(finding_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT target, evidence, vuln_type FROM findings WHERE id = ?", (finding_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Finding no encontrado")
+
+    try:
+        ev_data = json.loads(row["evidence"]) if row["evidence"] else {}
+    except Exception:
+        ev_data = {}
+
+    target_url = ev_data.get("matched_at", row["target"])
+    client = get_ssh_client()
+    if not client:
+        conn.close()
+        return {"status": "error", "data": "SSH a OCI-1 no disponible"}
+
+    results = []
+    waf_bypassed = False
+    final_triager_curl = ""
+
+    for attempt in [1, 2]:
+        headers = rotate_headers(attempt)
+        triager_curl = build_triager_curl(target_url, headers)
+
+        # Construir el curl para ejecutar via SSH en OCI-1
+        ssh_curl = triager_curl.replace(
+            "curl ",
+            "curl -H 'X-Bug-Bounty: HackerOne-tomas244' ", 1
+        ) + " | head -c 2500"
+
+        try:
+            stdin, stdout, stderr = client.exec_command(ssh_curl)
+            output = stdout.read().decode(errors="ignore").strip()
+        except Exception as ex:
+            output = "SSH exec error: {}".format(ex)
+
+        first_line = output.split("\n")[0].upper() if output else ""
+        status_code = None
+        for code_str in [" 200 ", " 404 ", " 403 ", " 406 ", " 301 ", " 302 ", " 429 "]:
+            if code_str in first_line:
+                status_code = int(code_str.strip())
+                break
+
+        results.append({
+            "attempt": attempt,
+            "status_code": status_code,
+            "headers_used": {k: v for k, v in headers.items() if k != "X-Bug-Bounty"},
+            "triager_curl": triager_curl,
+            "response_preview": output[:800],
+        })
+
+        if status_code == 200:
+            waf_bypassed = (attempt == 2)
+            final_triager_curl = triager_curl
+            break
+
+        if attempt == 1 and status_code in (403, 406, 429):
+            continue  # Reintentar con attempt=2
+        break
+
+    client.close()
+
+    # Persistir el triager_curl en la evidence si fue exitoso
+    if final_triager_curl:
+        ev_data["triager_poc"] = final_triager_curl
+        ev_data["poc_quality"] = "HIGH" if waf_bypassed or results[0].get("status_code") == 200 else "MEDIUM"
+        cursor.execute(
+            "UPDATE findings SET evidence = ?, poc_quality = ? WHERE id = ?",
+            (json.dumps(ev_data, ensure_ascii=False), ev_data["poc_quality"], finding_id)
+        )
+        conn.commit()
+    conn.close()
+
+    return {
+        "status": "success",
+        "waf_bypassed": waf_bypassed,
+        "attempts": results,
+        "final_triager_curl": final_triager_curl,
+    }
 
 class ExplainErrorRequest(BaseModel):
     error_text: str

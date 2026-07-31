@@ -18,13 +18,27 @@ import sys
 import logging
 from pathlib import Path
 
-# ── Importar notificador del mismo directorio ─────────────────────────────────
+# ── Importar modulos del mismo directorio ────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
 try:
     from notificador import sync_to_c2_panel, notificar_hallazgos_valor
 except ImportError as e:
     print(f"[FATAL] No se pudo importar notificador.py: {e}")
     sys.exit(1)
+
+# M3-A: PoC Generator
+try:
+    from poc_generator import sanitize_poc, QUALITY_UNVERIFIABLE
+except ImportError:
+    def sanitize_poc(ev): return ev
+    QUALITY_UNVERIFIABLE = "UNVERIFIABLE"
+
+# M3-B: Scope Validator
+try:
+    from scope_validator import scope_check, dedup_check
+except ImportError:
+    def scope_check(h, s): return {"valid": True, "reason": "scope_validator_missing", "program_slug": "", "h1_report_url": ""}
+    def dedup_check(t, v): return False, ""
 
 logging.basicConfig(
     level=logging.INFO,
@@ -103,7 +117,6 @@ def parse_nuclei_jsonl(nuclei_json_path: str) -> list[dict]:
                 continue
 
             # ── Guardrail 2: Verificar que hay evidencia concreta ──────────
-            # Un hallazgo sin curl-command o sin matcher es sospechoso.
             has_evidence = bool(curl_command or matcher_name or extracted_results)
             if not has_evidence and severity not in ("critical", "high"):
                 log.warning(
@@ -112,30 +125,63 @@ def parse_nuclei_jsonl(nuclei_json_path: str) -> list[dict]:
                 )
                 continue
 
+            # ── Guardrail 3: Validacion de Scope H1 (M3-B) ────────────────
+            scope_result = scope_check(matched_at or host, severity)
+            if not scope_result["valid"]:
+                log.info(
+                    "[M3-B SCOPE] Descartado: %s | Razon: %s",
+                    matched_at or host, scope_result["reason"]
+                )
+                continue
+
+            # ── Guardrail 4: Deduplicacion cross-ejecucion (M3-B) ─────────
+            is_dup, fingerprint = dedup_check(matched_at or host, name)
+            if is_dup:
+                log.info(
+                    "[M3-B DEDUP] Duplicado detectado, omitiendo: %s / %s",
+                    matched_at or host, name
+                )
+                continue
+
             # ── Construir la evidencia forense estructurada ────────────────
             evidence = {
                 "template_id":  template_id,
                 "matched_at":   matched_at,
+                "host":         host,
                 "severity":     severity,
                 "curl_command": curl_command,
                 "matcher_name": matcher_name,
+                "vuln_type":    name,
+                "scope_program": scope_result.get("program_slug", ""),
+                "h1_report_url": scope_result.get("h1_report_url", ""),
+                "dedup_fp":     fingerprint,
             }
             if extracted_results:
-                evidence["extracted"] = extracted_results[:5]  # Cap a 5 items
+                evidence["extracted"] = extracted_results[:5]
 
-            # Agregar datos extra si los hay (útil para exposures de tokens)
             for key in ("extracted-results", "response-time", "ip"):
                 if finding.get(key):
                     evidence[key] = finding[key]
 
+            # ── M3-A: Sanitizar PoC y evaluar calidad forense ─────────────
+            evidence = sanitize_poc(evidence)
+            if evidence.get("poc_quality") == QUALITY_UNVERIFIABLE:
+                log.warning(
+                    "[M3-A POC] Calidad UNVERIFIABLE para '%s'. Se sincroniza con verified=False.",
+                    name
+                )
+
             # ── Mapear al formato del C2 Panel ────────────────────────────
+            poc_quality = evidence.get("poc_quality", QUALITY_UNVERIFIABLE)
+            is_verified = poc_quality != QUALITY_UNVERIFIABLE
             c2_finding = {
                 "target":           matched_at or host,
                 "vuln_type":        name,
                 "severity":         severity.capitalize(),
                 "estimated_bounty": BOUNTY_MAP.get(severity, "$50-$200"),
                 "evidence":         json.dumps(evidence, ensure_ascii=False),
-                "verified":         True,  # Nuclei lo verificó en vivo
+                "verified":         is_verified,
+                "scope_program":    scope_result.get("program_slug", ""),
             }
 
             findings.append(c2_finding)
