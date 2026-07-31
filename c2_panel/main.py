@@ -3,6 +3,7 @@ import sys
 import json
 import sqlite3
 import datetime
+import asyncio
 from typing import Optional, List
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -82,6 +83,13 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    # Tabla de Heartbeats para el Watchdog OCI-1 (Módulo 1-B)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS heartbeats (
+            zone TEXT PRIMARY KEY,
+            last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -99,6 +107,36 @@ class NoCacheStaticFiles(StaticFiles):
 
 app.mount("/static", NoCacheStaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+# --- M1-B: DEAD MAN'S ALERTING (WATCHDOG C2) ---
+async def dead_mans_switch():
+    """Revisa cada hora si alguna zona de OCI-1 lleva más de 12h sin emitir Heartbeat."""
+    while True:
+        await asyncio.sleep(3600)  # Cada 60 minutos
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            # Diferencia en horas entre last_seen y ahora (UTC)
+            cursor.execute("SELECT zone, last_seen FROM heartbeats WHERE (julianday(CURRENT_TIMESTAMP) - julianday(last_seen)) * 24 > 12")
+            dead_zones = cursor.fetchall()
+            conn.close()
+            
+            for (zone, last_seen) in dead_zones:
+                import urllib.request, json
+                token = os.environ.get('TELEGRAM_BOT_TOKEN')
+                chat_id = "6527908321" # Fijo del entorno del lab
+                if token:
+                    text = f"🚨 ALERTA CRÍTICA 🚨\n\nEl pipeline OCI-1 (Zona: {zone}) no emite latidos desde hace más de 12 horas.\nÚltimo contacto: {last_seen} UTC.\n\nPor favor revisar SSH a OCI-1, posible OOM Kill o falla de Cron."
+                    url = f"https://api.telegram.org/bot{token}/sendMessage"
+                    payload = {"chat_id": chat_id, "text": text}
+                    req_obj = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
+                    urllib.request.urlopen(req_obj)
+        except Exception as e:
+            print(f"Error en dead_mans_switch: {e}")
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(dead_mans_switch())
 
 # Configuración OCI-1 (Esclavo)
 OCI1_IP = os.getenv("OCI1_IP", "129.80.73.248")
@@ -530,6 +568,23 @@ def ingest_delta(payload: IngestPayload):
         "inserted_deltas": inserted_deltas,
         "inserted_findings": inserted_findings
     }
+
+class HeartbeatPayload(BaseModel):
+    zone: str
+
+@app.post("/api/heartbeat")
+def heartbeat_endpoint(payload: HeartbeatPayload):
+    """Recibe latidos de OCI-1 al finalizar cada pipeline para el Dead Man's Switch."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    # Usamos REPLACE o ON CONFLICT (requiere tabla creada de esa forma, INSERT OR REPLACE es más universal en SQLite)
+    cursor.execute("""
+        INSERT OR REPLACE INTO heartbeats (zone, last_seen) 
+        VALUES (?, CURRENT_TIMESTAMP)
+    """, (payload.zone,))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": "Heartbeat received"}
 
 # --- CONSULTAS Y CICLO DE VIDA DE DATOS ---
 

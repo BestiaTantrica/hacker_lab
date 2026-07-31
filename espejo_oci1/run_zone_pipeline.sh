@@ -3,15 +3,16 @@
 # ========================================================================
 # Uso: ./run_zone_pipeline.sh [americas_1|emea_1|asia_1|...]
 #
-# Flujo ESTRICTO (cascada lineal, 5 eslabones, sin paralelismos):
+# Flujo ESTRICTO (cascada lineal, 6 eslabones, sin paralelismos):
 #   1. mass_recon.py --zone ZONA      → SQLite (subfinder + crt.sh)
 #   2. comparador.py --zone ZONA      → delta_{zona}_FECHA.json
 #   3. dnsx + httpx                   → live_hosts_{zona}_FECHA.txt (filtro DNS/HTTP)
 #   4. nuclei                         → nuclei_{zona}_FECHA.json (vulns reales)
 #   5. parsear_nuclei.py              → sync C2 Panel + Telegram (solo si hay bugs reales)
+#   6. GC Dinámico & Heartbeat        → Mantiene OCI-1 limpio e informa latido.
 #
 # Si cualquier eslabón crítico falla, la cascada se detiene.
-# Telegram SOLO se activa si nuclei encuentra vulnerabilidades confirmadas.
+# Telegram SOLO se activa si nuclei encuentra vulnerabilidades confirmadas o Dead Man.
 
 set -euo pipefail
 
@@ -50,6 +51,30 @@ flock -n 200 || {
 log()   { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [INFO]  [$ZONA] $1" | tee -a "$LOG"; }
 warn()  { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [WARN]  [$ZONA] $1" | tee -a "$LOG"; }
 error() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [ERROR] [$ZONA] $1" | tee -a "$LOG"; exit 1; }
+
+# -- TITLE-M1-A: Watchdog RAM & Circuit Breaker --------------------------------
+# Previene OOM Killers catastróficos si dnsx/httpx/nuclei desbordan la memoria.
+watchdog_ram() {
+    while true; do
+        for p in "dnsx" "httpx" "nuclei"; do
+            PID=$(pgrep -x "$p" | head -n 1)
+            if [ -n "$PID" ]; then
+                # Obtener Resident Set Size (memoria física usada en KB)
+                RSS=$(ps -o rss= -p "$PID" 2>/dev/null | awk '{print $1}')
+                if [ -n "$RSS" ] && [ "$RSS" -ge 768000 ]; then # 750MB = ~768000 KB
+                    echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [CRITICAL] Watchdog: Proceso $p (PID $PID) excedió 750MB RAM. Abortando proceso de forma segura." >> "$LOG"
+                    kill -15 "$PID" 2>/dev/null || true
+                    sleep 2
+                    kill -9 "$PID" 2>/dev/null || true
+                fi
+            fi
+        done
+        sleep 5
+    done
+}
+watchdog_ram &
+WATCHDOG_PID=$!
+trap "kill -9 $WATCHDOG_PID 2>/dev/null || true; rm -f $LOCKFILE" EXIT INT TERM
 
 log "============================================================"
 log "🌐 INICIANDO CASCADA v2 — ZONA: ${ZONA^^}"
@@ -105,14 +130,14 @@ LIVE_HTTP="${RESULTADO_DIR}/live_http_${ZONA}_${FECHA}.txt"
 # dnsx: Filtro DNS. Solo pasa subdominios con resolución IP real.
 # -resp-only: solo los que resolvieron. -retry 2: evita falsos negativos.
 # -t 150: 150 goroutines concurrentes (ajustado a la RAM de OCI-1).
-dnsx \
+timeout 2h dnsx \
     -list "$SUBS_RAW" \
     -resp-only \
     -retry 2 \
     -t 100 \
     -silent \
     -o "$LIVE_DNS" \
-    >> "$LOG" 2>&1 || warn "⚠️  dnsx falló. Usando lista raw sin filtro DNS."
+    >> "$LOG" 2>&1 || warn "⚠️  dnsx falló o superó el timeout de 2h. Usando lista raw sin filtro DNS."
 
 if [ ! -s "$LIVE_DNS" ]; then
     warn "⚠️  dnsx no resolvió ningún host vivo. Sin objetivos para escanear."
@@ -131,7 +156,7 @@ log "🔍 Hosts resueltos por DNS: ${TOTAL_DNS} / ${TOTAL_SUBS}"
 # -t 50: 50 goroutines HTTP concurrentes.
 # -json: salida en JSON enriquecido para el C2 Panel.
 HTTPX_JSON="${RESULTADO_DIR}/httpx_${ZONA}_${FECHA}.json"
-httpx \
+timeout 2h httpx \
     -list "$LIVE_DNS" \
     -sc \
     -title \
@@ -143,7 +168,7 @@ httpx \
     -silent \
     -json \
     -o "$HTTPX_JSON" \
-    >> "$LOG" 2>&1 || warn "⚠️  httpx tuvo errores parciales. Continuando con lo disponible."
+    >> "$LOG" 2>&1 || warn "⚠️  httpx tuvo errores parciales o superó timeout de 2h. Continuando con lo disponible."
 
 # Generar la lista final de hosts vivos para nuclei (solo URLs)
 if [ -s "$HTTPX_JSON" ]; then
@@ -181,7 +206,7 @@ log "Eslabón 4/5: Escaneo de vulnerabilidades (nuclei)"
 
 NUCLEI_JSON="${RESULTADO_DIR}/nuclei_${ZONA}_${FECHA}.json"
 
-nuclei \
+timeout 3h nuclei \
     -list "$LIVE_HTTP" \
     -t /home/ubuntu/nuclei-templates/http/takeovers/ \
     -t /home/ubuntu/nuclei-templates/http/exposures/ \
@@ -195,7 +220,7 @@ nuclei \
     -jsonl \
     -o "$NUCLEI_JSON" \
     -silent \
-    >> "$LOG" 2>&1 || warn "⚠️  nuclei finalizó con errores parciales. Revisando resultados disponibles."
+    >> "$LOG" 2>&1 || warn "⚠️  nuclei finalizó con errores parciales o superó timeout de 3h. Revisando resultados disponibles."
 
 if [ ! -s "$NUCLEI_JSON" ]; then
     log "ℹ️  Nuclei no encontró vulnerabilidades reales en zona ${ZONA}. Cascada finalizada limpiamente."
@@ -218,7 +243,38 @@ $VENV "${BASE}/monitores/parsear_nuclei.py" \
 # Se mantienen: NUCLEI_JSON (evidencia forense), DELTA_FILE (historial)
 # Se eliminan: archivos temporales del proceso de filtrado
 rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON"
-log "🧹 Archivos temporales limpiados."
+log "🧹 Archivos temporales directos limpiados."
+
+# -- Eslabón 6: Garbage Collection Dinámico y Heartbeat (M1-B & M1-C) -----------
+log "Eslabón 6/6: GC Dinámico y Passive Heartbeat"
+
+# 1. Capacity-Based Auto-Purge (M1-C)
+DISK_USAGE=$(df /home/ubuntu | tail -1 | awk '{print $5}' | sed 's/%//')
+if [ "$DISK_USAGE" -ge 85 ]; then
+    warn "⚠️ Uso de disco crítico al ${DISK_USAGE}%. Iniciando Purga Dinámica..."
+    
+    # Loop de purga: de más viejo a más nuevo hasta bajar al 75%
+    while [ "$DISK_USAGE" -ge 75 ]; do
+        # Buscar el .json o .txt más antiguo, excepto el de hoy (usando awk/sort si es necesario, o ls por orden de tiempo invertido)
+        # Se asume formato seguro. No se falla el script si ocurre un error temporal.
+        OLDEST=$(ls -1t "$RESULTADO_DIR"/*_*.json "$RESULTADO_DIR"/*_*.txt 2>/dev/null | tail -n 1)
+        if [ -z "$OLDEST" ]; then break; fi # No hay más archivos para borrar
+        
+        rm -f "$OLDEST"
+        DISK_USAGE=$(df /home/ubuntu | tail -1 | awk '{print $5}' | sed 's/%//')
+    done
+    log "🧹 Purga finalizada. Uso de disco actual: ${DISK_USAGE}%"
+fi
+
+# Respaldo higiénico pasivo (> 14 días)
+find "$RESULTADO_DIR" -type f -name "*_*.json" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+find "$RESULTADO_DIR" -type f -name "*_*.txt" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+find "${BASE}/logs" -type f -name "*.log" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+
+# 2. Passive Heartbeat al C2 (M1-B)
+curl -s -X POST "${C2_PANEL_URL}/api/heartbeat" \
+     -d "{\"zone\": \"$ZONA\"}" \
+     -H "Content-Type: application/json" >/dev/null 2>&1 || warn "⚠️ Heartbeat no pudo contactar al C2."
 
 log "🏁 CASCADA v2 ZONA ${ZONA^^} COMPLETADA EXITOSAMENTE — ${TOTAL_BUGS} hallazgo(s) procesado(s)."
 log "============================================================"

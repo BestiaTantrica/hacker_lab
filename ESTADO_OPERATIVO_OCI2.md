@@ -12,6 +12,7 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
   - Tabla `deltas`: Registro de subdominios descubiertos por zona (`zone`, `domain`, `subdomain`, `discovered_at`).
   - Tabla `findings`: Registro de vulnerabilidades verificadas (`target`, `vuln_type`, `severity`, `estimated_bounty`, `evidence`, `verified`, `reported`).
   - Tabla `chat_history`: Registro de interacciones unificadas aisladas por hallazgo (`source`, `role`, `message`, `finding_id`, `created_at`).
+  - Tabla `heartbeats`: Registro del último latido emitido por cada zona de OCI-1, utilizado para el Dead Man's Switch (`zone`, `last_seen`).
 - **Hub de Prompts & Skills Integradas (`SKILLS_PROMPTS`):**
   - `report_h1`: Generación de borrador de reporte formal en inglés para HackerOne con inferencia automática del programa.
   - `takeover_analysis`: Evaluación de CNAMEs huérfanos con formato H1 e inferencia de programa.
@@ -20,8 +21,9 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 
 ---
 
-## 2. Endpoints de Ingesta y Comunicación
+## 2. Endpoints de Ingesta, Comunicación y Monitoreo
 - `POST /api/ingest_delta`: Ingesta directa de telemetría desde OCI-1 (`deltas` y `findings`).
+- `POST /api/heartbeat`: Recibe el latido pasivo desde OCI-1 al finalizar cada pipeline de forma segura. Si el background loop (Dead Man's Switch) detecta >12h sin latidos, envía alerta a Telegram.
 - `GET /api/status`: Diagnóstico SSH en tiempo real hacia OCI-1.
 - `GET /api/findings` & `GET /api/deltas/{zone}`: Consultas de telemetría para la interfaz web.
 - `POST /api/copilot/generate`: Ejecución de skills de IA pasando la evidencia cruda.

@@ -11,6 +11,7 @@ En `espejo_oci1/monitores/` y `espejo_oci1/` se encuentran los eslabones del nue
 - `dnsx` + `httpx` (binarios Go): Eslabón 3. Filtran subdominios sin DNS real y hacen probing HTTP masivo para sacar CNAMEs, titles y tech-stack. **Elimina la causa raíz de los falsos positivos.**
 - `nuclei` (v3.3.0): Eslabón 4. Escanea únicamente hosts HTTP vivos con plantillas `takeovers/`, `exposures/`, `misconfiguration/` en severidad `critical,high,medium`. Genera `nuclei_{zona}_FECHA.json`.
 - `parsear_nuclei.py`: Eslabón 5. Lee el JSONL de nuclei, aplica guardrails anti-falso-positivo, sincroniza con OCI-2 (`POST /api/ingest_delta`) y notifica a Telegram.
+- **Circuit Breaker & GC**: Eslabón 6 y Wrappers. Se integró un Watchdog de RAM asíncrono para abortar `dnsx`/`httpx`/`nuclei` si exceden 750MB. Al final de la cascada, evalúa el `%` de uso de disco: si excede 85%, lanza purga dinámica (Watermark GC) iterativa para no reventar el Free Tier. También emite un `Heartbeat` al C2.
 
 ### Herramientas instaladas en OCI-1 (`/usr/local/bin/`):
 - `subfinder` v2.14.0 ✅
