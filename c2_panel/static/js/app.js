@@ -3,6 +3,28 @@
 let current_finding = null;
 let current_tab = 'Pendiente';
 
+// SISTEMA DE NOTIFICACIONES TOAST (sin alert() bloqueante)
+function mostrarToast(mensaje, tipo) {
+    tipo = tipo || 'success';
+    var el = document.createElement('div');
+    el.style.cssText = [
+        'position:fixed;top:22px;right:22px;z-index:9999;padding:12px 20px;',
+        'border-radius:8px;font-size:13px;font-weight:600;max-width:380px;',
+        'box-shadow:0 4px 24px rgba(0,0,0,0.55);opacity:1;transition:opacity 0.4s ease;',
+        tipo === 'error'
+            ? 'background:#3d0d0d;color:#ff8080;border:1px solid #7c2020;'
+            : 'background:#0d2d0d;color:#7cfc00;border:1px solid #1d6e1d;'
+    ].join('');
+    el.textContent = mensaje;
+    document.body.appendChild(el);
+    setTimeout(function() { el.style.opacity = '0'; }, 3200);
+    setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 3700);
+}
+
+function escapeHtmlModal(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     checkOciStatus();
     cargarHallazgos();
@@ -147,7 +169,8 @@ async function cargarHallazgos() {
                     const actionsDiv = document.createElement('div');
                     actionsDiv.style = 'display: flex; gap: 8px; margin-top: 10px;';
                     actionsDiv.innerHTML = `
-                        <button class="btn btn-primary" style="flex: 1; font-size: 10px; padding: 6px; background: #8b5cf6; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); abrirAreaDeTrabajoFromCard(${f.id})">🚀 Abrir para Reportar</button>
+                        <button class="btn btn-primary" style="flex: 1; font-size: 10px; padding: 6px; background: #8b5cf6; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); abrirAreaDeTrabajoFromCard(${f.id})">Abrir para Reportar</button>
+                        <button class="btn btn-secondary" style="flex: 1; font-size: 10px; padding: 6px; background: #1e3a5f; color: #93c5fd; border: 1px solid #2563eb; border-radius: 3px; cursor: pointer;" onclick="event.stopPropagation(); mostrarModalArchivado(${f.id}, '${f.target.replace(/'/g, '\\&apos;')}')">Archivar Directo</button>
                     `;
                     card.appendChild(actionsDiv);
                 }
@@ -542,99 +565,20 @@ async function enviarMensajeChat() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// ARCHIVADO DE REPORTES CON REGISTRO DE ID HACKERONE REAL
-async function archivarHallazgoActual() {
+// ARCHIVADO DE REPORTES — llama al modal premium sin prompt() bloqueante
+function archivarHallazgoActual() {
     if (!current_finding) {
-        alert("Primero selecciona un hallazgo del panel.");
+        mostrarToast('Primero selecciona un hallazgo del panel', 'error');
         return;
     }
-
-    const reportId = prompt(`Ingresa el número de reporte REAL otorgado por HackerOne para ${current_finding.target} (Ej: 3892352):`, current_finding.h1_report_id || "");
-    
-    if (reportId === null) return; // Cancelado por usuario
-
-    try {
-        const res = await fetch(`/api/findings/${current_finding.id}/archive`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ h1_report_id: reportId.trim() })
-        });
-        
-        const data = await res.json();
-        if (data.status === 'success') {
-            alert(`✅ Hallazgo #${current_finding.id} (${current_finding.target}) archivado correctamente y vinculado al reporte H1 #${reportId || 'N/A'}.`);
-            switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
-            cambiarTabFindings('Historico', document.getElementById('tab-findings-Historico'));
-        } else {
-            alert(`❌ Error al archivar: ${data.message}`);
-        }
-    } catch (e) {
-        alert("❌ Error de red al intentar archivar el reporte.");
-    }
+    mostrarModalArchivado(current_finding.id, current_finding.target);
 }
 
-async function actualizarEstadoH1(findingId, currentStatus, currentReportId, currentBounty) {
-    const reportId = prompt("Número de Reporte en HackerOne:", currentReportId || "");
-    if (reportId === null) return;
-
-    const newStatus = prompt("Estado del reporte en HackerOne (Submitted, Triaged, Resolved, Duplicate, Informative, Bounty Paid):", currentStatus || "Submitted");
-    if (newStatus === null) return;
-
-    const bounty = prompt("Monto cobrado en USD (ingresar 0 si aún no fue pagado o fue duplicado):", currentBounty || "");
-    if (bounty === null) return;
-
-    // AUTO-TAXONOMIA: Decidir a qué pestaña debe ir según el estado de H1
-    let autoInternalStatus = null;
-    const finalStatus = newStatus.trim().toLowerCase();
-    
-    if (["informative", "duplicate", "n/a", "not applicable", "spam", "cerrado"].includes(finalStatus)) {
-        autoInternalStatus = 'FalsoPositivo';
-    } else if (["submitted", "triaged", "resolved", "bounty paid", "new"].includes(finalStatus)) {
-        autoInternalStatus = 'Archivado';
-    }
-
-    try {
-        // 1. Actualizar datos de H1
-        const res = await fetch(`/api/findings/${findingId}/update_status`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                h1_status: newStatus.trim(),
-                h1_report_id: reportId.trim(),
-                bounty_paid: bounty.trim()
-            })
-        });
-        const data = await res.json();
-        
-        if (data.status === 'success') {
-            // 2. Si hay que moverlo de pestaña, actualizamos el status interno
-            if (autoInternalStatus) {
-                await fetch(`/api/findings/${findingId}/internal_status`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status_interno: autoInternalStatus })
-                });
-                
-                // Mover al usuario a la pestaña correcta automáticamente
-                const tabBtn = document.getElementById('tab-findings-Historico');
-                if (tabBtn) {
-                    cambiarTabFindings('Historico', tabBtn);
-                } else {
-                    cargarHallazgos();
-                }
-            } else {
-                alert(`✅ Estado del reporte #${findingId} actualizado a '${newStatus}'.`);
-                cargarHallazgos();
-            }
-        } else {
-            alert(`❌ Error: ${data.message}`);
-        }
-    } catch (e) {
-        alert("❌ Error de red al actualizar estado del reporte.");
-    }
+function actualizarEstadoH1(findingId, currentStatus, currentReportId, currentBounty) {
+    mostrarModalActualizacionH1(findingId, currentStatus, currentReportId, currentBounty);
 }
 
-// ACTUALIZACIÓN DE ESTADO INTERNO (TAXONOMÍA)
+// ACTUALIZACIÓN DE ESTADO INTERNO (TAXONOMÍA) — sin alert() bloqueante
 async function cambiarEstadoInterno(nuevoEstado) {
     if (!current_finding) return;
 
@@ -647,21 +591,19 @@ async function cambiarEstadoInterno(nuevoEstado) {
 
         const data = await res.json();
         if (data.status === 'success') {
-            alert(`✅ Estado actualizado a: ${nuevoEstado}`);
+            mostrarToast('Estado actualizado a: ' + nuevoEstado);
             switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
-            
-            // Simular clic en la pestaña correspondiente
-            const tabBtn = document.getElementById(`tab-findings-${nuevoEstado}`);
-            if(tabBtn) {
+            const tabBtn = document.getElementById('tab-findings-' + nuevoEstado);
+            if (tabBtn) {
                 cambiarTabFindings(nuevoEstado, tabBtn);
             } else {
                 cargarHallazgos();
             }
         } else {
-            alert(`❌ Error al cambiar estado: ${data.message}`);
+            mostrarToast('Error al cambiar estado: ' + (data.message || ''), 'error');
         }
     } catch (e) {
-        alert("❌ Error de red al intentar cambiar el estado interno.");
+        mostrarToast('Error de red al intentar cambiar el estado interno', 'error');
     }
 }
 
@@ -818,5 +760,203 @@ function imprimirPDF() {
     `);
     
     printWindow.document.close();
-    agregarMensajePegaso("✅ Se ha abierto una ventana limpia para Imprimir a PDF. Puedes guardar el reporte nativamente.");
+    agregarMensajePegaso("Se ha abierto una ventana limpia para Imprimir a PDF. Puedes guardar el reporte nativamente.");
+}
+
+// =============================================================================
+// MODAL: ARCHIVADO PREMIUM (reemplaza prompt() bloqueante)
+// =============================================================================
+function mostrarModalArchivado(findingId, targetLabel) {
+    if (!findingId) { mostrarToast('Primero selecciona un hallazgo', 'error'); return; }
+    var existing = document.getElementById('c2-modal-archive');
+    if (existing) existing.parentNode.removeChild(existing);
+
+    var prefilledId = '';
+    if (current_finding && current_finding.id === findingId) {
+        prefilledId = current_finding.h1_report_id || '';
+    }
+
+    var overlay = document.createElement('div');
+    overlay.id = 'c2-modal-archive';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.82);backdrop-filter:blur(4px);';
+
+    overlay.innerHTML = '<div id="c2-modal-archive-inner" style="background:#1a1a2e;border:1px solid #334155;border-radius:14px;padding:28px;max-width:480px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.6);transform:translateY(-18px);transition:transform 0.22s ease;">'
+        + '<h3 style="color:#e2e8f0;margin:0 0 6px 0;font-size:16px;">Archivar Hallazgo</h3>'
+        + '<p style="color:#94a3b8;font-size:12px;margin:0 0 20px 0;">Target: <strong style="color:#93c5fd;">' + escapeHtmlModal(targetLabel) + '</strong></p>'
+        + '<label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:6px;">Numero de Reporte HackerOne (opcional)</label>'
+        + '<input id="modal-arch-h1id" type="text" value="' + escapeHtmlModal(prefilledId) + '" placeholder="Ej: 3892352" style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;font-family:Monospace;">'
+        + '<p style="font-size:11px;color:#64748b;margin:8px 0 20px 0;">El numero lo asigna HackerOne cuando enviás el bug. Si todavia no lo envias, dejalo vacio y archiva igual.</p>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">'
+        + '<button id="modal-arch-confirm" style="padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Confirmar Archivado</button>'
+        + '<button id="modal-arch-fp" style="padding:11px;background:#1e293b;color:#f87171;border:1px solid #ef4444;border-radius:8px;cursor:pointer;font-size:13px;">Marcar Falso Positivo</button>'
+        + '</div>'
+        + '<button id="modal-arch-cancel" style="width:100%;padding:9px;background:transparent;color:#64748b;border:1px solid #334155;border-radius:8px;cursor:pointer;font-size:12px;">Cancelar</button>'
+        + '</div>';
+
+    document.body.appendChild(overlay);
+    setTimeout(function() {
+        var inner = document.getElementById('c2-modal-archive-inner');
+        if (inner) inner.style.transform = 'translateY(0)';
+    }, 10);
+
+    var inp = document.getElementById('modal-arch-h1id');
+    if (inp) inp.focus();
+
+    document.getElementById('modal-arch-confirm').onclick = function() {
+        var reportId = (document.getElementById('modal-arch-h1id').value || '').trim();
+        fetch('/api/findings/' + findingId + '/archive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ h1_report_id: reportId })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            if (data.status === 'success') {
+                mostrarToast('Hallazgo #' + findingId + ' archivado correctamente');
+                if (current_finding && current_finding.id === findingId) {
+                    switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
+                }
+                var tabBtn = document.getElementById('tab-findings-Historico');
+                cambiarTabFindings('Historico', tabBtn);
+            } else {
+                mostrarToast('Error al archivar: ' + (data.message || ''), 'error');
+            }
+        })
+        .catch(function() { mostrarToast('Error de red al archivar', 'error'); });
+    };
+
+    document.getElementById('modal-arch-fp').onclick = function() {
+        fetch('/api/findings/' + findingId + '/internal_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status_interno: 'FalsoPositivo' })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            if (data.status === 'success') {
+                mostrarToast('Hallazgo marcado como Falso Positivo');
+                if (current_finding && current_finding.id === findingId) {
+                    switchView('dashboard', document.querySelectorAll('.nav-item')[0]);
+                }
+                var tabBtn = document.getElementById('tab-findings-Historico');
+                cambiarTabFindings('Historico', tabBtn);
+            } else {
+                mostrarToast('Error: ' + (data.message || ''), 'error');
+            }
+        })
+        .catch(function() { mostrarToast('Error de red', 'error'); });
+    };
+
+    document.getElementById('modal-arch-cancel').onclick = function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    };
+    overlay.onclick = function(e) {
+        if (e.target === overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    };
+    function onEscArch(e) {
+        if (e.key === 'Escape') {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            document.removeEventListener('keydown', onEscArch);
+        }
+    }
+    document.addEventListener('keydown', onEscArch);
+}
+
+// =============================================================================
+// MODAL: ACTUALIZACION DE ESTADO H1 (reemplaza triple prompt() bloqueante)
+// =============================================================================
+function mostrarModalActualizacionH1(findingId, currentStatus, currentReportId, currentBounty) {
+    var existing = document.getElementById('c2-modal-h1upd');
+    if (existing) existing.parentNode.removeChild(existing);
+
+    var statusOptions = ['Submitted', 'Triaged', 'Resolved', 'Bounty Paid', 'Duplicate', 'Informative', 'N/A'];
+    var optionsHtml = statusOptions.map(function(s) {
+        return '<option value="' + s + '"' + (s === currentStatus ? ' selected' : '') + '>' + s + '</option>';
+    }).join('');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'c2-modal-h1upd';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.82);backdrop-filter:blur(4px);';
+
+    overlay.innerHTML = '<div id="c2-modal-h1upd-inner" style="background:#1a1a2e;border:1px solid #334155;border-radius:14px;padding:28px;max-width:480px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.6);transform:translateY(-18px);transition:transform 0.22s ease;">'
+        + '<h3 style="color:#e2e8f0;margin:0 0 20px 0;font-size:16px;">Actualizar Estado HackerOne — #' + findingId + '</h3>'
+        + '<label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:6px;">Numero de Reporte H1</label>'
+        + '<input id="modal-upd-id" type="text" value="' + escapeHtmlModal(currentReportId || '') + '" placeholder="Ej: 3892352" style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;font-family:Monospace;margin-bottom:14px;">'
+        + '<label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:6px;">Estado del Reporte en HackerOne</label>'
+        + '<select id="modal-upd-status" style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-bottom:14px;">' + optionsHtml + '</select>'
+        + '<label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:6px;">Bounty cobrado en USD (0 si no fue pagado aun)</label>'
+        + '<input id="modal-upd-bounty" type="text" value="' + escapeHtmlModal(currentBounty || '') + '" placeholder="Ej: 150" style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-bottom:20px;font-family:Monospace;">'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+        + '<button id="modal-upd-confirm" style="padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Guardar Cambios</button>'
+        + '<button id="modal-upd-cancel" style="padding:11px;background:transparent;color:#64748b;border:1px solid #334155;border-radius:8px;cursor:pointer;font-size:13px;">Cancelar</button>'
+        + '</div>'
+        + '</div>';
+
+    document.body.appendChild(overlay);
+    setTimeout(function() {
+        var inner = document.getElementById('c2-modal-h1upd-inner');
+        if (inner) inner.style.transform = 'translateY(0)';
+    }, 10);
+
+    document.getElementById('modal-upd-confirm').onclick = function() {
+        var reportId = (document.getElementById('modal-upd-id').value || '').trim();
+        var newStatus = (document.getElementById('modal-upd-status').value || '').trim();
+        var bounty = (document.getElementById('modal-upd-bounty').value || '').trim();
+
+        // Auto-taxonomia: mover a la tab correcta segun el resultado de H1
+        var finalStatusLower = newStatus.toLowerCase();
+        var autoInternalStatus = null;
+        if (['informative', 'duplicate', 'n/a'].indexOf(finalStatusLower) !== -1) {
+            autoInternalStatus = 'FalsoPositivo';
+        } else if (['submitted', 'triaged', 'resolved', 'bounty paid'].indexOf(finalStatusLower) !== -1) {
+            autoInternalStatus = 'Archivado';
+        }
+
+        fetch('/api/findings/' + findingId + '/update_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ h1_status: newStatus, h1_report_id: reportId, bounty_paid: bounty })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status !== 'success') {
+                mostrarToast('Error: ' + (data.message || ''), 'error');
+                return;
+            }
+            if (autoInternalStatus) {
+                fetch('/api/findings/' + findingId + '/internal_status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status_interno: autoInternalStatus })
+                })
+                .then(function() {
+                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                    mostrarToast('Estado actualizado a: ' + newStatus);
+                    var tabBtn = document.getElementById('tab-findings-Historico');
+                    cambiarTabFindings('Historico', tabBtn);
+                });
+            } else {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                mostrarToast('Estado actualizado a: ' + newStatus);
+                cargarHallazgos();
+            }
+        })
+        .catch(function() { mostrarToast('Error de red', 'error'); });
+    };
+
+    document.getElementById('modal-upd-cancel').onclick = function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    };
+    overlay.onclick = function(e) {
+        if (e.target === overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    };
+    function onEscUpd(e) {
+        if (e.key === 'Escape') {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            document.removeEventListener('keydown', onEscUpd);
+        }
+    }
+    document.addEventListener('keydown', onEscUpd);
 }
