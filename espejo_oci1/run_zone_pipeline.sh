@@ -267,19 +267,21 @@ if [ -s "$KATANA_JS" ]; then
 fi
 
 if [ ! -s "$NUCLEI_JSON" ]; then
-    log "  Nuclei no encontro vulnerabilidades reales en zona ${ZONA}. Cascada finalizada limpiamente."
-    rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON" "$NUCLEI_JSON"
-    exit 0
+    log "  Nuclei no encontro vulnerabilidades reales en zona ${ZONA}. Continuando para enviar Deltas y Heartbeat."
+    rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON"
+    touch "$NUCLEI_JSON"
+    TOTAL_BUGS=0
+else
+    TOTAL_BUGS=$(wc -l < "$NUCLEI_JSON" | tr -d ' ')
+    log " Nuclei encontro ${TOTAL_BUGS} hallazgo(s) verificado(s)."
 fi
-
-TOTAL_BUGS=$(wc -l < "$NUCLEI_JSON" | tr -d ' ')
-log " Nuclei encontro ${TOTAL_BUGS} hallazgo(s) verificado(s)."
 log " Eslabon 4 completado."
 
 # -- Eslabon 5: Parsear + Sincronizar C2 Panel + Notificar Telegram ------------
 log "Eslabon 5/5: Sincronizando con C2 Panel y notificando Telegram (parsear_nuclei.py)"
 $VENV "${BASE}/monitores/parsear_nuclei.py" \
     --nuclei-json "$NUCLEI_JSON" \
+    --delta-json "$DELTA_FILE" \
     --zone "$ZONA" \
     >> "$LOG" 2>&1 || warn "  parsear_nuclei.py fallo, pero el escaneo fue exitoso."
 

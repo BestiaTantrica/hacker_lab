@@ -196,6 +196,7 @@ def parse_nuclei_jsonl(nuclei_json_path: str) -> list[dict]:
 def main():
     parser = argparse.ArgumentParser(description="Parsear salida de Nuclei y sincronizar con C2 Panel")
     parser.add_argument("--nuclei-json", required=True, help="Ruta al archivo JSONL de salida de nuclei")
+    parser.add_argument("--delta-json",  required=False, help="Ruta al archivo JSON de deltas")
     parser.add_argument("--zone",        required=True, help="Zona geográfica (ej: americas, emea, asia)")
     args = parser.parse_args()
 
@@ -206,19 +207,26 @@ def main():
     # ── Parsear el JSONL de Nuclei ────────────────────────────────────────
     findings = parse_nuclei_jsonl(args.nuclei_json)
 
-    if not findings:
-        log.info("Sin hallazgos de valor tras filtrado. No se sincroniza ni notifica. ✅")
+    deltas_dict = {}
+    if hasattr(args, "delta_json") and args.delta_json and os.path.exists(args.delta_json):
+        try:
+            with open(args.delta_json, "r", encoding="utf-8") as f:
+                delta_data = json.load(f)
+                deltas_dict = delta_data.get("nuevos_activos", {})
+        except Exception as e:
+            log.warning("No se pudo leer el delta-json: %s", e)
+
+    if not findings and not deltas_dict:
+        log.info("Sin hallazgos ni deltas para sincronizar. ✅")
         log.info("=" * 60)
         sys.exit(0)
 
-    log.info("Total hallazgos válidos para sincronizar: %d", len(findings))
+    log.info("Total hallazgos válidos: %d | Total dominios con deltas: %d", len(findings), len(deltas_dict))
 
     # ── Sincronizar con C2 Panel (OCI-2) ─────────────────────────────────
-    # El deltas_dict se deja vacío: los deltas ya los maneja comparador.py.
-    # Solo enviamos los findings verificados por Nuclei.
     sync_ok = sync_to_c2_panel(
         zone=args.zone,
-        deltas_dict={},
+        deltas_dict=deltas_dict,
         findings=findings,
     )
 
