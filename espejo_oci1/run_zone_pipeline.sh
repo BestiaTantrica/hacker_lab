@@ -127,10 +127,24 @@ log "Eslabon 3/5: Filtro DNS y HTTP Probing (dnsx -> httpx)"
 LIVE_DNS="${RESULTADO_DIR}/live_dns_${ZONA}_${FECHA}.txt"
 LIVE_HTTP="${RESULTADO_DIR}/live_http_${ZONA}_${FECHA}.txt"
 
-# dnsx: Filtro DNS con Alterx (Permutaciones dinamicas TITLE-M2-C).
-# piping in-memory evita escritura masiva en disco. Watchdog controla memoria de dnsx/alterx.
-timeout 2h bash -c "cat \"$SUBS_RAW\" | alterx -silent | dnsx -resp-only -retry 2 -t 100 -silent -o \"$LIVE_DNS\"" \
-    >> "$LOG" 2>&1 || warn "  alterx/dnsx fallo o supero el timeout de 2h. Usando lista raw sin filtro DNS."
+# dnsx: Filtro DNS con Alterx (Permutaciones controladas TITLE-M2-C).
+# Se usa -enrich con wordlist acotada para evitar OOM Kill en OCI Free Tier (1GB RAM).
+# La wordlist esta limitada a 50 palabras de alto impacto en Bug Bounty.
+WORDLIST="${BASE}/config/wordlist_permutaciones.txt"
+if [ -f "$WORDLIST" ]; then
+    timeout 2h bash -c "cat \"$SUBS_RAW\" | alterx -enrich -pp \"word=@${WORDLIST}\" -silent | dnsx -resp-only -retry 2 -t 100 -silent -o \"$LIVE_DNS\"" \
+        >> "$LOG" 2>&1 || warn "  alterx/dnsx fallo o supero el timeout de 2h. Intentando fallback sin permutaciones."
+    # Fallback: si alterx con wordlist no produjo resultados, usar la lista raw directamente
+    if [ ! -s "$LIVE_DNS" ]; then
+        warn "  Fallback: alterx no produjo resultados. Resolviendo lista raw directamente."
+        timeout 1h dnsx -l "$SUBS_RAW" -resp-only -retry 2 -t 100 -silent -o "$LIVE_DNS" \
+            >> "$LOG" 2>&1 || warn "  Fallback dnsx tambien fallo."
+    fi
+else
+    warn "  wordlist_permutaciones.txt no encontrada en ${WORDLIST}. Usando alterx sin wordlist (modo legacy)."
+    timeout 2h bash -c "cat \"$SUBS_RAW\" | alterx -silent | dnsx -resp-only -retry 2 -t 100 -silent -o \"$LIVE_DNS\"" \
+        >> "$LOG" 2>&1 || warn "  alterx/dnsx fallo o supero el timeout de 2h."
+fi
 
 if [ ! -s "$LIVE_DNS" ]; then
     warn "  dnsx no resolvio ningun host vivo. Sin objetivos para escanear."

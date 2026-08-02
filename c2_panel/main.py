@@ -1150,6 +1150,163 @@ Provide a short, direct, and friendly explanation in SPANISH of why this happene
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+# ============================================================
+# MODULO C: Asistente Guru del Lab -- Explicaciones Didacticas
+# ============================================================
+# Endpoint sin costo de tokens: usa diccionario estatico de metaforas.
+# No invoca LLM. Lookup O(1), cero overhead en OCI Free Tier.
+# ============================================================
+
+GURU_EXPLICACIONES = {
+    "subdomain takeover": {
+        "titulo": "Subdomain Takeover",
+        "metafora": "Es como si una empresa alquilara un local en un centro comercial, pusiera un letrero con su nombre en la puerta, y luego se mudara sin devolver la llave ni quitar el letrero. Cualquier persona podria entrar al local vacio, poner su propio negocio ahi, y los clientes pensarian que es la empresa original.",
+        "impacto_simple": "Un atacante puede hacerse pasar por una parte del sitio web de la empresa (por ejemplo 'pagos.empresa.com') y enganar a los usuarios para que pongan sus contrasenas o datos.",
+        "severidad": "Alta -- vale entre $300 y $3,000 en HackerOne.",
+        "accion_defensiva": "La empresa debe eliminar el registro DNS que apunta a un servicio que ya no usa, o reclamar ese servicio antes de que alguien mas lo haga."
+    },
+    "cors misconfiguration": {
+        "titulo": "Configuracion Incorrecta de CORS",
+        "metafora": "Imagina que tu banco tiene una ventanilla de atencion y tiene una regla: solo atendemos a personas que vengan de nuestra sucursal. Una mala configuracion de CORS es como si el banco dijera: atendemos a quien sea, de donde sea. Un atacante puede hacer una web falsa que le pida al banco tus datos mientras estes conectado, y el banco los da sin preguntar.",
+        "impacto_simple": "Un atacante puede crear una pagina maliciosa que, cuando la visitas, roba silenciosamente datos de tu sesion en otro sitio web (tu email, tus fotos, tu historial).",
+        "severidad": "Media a Alta -- vale entre $100 y $1,000 segun el dato expuesto.",
+        "accion_defensiva": "El sitio web debe tener una lista blanca de dominios de confianza. No debe aceptar peticiones de cualquier pagina de internet."
+    },
+    "s3 bucket exposure": {
+        "titulo": "Bucket S3 Expuesto (Amazon)",
+        "metafora": "Es como si una empresa guardara sus documentos importantes en un archivador con la llave puesta y la puerta abierta al publico. Cualquier persona que pase puede abrirlo y leer, copiar o hasta borrar los documentos.",
+        "impacto_simple": "Los archivos guardados en ese espacio de almacenamiento de Amazon (fotos, documentos, codigo, bases de datos) son accesibles para cualquier persona en internet.",
+        "severidad": "Media a Critica -- puede valer desde $100 hasta miles de dolares segun lo que este expuesto.",
+        "accion_defensiva": "Activar la opcion 'Block Public Access' en la configuracion del bucket de S3 y revisar los permisos de cada archivo."
+    },
+    "openapi exposure": {
+        "titulo": "Exposicion de Documentacion de API (OpenAPI/Swagger)",
+        "metafora": "Es como publicar el plano completo del sistema de seguridad de un edificio en la puerta principal. No es un robo directo, pero le da a un ladron el mapa perfecto para saber por donde entrar.",
+        "impacto_simple": "Un atacante obtiene la lista completa de todas las puertas (endpoints) del sistema, con instrucciones exactas de como usarlas, lo que facilita enormemente encontrar vulnerabilidades mas graves.",
+        "severidad": "Media -- vale entre $100 y $500.",
+        "accion_defensiva": "Proteger el acceso a la documentacion de la API con autenticacion, o eliminarla del servidor publico si no es necesaria para clientes externos."
+    },
+    "idor": {
+        "titulo": "IDOR -- Acceso Directo a Objetos Inseguros",
+        "metafora": "Es como si en un hotel, cada habitacion tuviera un numero en la puerta. Si en lugar de usar tu llave magnetica simplemente cambias el numero de la puerta de la 101 a 102, y la puerta se abre, hay un problema grave. Puedes entrar a la habitacion de otra persona.",
+        "impacto_simple": "Un atacante puede ver, modificar o borrar la informacion de otros usuarios (sus pedidos, sus facturas, sus datos personales) simplemente cambiando un numero en la URL.",
+        "severidad": "Alta a Critica -- puede valer entre $500 y $10,000.",
+        "accion_defensiva": "El servidor debe verificar siempre que el usuario que pide un recurso sea el dueno de ese recurso antes de mostrarlo."
+    },
+    "ssrf": {
+        "titulo": "SSRF -- Falsificacion de Peticiones del Servidor",
+        "metafora": "Imagina que le pides a un empleado de una empresa (que tiene acceso a la oficina interna) que vaya a buscar un documento. Pero en lugar de pedirle el documento del cliente, le pides que espie los archivos internos del jefe. El SSRF es convencer al servidor de que haga peticiones internas que normalmente no deberia hacer.",
+        "impacto_simple": "Un atacante puede usar el servidor de la empresa como intermediario para acceder a sistemas internos protegidos, como bases de datos o servidores de administracion que no deberian ser accesibles desde internet.",
+        "severidad": "Alta a Critica -- puede valer entre $1,000 y $20,000.",
+        "accion_defensiva": "Validar y filtrar todas las URLs que el servidor puede visitar. Bloquear peticiones a rangos de IPs privadas y a los endpoints de metadatos de servicios cloud."
+    },
+    "jwt vulnerability": {
+        "titulo": "Vulnerabilidad en JWT (Token de Autenticacion)",
+        "metafora": "Un JWT es como un carnet de identidad digital. Una vulnerabilidad en JWT es como si ese carnet no tuviera firma de seguridad o tuviera una firma falsa que cualquiera puede imitar. Cualquier persona podria fabricar un carnet que diga soy administrador y el sistema lo aceptaria como valido.",
+        "impacto_simple": "Un atacante puede falsificar su propia sesion para hacerse pasar por otro usuario o incluso por un administrador del sistema.",
+        "severidad": "Alta a Critica -- puede valer entre $500 y $15,000.",
+        "accion_defensiva": "El servidor debe rechazar tokens con el algoritmo none. Debe tener una lista blanca del algoritmo permitido y verificar siempre la firma correctamente."
+    }
+}
+
+class GuruRequest(BaseModel):
+    vuln_type: str
+
+@app.post("/api/guru/explain")
+def guru_explain(req: GuruRequest):
+    """
+    Modulo C: Asistente Guru del Lab.
+    Devuelve explicacion didactica en espanol sin consumir tokens de LLM.
+    Lookup O(1) sobre diccionario estatico.
+    """
+    vuln_key = req.vuln_type.lower().strip()
+
+    explicacion = GURU_EXPLICACIONES.get(vuln_key)
+    if not explicacion:
+        for key, value in GURU_EXPLICACIONES.items():
+            if key in vuln_key or vuln_key in key:
+                explicacion = value
+                break
+
+    if not explicacion:
+        explicacion = {
+            "titulo": req.vuln_type,
+            "metafora": "Esta vulnerabilidad aun no tiene una explicacion didactica en el catalogo del Guru. Pero en esencia, representa una brecha en la seguridad del sistema que un atacante podria explotar para acceder a recursos no autorizados.",
+            "impacto_simple": "Podria permitir a un atacante acceder a informacion o funcionalidades que no deberian estar disponibles publicamente.",
+            "severidad": "Variable -- consultar la evidencia del hallazgo para determinar el impacto real.",
+            "accion_defensiva": "Revisar la documentacion de seguridad del componente afectado y aplicar el principio de minimo privilegio."
+        }
+
+    return {"status": "success", "vuln_type": req.vuln_type, "explicacion": explicacion}
+
+
+# ============================================================
+# MODULO D: Estadisticas Publicas Anonimizadas (Portfolio)
+# ============================================================
+# OPSEC CRITICO: Nunca devuelve dominios, IPs, paths ni targets.
+# Solo conteos y metricas anonimas para portafolio publico.
+# ============================================================
+
+@app.get("/api/public/stats")
+def get_public_stats():
+    """
+    Modulo D: Estadisticas publicas anonimizadas para portafolio.
+    Cero targets, cero IPs, cero paths. Solo conteos.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    total_findings = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT severity, COUNT(*) as count
+        FROM findings WHERE verified = 1
+        GROUP BY severity ORDER BY count DESC
+    """)
+    by_severity = {row[0]: row[1] for row in cursor.fetchall()}
+
+    cursor.execute("""
+        SELECT status_interno, COUNT(*) as count
+        FROM findings WHERE verified = 1
+        GROUP BY status_interno ORDER BY count DESC
+    """)
+    by_status = {row[0]: row[1] for row in cursor.fetchall()}
+
+    cursor.execute("""
+        SELECT vuln_type, COUNT(*) as count
+        FROM findings WHERE verified = 1
+        GROUP BY vuln_type ORDER BY count DESC LIMIT 10
+    """)
+    by_vuln_type = {row[0]: row[1] for row in cursor.fetchall()}
+
+    cursor.execute("SELECT COUNT(*) FROM deltas")
+    total_subdomains = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(DISTINCT zone) FROM deltas")
+    total_zones = cursor.fetchone()[0]
+
+    cursor.execute("SELECT MAX(created_at) FROM findings WHERE verified = 1")
+    last_raw = cursor.fetchone()[0]
+    last_finding_date = last_raw[:10] if last_raw else None
+
+    conn.close()
+
+    return {
+        "status": "success",
+        "disclaimer": "All data is anonymized. No targets, IPs, or sensitive paths are exposed.",
+        "stats": {
+            "total_verified_findings": total_findings,
+            "total_subdomains_monitored": total_subdomains,
+            "active_zones": total_zones,
+            "last_finding_date": last_finding_date,
+            "by_severity": by_severity,
+            "by_lifecycle_status": by_status,
+            "top_vuln_types": by_vuln_type
+        }
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

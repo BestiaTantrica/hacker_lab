@@ -1,0 +1,66 @@
+# wordlist_permutaciones.txt - Diccionario de Permutaciones DNS para Bug Bounty
+# ==============================================================================
+# Uso: cat subs_base.txt | alterx -enrich -pp word=@wordlist_permutaciones.txt
+# Criterio de seleccion: palabras con alta probabilidad de subdominios olvidados
+# o mal configurados que apunten a servicios cloud reclamables.
+# Mantenido en < 50 palabras para no saturar RAM en OCI Free Tier (1GB).
+# ==============================================================================
+
+# --- Entornos no productivos (alta frecuencia de takeovers) ---
+dev
+develop
+development
+staging
+stg
+stage
+uat
+qa
+test
+testing
+sandbox
+demo
+preview
+beta
+alpha
+canary
+nightly
+rc
+
+# --- APIs y versiones (IDOR, business logic, info disclosure) ---
+api
+api-v1
+api-v2
+v1
+v2
+v3
+internal
+backend
+gateway
+gw
+
+# --- Servicios de empresa (herramientas con SSO mal configurado) ---
+jira
+confluence
+grafana
+kibana
+jenkins
+gitlab
+sonar
+sonarqube
+vault
+
+# --- Storage y media (S3/GCS takeovers) ---
+assets
+static
+cdn
+media
+files
+uploads
+backup
+
+# --- Infraestructura (exposure de paneles de control) ---
+admin
+dashboard
+monitor
+status
+health
