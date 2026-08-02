@@ -31,7 +31,8 @@ if [ -f "${SCRIPT_DIR}/.env" ]; then
 fi
 
 OCI_BACKUP_BUCKET="${OCI_BACKUP_BUCKET:-hackerlab-backups}"
-OCI_BACKUP_NS="${OCI_BACKUP_NS:-}"
+OCI_BACKUP_NS="${OCI_BACKUP_NS:-idd9nlzkvn8c}"
+OCI_PAR_URL="${OCI_PAR_URL:-}"
 
 # -- Validaciones previas -----------------------------------------------------
 log() { echo "${LOG_PREFIX} $1"; }
@@ -43,14 +44,24 @@ log "Iniciando backup de c2_db.sqlite"
 # Verificar que la DB existe
 [ -f "${DB_SOURCE}" ] || error_exit "Base de datos no encontrada en ${DB_SOURCE}"
 
-# Verificar que oci-cli esta disponible
-command -v oci > /dev/null 2>&1 || error_exit "oci-cli no encontrado. Instalar segun documentacion del script."
+# Verificar método de subida
+if [ -n "${OCI_PAR_URL}" ]; then
+    log "Método de subida: URL Pre-Autenticada (curl PAR - ultraliviano)"
+else
+    command -v oci > /dev/null 2>&1 || error_exit "Ni OCI_PAR_URL está configurada ni oci-cli está instalado."
+    log "Método de subida: oci-cli"
+fi
 
 # -- Paso 1: Snapshot seguro de SQLite ----------------------------------------
 # sqlite3 .backup es transaccional y seguro incluso con la DB en uso.
 log "Paso 1/3: Creando snapshot SQLite en ${BACKUP_FILE}..."
-sqlite3 "${DB_SOURCE}" ".backup '${BACKUP_FILE}'" \
-    || error_exit "Fallo el snapshot de SQLite. Abortando para no subir un archivo corrupto."
+if command -v sqlite3 > /dev/null 2>&1; then
+    sqlite3 "${DB_SOURCE}" ".backup '${BACKUP_FILE}'" \
+        || error_exit "Fallo el snapshot de SQLite via CLI."
+else
+    python3 -c "import sqlite3; src=sqlite3.connect('${DB_SOURCE}'); dst=sqlite3.connect('${BACKUP_FILE}'); src.backup(dst); dst.close(); src.close()" \
+        || error_exit "Fallo el snapshot de SQLite via Python API."
+fi
 log "Snapshot creado: $(du -sh "${BACKUP_FILE}" | cut -f1)"
 
 # -- Paso 2: Comprimir con gzip -----------------------------------------------
@@ -62,23 +73,30 @@ gzip -9 "${BACKUP_FILE}" \
 log "Archivo comprimido: $(du -sh "${BACKUP_GZ}" | cut -f1) -> ${BACKUP_GZ}"
 
 # -- Paso 3: Subir a OCI Object Storage ---------------------------------------
-log "Paso 3/3: Subiendo a OCI Object Storage (bucket: ${OCI_BACKUP_BUCKET})..."
+OBJECT_NAME="${BACKUP_BASENAME}_${TIMESTAMP}.sqlite.gz"
+log "Paso 3/3: Subiendo a OCI Object Storage (${OBJECT_NAME})..."
 
-OCI_CMD="oci os object put \
-    --bucket-name \"${OCI_BACKUP_BUCKET}\" \
-    --file \"${BACKUP_GZ}\" \
-    --name \"${BACKUP_BASENAME}_${TIMESTAMP}.sqlite.gz\" \
-    --force"
-
-# Si se especifica namespace, incluirlo
-if [ -n "${OCI_BACKUP_NS}" ]; then
-    OCI_CMD="${OCI_CMD} --namespace \"${OCI_BACKUP_NS}\""
+if [ -n "${OCI_PAR_URL}" ]; then
+    # Garantizar que la PAR URL termine con '/'
+    PAR_ENDPOINT="${OCI_PAR_URL}"
+    [[ "${PAR_ENDPOINT}" != */ ]] && PAR_ENDPOINT="${PAR_ENDPOINT}/"
+    
+    curl -s -f -X PUT --data-binary "@${BACKUP_GZ}" "${PAR_ENDPOINT}${OBJECT_NAME}" \
+        || error_exit "Fallo la subida via curl PAR. Verificar validez de OCI_PAR_URL."
+else
+    OCI_CMD="oci os object put \
+        --bucket-name \"${OCI_BACKUP_BUCKET}\" \
+        --file \"${BACKUP_GZ}\" \
+        --name \"${OBJECT_NAME}\" \
+        --force"
+    if [ -n "${OCI_BACKUP_NS}" ]; then
+        OCI_CMD="${OCI_CMD} --namespace \"${OCI_BACKUP_NS}\""
+    fi
+    eval "${OCI_CMD}" > /dev/null \
+        || error_exit "Fallo la subida a OCI Object Storage via oci-cli."
 fi
 
-eval "${OCI_CMD}" > /dev/null \
-    || error_exit "Fallo la subida a OCI Object Storage. Verificar credenciales de oci-cli y permisos del bucket."
-
-log "Backup subido exitosamente: ${BACKUP_BASENAME}_${TIMESTAMP}.sqlite.gz"
+log "Backup subido exitosamente: ${OBJECT_NAME}"
 
 # -- Limpieza de temporales ---------------------------------------------------
 rm -f "${BACKUP_GZ}"
