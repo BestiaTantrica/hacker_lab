@@ -23,6 +23,7 @@ trigger: always_on
 - `espejo_oci1/monitores/` → `poc_generator.py` (M3-A), `scope_validator.py` (M3-B), `waf_mutator.py` (M3-C)
 - `espejo_oci1/run_zone_pipeline.sh` → Orquestador 6 Eslabones (Watchdog RAM + Sync C2)
 - `c2_panel/main.py` → FastAPI OCI-2 (puerto `8000`, Uvicorn)
+- `c2_panel/backup_oci_storage.sh` → Backup automatizado SQLite a OCI Object Storage
 - `c2_panel/static/js/app.js` → Frontend JS
 - `c2_panel/c2_db.sqlite` → DB central (`deltas`, `findings`, `chat_history`)
 - `skills/` → Prompts IA (`report_h1`, `takeover_analysis`, `cors_analysis`, etc.)
