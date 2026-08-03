@@ -1,6 +1,6 @@
 # Estado Operativo de OCI-1 (Espejo Local)
 
-> **Actualización:** 2026-07-31 — Pipeline v2 con Go-Stack ProjectDiscovery activo.
+> **Actualización:** 2026-08-03 — Pipeline v2 Go-Stack Activo y Base de Datos Ampliada (300 Targets).
 
 El directorio `espejo_oci1/` refleja la estructura del servidor remoto encargado de la recolección masiva automatizada.
 
@@ -13,7 +13,7 @@ En `espejo_oci1/monitores/` y `espejo_oci1/` se encuentran los eslabones del nue
 - `nuclei` (v3.3.0): Eslabón 4. Ejecuta doble pasada: una sobre hosts vivos (takeovers, misconfigurations) y una ultra-focalizada en secretos/tokens sobre los archivos `.js` descubiertos por katana. Genera `nuclei_{zona}_FECHA.json`.
 - `parsear_nuclei.py`: Eslabón 5. Lee el JSONL de nuclei, aplica guardrails anti-falso-positivo (M3-A+M3-B), sincroniza con OCI-2 (`POST /api/ingest_delta`) y notifica a Telegram.
 - **M3-A `poc_generator.py`**: Eslabón 5.5. Sanitiza el `curl-command` crudo de Nuclei → `triager_poc` copiable. Evalúa `poc_quality` = HIGH / MEDIUM / UNVERIFIABLE.
-- **M3-B `scope_validator.py`**: Pre-filtro (Guardrail 3). Valida el host contra SCOPE_DB (44 programas H1). Filtra severidad mínima por programa. Deduplica via SHA-256 cross-ejecución. `calculate_batch_size()` ajusta dinámicamente el número de subdominios según RAM disponible (`/proc/meminfo`).
+- **M3-B `scope_validator.py`**: Pre-filtro (Guardrail 3). Valida el host contra SCOPE_DB (**300 programas inyectados - Startups IA, FinTech, SaaS**). Filtra severidad mínima por programa. Deduplica via SHA-256 cross-ejecución. `calculate_batch_size()` ajusta dinámicamente el número de subdominios según RAM disponible (`/proc/meminfo`).
 - **M3-C `waf_mutator.py`**: Mutación de headers para evadir 403/406 en sondas. Pool de 5 UA reales. `rotate_headers(attempt)` determinístico. Integrado en `explotador_automatico.py` con retry automático en attempt=2.
 - **Circuit Breaker & GC**: Eslabón 6 y Wrappers. Watchdog de RAM asíncrono (750MB límite). Heartbeat al C2.
 

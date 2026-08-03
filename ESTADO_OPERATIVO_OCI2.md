@@ -27,24 +27,24 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 - `GET /api/status`: Diagnóstico SSH en tiempo real hacia OCI-1.
 - `GET /api/findings` & `GET /api/deltas/{zone}`: Consultas de telemetría para la interfaz web.
 - `POST /api/copilot/generate`: Ejecución de skills de IA pasando la evidencia cruda.
-- `POST /api/chat`: Chat interactivo con **Pegaso**, aislado por `finding_id` con ventana de memoria de hasta 20 mensajes.
+- `POST /api/chat`: Chat interactivo con **Pegaso**, aislado por `finding_id`.
+- `GET /api/chat/context`: Inyección automática de memoria de sesión (estadísticas, heartbeats, hallazgos e historial de chat previo) para dar contexto a Pegaso al inicio.
 - `POST /api/verify_bug`: Verificación en vivo de objetivos mediante invocaciones SSH `curl` contra OCI-1.
 - `POST /api/notify_telegram`: Envío limpio de reportes aprobados en Markdown directamente al bot de Telegram.
-- **M3-B `POST /api/findings/{id}/validate_scope`**: Valida si el target está in-scope H1. Actualiza `status_interno` a Validado/FalsoPositivo. Cachea en tabla `scope_cache`.
-- **M3-A `POST /api/findings/{id}/generate_poc`**: Sanitiza curl de Nuclei → `triager_poc` copiable. Persiste `poc_quality` en la DB.
-- **M3-C `POST /api/findings/{id}/waf_probe`**: Sonda live via SSH curl con hasta 2 intentos (WAF headers rotation). Retorna el curl exacto listo para el reporte H1.
-
+- **M3-B `POST /api/findings/{id}/validate_scope`**: Valida si el target está in-scope H1.
+- **M3-A `POST /api/findings/{id}/generate_poc`**: Sanitiza curl de Nuclei → `triager_poc` copiable.
+- **M3-C `POST /api/findings/{id}/waf_probe`**: Sonda live via SSH curl con rotación de WAF headers.
 
 ---
 
 ## 3. Conexión con OCI-1 y Flujo Global
-1. **OCI-1 (Red de Pesca):** Recolecta subdominios (`mass_recon.py`), filtra novedades (`comparador.py`) y verifica exploits (`explotador_automatico.py`).
+1. **OCI-1 (Red de Pesca):** Recolecta subdominios, filtra novedades y verifica exploits.
 2. **Puente HTTP/API:** OCI-1 envía la información digerida a `POST /api/ingest_delta` en OCI-2.
-3. **OCI-2 (Panel C2 & IA):** Almacena hallazgos en `c2_db.sqlite`, los muestra en la interfaz web split-screen, permite verificar en vivo desde OCI-1, aislar memoria de chat por PoC e inferir el programa HackerOne para envío inmediato a Telegram.
+3. **OCI-2 (Panel C2 & IA):** Almacena hallazgos en `c2_db.sqlite`, gestiona el ciclo de vida de los bugs (Pendiente → Validado → Archivado) y provee interfaz de memoria contextual para Pegaso.
 
 ---
 
-## 4. Tareas Pendientes y Evolución UI (Para la Próxima Sesión)
-- **Archivado de Reportes:** Implementar lógica para que cuando el usuario haga clic en "Abrir e Inyectar en HackerOne", el `finding` cambie de estado a `reported = true` (o se archive) y desaparezca de la lista principal de bugs activos en el Dashboard.
-- **Historial de Reportes:** Crear una vista secundaria o modal en el Panel C2 para consultar el archivo histórico de vulnerabilidades enviadas/resueltas, leyendo los hallazgos archivados de `c2_db.sqlite`.
-- **Guía de Reporte:** Guiar al usuario paso a paso en el flujo de envío de HackerOne en el inicio del próximo hilo.
+## 4. Estado de Implementación (Actualizado)
+- **Archivado de Reportes:** ✅ Implementado. Ciclo de vida M4 activo (Pending -> Validated -> Archived).
+- **Exportación Forense:** ✅ Implementado. Reportes nativos Markdown y PDF exportables desde UI sin overhead.
+- **Memoria de IA (Pegaso):** ✅ Implementado. Endpoint `/api/chat/context` inyecta el estado de OCI-1/OCI-2 sin gastar tokens extra en cada mensaje.
