@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HackerQuest: Aprende ciberseguridad en 5 segundos y gana recompensas reales.">
+    <title>HackerQuest — Aprende. Juega. Gana.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- PANTALLA DE INICIO -->
+<div id="screen-intro" class="screen active">
+    <div class="matrix-rain" id="matrix-canvas-container">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <div class="intro-content">
+        <div class="logo-badge">🛡️ HACKERQUEST</div>
+        <h1 class="hero-title">Aprende<br><span class="gradient-text">Ciberseguridad</span><br>en 5 segundos.</h1>
+        <p class="hero-sub">Desafíos rápidos. Conocimiento real. Recompensas por aprender.</p>
+
+        <div class="stats-row">
+            <div class="stat-pill">🔥 <span id="stat-challenges">12</span> Desafíos</div>
+            <div class="stat-pill">⚡ <span id="stat-players">1,847</span> Jugadores</div>
+            <div class="stat-pill">💰 <span id="stat-bounty">$12,400</span> en Bounties</div>
+        </div>
+
+        <button id="btn-start" class="btn-primary" onclick="iniciarJuego()">
+            <span class="btn-icon">▶</span> EMPEZAR AHORA
+        </button>
+
+        <p class="legal-note">Gratis para siempre · Sin registro · Para todas las edades</p>
+    </div>
+</div>
+
+<!-- PANTALLA DEL JUEGO -->
+<div id="screen-game" class="screen">
+    <header class="game-header">
+        <div class="game-logo">🛡️ HackerQuest</div>
+        <div class="game-hud">
+            <div class="hud-item">
+                <span class="hud-label">NIVEL</span>
+                <span class="hud-value" id="hud-level">1</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">PUNTOS</span>
+                <span class="hud-value accent" id="hud-score">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">RACHA</span>
+                <span class="hud-value" id="hud-streak">🔥 0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE PROGRESO DEL DESAFÍO -->
+    <div class="challenge-progress-bar">
+        <div class="challenge-progress-fill" id="timer-bar"></div>
+    </div>
+
+    <!-- CONTADOR DE TIEMPO -->
+    <div class="timer-display" id="timer-display">5</div>
+
+    <!-- TARJETA DEL DESAFÍO -->
+    <div class="challenge-card" id="challenge-card">
+        <div class="challenge-category" id="challenge-category">🔐 CRIPTOGRAFÍA</div>
+        <div class="challenge-headline" id="challenge-headline">
+            <!-- Inyectado por JS -->
+        </div>
+        <div class="challenge-question" id="challenge-question">
+            <!-- Inyectado por JS -->
+        </div>
+    </div>
+
+    <!-- OPCIONES DE RESPUESTA -->
+    <div class="options-grid" id="options-grid">
+        <!-- Inyectado por JS -->
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback-panel" id="feedback-panel" style="display:none">
+        <div class="feedback-icon" id="feedback-icon"></div>
+        <div class="feedback-text" id="feedback-text"></div>
+        <div class="feedback-explanation" id="feedback-explanation"></div>
+        <button class="btn-next" id="btn-next" onclick="siguienteDesafio()">SIGUIENTE DESAFÍO →</button>
+    </div>
+
+    <!-- INDICADOR DE PROGRESO -->
+    <div class="progress-dots" id="progress-dots"></div>
+</div>
+
+<!-- PANTALLA DE RESULTADOS -->
+<div id="screen-results" class="screen">
+    <div class="results-content">
+        <div class="results-trophy" id="results-trophy">🏆</div>
+        <h2 class="results-title" id="results-title">¡Misión Completada!</h2>
+        <p class="results-subtitle" id="results-subtitle"></p>
+
+        <div class="results-stats">
+            <div class="result-stat">
+                <div class="result-stat-value" id="res-score">0</div>
+                <div class="result-stat-label">Puntos</div>
+            </div>
+            <div class="result-stat">
+                <div class="result-stat-value" id="res-correct">0</div>
+                <div class="result-stat-label">Correctas</div>
+            </div>
+            <div class="result-stat">
+                <div class="result-stat-value" id="res-streak">0</div>
+                <div class="result-stat-label">Racha Máx</div>
+            </div>
+            <div class="result-stat">
+                <div class="result-stat-value" id="res-rank">F</div>
+                <div class="result-stat-label">Rango</div>
+            </div>
+        </div>
+
+        <!-- MÓDULO DE RECOMPENSA -->
+        <div class="reward-module" id="reward-module">
+            <div class="reward-title">💰 Recompensa Desbloqueada</div>
+            <div class="reward-amount" id="reward-amount">$0.50</div>
+            <p class="reward-desc">Recibe tu recompensa cuando alcances $5.00 acumulados.</p>
+            <div class="reward-progress-bar">
+                <div class="reward-progress-fill" id="reward-bar"></div>
+            </div>
+            <div class="reward-actions">
+                <button class="btn-reward" onclick="abrirDonacion()">💳 Reclamar / Donar</button>
+                <button class="btn-secondary" onclick="reiniciarJuego()">🔄 Jugar de Nuevo</button>
+            </div>
+        </div>
+
+        <!-- MÓDULO EDUCATIVO -->
+        <div class="edu-module">
+            <div class="edu-title">📚 ¿Querés aprender más?</div>
+            <p class="edu-text">Este proyecto financia cursos reales con bounties de Bug Bounty. Cada empresa que protegemos paga parte de tu aprendizaje.</p>
+            <a href="https://www.youtube.com/@BestiaTantrica" target="_blank" class="btn-edu">Ver Videos Educativos →</a>
+        </div>
+
+        <button class="btn-secondary mt-1" onclick="reiniciarJuego()">🔄 Volver a Jugar</button>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
