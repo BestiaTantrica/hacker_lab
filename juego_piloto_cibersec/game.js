@@ -1,143 +1,189 @@
 // ============================================================
-// MicroSecure — Feed de Micro-Insights
-// Concepto: Ver un insight real → confirmar con 1 clic → ganar micro-recompensa
+// MicroSecure v3 — Insight + Multiple Choice + Niveles
+// Flujo: Ver insight (8s) → Pregunta 1-clic (MC) → Feedback → Recompensa → Nivel
 // ============================================================
 
-// BANCO DE INSIGHTS (no quizzes — el conocimiento está EN el reel)
+const TIMER_SEGUNDOS = 8;
+const META_DOLARES   = 5.00;
+
+// NIVELES
+const NIVELES = [
+    { min: 0,   max: 149,  nombre: "Novato",       emoji: "🔵", desc: "Acabás de empezar. ¡Todo lo que aprendas desde acá es ganancia!" },
+    { min: 150, max: 349,  nombre: "Consciente",   emoji: "🟡", desc: "Ya sabés más que el 80% de la población sobre ciberseguridad." },
+    { min: 350, max: 599,  nombre: "Informado",    emoji: "🟠", desc: "Pensás como alguien que sabe protegerse en el mundo digital." },
+    { min: 600, max: 9999, nombre: "Avanzado",     emoji: "🔴", desc: "Nivel profesional. Podés enseñarle a otros y monetizarlo." }
+];
+
+function obtenerNivel(pts) {
+    return NIVELES.find(n => pts >= n.min && pts <= n.max) || NIVELES[0];
+}
+
+// BANCO DE INSIGHTS con pregunta MC integrada
 const INSIGHTS = [
     {
         emoji: "📶",
-        stat: { number: "147", unit: "contraseñas robadas por hora" },
-        headline: "Tu Wi-Fi pública es una trampa.",
-        context: "En redes públicas sin VPN, un atacante puede capturar tus credenciales con herramientas gratuitas en menos de 30 segundos.",
-        categoria: "WI-FI",
+        stat: { number: "147", unit: "contraseñas robadas por hora en Wi-Fi pública" },
+        headline: "Tu Wi-Fi pública es una trampa silenciosa.",
+        context: "Un atacante en la misma red puede capturar tu tráfico con herramientas gratuitas. Una VPN cifra todo tu tráfico y lo hace ilegible para cualquiera en la red.",
+        categoria: "WI-FI", bgAccent: "rgba(239,68,68,0.12)", color: "#f87171",
+        sponsor: "Patrocinado por NordVPN",
         rewardBase: 0.07,
-        bgAccent: "rgba(239,68,68,0.12)",
-        color: "#f87171",
-        sponsor: "Patrocinado por NordVPN"
+        pregunta: "¿Qué herramienta protege tu tráfico en redes públicas?",
+        opciones: [
+            { texto: "Un antivirus actualizado", correcta: false },
+            { texto: "Una VPN (Red Privada Virtual)", correcta: true },
+            { texto: "Navegar en modo incógnito", correcta: false },
+            { texto: "Usar solo HTTPS", correcta: false }
+        ],
+        explicacion: "Una VPN cifra todo tu tráfico antes de que salga de tu dispositivo. El modo incógnito solo esconde el historial local — no te protege en la red."
     },
     {
         emoji: "🎣",
-        stat: { number: "91%", unit: "de los hackeos empieza con un email" },
-        headline: "El phishing es la arma #1 de los hackers.",
-        context: "Un atacante puede crear un email idéntico al de tu banco en 5 minutos. La diferencia está en el dominio del remitente — siempre verificalo.",
-        categoria: "PHISHING",
+        stat: { number: "91%", unit: "de los hackeos empieza con un email falso" },
+        headline: "El phishing es la arma #1 del cibercrimen.",
+        context: "Un atacante puede clonar el email de tu banco en minutos. La diferencia entre el real y el falso suele estar en una letra del dominio del remitente.",
+        categoria: "PHISHING", bgAccent: "rgba(245,158,11,0.1)", color: "#fbbf24",
+        sponsor: "Patrocinado por Proofpoint",
         rewardBase: 0.06,
-        bgAccent: "rgba(245,158,11,0.1)",
-        color: "#fbbf24",
-        sponsor: "Patrocinado por Proofpoint"
+        pregunta: "Recibes un email de 'seguridad@bancc0.com'. ¿Qué hacés?",
+        opciones: [
+            { texto: "Clic en el link si parece urgente", correcta: false },
+            { texto: "Verificar el dominio exacto del remitente", correcta: true },
+            { texto: "Responder para confirmar que es legítimo", correcta: false },
+            { texto: "Abrir el adjunto para ver de qué trata", correcta: false }
+        ],
+        explicacion: "'bancc0.com' no es el dominio real de ningún banco. Los atacantes usan dominios casi idénticos. Verificar el dominio exacto (no el nombre visible) es la defensa clave."
     },
     {
         emoji: "🔑",
         stat: { number: "23M", unit: "personas usan '123456' como contraseña" },
-        headline: "Tu contraseña más fácil es la primera que prueban.",
-        context: "Los atacantes usan listas de millones de contraseñas comunes. Una contraseña de 12 caracteres mixtos tardaría 34,000 años en crackearse por fuerza bruta.",
-        categoria: "CONTRASEÑAS",
+        headline: "La contraseña más fácil = la primera que prueban.",
+        context: "Los atacantes usan diccionarios con millones de contraseñas comunes. Una contraseña de 12 caracteres aleatorios tardaría miles de años en crackearse.",
+        categoria: "CONTRASEÑAS", bgAccent: "rgba(99,102,241,0.12)", color: "#818cf8",
+        sponsor: "Patrocinado por 1Password",
         rewardBase: 0.05,
-        bgAccent: "rgba(99,102,241,0.12)",
-        color: "#818cf8",
-        sponsor: "Patrocinado por 1Password"
-    },
-    {
-        emoji: "🔒",
-        stat: { number: "58%", unit: "de los sitios web aún no fuerzan HTTPS" },
-        headline: "Sin el candado, cualquiera puede leer tus datos.",
-        context: "HTTPS cifra la comunicación entre vos y el servidor. Sin él, tu contraseña viaja en texto plano por la red. Siempre buscá el 🔒 en la barra del navegador.",
-        categoria: "HTTPS/TLS",
-        rewardBase: 0.06,
-        bgAccent: "rgba(16,185,129,0.1)",
-        color: "#34d399",
-        sponsor: "Patrocinado por Let's Encrypt"
+        pregunta: "¿Cuál de estas contraseñas es más segura?",
+        opciones: [
+            { texto: "MiPerro2024!", correcta: false },
+            { texto: "P@ssw0rd", correcta: false },
+            { texto: "kX#9mQ2!vLpR", correcta: true },
+            { texto: "123456789", correcta: false }
+        ],
+        explicacion: "'kX#9mQ2!vLpR' es aleatoria, larga y mezcla tipos de caracteres. Las basadas en palabras o patrones conocidos son vulnerables a ataques de diccionario."
     },
     {
         emoji: "📱",
         stat: { number: "99.9%", unit: "de los ataques automáticos bloqueados por 2FA" },
-        headline: "Agregar el doble factor toma 30 segundos.",
-        context: "El 2FA requiere algo que sabés (contraseña) + algo que tenés (teléfono). Aunque te roben la contraseña, sin el código SMS o la app, no pueden entrar.",
-        categoria: "2FA",
+        headline: "El doble factor tarda 30 segundos en activarse.",
+        context: "El 2FA exige dos pruebas: algo que sabés (contraseña) + algo que tenés (teléfono). Aunque te roben la contraseña, sin el código del teléfono no pueden entrar.",
+        categoria: "2FA", bgAccent: "rgba(6,182,212,0.1)", color: "#22d3ee",
+        sponsor: "Patrocinado por Authy",
         rewardBase: 0.07,
-        bgAccent: "rgba(6,182,212,0.1)",
-        color: "#22d3ee",
-        sponsor: "Patrocinado por Authy"
+        pregunta: "¿Cuál es el segundo 'factor' en la autenticación de dos factores?",
+        opciones: [
+            { texto: "Una contraseña más larga", correcta: false },
+            { texto: "Un código enviado a tu teléfono o app", correcta: true },
+            { texto: "Tu nombre de usuario", correcta: false },
+            { texto: "Un CAPTCHA", correcta: false }
+        ],
+        explicacion: "El segundo factor es algo físico que tenés: tu teléfono. Aunque el atacante tenga tu contraseña, no puede acceder sin ese código temporal."
+    },
+    {
+        emoji: "💉",
+        stat: { number: "#1", unit: "vulnerabilidad más reportada en HackerOne: IDOR" },
+        headline: "Cambiar un número en la URL puede exponer datos ajenos.",
+        context: "IDOR (Insecure Direct Object Reference): si la app no verifica que sos el dueño del recurso, cambiar /usuario/123 a /usuario/124 puede mostrar datos de otro usuario.",
+        categoria: "BUG BOUNTY", bgAccent: "rgba(16,185,129,0.1)", color: "#34d399",
+        sponsor: "Patrocinado por HackerOne",
+        rewardBase: 0.09,
+        pregunta: "Una app muestra /api/perfil/100 con tus datos. Cambiás a /api/perfil/101 y ves datos de otra persona. ¿Qué vulnerabilidad es?",
+        opciones: [
+            { texto: "SQL Injection", correcta: false },
+            { texto: "XSS (Cross-Site Scripting)", correcta: false },
+            { texto: "IDOR (Referencia directa insegura)", correcta: true },
+            { texto: "CSRF", correcta: false }
+        ],
+        explicacion: "IDOR ocurre cuando el servidor no verifica que el usuario autenticado es el dueño del objeto solicitado. Es la vulnerabilidad #1 en Bug Bounty por su alto impacto y fácil detección."
     },
     {
         emoji: "⚡",
-        stat: { number: "60%", unit: "de las brechas explotan vulnerabilidades ya parcheadas" },
-        headline: "El botón 'Actualizar' es tu escudo.",
-        context: "Cuando sale una actualización de seguridad, los atacantes analizan el parche para crear exploits en horas. Las máquinas sin actualizar son blancos fáciles.",
-        categoria: "ACTUALIZACIONES",
+        stat: { number: "60%", unit: "de brechas explotan vulnerabilidades ya parcheadas" },
+        headline: "'Actualizar después' puede costarte todo.",
+        context: "Cuando aparece un parche de seguridad, los atacantes analizan el código para crear exploits en horas. Las máquinas sin actualizar son blancos fáciles y conocidos.",
+        categoria: "ACTUALIZACIONES", bgAccent: "rgba(245,158,11,0.1)", color: "#fbbf24",
+        sponsor: "Patrocinado por Microsoft",
         rewardBase: 0.05,
-        bgAccent: "rgba(245,158,11,0.1)",
-        color: "#fbbf24",
-        sponsor: "Patrocinado por Microsoft"
+        pregunta: "¿Por qué es urgente instalar actualizaciones de seguridad el mismo día que salen?",
+        opciones: [
+            { texto: "Para tener las últimas funciones del sistema", correcta: false },
+            { texto: "Porque los atacantes crean exploits en horas tras el parche", correcta: true },
+            { texto: "Para mejorar la velocidad del equipo", correcta: false },
+            { texto: "Porque lo pide el fabricante", correcta: false }
+        ],
+        explicacion: "El parche publica qué bug fue corregido. Los atacantes lo usan como mapa para atacar sistemas sin actualizar. Cuanto más tardás, más expuesto estás."
     },
     {
         emoji: "💸",
         stat: { number: "$1.50", unit: "vale tu perfil completo en la dark web" },
-        headline: "Tus datos personales se venden al por mayor.",
-        context: "Nombre, email, fecha de nacimiento y contraseña se combinan en bases de datos filtradas. Verificá si tu email fue comprometido en haveibeenpwned.com",
-        categoria: "DATA BREACH",
+        headline: "Tus datos se venden al por mayor sin que lo sepas.",
+        context: "Las filtraciones masivas de bases de datos se venden en mercados ilegales. Tu email, contraseña y fecha de nacimiento combinados permiten ataques de 'credential stuffing' en otros sitios.",
+        categoria: "DATA BREACH", bgAccent: "rgba(239,68,68,0.1)", color: "#f87171",
+        sponsor: "Patrocinado por HaveIBeenPwned",
         rewardBase: 0.08,
-        bgAccent: "rgba(239,68,68,0.1)",
-        color: "#f87171",
-        sponsor: "Patrocinado por HaveIBeenPwned"
+        pregunta: "¿Qué podés hacer HOY para saber si tus datos fueron filtrados?",
+        opciones: [
+            { texto: "Cambiar todas las contraseñas por 'admin123'", correcta: false },
+            { texto: "Consultar haveibeenpwned.com con tu email", correcta: true },
+            { texto: "Formatear la computadora", correcta: false },
+            { texto: "No hay forma de saberlo", correcta: false }
+        ],
+        explicacion: "HaveIBeenPwned.com (Troy Hunt) indexa todas las filtraciones conocidas. Ingresás tu email y te dice si aparece en alguna base de datos comprometida."
     },
     {
         emoji: "💾",
-        stat: { number: "11s", unit: "cada 11 segundos una empresa es atacada con ransomware" },
-        headline: "Sin backup, un ataque lo borra todo.",
-        context: "El ransomware cifra todos tus archivos y pide rescate. La única defensa real es tener copias de seguridad offline actualizadas. Regla 3-2-1: 3 copias, 2 medios, 1 offsite.",
-        categoria: "RANSOMWARE",
+        stat: { number: "11s", unit: "— cada 11 segundos una empresa es atacada con ransomware" },
+        headline: "Sin backup, un ataque borra años de trabajo.",
+        context: "El ransomware cifra todos tus archivos y pide rescate. La única defensa real es una copia offline. Regla 3-2-1: 3 copias, en 2 medios distintos, 1 fuera del sitio.",
+        categoria: "RANSOMWARE", bgAccent: "rgba(139,92,246,0.1)", color: "#a78bfa",
+        sponsor: "Patrocinado por Backblaze",
         rewardBase: 0.09,
-        bgAccent: "rgba(139,92,246,0.1)",
-        color: "#a78bfa",
-        sponsor: "Patrocinado por Backblaze"
+        pregunta: "Si un ransomware cifra tu disco, ¿cuál es la única defensa real?",
+        opciones: [
+            { texto: "Pagar el rescate rápidamente", correcta: false },
+            { texto: "Tener backups offline actualizados", correcta: true },
+            { texto: "Apagar la computadora inmediatamente", correcta: false },
+            { texto: "Usar Windows Defender", correcta: false }
+        ],
+        explicacion: "Pagar no garantiza recuperar los archivos. Un antivirus no puede descifrar lo que ya fue cifrado. Solo una copia de seguridad offline (no conectada a la red) te garantiza recuperación total."
     }
 ];
 
-// CONFIGURACIÓN
-const TIMER_SEGUNDOS = 8;
-const REWARD_MULTIPLIER_NEW = 1.0;   // "Aprendí algo nuevo" → 100% de la recompensa
-const REWARD_MULTIPLIER_KNEW = 0.4;  // "Ya lo sabía" → 40% (igual sumaste atención)
-const META_DOLARES = 5.00;
-
 // ESTADO
-let estado = {
+let E = {
     indexActual: 0,
     orden: [],
-    walletTotal: 0,
-    sesionGanado: 0,
-    sesionVistos: 0,
-    sesionNuevos: 0,
-    rachaActual: 0,
+    puntos: 0,
+    wallet: 0,
+    correctas: 0,
+    racha: 0,
     rachaMax: 0,
     timerInterval: null,
-    tiempoRestante: TIMER_SEGUNDOS,
-    enEjecucion: false,
-    segFill: null,   // referencia al segmento de progreso activo
+    respondido: false,
+    enTimer: false,
 };
 
 // ============================================================
-// FLUJO PRINCIPAL
+// FLUJO
 // ============================================================
 function iniciarFeed() {
-    // Mezclar insights
-    estado.orden = INSIGHTS.map((_, i) => i);
-    for (let i = estado.orden.length - 1; i > 0; i--) {
+    E.orden = INSIGHTS.map((_,i) => i);
+    for (let i = E.orden.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [estado.orden[i], estado.orden[j]] = [estado.orden[j], estado.orden[i]];
+        [E.orden[i], E.orden[j]] = [E.orden[j], E.orden[i]];
     }
-
-    estado.indexActual = 0;
-    estado.walletTotal = 0;
-    estado.sesionGanado = 0;
-    estado.sesionVistos = 0;
-    estado.sesionNuevos = 0;
-    estado.rachaActual = 0;
-    estado.rachaMax = 0;
-
+    Object.assign(E, { indexActual:0, puntos:0, wallet:0, correctas:0, racha:0, rachaMax:0 });
     construirBarraEpisodios();
-    cambiarPantalla('screen-intro', 'screen-feed');
+    cambiarPantalla('screen-intro','screen-feed');
     mostrarInsight();
 }
 
@@ -145,184 +191,179 @@ function cambiarPantalla(ocultar, mostrar) {
     document.getElementById(ocultar).classList.remove('active');
     const el = document.getElementById(mostrar);
     el.classList.add('active');
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
 }
 
 function mostrarInsight() {
-    if (estado.indexActual >= estado.orden.length) {
-        mostrarResumen();
-        return;
-    }
+    if (E.indexActual >= E.orden.length) { mostrarResumen(); return; }
 
-    const idx = estado.orden[estado.indexActual];
-    const insight = INSIGHTS[idx];
+    const ins = INSIGHTS[E.orden[E.indexActual]];
+    E.respondido = false;
+    E.enTimer = true;
 
-    estado.enEjecucion = true;
-    estado.tiempoRestante = TIMER_SEGUNDOS;
-
-    // Resetear panels
+    // Reset panels
     document.getElementById('action-panel').style.display = 'none';
-    document.getElementById('reward-flash').style.display = 'none';
+    document.getElementById('mc-feedback').style.display = 'none';
 
-    // Actualizar sponsor
-    document.getElementById('reel-sponsor').textContent = insight.sponsor;
-
-    // Inyectar contenido
+    // Contenido
+    document.getElementById('reel-sponsor').textContent = ins.sponsor;
     document.getElementById('reel-body').innerHTML = `
-        <div class="reel-hero" style="background: ${insight.bgAccent};">
-            <div class="reel-emoji">${insight.emoji}</div>
+        <div class="reel-hero" style="background:${ins.bgAccent}">
+            <div class="reel-emoji">${ins.emoji}</div>
             <div class="reel-stat-wrapper">
-                <div class="reel-stat-number" style="color: ${insight.color}">${insight.stat.number}</div>
-                <div class="reel-stat-unit">${insight.stat.unit}</div>
+                <div class="reel-stat-number" style="color:${ins.color}">${ins.stat.number}</div>
+                <div class="reel-stat-unit">${ins.stat.unit}</div>
             </div>
-            <div class="reel-headline">${insight.headline}</div>
-            <div class="reel-context">${insight.context}</div>
+            <div class="reel-headline">${ins.headline}</div>
+            <div class="reel-context">${ins.context}</div>
         </div>
         <div class="reel-footer">
-            <div class="reel-category" style="color: ${insight.color}">${insight.categoria}</div>
-            <div class="reel-reward-preview">+$${insight.rewardBase.toFixed(2)}</div>
-        </div>
-    `;
+            <div class="reel-category" style="color:${ins.color}">${ins.categoria}</div>
+            <div class="reel-reward-preview">+$${ins.rewardBase.toFixed(2)}</div>
+        </div>`;
 
-    // Reiniciar card (re-trigger animation)
+    // Re-trigger animation
     const card = document.getElementById('reel-card');
-    card.style.animation = 'none';
-    card.offsetWidth; // reflow
-    card.style.animation = '';
+    card.style.animation = 'none'; card.offsetWidth; card.style.animation = '';
 
-    iniciarTimer(insight);
     actualizarBarraEpisodios();
+    iniciarTimer(ins);
 }
 
 // ============================================================
-// TIMER CIRCULAR SVG
+// TIMER
 // ============================================================
-function iniciarTimer(insight) {
-    clearInterval(estado.timerInterval);
+function iniciarTimer(ins) {
+    clearInterval(E.timerInterval);
+    const ring  = document.getElementById('ring-fill');
+    const sec   = document.getElementById('timer-seconds');
+    const CIRC  = 163.36;
 
-    const ring = document.getElementById('ring-fill');
-    const sec = document.getElementById('timer-seconds');
-    const CIRCUMFERENCE = 163.36; // 2π × 26
-
-    // Reset ring
     ring.style.transition = 'none';
     ring.style.strokeDashoffset = '0';
     ring.classList.remove('urgent');
     sec.textContent = TIMER_SEGUNDOS;
-    estado.tiempoRestante = TIMER_SEGUNDOS;
 
-    // Activar animación CSS del segmento
-    const segFill = document.querySelector(`.ep-seg:nth-child(${estado.indexActual + 1}) .ep-seg-fill`);
+    // Segmento de episodio
+    const segFill = document.querySelector(`.ep-seg:nth-child(${E.indexActual + 1}) .ep-seg-fill`);
     if (segFill) {
-        segFill.style.transition = 'none';
-        segFill.style.width = '0%';
-        segFill.offsetWidth;
-        segFill.style.transition = `width ${TIMER_SEGUNDOS}s linear`;
-        segFill.style.width = '100%';
+        segFill.style.transition = 'none'; segFill.style.width = '0%'; segFill.offsetWidth;
+        segFill.style.transition = `width ${TIMER_SEGUNDOS}s linear`; segFill.style.width = '100%';
     }
 
-    // Animar el ring con JS para mayor control
     let elapsed = 0;
-    const TICK = 100; // ms
-    const TOTAL_MS = TIMER_SEGUNDOS * 1000;
-
-    estado.timerInterval = setInterval(() => {
-        elapsed += TICK;
-        const progress = elapsed / TOTAL_MS;
-        const offset = CIRCUMFERENCE * progress;
-        ring.style.transition = 'none';
-        ring.style.strokeDashoffset = offset.toString();
-
-        const remaining = Math.ceil((TOTAL_MS - elapsed) / 1000);
-        sec.textContent = Math.max(0, remaining);
-
-        if (remaining <= 2) {
-            ring.classList.add('urgent');
+    E.timerInterval = setInterval(() => {
+        elapsed += 100;
+        ring.style.strokeDashoffset = String(CIRC * elapsed / (TIMER_SEGUNDOS * 1000));
+        const rem = Math.ceil((TIMER_SEGUNDOS * 1000 - elapsed) / 1000);
+        sec.textContent = Math.max(0, rem);
+        if (rem <= 2) ring.classList.add('urgent');
+        if (elapsed >= TIMER_SEGUNDOS * 1000) {
+            clearInterval(E.timerInterval);
+            E.enTimer = false;
+            if (!E.respondido) mostrarPregunta(ins);
         }
-
-        if (elapsed >= TOTAL_MS) {
-            clearInterval(estado.timerInterval);
-            if (estado.enEjecucion) {
-                terminarInsight();
-            }
-        }
-    }, TICK);
+    }, 100);
 }
 
-function terminarInsight() {
-    estado.enEjecucion = false;
-    clearInterval(estado.timerInterval);
+// ============================================================
+// PREGUNTA MC
+// ============================================================
+function mostrarPregunta(ins) {
     const panel = document.getElementById('action-panel');
+    document.getElementById('mc-question').textContent = ins.pregunta;
+
+    // Mezclar opciones
+    const letras = ['A','B','C','D'];
+    const orden = [0,1,2,3].sort(() => Math.random() - 0.5);
+    const optsEl = document.getElementById('mc-options');
+    optsEl.innerHTML = '';
+
+    orden.forEach((opIdx, i) => {
+        const op = ins.opciones[opIdx];
+        const btn = document.createElement('button');
+        btn.className = 'mc-opt';
+        btn.dataset.correcta = op.correcta;
+        btn.dataset.opIdx = opIdx;
+        btn.innerHTML = `<span class="opt-letter">${letras[i]}</span> ${op.texto}`;
+        btn.onclick = () => responder(btn, ins, orden);
+        optsEl.appendChild(btn);
+    });
+
     panel.style.display = 'block';
 }
 
-// ============================================================
-// ACCIÓN DE 1 CLIC
-// ============================================================
-function confirmar(esNuevo) {
-    if (!document.getElementById('action-panel').style.display || document.getElementById('action-panel').style.display === 'none') return;
+function responder(btnClickeado, ins, orden) {
+    if (E.respondido) return;
+    E.respondido = true;
 
-    document.getElementById('action-panel').style.display = 'none';
+    const esCorrecta = btnClickeado.dataset.correcta === 'true';
+    const allBtns = document.querySelectorAll('.mc-opt');
 
-    const idx = estado.orden[estado.indexActual];
-    const insight = INSIGHTS[idx];
-    const rewardMult = esNuevo ? REWARD_MULTIPLIER_NEW : REWARD_MULTIPLIER_KNEW;
-    const rewardAmount = insight.rewardBase * rewardMult;
+    // Colorear
+    allBtns.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.correcta === 'true') b.classList.add('correct-opt');
+        else if (b === btnClickeado && !esCorrecta) b.classList.add('wrong-opt');
+    });
 
-    // Actualizar estado
-    estado.sesionGanado += rewardAmount;
-    estado.walletTotal += rewardAmount;
-    estado.sesionVistos++;
-    if (esNuevo) {
-        estado.sesionNuevos++;
-        estado.rachaActual++;
-        if (estado.rachaActual > estado.rachaMax) estado.rachaMax = estado.rachaActual;
+    // Puntaje
+    let ptsGanados, rewardGanada;
+    if (esCorrecta) {
+        ptsGanados  = 100;
+        rewardGanada = ins.rewardBase;
+        E.correctas++;
+        E.racha++;
+        if (E.racha > E.rachaMax) E.rachaMax = E.racha;
+        // Bonus racha
+        if (E.racha > 1) { ptsGanados += 20 * (E.racha - 1); rewardGanada += 0.01 * (E.racha - 1); }
     } else {
-        estado.rachaActual = 0;
+        ptsGanados  = 20;
+        rewardGanada = ins.rewardBase * 0.2; // Viste el contenido igual
+        E.racha = 0;
     }
 
-    actualizarWallet(rewardAmount);
-    mostrarFlash(esNuevo, rewardAmount, insight);
+    E.puntos  += ptsGanados;
+    E.wallet  += rewardGanada;
+
+    // Actualizar HUD
+    actualizarWalletHUD(rewardGanada);
+    actualizarNivelHUD();
+
+    // Feedback inline
+    mostrarFeedbackMC(esCorrecta, ptsGanados, rewardGanada, ins);
 }
 
-function mostrarFlash(esNuevo, amount, insight) {
-    const flash = document.getElementById('reward-flash');
-    const inner = document.getElementById('reward-flash-inner');
+function mostrarFeedbackMC(esCorrecta, pts, reward, ins) {
+    document.getElementById('action-panel').style.display = 'none';
+    const fb = document.getElementById('mc-feedback');
+    document.getElementById('mc-fb-icon').textContent = esCorrecta ? '✅' : '❌';
+    document.getElementById('mc-fb-msg').innerHTML =
+        `<strong>${esCorrecta ? `+${pts} pts · +$${reward.toFixed(2)}` : `+${pts} pts · +$${reward.toFixed(2)} (viste el contenido)`}</strong>${ins.explicacion}`;
+    fb.style.display = 'flex';
+}
 
-    inner.innerHTML = `
-        <div class="flash-emoji">${esNuevo ? '🎉' : '✅'}</div>
-        <div class="flash-title">${esNuevo ? '¡Nuevo conocimiento!' : '¡Repaso confirmado!'}</div>
-        <div class="flash-amount">+$${amount.toFixed(2)}</div>
-        <div class="flash-sub">Balance total: $${estado.walletTotal.toFixed(2)}</div>
-    `;
-
-    flash.style.display = 'flex';
-
-    // Auto-cerrar después de 1.6s y pasar al siguiente
-    setTimeout(() => {
-        flash.style.display = 'none';
-        marcarEpisodioCompleto();
-        estado.indexActual++;
-        mostrarInsight();
-    }, 1600);
+function siguienteInsight() {
+    document.getElementById('mc-feedback').style.display = 'none';
+    marcarEpisodioCompleto();
+    E.indexActual++;
+    mostrarInsight();
 }
 
 // ============================================================
-// WALLET Y HUD
+// HUD
 // ============================================================
-function actualizarWallet(delta) {
-    const display = document.getElementById('wallet-display');
-    const deltaEl = document.getElementById('wallet-delta');
+function actualizarWalletHUD(delta) {
+    document.getElementById('wallet-display').textContent = `$${E.wallet.toFixed(2)}`;
+    const d = document.getElementById('wallet-delta');
+    d.textContent = `+$${delta.toFixed(2)}`;
+    d.classList.add('show');
+    setTimeout(() => { d.classList.remove('show'); d.style.transform=''; }, 1200);
+}
 
-    display.textContent = `$${estado.walletTotal.toFixed(2)}`;
-
-    // Flash del delta
-    deltaEl.textContent = `+$${delta.toFixed(2)}`;
-    deltaEl.classList.add('show');
-    setTimeout(() => {
-        deltaEl.classList.remove('show');
-        deltaEl.style.transform = '';
-    }, 1000);
+function actualizarNivelHUD() {
+    const nv = obtenerNivel(E.puntos);
+    document.getElementById('level-badge').textContent = `Nv. ${nv.nombre}`;
 }
 
 // ============================================================
@@ -331,90 +372,75 @@ function actualizarWallet(delta) {
 function construirBarraEpisodios() {
     const bar = document.getElementById('episodes-bar');
     bar.innerHTML = '';
-    estado.orden.forEach(() => {
-        const seg = document.createElement('div');
-        seg.className = 'ep-seg';
-        const fill = document.createElement('div');
-        fill.className = 'ep-seg-fill';
-        seg.appendChild(fill);
-        bar.appendChild(seg);
+    E.orden.forEach(() => {
+        const seg = document.createElement('div'); seg.className = 'ep-seg';
+        const fill = document.createElement('div'); fill.className = 'ep-seg-fill';
+        seg.appendChild(fill); bar.appendChild(seg);
     });
 }
-
 function actualizarBarraEpisodios() {
-    const segs = document.querySelectorAll('.ep-seg');
-    segs.forEach((seg, i) => {
-        if (i < estado.indexActual) seg.classList.add('done');
-        else seg.classList.remove('done');
+    document.querySelectorAll('.ep-seg').forEach((s,i) => {
+        s.classList.toggle('done', i < E.indexActual);
     });
 }
-
 function marcarEpisodioCompleto() {
     const segs = document.querySelectorAll('.ep-seg');
-    if (segs[estado.indexActual]) {
-        segs[estado.indexActual].classList.add('done');
-    }
+    if (segs[E.indexActual]) segs[E.indexActual].classList.add('done');
 }
 
 // ============================================================
-// RESUMEN FINAL
+// RESUMEN
 // ============================================================
 function mostrarResumen() {
-    cambiarPantalla('screen-feed', 'screen-summary');
+    cambiarPantalla('screen-feed','screen-summary');
+    const nv = obtenerNivel(E.puntos);
 
-    const ganado = estado.sesionGanado;
-    document.getElementById('summary-amount').textContent = `$${ganado.toFixed(2)}`;
-    document.getElementById('wallet-bar-current').textContent = `$${ganado.toFixed(2)}`;
-    document.getElementById('ss-watched').textContent = estado.sesionVistos;
-    document.getElementById('ss-new').textContent = estado.sesionNuevos;
-    document.getElementById('ss-streak').textContent = estado.rachaMax;
+    document.getElementById('summary-amount').textContent    = `$${E.wallet.toFixed(2)}`;
+    document.getElementById('wallet-bar-current').textContent = `$${E.wallet.toFixed(2)}`;
+    document.getElementById('ss-pts').textContent            = E.puntos;
+    document.getElementById('ss-correct').textContent        = `${E.correctas}/${E.orden.length}`;
+    document.getElementById('ss-streak').textContent         = E.rachaMax;
 
-    const pct = Math.min((ganado / META_DOLARES) * 100, 100);
-    setTimeout(() => {
-        document.getElementById('wallet-bar-fill').style.width = pct + '%';
-    }, 600);
+    // Nivel
+    document.getElementById('level-result-icon').textContent = nv.emoji;
+    document.getElementById('level-result-name').textContent = nv.nombre.toUpperCase();
+    document.getElementById('level-result-desc').textContent = nv.desc;
+
+    const pct = Math.min((E.wallet / META_DOLARES) * 100, 100);
+    setTimeout(() => { document.getElementById('wallet-bar-fill').style.width = pct + '%'; }, 600);
 }
 
-function abrirRetiro(metodo) {
-    const urls = {
-        paypal: 'https://www.paypal.com/donate',
-        crypto: 'https://coinbase.com',
-        kofi: 'https://ko-fi.com/'
-    };
-    window.open(urls[metodo] || urls.kofi, '_blank');
+function abrirRetiro(m) {
+    const urls = { paypal:'https://www.paypal.com/donate', crypto:'https://coinbase.com', kofi:'https://ko-fi.com/' };
+    window.open(urls[m] || urls.kofi, '_blank');
 }
 
 function compartir() {
-    const url = window.location.href;
-    const text = `Acabo de aprender sobre ciberseguridad y gané $${estado.sesionGanado.toFixed(2)}. ¡Vos también podés! 🛡️`;
+    const txt = `Alcancé el nivel "${obtenerNivel(E.puntos).nombre}" en MicroSecure y gané $${E.wallet.toFixed(2)} aprendiendo ciberseguridad 🛡️`;
     if (navigator.share) {
-        navigator.share({ title: 'MicroSecure', text, url });
+        navigator.share({ title:'MicroSecure', text:txt, url: window.location.href });
     } else {
-        navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
-            alert('¡Enlace copiado! Compartilo con quien quieras.');
-        });
+        navigator.clipboard.writeText(txt + '\n' + window.location.href)
+            .then(() => alert('¡Copiado! Compartilo con quien quieras.'));
     }
 }
 
-function irProfundidad() {
-    window.open('https://www.youtube.com/@BestiaTantrica', '_blank');
-}
+function irProfundidad() { window.open('https://www.youtube.com/@BestiaTantrica','_blank'); }
 
 function reiniciar() {
-    estado.indexActual = 0;
-    estado.sesionGanado = 0;
-    estado.sesionVistos = 0;
-    estado.sesionNuevos = 0;
-    estado.rachaActual = 0;
-    estado.rachaMax = 0;
-
-    // Re-mezclar
-    for (let i = estado.orden.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [estado.orden[i], estado.orden[j]] = [estado.orden[j], estado.orden[i]];
+    Object.assign(E, { indexActual:0, puntos:0, wallet:0, correctas:0, racha:0, rachaMax:0 });
+    for (let i = E.orden.length-1; i>0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [E.orden[i],E.orden[j]] = [E.orden[j],E.orden[i]];
     }
-
     construirBarraEpisodios();
-    cambiarPantalla('screen-summary', 'screen-feed');
+    cambiarPantalla('screen-summary','screen-feed');
     mostrarInsight();
 }
+
+// Tecla Enter para avanzar si el feedback está visible
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('mc-feedback').style.display !== 'none') {
+        siguienteInsight();
+    }
+});

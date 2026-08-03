@@ -43,10 +43,13 @@
     <!-- HEADER FIJO -->
     <header class="feed-header">
         <div class="brand">🛡️ MicroSecure</div>
-        <div class="wallet-chip">
-            <span class="wallet-icon">💰</span>
-            <span class="wallet-value" id="wallet-display">$0.00</span>
-            <span class="wallet-delta" id="wallet-delta"></span>
+        <div class="header-right">
+            <div class="level-badge" id="level-badge">Nv. Novato</div>
+            <div class="wallet-chip">
+                <span class="wallet-icon">💰</span>
+                <span class="wallet-value" id="wallet-display">$0.00</span>
+                <span class="wallet-delta" id="wallet-delta"></span>
+            </div>
         </div>
     </header>
 
@@ -79,24 +82,19 @@
         </div>
     </div>
 
-    <!-- PANEL DE ACCIÓN (aparece al terminar el timer) -->
+    <!-- PANEL DE PREGUNTA (aparece al terminar el timer) -->
     <div class="action-panel" id="action-panel" style="display:none">
-        <div class="action-question" id="action-question">¿Sabías esto antes?</div>
-        <div class="action-btns">
-            <button class="btn-action btn-knew" id="btn-knew" onclick="confirmar(false)">
-                Ya lo sabía
-            </button>
-            <button class="btn-action btn-new" id="btn-new" onclick="confirmar(true)">
-                ✨ Aprendí algo nuevo
-            </button>
+        <div class="mc-question" id="mc-question">Cargando pregunta...</div>
+        <div class="mc-options" id="mc-options">
+            <!-- inyectado por JS -->
         </div>
     </div>
 
-    <!-- RECOMPENSA FLASH (aparece al confirmar) -->
-    <div class="reward-flash" id="reward-flash" style="display:none">
-        <div class="reward-flash-inner" id="reward-flash-inner">
-            <!-- inyectado por JS -->
-        </div>
+    <!-- FEEDBACK INLINE (aparece tras responder) -->
+    <div class="mc-feedback" id="mc-feedback" style="display:none">
+        <div class="mc-fb-icon" id="mc-fb-icon"></div>
+        <div class="mc-fb-msg" id="mc-fb-msg"></div>
+        <button class="btn-siguiente" onclick="siguienteInsight()">SIGUIENTE →</button>
     </div>
 
 </div>
@@ -121,15 +119,22 @@
             </div>
         </div>
 
+        <!-- Nivel alcanzado -->
+        <div class="level-result" id="level-result">
+            <div class="level-result-icon" id="level-result-icon">🟢</div>
+            <div class="level-result-name" id="level-result-name">Novato</div>
+            <div class="level-result-desc" id="level-result-desc"></div>
+        </div>
+
         <!-- Stats -->
         <div class="summary-stats">
             <div class="sstat">
-                <div class="sstat-val" id="ss-watched">0</div>
-                <div class="sstat-label">Vistos</div>
+                <div class="sstat-val" id="ss-pts">0</div>
+                <div class="sstat-label">Puntos</div>
             </div>
             <div class="sstat">
-                <div class="sstat-val" id="ss-new">0</div>
-                <div class="sstat-label">Nuevos</div>
+                <div class="sstat-val" id="ss-correct">0</div>
+                <div class="sstat-label">Correctas</div>
             </div>
             <div class="sstat">
                 <div class="sstat-val" id="ss-streak">0</div>
