@@ -1,466 +1,420 @@
 // ============================================================
-// HackerQuest — Game Logic
-// Desafíos rápidos de ciberseguridad con sistema de puntos y recompensas
+// MicroSecure — Feed de Micro-Insights
+// Concepto: Ver un insight real → confirmar con 1 clic → ganar micro-recompensa
 // ============================================================
 
-// BANCO DE DESAFÍOS (12 preguntas de 5 segundos)
-const DESAFIOS = [
+// BANCO DE INSIGHTS (no quizzes — el conocimiento está EN el reel)
+const INSIGHTS = [
     {
-        categoria: "🔐 CRIPTOGRAFÍA",
-        headline: "Un atacante intercepta tu tráfico.\n¿Qué protocolo <code>encripta</code> tus datos en la web?",
-        pregunta: "¿Cuál de estas tecnologías protege la conexión entre tu navegador y el servidor?",
-        opciones: ["HTTP (sin cifrado)", "HTTPS / TLS", "FTP", "Telnet"],
-        correcta: 1,
-        explicacion: "HTTPS usa TLS (Transport Layer Security) para cifrar todo el tráfico. Sin él, un atacante en la misma red Wi-Fi puede leer tus contraseñas en texto plano. Siempre busca el 🔒 en la barra de tu navegador.",
-        puntos: 100
+        emoji: "📶",
+        stat: { number: "147", unit: "contraseñas robadas por hora" },
+        headline: "Tu Wi-Fi pública es una trampa.",
+        context: "En redes públicas sin VPN, un atacante puede capturar tus credenciales con herramientas gratuitas en menos de 30 segundos.",
+        categoria: "WI-FI",
+        rewardBase: 0.07,
+        bgAccent: "rgba(239,68,68,0.12)",
+        color: "#f87171",
+        sponsor: "Patrocinado por NordVPN"
     },
     {
-        categoria: "🐟 INGENIERÍA SOCIAL",
-        headline: "Recibes un email que dice:\n<code>\"Tu cuenta será bloqueada. Haz clic aquí.\"</code>",
-        pregunta: "¿Qué tipo de ataque es este?",
-        opciones: ["Ransomware", "DDoS", "Phishing", "Exploit de día cero"],
-        correcta: 2,
-        explicacion: "Phishing es cuando los atacantes se hacen pasar por entidades legítimas (bancos, empresas) para robar tus credenciales. Siempre verifica el remitente real del email y nunca hagas clic en links sospechosos.",
-        puntos: 100
+        emoji: "🎣",
+        stat: { number: "91%", unit: "de los hackeos empieza con un email" },
+        headline: "El phishing es la arma #1 de los hackers.",
+        context: "Un atacante puede crear un email idéntico al de tu banco en 5 minutos. La diferencia está en el dominio del remitente — siempre verificalo.",
+        categoria: "PHISHING",
+        rewardBase: 0.06,
+        bgAccent: "rgba(245,158,11,0.1)",
+        color: "#fbbf24",
+        sponsor: "Patrocinado por Proofpoint"
     },
     {
-        categoria: "🕵️ RECON PASIVO",
-        headline: "Un hacker busca subdominios de una empresa\nsin enviarle ni un solo paquete de datos.",
-        pregunta: "¿Cómo se llama esta técnica de reconocimiento sin contacto directo?",
-        opciones: ["Port Scanning", "Passive Reconnaissance", "SQL Injection", "Brute Force"],
-        correcta: 1,
-        explicacion: "El Passive Recon usa fuentes públicas (Google, Shodan, crt.sh, Wayback Machine) para mapear la superficie de ataque sin alertar al objetivo. Es la base del Bug Bounty profesional.",
-        puntos: 150
+        emoji: "🔑",
+        stat: { number: "23M", unit: "personas usan '123456' como contraseña" },
+        headline: "Tu contraseña más fácil es la primera que prueban.",
+        context: "Los atacantes usan listas de millones de contraseñas comunes. Una contraseña de 12 caracteres mixtos tardaría 34,000 años en crackearse por fuerza bruta.",
+        categoria: "CONTRASEÑAS",
+        rewardBase: 0.05,
+        bgAccent: "rgba(99,102,241,0.12)",
+        color: "#818cf8",
+        sponsor: "Patrocinado por 1Password"
     },
     {
-        categoria: "🪪 AUTENTICACIÓN",
-        headline: "Un banco solo pide tu contraseña para entrar.\n¿Qué le falta para ser seguro?",
-        pregunta: "¿Qué mecanismo de seguridad debería agregar?",
-        opciones: ["Un CAPTCHA", "Una contraseña más larga", "2FA (Doble Factor)", "Cifrar la contraseña en el cliente"],
-        correcta: 2,
-        explicacion: "El 2FA (Autenticación de Dos Factores) requiere algo que SABÉS (contraseña) + algo que TENÉS (teléfono/código). Aunque tu contraseña sea robada, el atacante no puede acceder sin el segundo factor.",
-        puntos: 100
+        emoji: "🔒",
+        stat: { number: "58%", unit: "de los sitios web aún no fuerzan HTTPS" },
+        headline: "Sin el candado, cualquiera puede leer tus datos.",
+        context: "HTTPS cifra la comunicación entre vos y el servidor. Sin él, tu contraseña viaja en texto plano por la red. Siempre buscá el 🔒 en la barra del navegador.",
+        categoria: "HTTPS/TLS",
+        rewardBase: 0.06,
+        bgAccent: "rgba(16,185,129,0.1)",
+        color: "#34d399",
+        sponsor: "Patrocinado por Let's Encrypt"
     },
     {
-        categoria: "💉 INYECCIÓN",
-        headline: "Un login acepta el usuario:\n<code>' OR '1'='1</code>\ny deja entrar sin contraseña.",
-        pregunta: "¿Qué vulnerabilidad clásica es esta?",
-        opciones: ["XSS (Cross-Site Scripting)", "CSRF", "SQL Injection", "Path Traversal"],
-        correcta: 2,
-        explicacion: "SQL Injection ocurre cuando el input del usuario se concatena directamente en una query SQL sin validación. La solución son las Prepared Statements (consultas parametrizadas) que tratan el input como dato, nunca como código.",
-        puntos: 150
+        emoji: "📱",
+        stat: { number: "99.9%", unit: "de los ataques automáticos bloqueados por 2FA" },
+        headline: "Agregar el doble factor toma 30 segundos.",
+        context: "El 2FA requiere algo que sabés (contraseña) + algo que tenés (teléfono). Aunque te roben la contraseña, sin el código SMS o la app, no pueden entrar.",
+        categoria: "2FA",
+        rewardBase: 0.07,
+        bgAccent: "rgba(6,182,212,0.1)",
+        color: "#22d3ee",
+        sponsor: "Patrocinado por Authy"
     },
     {
-        categoria: "🌐 SUBDOMINIOS",
-        headline: "El subdominio <code>viejo.empresa.com</code> apunta a\nun servicio en la nube que ya no existe.",
-        pregunta: "¿Qué vulnerabilidad puede tener un Bug Hunter aquí?",
-        opciones: ["CORS Misconfiguration", "Subdomain Takeover", "Open Redirect", "JWT Bypass"],
-        correcta: 1,
-        explicacion: "Subdomain Takeover: si el registro DNS apunta a un recurso reclamable (GitHub Pages, S3, Heroku), un atacante puede 'tomarlo' y servir contenido malicioso desde un dominio de confianza. Vale entre $300 y $3000 en HackerOne.",
-        puntos: 200
+        emoji: "⚡",
+        stat: { number: "60%", unit: "de las brechas explotan vulnerabilidades ya parcheadas" },
+        headline: "El botón 'Actualizar' es tu escudo.",
+        context: "Cuando sale una actualización de seguridad, los atacantes analizan el parche para crear exploits en horas. Las máquinas sin actualizar son blancos fáciles.",
+        categoria: "ACTUALIZACIONES",
+        rewardBase: 0.05,
+        bgAccent: "rgba(245,158,11,0.1)",
+        color: "#fbbf24",
+        sponsor: "Patrocinado por Microsoft"
     },
     {
-        categoria: "🔑 SECRETOS",
-        headline: "Un desarrollador sube su proyecto a GitHub\ny olvida incluir el archivo <code>.env</code> en .gitignore.",
-        pregunta: "¿Cuál es el riesgo inmediato?",
-        opciones: ["Pérdida de performance", "Exposición de API keys y contraseñas", "Error de compilación", "Incompatibilidad de versiones"],
-        correcta: 1,
-        explicacion: "El archivo .env contiene API keys, tokens y contraseñas de base de datos. Si se sube a un repositorio público, cualquier persona (o bot) puede encontrarlo con Google Dorks o Gitleaks y abusar de esas credenciales.",
-        puntos: 150
+        emoji: "💸",
+        stat: { number: "$1.50", unit: "vale tu perfil completo en la dark web" },
+        headline: "Tus datos personales se venden al por mayor.",
+        context: "Nombre, email, fecha de nacimiento y contraseña se combinan en bases de datos filtradas. Verificá si tu email fue comprometido en haveibeenpwned.com",
+        categoria: "DATA BREACH",
+        rewardBase: 0.08,
+        bgAccent: "rgba(239,68,68,0.1)",
+        color: "#f87171",
+        sponsor: "Patrocinado por HaveIBeenPwned"
     },
     {
-        categoria: "🛡️ DEFENSA",
-        headline: "Una app web incluye los headers:\n<code>Content-Security-Policy</code> y <code>X-Frame-Options</code>.",
-        pregunta: "¿Para qué sirven estos headers de respuesta HTTP?",
-        opciones: ["Mejorar el SEO", "Prevenir XSS y Clickjacking", "Comprimir los datos", "Autenticar al servidor"],
-        correcta: 1,
-        explicacion: "Los Security Headers son la primera línea de defensa del servidor. CSP previene inyección de scripts maliciosos (XSS). X-Frame-Options evita que tu página sea embebida en un iframe para ataques de Clickjacking.",
-        puntos: 150
-    },
-    {
-        categoria: "☁️ CLOUD HACKING",
-        headline: "Una API devuelve el mismo objeto para cualquier\nvalor de ID sin verificar si eres el dueño.",
-        pregunta: "¿Cómo se llama esta vulnerabilidad de lógica de negocio?",
-        opciones: ["SSRF", "IDOR", "RCE", "XXE"],
-        correcta: 1,
-        explicacion: "IDOR (Insecure Direct Object Reference) permite acceder a recursos de otros usuarios cambiando un ID. Ejemplo: cambiar /api/user/123 a /api/user/124 y ver datos ajenos. Es la vulnerabilidad #1 más reportada en HackerOne.",
-        puntos: 200
-    },
-    {
-        categoria: "🔓 CONTRASEÑAS",
-        headline: "Una base de datos filtrada tiene las contraseñas\nalmacenadas como <code>MD5('password123')</code>.",
-        pregunta: "¿Por qué esto es inseguro incluso si está 'hasheada'?",
-        opciones: ["MD5 es reversible matemáticamente", "MD5 es muy lento para calcular", "Las Rainbow Tables pueden crackearla en segundos", "MD5 no es un algoritmo real"],
-        correcta: 2,
-        explicacion: "MD5 es vulnerable a Rainbow Tables (tablas precalculadas de hashes). Para contraseñas se debe usar bcrypt, scrypt o Argon2, que incluyen un 'salt' (valor aleatorio) y están diseñados para ser computacionalmente costosos.",
-        puntos: 150
-    },
-    {
-        categoria: "🕸️ WEB ATTACKS",
-        headline: "El servidor hace un request HTTP a una URL\nque el atacante controla: <code>file:///etc/passwd</code>",
-        pregunta: "¿Qué tipo de vulnerabilidad es esta?",
-        opciones: ["XSS Reflejado", "CORS", "SSRF (Server-Side Request Forgery)", "CSRF"],
-        correcta: 2,
-        explicacion: "SSRF le permite al atacante hacer que el SERVIDOR realice requests arbitrarios (a la red interna, metadata de cloud, sistemas internos). En AWS, el endpoint 169.254.169.254 puede devolver credenciales IAM válidas.",
-        puntos: 200
-    },
-    {
-        categoria: "🎓 BOUNTY HUNTER",
-        headline: "Encontrás un bug en una empresa que paga recompensas.\nEscribís el reporte y lo enviás. ¿Cuál es el camino correcto?",
-        pregunta: "¿Qué es lo PRIMERO que debés verificar antes de reportar?",
-        opciones: ["Que el bug sea crítico", "Que el dominio esté dentro del Scope del programa", "Que tengas capturas de pantalla", "Que el bug sea nuevo"],
-        correcta: 1,
-        explicacion: "El Scope define exactamente qué dominios y funciones están autorizados a testear. Reportar fuera del scope puede resultar en el rechazo del reporte e incluso acciones legales. Siempre leé las reglas del programa antes.",
-        puntos: 300
+        emoji: "💾",
+        stat: { number: "11s", unit: "cada 11 segundos una empresa es atacada con ransomware" },
+        headline: "Sin backup, un ataque lo borra todo.",
+        context: "El ransomware cifra todos tus archivos y pide rescate. La única defensa real es tener copias de seguridad offline actualizadas. Regla 3-2-1: 3 copias, 2 medios, 1 offsite.",
+        categoria: "RANSOMWARE",
+        rewardBase: 0.09,
+        bgAccent: "rgba(139,92,246,0.1)",
+        color: "#a78bfa",
+        sponsor: "Patrocinado por Backblaze"
     }
 ];
 
-// ESTADO DEL JUEGO
+// CONFIGURACIÓN
+const TIMER_SEGUNDOS = 8;
+const REWARD_MULTIPLIER_NEW = 1.0;   // "Aprendí algo nuevo" → 100% de la recompensa
+const REWARD_MULTIPLIER_KNEW = 0.4;  // "Ya lo sabía" → 40% (igual sumaste atención)
+const META_DOLARES = 5.00;
+
+// ESTADO
 let estado = {
-    desafioActual: 0,
-    desafiosOrden: [],
-    puntaje: 0,
-    racha: 0,
+    indexActual: 0,
+    orden: [],
+    walletTotal: 0,
+    sesionGanado: 0,
+    sesionVistos: 0,
+    sesionNuevos: 0,
+    rachaActual: 0,
     rachaMax: 0,
-    correctas: 0,
-    resultados: [], // 'correct' | 'wrong' | 'timeout'
     timerInterval: null,
-    timerAnimFrame: null,
-    tiempoRestante: 5,
-    respondido: false,
-    acumuladoTotal: 0 // simulado
+    tiempoRestante: TIMER_SEGUNDOS,
+    enEjecucion: false,
+    segFill: null,   // referencia al segmento de progreso activo
 };
 
 // ============================================================
-// MATRIX RAIN ANIMATION
+// FLUJO PRINCIPAL
 // ============================================================
-function iniciarMatrixRain() {
-    const canvas = document.getElementById('matrix-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&<>{}[]|/\\;:';
-    const fontSize = 14;
-    const cols = Math.floor(canvas.width / fontSize);
-    const drops = Array(cols).fill(1);
-
-    function draw() {
-        ctx.fillStyle = 'rgba(5, 6, 15, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#6366f1';
-        ctx.font = fontSize + 'px JetBrains Mono, monospace';
-        drops.forEach((y, i) => {
-            const char = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(char, i * fontSize, y * fontSize);
-            if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        });
-    }
-
-    setInterval(draw, 60);
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-}
-
-iniciarMatrixRain();
-
-// ============================================================
-// FLUJO DEL JUEGO
-// ============================================================
-function iniciarJuego() {
-    // Mezclar desafíos de forma aleatoria (Fisher-Yates shuffle)
-    estado.desafiosOrden = DESAFIOS.map((_, i) => i);
-    for (let i = estado.desafiosOrden.length - 1; i > 0; i--) {
+function iniciarFeed() {
+    // Mezclar insights
+    estado.orden = INSIGHTS.map((_, i) => i);
+    for (let i = estado.orden.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [estado.desafiosOrden[i], estado.desafiosOrden[j]] = [estado.desafiosOrden[j], estado.desafiosOrden[i]];
+        [estado.orden[i], estado.orden[j]] = [estado.orden[j], estado.orden[i]];
     }
 
-    // Tomar los primeros 8 desafíos
-    estado.desafiosOrden = estado.desafiosOrden.slice(0, 8);
-    estado.desafioActual = 0;
-    estado.puntaje = 0;
-    estado.racha = 0;
+    estado.indexActual = 0;
+    estado.walletTotal = 0;
+    estado.sesionGanado = 0;
+    estado.sesionVistos = 0;
+    estado.sesionNuevos = 0;
+    estado.rachaActual = 0;
     estado.rachaMax = 0;
-    estado.correctas = 0;
-    estado.resultados = [];
 
-    cambiarPantalla('screen-intro', 'screen-game');
-    mostrarDesafio();
+    construirBarraEpisodios();
+    cambiarPantalla('screen-intro', 'screen-feed');
+    mostrarInsight();
 }
 
 function cambiarPantalla(ocultar, mostrar) {
     document.getElementById(ocultar).classList.remove('active');
     const el = document.getElementById(mostrar);
     el.classList.add('active');
-    el.scrollTop = 0;
+    window.scrollTo(0, 0);
 }
 
-function mostrarDesafio() {
-    const idx = estado.desafiosOrden[estado.desafioActual];
-    const desafio = DESAFIOS[idx];
+function mostrarInsight() {
+    if (estado.indexActual >= estado.orden.length) {
+        mostrarResumen();
+        return;
+    }
 
-    estado.respondido = false;
-    actualizarHUD();
-    construirPuntos();
+    const idx = estado.orden[estado.indexActual];
+    const insight = INSIGHTS[idx];
 
-    // Resetear UI
-    document.getElementById('feedback-panel').style.display = 'none';
-    document.getElementById('options-grid').style.display = 'grid';
+    estado.enEjecucion = true;
+    estado.tiempoRestante = TIMER_SEGUNDOS;
 
-    // Inyectar contenido del desafío
-    document.getElementById('challenge-category').innerHTML = desafio.categoria;
-    document.getElementById('challenge-headline').innerHTML = desafio.headline;
-    document.getElementById('challenge-question').textContent = desafio.pregunta;
+    // Resetear panels
+    document.getElementById('action-panel').style.display = 'none';
+    document.getElementById('reward-flash').style.display = 'none';
 
-    // Generar opciones mezcladas
-    const letras = ['A', 'B', 'C', 'D'];
-    const opcionesGrid = document.getElementById('options-grid');
-    opcionesGrid.innerHTML = '';
+    // Actualizar sponsor
+    document.getElementById('reel-sponsor').textContent = insight.sponsor;
 
-    // Mapear índice real → índice mezclado
-    const orden = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-    const mapeoCorrecta = orden.indexOf(desafio.correcta);
+    // Inyectar contenido
+    document.getElementById('reel-body').innerHTML = `
+        <div class="reel-hero" style="background: ${insight.bgAccent};">
+            <div class="reel-emoji">${insight.emoji}</div>
+            <div class="reel-stat-wrapper">
+                <div class="reel-stat-number" style="color: ${insight.color}">${insight.stat.number}</div>
+                <div class="reel-stat-unit">${insight.stat.unit}</div>
+            </div>
+            <div class="reel-headline">${insight.headline}</div>
+            <div class="reel-context">${insight.context}</div>
+        </div>
+        <div class="reel-footer">
+            <div class="reel-category" style="color: ${insight.color}">${insight.categoria}</div>
+            <div class="reel-reward-preview">+$${insight.rewardBase.toFixed(2)}</div>
+        </div>
+    `;
 
-    orden.forEach((opIdx, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.id = `option-${i}`;
-        btn.innerHTML = `<span class="option-letter">${letras[i]}.</span> ${desafio.opciones[opIdx]}`;
-        btn.onclick = () => responder(i, mapeoCorrecta, desafio);
-        opcionesGrid.appendChild(btn);
-    });
+    // Reiniciar card (re-trigger animation)
+    const card = document.getElementById('reel-card');
+    card.style.animation = 'none';
+    card.offsetWidth; // reflow
+    card.style.animation = '';
 
-    iniciarTimer(desafio);
+    iniciarTimer(insight);
+    actualizarBarraEpisodios();
 }
 
-function iniciarTimer(desafio) {
+// ============================================================
+// TIMER CIRCULAR SVG
+// ============================================================
+function iniciarTimer(insight) {
     clearInterval(estado.timerInterval);
-    estado.tiempoRestante = 5;
 
-    const timerDisplay = document.getElementById('timer-display');
-    const timerBar = document.getElementById('timer-bar');
+    const ring = document.getElementById('ring-fill');
+    const sec = document.getElementById('timer-seconds');
+    const CIRCUMFERENCE = 163.36; // 2π × 26
 
-    timerDisplay.textContent = '5';
-    timerDisplay.classList.remove('urgent');
-    timerBar.style.transition = 'none';
-    timerBar.style.width = '100%';
+    // Reset ring
+    ring.style.transition = 'none';
+    ring.style.strokeDashoffset = '0';
+    ring.classList.remove('urgent');
+    sec.textContent = TIMER_SEGUNDOS;
+    estado.tiempoRestante = TIMER_SEGUNDOS;
 
-    // Forzar reflow para que la transición funcione
-    timerBar.offsetWidth;
-    timerBar.style.transition = 'width 5s linear';
-    timerBar.style.width = '0%';
+    // Activar animación CSS del segmento
+    const segFill = document.querySelector(`.ep-seg:nth-child(${estado.indexActual + 1}) .ep-seg-fill`);
+    if (segFill) {
+        segFill.style.transition = 'none';
+        segFill.style.width = '0%';
+        segFill.offsetWidth;
+        segFill.style.transition = `width ${TIMER_SEGUNDOS}s linear`;
+        segFill.style.width = '100%';
+    }
+
+    // Animar el ring con JS para mayor control
+    let elapsed = 0;
+    const TICK = 100; // ms
+    const TOTAL_MS = TIMER_SEGUNDOS * 1000;
 
     estado.timerInterval = setInterval(() => {
-        estado.tiempoRestante--;
-        timerDisplay.textContent = estado.tiempoRestante;
+        elapsed += TICK;
+        const progress = elapsed / TOTAL_MS;
+        const offset = CIRCUMFERENCE * progress;
+        ring.style.transition = 'none';
+        ring.style.strokeDashoffset = offset.toString();
 
-        if (estado.tiempoRestante <= 2) {
-            timerDisplay.classList.add('urgent');
+        const remaining = Math.ceil((TOTAL_MS - elapsed) / 1000);
+        sec.textContent = Math.max(0, remaining);
+
+        if (remaining <= 2) {
+            ring.classList.add('urgent');
         }
 
-        if (estado.tiempoRestante <= 0) {
+        if (elapsed >= TOTAL_MS) {
             clearInterval(estado.timerInterval);
-            if (!estado.respondido) {
-                tiempoAgotado(desafio);
+            if (estado.enEjecucion) {
+                terminarInsight();
             }
         }
+    }, TICK);
+}
+
+function terminarInsight() {
+    estado.enEjecucion = false;
+    clearInterval(estado.timerInterval);
+    const panel = document.getElementById('action-panel');
+    panel.style.display = 'block';
+}
+
+// ============================================================
+// ACCIÓN DE 1 CLIC
+// ============================================================
+function confirmar(esNuevo) {
+    if (!document.getElementById('action-panel').style.display || document.getElementById('action-panel').style.display === 'none') return;
+
+    document.getElementById('action-panel').style.display = 'none';
+
+    const idx = estado.orden[estado.indexActual];
+    const insight = INSIGHTS[idx];
+    const rewardMult = esNuevo ? REWARD_MULTIPLIER_NEW : REWARD_MULTIPLIER_KNEW;
+    const rewardAmount = insight.rewardBase * rewardMult;
+
+    // Actualizar estado
+    estado.sesionGanado += rewardAmount;
+    estado.walletTotal += rewardAmount;
+    estado.sesionVistos++;
+    if (esNuevo) {
+        estado.sesionNuevos++;
+        estado.rachaActual++;
+        if (estado.rachaActual > estado.rachaMax) estado.rachaMax = estado.rachaActual;
+    } else {
+        estado.rachaActual = 0;
+    }
+
+    actualizarWallet(rewardAmount);
+    mostrarFlash(esNuevo, rewardAmount, insight);
+}
+
+function mostrarFlash(esNuevo, amount, insight) {
+    const flash = document.getElementById('reward-flash');
+    const inner = document.getElementById('reward-flash-inner');
+
+    inner.innerHTML = `
+        <div class="flash-emoji">${esNuevo ? '🎉' : '✅'}</div>
+        <div class="flash-title">${esNuevo ? '¡Nuevo conocimiento!' : '¡Repaso confirmado!'}</div>
+        <div class="flash-amount">+$${amount.toFixed(2)}</div>
+        <div class="flash-sub">Balance total: $${estado.walletTotal.toFixed(2)}</div>
+    `;
+
+    flash.style.display = 'flex';
+
+    // Auto-cerrar después de 1.6s y pasar al siguiente
+    setTimeout(() => {
+        flash.style.display = 'none';
+        marcarEpisodioCompleto();
+        estado.indexActual++;
+        mostrarInsight();
+    }, 1600);
+}
+
+// ============================================================
+// WALLET Y HUD
+// ============================================================
+function actualizarWallet(delta) {
+    const display = document.getElementById('wallet-display');
+    const deltaEl = document.getElementById('wallet-delta');
+
+    display.textContent = `$${estado.walletTotal.toFixed(2)}`;
+
+    // Flash del delta
+    deltaEl.textContent = `+$${delta.toFixed(2)}`;
+    deltaEl.classList.add('show');
+    setTimeout(() => {
+        deltaEl.classList.remove('show');
+        deltaEl.style.transform = '';
     }, 1000);
 }
 
-function responder(indiceSeleccionado, indiceCorrectoMezclado, desafio) {
-    if (estado.respondido) return;
-    estado.respondido = true;
-    clearInterval(estado.timerInterval);
-
-    const esCorrecta = indiceSeleccionado === indiceCorrectoMezclado;
-    const btns = document.querySelectorAll('.option-btn');
-
-    // Marcar visual
-    btns.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === indiceCorrectoMezclado) btn.classList.add('correct');
-        else if (i === indiceSeleccionado && !esCorrecta) btn.classList.add('wrong');
+// ============================================================
+// BARRA DE EPISODIOS
+// ============================================================
+function construirBarraEpisodios() {
+    const bar = document.getElementById('episodes-bar');
+    bar.innerHTML = '';
+    estado.orden.forEach(() => {
+        const seg = document.createElement('div');
+        seg.className = 'ep-seg';
+        const fill = document.createElement('div');
+        fill.className = 'ep-seg-fill';
+        seg.appendChild(fill);
+        bar.appendChild(seg);
     });
-
-    if (esCorrecta) {
-        estado.racha++;
-        estado.correctas++;
-        const bonus = estado.racha > 3 ? Math.floor(desafio.puntos * 0.5) : (estado.racha > 1 ? Math.floor(desafio.puntos * 0.2) : 0);
-        const puntosGanados = desafio.puntos + bonus;
-        estado.puntaje += puntosGanados;
-        if (estado.racha > estado.rachaMax) estado.rachaMax = estado.racha;
-        estado.resultados.push('correct');
-        mostrarFeedback(true, desafio, puntosGanados);
-    } else {
-        estado.racha = 0;
-        estado.resultados.push('wrong');
-        mostrarFeedback(false, desafio, 0);
-    }
-
-    actualizarHUD();
 }
 
-function tiempoAgotado(desafio) {
-    estado.respondido = true;
-    estado.racha = 0;
-    estado.resultados.push('timeout');
-
-    const btns = document.querySelectorAll('.option-btn');
-    btns.forEach((btn, i) => {
-        btn.disabled = true;
+function actualizarBarraEpisodios() {
+    const segs = document.querySelectorAll('.ep-seg');
+    segs.forEach((seg, i) => {
+        if (i < estado.indexActual) seg.classList.add('done');
+        else seg.classList.remove('done');
     });
-    // Revelar la correcta
-    const correctaBtn = document.querySelector(`#option-0`);
-    // Buscar el botón con la respuesta correcta (es el que tiene 'correct' class)
-    // En este caso el índice correcto ya está mapeado en el HTML
-
-    mostrarFeedback(null, desafio, 0); // null = timeout
 }
 
-function mostrarFeedback(esCorrecta, desafio, puntosGanados) {
-    const panel = document.getElementById('feedback-panel');
-    const icon = document.getElementById('feedback-icon');
-    const text = document.getElementById('feedback-text');
-    const exp = document.getElementById('feedback-explanation');
-
-    panel.style.display = 'block';
-    document.getElementById('options-grid').style.display = 'none';
-
-    if (esCorrecta === true) {
-        icon.textContent = '✅';
-        text.style.color = '#34d399';
-        const rachaMsg = estado.racha > 1 ? ` 🔥 Racha x${estado.racha}!` : '';
-        text.textContent = `¡Correcto! +${puntosGanados} pts${rachaMsg}`;
-    } else if (esCorrecta === false) {
-        icon.textContent = '❌';
-        text.style.color = '#f87171';
-        text.textContent = 'Incorrecto — así se aprende.';
-    } else {
-        icon.textContent = '⏱️';
-        text.style.color = '#f59e0b';
-        text.textContent = '¡Se acabó el tiempo!';
-    }
-
-    exp.innerHTML = `<strong>💡 Explicación:</strong> ${desafio.explicacion}`;
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function siguienteDesafio() {
-    estado.desafioActual++;
-
-    if (estado.desafioActual >= estado.desafiosOrden.length) {
-        mostrarResultados();
-    } else {
-        actualizarHUD();
-        mostrarDesafio();
+function marcarEpisodioCompleto() {
+    const segs = document.querySelectorAll('.ep-seg');
+    if (segs[estado.indexActual]) {
+        segs[estado.indexActual].classList.add('done');
     }
 }
 
 // ============================================================
-// HUD Y PUNTOS
+// RESUMEN FINAL
 // ============================================================
-function actualizarHUD() {
-    const nivel = Math.floor(estado.puntaje / 500) + 1;
-    document.getElementById('hud-level').textContent = nivel;
-    document.getElementById('hud-score').textContent = estado.puntaje.toLocaleString();
-    document.getElementById('hud-streak').textContent = `🔥 ${estado.racha}`;
-    construirPuntos();
-}
+function mostrarResumen() {
+    cambiarPantalla('screen-feed', 'screen-summary');
 
-function construirPuntos() {
-    const container = document.getElementById('progress-dots');
-    container.innerHTML = '';
-    for (let i = 0; i < estado.desafiosOrden.length; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        if (i < estado.desafioActual) {
-            dot.classList.add(estado.resultados[i] === 'correct' ? 'done' : 'wrong-dot');
-        } else if (i === estado.desafioActual) {
-            dot.classList.add('current');
-        }
-        container.appendChild(dot);
-    }
-}
+    const ganado = estado.sesionGanado;
+    document.getElementById('summary-amount').textContent = `$${ganado.toFixed(2)}`;
+    document.getElementById('wallet-bar-current').textContent = `$${ganado.toFixed(2)}`;
+    document.getElementById('ss-watched').textContent = estado.sesionVistos;
+    document.getElementById('ss-new').textContent = estado.sesionNuevos;
+    document.getElementById('ss-streak').textContent = estado.rachaMax;
 
-// ============================================================
-// RESULTADOS
-// ============================================================
-function mostrarResultados() {
-    cambiarPantalla('screen-game', 'screen-results');
-
-    const total = estado.desafiosOrden.length;
-    const pct = estado.correctas / total;
-
-    // Trofeo y rank
-    let trophy, rankLabel, titulo, subtitulo;
-    if (pct >= 0.9) { trophy = '🏆'; rankLabel = 'S'; titulo = '¡Sos un Hacker Élite!'; subtitulo = 'Puntuación perfecta. El Bug Bounty te espera.'; }
-    else if (pct >= 0.75) { trophy = '🥇'; rankLabel = 'A'; titulo = '¡Excelente Trabajo!'; subtitulo = 'Dominás los conceptos fundamentales de ciberseguridad.'; }
-    else if (pct >= 0.5) { trophy = '🥈'; rankLabel = 'B'; titulo = 'Buen Intento'; subtitulo = 'Seguí aprendiendo. Cada error te hace más fuerte.'; }
-    else { trophy = '📚'; rankLabel = 'C'; titulo = 'Hay que Entrenar Más'; subtitulo = 'La ciberseguridad se aprende jugando. ¡Intentalo de nuevo!'; }
-
-    document.getElementById('results-trophy').textContent = trophy;
-    document.getElementById('results-title').textContent = titulo;
-    document.getElementById('results-subtitle').textContent = subtitulo;
-    document.getElementById('res-score').textContent = estado.puntaje.toLocaleString();
-    document.getElementById('res-correct').textContent = `${estado.correctas}/${total}`;
-    document.getElementById('res-streak').textContent = estado.rachaMax;
-    document.getElementById('res-rank').textContent = rankLabel;
-
-    // SISTEMA DE RECOMPENSA SIMULADO
-    const recompensa = (estado.puntaje / 1000 * 0.5).toFixed(2); // $0.50 por cada 1000 pts
-    estado.acumuladoTotal = parseFloat(recompensa);
-    const meta = 5.00;
-    const pctRecompensa = Math.min((estado.acumuladoTotal / meta) * 100, 100);
-
-    document.getElementById('reward-amount').textContent = `$${recompensa}`;
+    const pct = Math.min((ganado / META_DOLARES) * 100, 100);
     setTimeout(() => {
-        document.getElementById('reward-bar').style.width = pctRecompensa + '%';
+        document.getElementById('wallet-bar-fill').style.width = pct + '%';
     }, 600);
 }
 
-function abrirDonacion() {
-    // Por ahora, redirigir a Ko-fi o una futura página de pago
-    window.open('https://ko-fi.com/', '_blank');
-}
-
-function reiniciarJuego() {
-    cambiarPantalla('screen-results', 'screen-intro');
-    // Resetear estado
-    estado = {
-        desafioActual: 0,
-        desafiosOrden: [],
-        puntaje: 0,
-        racha: 0,
-        rachaMax: 0,
-        correctas: 0,
-        resultados: [],
-        timerInterval: null,
-        tiempoRestante: 5,
-        respondido: false,
-        acumuladoTotal: 0
+function abrirRetiro(metodo) {
+    const urls = {
+        paypal: 'https://www.paypal.com/donate',
+        crypto: 'https://coinbase.com',
+        kofi: 'https://ko-fi.com/'
     };
+    window.open(urls[metodo] || urls.kofi, '_blank');
 }
 
-// Presionar Enter en opciones
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        const nextBtn = document.getElementById('btn-next');
-        if (nextBtn && nextBtn.closest('#feedback-panel') && document.getElementById('feedback-panel').style.display !== 'none') {
-            siguienteDesafio();
-        }
+function compartir() {
+    const url = window.location.href;
+    const text = `Acabo de aprender sobre ciberseguridad y gané $${estado.sesionGanado.toFixed(2)}. ¡Vos también podés! 🛡️`;
+    if (navigator.share) {
+        navigator.share({ title: 'MicroSecure', text, url });
+    } else {
+        navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
+            alert('¡Enlace copiado! Compartilo con quien quieras.');
+        });
     }
-    // Teclas 1-4 para seleccionar opciones
-    const keyMap = { '1': 0, '2': 1, '3': 2, '4': 3 };
-    if (keyMap[e.key] !== undefined && !estado.respondido) {
-        const idx = estado.desafiosOrden[estado.desafioActual];
-        const desafio = DESAFIOS[idx];
-        const btns = document.querySelectorAll('.option-btn');
-        if (btns[keyMap[e.key]] && document.getElementById('screen-game').classList.contains('active')) {
-            btns[keyMap[e.key]].click();
-        }
+}
+
+function irProfundidad() {
+    window.open('https://www.youtube.com/@BestiaTantrica', '_blank');
+}
+
+function reiniciar() {
+    estado.indexActual = 0;
+    estado.sesionGanado = 0;
+    estado.sesionVistos = 0;
+    estado.sesionNuevos = 0;
+    estado.rachaActual = 0;
+    estado.rachaMax = 0;
+
+    // Re-mezclar
+    for (let i = estado.orden.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [estado.orden[i], estado.orden[j]] = [estado.orden[j], estado.orden[i]];
     }
-});
+
+    construirBarraEpisodios();
+    cambiarPantalla('screen-summary', 'screen-feed');
+    mostrarInsight();
+}

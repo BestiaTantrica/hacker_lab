@@ -2,145 +2,162 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="HackerQuest: Aprende ciberseguridad en 5 segundos y gana recompensas reales.">
-    <title>HackerQuest — Aprende. Juega. Gana.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="MicroSecure: Aprende ciberseguridad en 8 segundos y gana recompensas reales.">
+    <title>MicroSecure — Aprende en Segundos, Gana Real</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- PANTALLA DE INICIO -->
+<!-- PANTALLA INTRO -->
 <div id="screen-intro" class="screen active">
-    <div class="matrix-rain" id="matrix-canvas-container">
-        <canvas id="matrix-canvas"></canvas>
-    </div>
-
+    <div class="intro-bg"></div>
     <div class="intro-content">
-        <div class="logo-badge">🛡️ HACKERQUEST</div>
-        <h1 class="hero-title">Aprende<br><span class="gradient-text">Ciberseguridad</span><br>en 5 segundos.</h1>
-        <p class="hero-sub">Desafíos rápidos. Conocimiento real. Recompensas por aprender.</p>
-
-        <div class="stats-row">
-            <div class="stat-pill">🔥 <span id="stat-challenges">12</span> Desafíos</div>
-            <div class="stat-pill">⚡ <span id="stat-players">1,847</span> Jugadores</div>
-            <div class="stat-pill">💰 <span id="stat-bounty">$12,400</span> en Bounties</div>
+        <div class="intro-badge">
+            <span class="badge-dot"></span> SPONSOR: CyberAwareness.org
         </div>
 
-        <button id="btn-start" class="btn-primary" onclick="iniciarJuego()">
-            <span class="btn-icon">▶</span> EMPEZAR AHORA
+        <div class="intro-icon">🛡️</div>
+        <h1 class="intro-title">Aprende.<br><span class="t-gradient">Confirma.<br>Gana.</span></h1>
+        <p class="intro-desc">Micro-insights de ciberseguridad en 8 segundos. Cada uno que confirmas, suma a tu recompensa.</p>
+
+        <div class="wallet-preview">
+            <div class="wallet-label">Tu recompensa acumulada</div>
+            <div class="wallet-amount-preview">$0.00</div>
+            <div class="wallet-sub">Retirá cuando llegues a $5.00</div>
+        </div>
+
+        <button id="btn-start" class="btn-start" onclick="iniciarFeed()">
+            VER PRIMER INSIGHT →
         </button>
 
-        <p class="legal-note">Gratis para siempre · Sin registro · Para todas las edades</p>
+        <div class="sponsor-note">Este contenido está patrocinado. Cada visualización confirmada genera un micro-pago directo al usuario.</div>
     </div>
 </div>
 
-<!-- PANTALLA DEL JUEGO -->
-<div id="screen-game" class="screen">
-    <header class="game-header">
-        <div class="game-logo">🛡️ HackerQuest</div>
-        <div class="game-hud">
-            <div class="hud-item">
-                <span class="hud-label">NIVEL</span>
-                <span class="hud-value" id="hud-level">1</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">PUNTOS</span>
-                <span class="hud-value accent" id="hud-score">0</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">RACHA</span>
-                <span class="hud-value" id="hud-streak">🔥 0</span>
-            </div>
+<!-- PANTALLA REEL / FEED -->
+<div id="screen-feed" class="screen">
+
+    <!-- HEADER FIJO -->
+    <header class="feed-header">
+        <div class="brand">🛡️ MicroSecure</div>
+        <div class="wallet-chip">
+            <span class="wallet-icon">💰</span>
+            <span class="wallet-value" id="wallet-display">$0.00</span>
+            <span class="wallet-delta" id="wallet-delta"></span>
         </div>
     </header>
 
-    <!-- BARRA DE PROGRESO DEL DESAFÍO -->
-    <div class="challenge-progress-bar">
-        <div class="challenge-progress-fill" id="timer-bar"></div>
+    <!-- BARRA DE PROGRESO EPISODIOS -->
+    <div class="episodes-bar" id="episodes-bar">
+        <!-- generado por JS -->
     </div>
 
-    <!-- CONTADOR DE TIEMPO -->
-    <div class="timer-display" id="timer-display">5</div>
+    <!-- CARD PRINCIPAL (reel) -->
+    <div class="reel-container" id="reel-container">
+        <div class="reel-card" id="reel-card">
 
-    <!-- TARJETA DEL DESAFÍO -->
-    <div class="challenge-card" id="challenge-card">
-        <div class="challenge-category" id="challenge-category">🔐 CRIPTOGRAFÍA</div>
-        <div class="challenge-headline" id="challenge-headline">
-            <!-- Inyectado por JS -->
+            <!-- Sponsor tag -->
+            <div class="reel-sponsor" id="reel-sponsor">Patrocinado por CyberAwareness.org</div>
+
+            <!-- Timer circular -->
+            <div class="timer-ring-wrapper">
+                <svg class="timer-ring" viewBox="0 0 60 60">
+                    <circle class="ring-bg" cx="30" cy="30" r="26"/>
+                    <circle class="ring-fill" id="ring-fill" cx="30" cy="30" r="26"/>
+                </svg>
+                <span class="timer-seconds" id="timer-seconds">8</span>
+            </div>
+
+            <!-- Contenido del insight -->
+            <div class="reel-body" id="reel-body">
+                <!-- Inyectado por JS -->
+            </div>
+
         </div>
-        <div class="challenge-question" id="challenge-question">
-            <!-- Inyectado por JS -->
+    </div>
+
+    <!-- PANEL DE ACCIÓN (aparece al terminar el timer) -->
+    <div class="action-panel" id="action-panel" style="display:none">
+        <div class="action-question" id="action-question">¿Sabías esto antes?</div>
+        <div class="action-btns">
+            <button class="btn-action btn-knew" id="btn-knew" onclick="confirmar(false)">
+                Ya lo sabía
+            </button>
+            <button class="btn-action btn-new" id="btn-new" onclick="confirmar(true)">
+                ✨ Aprendí algo nuevo
+            </button>
         </div>
     </div>
 
-    <!-- OPCIONES DE RESPUESTA -->
-    <div class="options-grid" id="options-grid">
-        <!-- Inyectado por JS -->
+    <!-- RECOMPENSA FLASH (aparece al confirmar) -->
+    <div class="reward-flash" id="reward-flash" style="display:none">
+        <div class="reward-flash-inner" id="reward-flash-inner">
+            <!-- inyectado por JS -->
+        </div>
     </div>
 
-    <!-- FEEDBACK -->
-    <div class="feedback-panel" id="feedback-panel" style="display:none">
-        <div class="feedback-icon" id="feedback-icon"></div>
-        <div class="feedback-text" id="feedback-text"></div>
-        <div class="feedback-explanation" id="feedback-explanation"></div>
-        <button class="btn-next" id="btn-next" onclick="siguienteDesafio()">SIGUIENTE DESAFÍO →</button>
-    </div>
-
-    <!-- INDICADOR DE PROGRESO -->
-    <div class="progress-dots" id="progress-dots"></div>
 </div>
 
-<!-- PANTALLA DE RESULTADOS -->
-<div id="screen-results" class="screen">
-    <div class="results-content">
-        <div class="results-trophy" id="results-trophy">🏆</div>
-        <h2 class="results-title" id="results-title">¡Misión Completada!</h2>
-        <p class="results-subtitle" id="results-subtitle"></p>
+<!-- PANTALLA RESUMEN / WALLET -->
+<div id="screen-summary" class="screen">
+    <div class="summary-content">
+        <div class="summary-icon">💰</div>
+        <h2 class="summary-title">¡Sesión Completada!</h2>
 
-        <div class="results-stats">
-            <div class="result-stat">
-                <div class="result-stat-value" id="res-score">0</div>
-                <div class="result-stat-label">Puntos</div>
-            </div>
-            <div class="result-stat">
-                <div class="result-stat-value" id="res-correct">0</div>
-                <div class="result-stat-label">Correctas</div>
-            </div>
-            <div class="result-stat">
-                <div class="result-stat-value" id="res-streak">0</div>
-                <div class="result-stat-label">Racha Máx</div>
-            </div>
-            <div class="result-stat">
-                <div class="result-stat-value" id="res-rank">F</div>
-                <div class="result-stat-label">Rango</div>
+        <div class="wallet-card">
+            <div class="wallet-card-label">Total ganado esta sesión</div>
+            <div class="wallet-card-amount" id="summary-amount">$0.00</div>
+            <div class="wallet-progress-wrap">
+                <div class="wallet-bar">
+                    <div class="wallet-bar-fill" id="wallet-bar-fill"></div>
+                </div>
+                <div class="wallet-bar-labels">
+                    <span id="wallet-bar-current">$0.00</span>
+                    <span>Meta: $5.00</span>
+                </div>
             </div>
         </div>
 
-        <!-- MÓDULO DE RECOMPENSA -->
-        <div class="reward-module" id="reward-module">
-            <div class="reward-title">💰 Recompensa Desbloqueada</div>
-            <div class="reward-amount" id="reward-amount">$0.50</div>
-            <p class="reward-desc">Recibe tu recompensa cuando alcances $5.00 acumulados.</p>
-            <div class="reward-progress-bar">
-                <div class="reward-progress-fill" id="reward-bar"></div>
+        <!-- Stats -->
+        <div class="summary-stats">
+            <div class="sstat">
+                <div class="sstat-val" id="ss-watched">0</div>
+                <div class="sstat-label">Vistos</div>
             </div>
-            <div class="reward-actions">
-                <button class="btn-reward" onclick="abrirDonacion()">💳 Reclamar / Donar</button>
-                <button class="btn-secondary" onclick="reiniciarJuego()">🔄 Jugar de Nuevo</button>
+            <div class="sstat">
+                <div class="sstat-val" id="ss-new">0</div>
+                <div class="sstat-label">Nuevos</div>
+            </div>
+            <div class="sstat">
+                <div class="sstat-val" id="ss-streak">0</div>
+                <div class="sstat-label">Racha</div>
             </div>
         </div>
 
-        <!-- MÓDULO EDUCATIVO -->
-        <div class="edu-module">
-            <div class="edu-title">📚 ¿Querés aprender más?</div>
-            <p class="edu-text">Este proyecto financia cursos reales con bounties de Bug Bounty. Cada empresa que protegemos paga parte de tu aprendizaje.</p>
-            <a href="https://www.youtube.com/@BestiaTantrica" target="_blank" class="btn-edu">Ver Videos Educativos →</a>
+        <!-- CTA de retiro -->
+        <div class="withdraw-panel">
+            <div class="withdraw-title">Reclamar Recompensa</div>
+            <div class="withdraw-methods">
+                <button class="btn-method" onclick="abrirRetiro('paypal')">PayPal</button>
+                <button class="btn-method" onclick="abrirRetiro('crypto')">Crypto</button>
+                <button class="btn-method" onclick="abrirRetiro('kofi')">Ko-fi</button>
+            </div>
+            <p class="withdraw-note">Disponible cuando acumules $5.00 · Cada sesión suma al balance total</p>
         </div>
 
-        <button class="btn-secondary mt-1" onclick="reiniciarJuego()">🔄 Volver a Jugar</button>
+        <!-- Compartir -->
+        <div class="share-panel">
+            <div class="share-title">📢 Invitá a otros y ganan el doble</div>
+            <button class="btn-share" onclick="compartir()">Compartir MicroSecure</button>
+        </div>
+
+        <div class="summary-actions">
+            <button class="btn-replay" onclick="reiniciar()">🔄 Ver más insights</button>
+            <button class="btn-deep" onclick="irProfundidad()">📚 Aprender en profundidad</button>
+        </div>
     </div>
 </div>
 
