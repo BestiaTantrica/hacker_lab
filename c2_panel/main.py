@@ -809,6 +809,54 @@ def get_chat_history():
     conn.close()
     return {"status": "success", "history": rows}
 
+@app.get("/api/chat/context")
+def get_session_context():
+    """Genera un briefing inteligente de la sesion actual para inyectar como contexto inicial en Pegaso."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # Estadisticas globales del pipeline
+    cursor.execute("SELECT COUNT(*) FROM deltas")
+    total_deltas = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    total_findings = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE status_interno = 'Pendiente'")
+    pending = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE status_interno = 'Validado'")
+    validated = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE status_interno IN ('Enviado', 'Archivado')")
+    archived = cursor.fetchone()[0]
+
+    # Heartbeats: zonas activas
+    cursor.execute("SELECT zone, last_seen FROM heartbeats ORDER BY last_seen DESC")
+    heartbeats = [dict(r) for r in cursor.fetchall()]
+
+    # Ultimos 3 findings para contexto
+    cursor.execute("SELECT id, target, vuln_type, severity, status_interno, estimated_bounty, created_at FROM findings ORDER BY id DESC LIMIT 3")
+    recent_findings = [dict(r) for r in cursor.fetchall()]
+
+    # Ultimas 5 interacciones del chat (resumen de decisiones previas)
+    cursor.execute("SELECT role, message, created_at FROM chat_history ORDER BY id DESC LIMIT 10")
+    last_chat = list(reversed([dict(r) for r in cursor.fetchall()]))
+
+    conn.close()
+
+    briefing = {
+        "pipeline_stats": {
+            "total_deltas_recolectados": total_deltas,
+            "total_findings_verificados": total_findings,
+            "pendientes": pending,
+            "validados": validated,
+            "archivados": archived,
+        },
+        "zonas_activas": heartbeats,
+        "findings_recientes": recent_findings,
+        "resumen_conversacion_previa": last_chat
+    }
+
+    return {"status": "success", "context": briefing}
+
 @app.post("/api/chat")
 def chat_endpoint(req: ChatRequest):
     if completar is None:

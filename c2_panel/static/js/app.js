@@ -2,6 +2,7 @@
 
 let current_finding = null;
 let current_tab = 'Pendiente';
+let _contexto_pegaso_cargado = false; // Flag: contexto inicial solo se carga 1 vez por sesión
 
 // SISTEMA DE NOTIFICACIONES TOAST (sin alert() bloqueante)
 function mostrarToast(mensaje, tipo) {
@@ -29,7 +30,79 @@ document.addEventListener('DOMContentLoaded', () => {
     checkOciStatus();
     cargarHallazgos();
     setInterval(checkOciStatus, 30000);
+    // Precarga el contexto de sesión en background para que Pegaso esté listo
+    iniciarContextoPegaso();
 });
+
+// CONTEXTO INTELIGENTE DE PEGASO (Memoria de Sesión)
+async function iniciarContextoPegaso() {
+    if (_contexto_pegaso_cargado) return;
+    _contexto_pegaso_cargado = true;
+
+    try {
+        const res = await fetch(`/api/chat/context?_t=${Date.now()}`);
+        const data = await res.json();
+        if (data.status !== 'success') return;
+
+        const ctx = data.context;
+        const stats = ctx.pipeline_stats;
+        const findings = ctx.findings_recientes || [];
+        const zonas = ctx.zonas_activas || [];
+        const historial = ctx.resumen_conversacion_previa || [];
+
+        // Construir el briefing visual de Pegaso
+        let msg = `<strong>Briefing de Sesión — Sistema Operativo</strong><br><br>`;
+
+        // Stats del pipeline
+        msg += `<strong>📡 Pipeline OCI-1:</strong><br>`;
+        msg += `• Deltas recolectados: <code>${stats.total_deltas_recolectados.toLocaleString()}</code><br>`;
+        msg += `• Findings verificados: <code>${stats.total_findings_verificados}</code> `;
+        msg += `(Pendientes: <code>${stats.pendientes}</code> | Validados: <code>${stats.validados}</code> | Archivados: <code>${stats.archivados}</code>)<br>`;
+
+        // Zonas con heartbeat
+        if (zonas.length > 0) {
+            msg += `<br><strong>🚦 Zonas Activas:</strong><br>`;
+            zonas.forEach(z => {
+                msg += `• <code>${z.zone}</code> — último latido: ${z.last_seen}<br>`;
+            });
+        }
+
+        // Findings recientes
+        if (findings.length > 0) {
+            msg += `<br><strong>🔍 Hallazgos Recientes:</strong><br>`;
+            findings.forEach(f => {
+                const col = f.severity === 'Critical' ? '#e74c3c' : (f.severity === 'High' ? '#f39c12' : '#2ecc71');
+                msg += `• [<code>#${f.id}</code>] <span style="color:${col};font-weight:bold">${f.severity}</span> — <code>${f.vuln_type}</code> en <code>${f.target}</code> — Estado: <em>${f.status_interno}</em><br>`;
+            });
+        } else {
+            msg += `<br><em>No hay hallazgos verificados todavía. El pipeline sigue pescando.</em><br>`;
+        }
+
+        // Resumen del chat previo (contexto de decisiones estrategicas)
+        const ultimos = historial.filter(h => h.role === 'assistant').slice(-2);
+        if (ultimos.length > 0) {
+            msg += `<br><strong>💬 Contexto de Sesión Anterior:</strong><br>`;
+            ultimos.forEach(h => {
+                const texto = h.message.substring(0, 180).replace(/\n/g, ' ');
+                msg += `<em>└ "${texto}..."</em><br>`;
+            });
+        }
+
+        msg += `<br>Estoy listo. ¿En qué trabajamos hoy?`;
+
+        // Mostrar en el chat del Gurú si existe, sino guardar para cuando se abra
+        const chatBox = document.getElementById('chat-messages');
+        if (chatBox && chatBox.closest('.view.active')) {
+            agregarMensajePegaso(msg);
+        } else {
+            // Guardar como pendiente para inyectar cuando se abra la vista del chat
+            window._pegaso_briefing_pending = msg;
+        }
+    } catch(e) {
+        // Silencioso: si falla el contexto, Pegaso funciona igual sin briefing
+        console.warn('Pegaso context load failed:', e);
+    }
+}
 
 // NAVEGACIÓN ENTRE VISTAS
 function switchView(viewId, navElement) {
@@ -37,6 +110,15 @@ function switchView(viewId, navElement) {
     const targetView = document.getElementById('view-' + viewId);
     if (targetView) targetView.classList.add('active');
     
+    // Si se navega al chat/gurú y hay un briefing pendiente, inyectarlo ahora
+    if ((viewId === 'chat' || viewId === 'guru' || viewId === 'copilot') && window._pegaso_briefing_pending) {
+        const chatBox = document.getElementById('chat-messages');
+        if (chatBox && chatBox.children.length === 0) {
+            agregarMensajePegaso(window._pegaso_briefing_pending);
+        }
+        window._pegaso_briefing_pending = null;
+    }
+
     if (navElement) {
         document.querySelectorAll('.nav-item').forEach(el => {
             el.classList.remove('active');
