@@ -19,15 +19,11 @@ freshservice.com
 freshchat.com
 nextcloud.com
 asana.com
-atlassian.com
-atlassian.net
 hubspot.com
-zoom.us
 slack.com
 notion.so
 
 # Fintech y Cripto
-paypal.com
 stripe.com
 square.com
 coinbase.com
@@ -58,22 +54,13 @@ discord.com
 frontegg.com
 auth0.com
 okta.com
-cloudflare.com
 fastly.com
 twilio.com
 sendgrid.com
 digitalocean.com
 hashicorp.com
-gitlab.com
-github.com
 
 # Grandes Corporaciones Tech (Scopes Inmensos)
-yahoo.com
-ibm.com
-intel.com
-dell.com
-tesla.com
-ford.com
 
 # Nuevos Targets (SaaS/FinTech/IA/Crypto Inyectados masivamente)
 unrealengine.com
@@ -119,7 +106,6 @@ infradeals.com
 nflximg.net
 royalcaninvetdiets.com.sg
 vodafone.de
-paypalcorp.com
 jbl.ru
 zurich.at
 devin.ai
@@ -148,7 +134,6 @@ svc.singlestore.com
 ntcusa.com
 fetlife.com
 dashfinancial.info
-sonyentertainmentnetwork.com
 unquotenews.com
 yachak.com
 singspacegame.com
@@ -183,7 +168,6 @@ alshayaenterprises.com
 venmo.com
 eltel.it2net.iongroup.com
 clover.com
-mercadolibre.cl
 dashfinancial.com
 ayudavodafone.es
 worldcoin.org
@@ -191,7 +175,6 @@ superbet.com
 goshawk.asp.iongroup.com
 royalcanin.cz
 mercury.com.au
-amazon.in
 covenantxtract.com
 avcjindia.com
 bitdefender.net
@@ -219,7 +202,6 @@ got2b.com
 e2ctechnology.com
 my-mobilekey.com
 capitalone.ca
-amazon.it
 allyoucare-byhenkel.com
 gymshark.com
 paystack.com
@@ -332,3 +314,53 @@ propelwater.com
 wellsfargo.com
 mergemarket.com
 found.io
+
+# High-Growth Startups & Modern SaaS (Injected)
+vercel.app
+vercel.com
+figma.com
+miro.com
+canva.com
+huggingface.co
+vanta.com
+drata.com
+gusto.com
+rippling.com
+ramp.com
+brex.com
+plaid.com
+alchemy.com
+chainlinklabs.com
+okx.com
+bybit.com
+datadoghq.com
+snyk.io
+fivetran.com
+dbtlabs.com
+airtable.com
+clickup.com
+monday.com
+smartsheet.com
+webflow.com
+framer.com
+postman.com
+konghq.com
+apollo.io
+zoominfo.com
+snowflake.com
+confluent.io
+hashicorp.net
+netlify.com
+netlify.app
+supabase.com
+supabase.co
+planetscale.com
+render.com
+fly.io
+replit.com
+codesandbox.io
+gong.io
+outreach.io
+salesloft.com
+lattice.com
+cultureamp.com
