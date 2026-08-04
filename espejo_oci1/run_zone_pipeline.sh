@@ -52,6 +52,40 @@ log()   { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [INFO]  [$ZONA] $1" | tee -a "$
 warn()  { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [WARN]  [$ZONA] $1" | tee -a "$LOG"; }
 error() { echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") [ERROR] [$ZONA] $1" | tee -a "$LOG"; exit 1; }
 
+finalizar_cascada_anticipada() {
+    log "  Saltando eslabones de escaneo. Ejecutando Sincronizacion y Heartbeat."
+    NUCLEI_JSON="${RESULTADO_DIR}/nuclei_${ZONA}_${FECHA}.json"
+    touch "$NUCLEI_JSON"
+    $VENV "${BASE}/monitores/parsear_nuclei.py" \
+        --nuclei-json "$NUCLEI_JSON" \
+        --delta-json "${DELTA_FILE:-}" \
+        --zone "$ZONA" >> "$LOG" 2>&1 || true
+        
+    log "Eslabon 6/6: GC Dinamico y Passive Heartbeat"
+    DISK_USAGE=$(df /home/ubuntu | tail -1 | awk '{print $5}' | sed 's/%//')
+    if [ "$DISK_USAGE" -ge 85 ]; then
+        warn " Uso de disco critico al ${DISK_USAGE}%. Iniciando Purga Dinamica..."
+        while [ "$DISK_USAGE" -ge 75 ]; do
+            OLDEST=$(ls -1t "$RESULTADO_DIR"/*_*.json "$RESULTADO_DIR"/*_*.txt 2>/dev/null | tail -n 1)
+            if [ -z "$OLDEST" ]; then break; fi
+            rm -f "$OLDEST"
+            DISK_USAGE=$(df /home/ubuntu | tail -1 | awk '{print $5}' | sed 's/%//')
+        done
+        log " Purga finalizada. Uso de disco actual: ${DISK_USAGE}%"
+    fi
+    find "$RESULTADO_DIR" -type f -name "*_*.json" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+    find "$RESULTADO_DIR" -type f -name "*_*.txt" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+    find "${BASE}/logs" -type f -name "*.log" -mtime +14 -exec rm -f {} \; 2>/dev/null || true
+
+    curl -s -X POST "${C2_PANEL_URL}/api/heartbeat" \
+         -d "{\"zone\": \"$ZONA\"}" \
+         -H "Content-Type: application/json" >/dev/null 2>&1 || warn " Heartbeat no pudo contactar al C2."
+    
+    log " CASCADA v2 ZONA ${ZONA^^} COMPLETADA (Salida Anticipada)."
+    log "============================================================"
+    exit 0
+}
+
 # -- TITLE-M1-A: Watchdog RAM & Circuit Breaker --------------------------------
 # Previene OOM Killers catastroficos si dnsx/httpx/nuclei desbordan la memoria.
 watchdog_ram() {
@@ -94,7 +128,7 @@ $VENV "${BASE}/monitores/comparador.py" --zone "$ZONA" >> "$LOG" 2>&1 \
 DELTA_FILE="${RESULTADO_DIR}/delta_${ZONA%%_*}_${FECHA}.json"
 if [ ! -f "$DELTA_FILE" ]; then
     log "  Sin subdominios nuevos en la zona ${ZONA} hoy. Cascada finalizada limpiamente."
-    exit 0
+    finalizar_cascada_anticipada
 fi
 log " Eslabon 2 completado: delta encontrado -> ${DELTA_FILE}"
 
@@ -115,7 +149,7 @@ TOTAL_SUBS=$(wc -l < "$SUBS_RAW" | tr -d ' ')
 if [ "$TOTAL_SUBS" -eq 0 ]; then
     log "  El delta existe pero esta vacio. Cascada finalizada."
     rm -f "$SUBS_RAW"
-    exit 0
+    finalizar_cascada_anticipada
 fi
 log " Subdominios extraidos del delta: ${TOTAL_SUBS}"
 
@@ -149,7 +183,7 @@ fi
 if [ ! -s "$LIVE_DNS" ]; then
     warn "  dnsx no resolvio ningun host vivo. Sin objetivos para escanear."
     rm -f "$SUBS_RAW" "$LIVE_DNS"
-    exit 0
+    finalizar_cascada_anticipada
 fi
 
 TOTAL_DNS=$(wc -l < "$LIVE_DNS" | tr -d ' ')
@@ -196,7 +230,7 @@ fi
 if [ ! -s "$LIVE_HTTP" ]; then
     warn "  httpx no encontro ningun host con servicio HTTP activo."
     rm -f "$SUBS_RAW" "$LIVE_DNS" "$LIVE_HTTP" "$HTTPX_JSON"
-    exit 0
+    finalizar_cascada_anticipada
 fi
 
 TOTAL_HTTP=$(wc -l < "$LIVE_HTTP" | tr -d ' ')
