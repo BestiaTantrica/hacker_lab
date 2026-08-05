@@ -19,6 +19,9 @@
             <span id="oci-status-dot" class="dot gray"></span>
             <span id="oci-status-text">Cargando estado...</span>
         </div>
+        <div class="header-actions" style="margin-left: auto;">
+            <button class="btn btn-secondary" onclick="copiarEnlacesPublicos()" style="font-size: 11px; padding: 4px 8px; border: 1px solid #334155;">🔗 Copiar Enlaces Públicos</button>
+        </div>
     </header>
     
         <main class="main-content split-layout">
@@ -217,6 +220,18 @@
             });
         });
     });
+    // Función para copiar enlaces públicos
+    function copiarEnlacesPublicos() {
+        // En OCI-2, la IP o el dominio están en location.origin, pero si es un túnel Cloudflare, será ese dominio.
+        const origin = window.location.origin;
+        const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/api/status\n\n🎮 Piloto Educativo MicroSecure:\n${origin}/microsecure/`;
+        navigator.clipboard.writeText(texto).then(() => {
+            alert("✅ Enlaces públicos copiados al portapapeles. Listos para pegar en LinkedIn o YouTube.");
+        }).catch(err => {
+            alert("Error al copiar enlaces.");
+            console.error(err);
+        });
+    }
     </script>
 </body>
 </html>

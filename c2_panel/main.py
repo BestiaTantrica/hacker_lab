@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+import urllib.request
 import paramiko
 from dotenv import load_dotenv
 
@@ -1369,10 +1370,10 @@ def get_public_stats():
 
 async def _canary_notify(route: str, ip: str, ua: str):
     """Envia alerta Telegram en background cuando se activa un Canary Token."""
-    import urllib.request as _ur
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = "6527908321"
     if not token:
+        print("[CANARY] TELEGRAM_BOT_TOKEN no encontrado en entorno.")
         return
     text = (
         "\U0001f6a8 CANARY ACTIVADO \U0001f6a8\n"
@@ -1382,12 +1383,12 @@ async def _canary_notify(route: str, ip: str, ua: str):
     )
     payload = {"chat_id": chat_id, "text": text}
     try:
-        req_obj = _ur.Request(
+        req_obj = urllib.request.Request(
             f"https://api.telegram.org/bot{token}/sendMessage",
             data=json.dumps(payload).encode("utf-8"),
             headers={"Content-Type": "application/json"},
         )
-        _ur.urlopen(req_obj, timeout=5)
+        urllib.request.urlopen(req_obj, timeout=5)
     except Exception as _e:
         print(f"[CANARY] Error Telegram: {_e}")
 
