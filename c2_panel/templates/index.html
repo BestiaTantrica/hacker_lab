@@ -156,8 +156,8 @@
                         <h4 style="color: #34d399; margin: 0 0 6px 0; font-size: 13px;">🛡️ Portafolio / Estado en Vivo</h4>
                         <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 10px;">Estadísticas públicas de monitoreo 24/7 y transparencia técnica.</p>
                         <div style="display: flex; gap: 6px;">
-                            <a id="link-status-open" href="/api/status" target="_blank" class="btn btn-primary" style="font-size: 10px; padding: 6px; flex: 1; text-align: center; text-decoration: none; background: #059669;">📊 Abrir Status</a>
-                            <button onclick="copiarTexto(window.location.origin + '/api/status')" class="btn btn-secondary" style="font-size: 10px; padding: 6px; flex: 1;">📋 Copiar Link</button>
+                            <a id="link-status-open" href="/portfolio" target="_blank" class="btn btn-primary" style="font-size: 10px; padding: 6px; flex: 1; text-align: center; text-decoration: none; background: #059669;">📊 Abrir Portafolio</a>
+                            <button onclick="copiarTexto(window.location.origin + '/portfolio')" class="btn btn-secondary" style="font-size: 10px; padding: 6px; flex: 1;">📋 Copiar Link</button>
                         </div>
                     </div>
                 </div>
@@ -326,7 +326,7 @@
     // Función para copiar enlaces públicos
     function copiarEnlacesPublicos() {
         const origin = window.location.origin;
-        const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/api/status\n\n🎮 Piloto Educativo MicroSecure:\n${origin}/microsecure/`;
+        const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/portfolio\n\n🎮 Piloto Educativo MicroSecure:\n${origin}/microsecure/`;
         copiarTexto(texto);
     }
     </script>
