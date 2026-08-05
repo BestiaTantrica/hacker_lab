@@ -5,7 +5,7 @@ import sqlite3
 import datetime
 import asyncio
 from typing import Optional, List
-from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi import FastAPI, Request, HTTPException, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -150,6 +150,14 @@ class NoCacheStaticFiles(StaticFiles):
         return response
 
 app.mount("/static", NoCacheStaticFiles(directory="static"), name="static")
+
+# --- MICROSECURE: Piloto educativo publico servido desde OCI-2 ---
+# Los archivos estaticos residen en c2_panel/static/microsecure/
+# Accesible via Cloudflare Tunnel en /microsecure/
+MICROSECURE_DIR = os.path.join(os.path.dirname(__file__), "static", "microsecure")
+if os.path.isdir(MICROSECURE_DIR):
+    app.mount("/microsecure", StaticFiles(directory=MICROSECURE_DIR, html=True), name="microsecure")
+
 templates = Jinja2Templates(directory="templates")
 
 # --- M1-B: DEAD MAN'S ALERTING (WATCHDOG C2) ---
@@ -1353,6 +1361,104 @@ def get_public_stats():
             "top_vuln_types": by_vuln_type
         }
     }
+
+
+# --- CANARY TOKENS (Opcion A): Rutas trampa para detectar escáneres ---
+# Cada ruta es un señuelo. Si alguien la toca, se logea y se notifica por Telegram.
+# Pasivo absoluto: no abre puertos, no lanza procesos, solo registra.
+
+async def _canary_notify(route: str, ip: str, ua: str):
+    """Envia alerta Telegram en background cuando se activa un Canary Token."""
+    import urllib.request as _ur
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = "6527908321"
+    if not token:
+        return
+    text = (
+        "\U0001f6a8 CANARY ACTIVADO \U0001f6a8\n"
+        f"Ruta trampa: {route}\n"
+        f"IP origen: {ip}\n"
+        f"User-Agent: {ua[:200]}"
+    )
+    payload = {"chat_id": chat_id, "text": text}
+    try:
+        req_obj = _ur.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        _ur.urlopen(req_obj, timeout=5)
+    except Exception as _e:
+        print(f"[CANARY] Error Telegram: {_e}")
+
+
+@app.get("/.env", include_in_schema=False)
+@app.head("/.env", include_in_schema=False)
+async def canary_env(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /.env | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/.env", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/.git/config", include_in_schema=False)
+async def canary_git(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /.git/config | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/.git/config", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/wp-login.php", include_in_schema=False)
+async def canary_wp_login(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /wp-login.php | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/wp-login.php", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/wp-admin", include_in_schema=False)
+@app.get("/wp-admin/", include_in_schema=False)
+async def canary_wp_admin(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /wp-admin | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/wp-admin", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/phpmyadmin", include_in_schema=False)
+@app.get("/phpmyadmin/", include_in_schema=False)
+async def canary_phpmyadmin(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /phpmyadmin | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/phpmyadmin", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/config.php", include_in_schema=False)
+async def canary_config_php(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /config.php | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/config.php", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/actuator/health", include_in_schema=False)
+async def canary_actuator(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /actuator/health | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/actuator/health", ip, ua)
+    raise HTTPException(status_code=404)
+
+@app.get("/admin", include_in_schema=False)
+@app.get("/admin/", include_in_schema=False)
+async def canary_admin(request: Request, background_tasks: BackgroundTasks):
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    print(f"[CANARY] /admin | IP={ip}")
+    background_tasks.add_task(_canary_notify, "/admin", ip, ua)
+    raise HTTPException(status_code=404)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="MicroSecure: Aprende ciberseguridad en 8 segundos y gana recompensas reales.">
+    <title>MicroSecure — Aprende en Segundos, Gana Real</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- PANTALLA INTRO -->
+<div id="screen-intro" class="screen active">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+        <div class="intro-badge">
+            <span class="badge-dot"></span> SPONSOR: CyberAwareness.org
+        </div>
+
+        <div class="intro-icon">🛡️</div>
+        <h1 class="intro-title">Aprende.<br><span class="t-gradient">Confirma.<br>Gana.</span></h1>
+        <p class="intro-desc">Micro-insights de ciberseguridad en 8 segundos. Cada uno que confirmas, suma a tu recompensa.</p>
+
+        <div class="wallet-preview">
+            <div class="wallet-label">Tu recompensa acumulada</div>
+            <div class="wallet-amount-preview">$0.00</div>
+            <div class="wallet-sub">Retirá cuando llegues a $5.00</div>
+        </div>
+
+        <button id="btn-start" class="btn-start" onclick="iniciarFeed()">
+            VER PRIMER INSIGHT →
+        </button>
+
+        <div class="sponsor-note">Este contenido está patrocinado. Cada visualización confirmada genera un micro-pago directo al usuario.</div>
+    </div>
+</div>
+
+<!-- PANTALLA REEL / FEED -->
+<div id="screen-feed" class="screen">
+
+    <!-- HEADER FIJO -->
+    <header class="feed-header">
+        <div class="brand">🛡️ MicroSecure</div>
+        <div class="header-right">
+            <div class="level-badge" id="level-badge">Nv. Novato</div>
+            <div class="wallet-chip">
+                <span class="wallet-icon">💰</span>
+                <span class="wallet-value" id="wallet-display">$0.00</span>
+                <span class="wallet-delta" id="wallet-delta"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE PROGRESO EPISODIOS -->
+    <div class="episodes-bar" id="episodes-bar">
+        <!-- generado por JS -->
+    </div>
+
+    <!-- CARD PRINCIPAL (reel) -->
+    <div class="reel-container" id="reel-container">
+        <div class="reel-card" id="reel-card">
+
+            <!-- Sponsor tag -->
+            <div class="reel-sponsor" id="reel-sponsor">Patrocinado por CyberAwareness.org</div>
+
+            <!-- Timer circular -->
+            <div class="timer-ring-wrapper">
+                <svg class="timer-ring" viewBox="0 0 60 60">
+                    <circle class="ring-bg" cx="30" cy="30" r="26"/>
+                    <circle class="ring-fill" id="ring-fill" cx="30" cy="30" r="26"/>
+                </svg>
+                <span class="timer-seconds" id="timer-seconds">8</span>
+            </div>
+
+            <!-- Contenido del insight -->
+            <div class="reel-body" id="reel-body">
+                <!-- Inyectado por JS -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PANEL DE PREGUNTA (aparece al terminar el timer) -->
+    <div class="action-panel" id="action-panel" style="display:none">
+        <div class="mc-question" id="mc-question">Cargando pregunta...</div>
+        <div class="mc-options" id="mc-options">
+            <!-- inyectado por JS -->
+        </div>
+    </div>
+
+    <!-- FEEDBACK INLINE (aparece tras responder) -->
+    <div class="mc-feedback" id="mc-feedback" style="display:none">
+        <div class="mc-fb-icon" id="mc-fb-icon"></div>
+        <div class="mc-fb-msg" id="mc-fb-msg"></div>
+        <button class="btn-siguiente" onclick="siguienteInsight()">SIGUIENTE →</button>
+    </div>
+
+</div>
+
+<!-- PANTALLA RESUMEN / WALLET -->
+<div id="screen-summary" class="screen">
+    <div class="summary-content">
+        <div class="summary-icon">💰</div>
+        <h2 class="summary-title">¡Sesión Completada!</h2>
+
+        <div class="wallet-card">
+            <div class="wallet-card-label">Total ganado esta sesión</div>
+            <div class="wallet-card-amount" id="summary-amount">$0.00</div>
+            <div class="wallet-progress-wrap">
+                <div class="wallet-bar">
+                    <div class="wallet-bar-fill" id="wallet-bar-fill"></div>
+                </div>
+                <div class="wallet-bar-labels">
+                    <span id="wallet-bar-current">$0.00</span>
+                    <span>Meta: $5.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nivel alcanzado -->
+        <div class="level-result" id="level-result">
+            <div class="level-result-icon" id="level-result-icon">🟢</div>
+            <div class="level-result-name" id="level-result-name">Novato</div>
+            <div class="level-result-desc" id="level-result-desc"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="summary-stats">
+            <div class="sstat">
+                <div class="sstat-val" id="ss-pts">0</div>
+                <div class="sstat-label">Puntos</div>
+            </div>
+            <div class="sstat">
+                <div class="sstat-val" id="ss-correct">0</div>
+                <div class="sstat-label">Correctas</div>
+            </div>
+            <div class="sstat">
+                <div class="sstat-val" id="ss-streak">0</div>
+                <div class="sstat-label">Racha</div>
+            </div>
+        </div>
+
+        <!-- CTA de retiro -->
+        <div class="withdraw-panel">
+            <div class="withdraw-title">Reclamar Recompensa</div>
+            <div class="withdraw-methods">
+                <button class="btn-method" onclick="abrirRetiro('paypal')">PayPal</button>
+                <button class="btn-method" onclick="abrirRetiro('crypto')">Crypto</button>
+                <button class="btn-method" onclick="abrirRetiro('kofi')">Ko-fi</button>
+            </div>
+            <p class="withdraw-note">Disponible cuando acumules $5.00 · Cada sesión suma al balance total</p>
+        </div>
+
+        <!-- Compartir -->
+        <div class="share-panel">
+            <div class="share-title">📢 Invitá a otros y ganan el doble</div>
+            <button class="btn-share" onclick="compartir()">Compartir MicroSecure</button>
+        </div>
+
+        <div class="summary-actions">
+            <button class="btn-replay" onclick="reiniciar()">🔄 Ver más insights</button>
+            <button class="btn-deep" onclick="irProfundidad()">📚 Aprender en profundidad</button>
+        </div>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
