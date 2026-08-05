@@ -138,3 +138,18 @@ body { background: var(--bg); color: var(--text-1); font-family: var(--sans); mi
 .summary-actions { width: 100%; margin-top: 10px; }
 .btn-replay { width: 100%; padding: 16px; border-radius: 14px; font-family: var(--sans); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.18s; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-1); }
 .btn-replay:hover { background: rgba(255,255,255,0.1); }
+
+/* MAPA DE DECISIONES */
+.mapa-panel { width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 22px; margin: 8px 0; text-align: left; }
+.mapa-title { font-size: 15px; font-weight: 700; margin-bottom: 18px; color: var(--text-1); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+.mapa-lista { display: flex; flex-direction: column; }
+.mapa-vacio { font-size: 13px; color: var(--text-3); font-style: italic; text-align: center; }
+.mapa-nodo { position: relative; padding-left: 24px; padding-bottom: 16px; }
+.mapa-nodo:last-child { padding-bottom: 0; }
+.mapa-linea { position: absolute; left: 5px; top: 12px; bottom: -8px; width: 2px; background: rgba(255,255,255,0.1); }
+.mapa-nodo:last-child .mapa-linea { display: none; }
+.mapa-punto { position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg); background: #818cf8; box-shadow: 0 0 0 1px rgba(255,255,255,0.2); }
+.mapa-punto.punto-ok { background: var(--green); box-shadow: 0 0 0 1px rgba(16,185,129,0.3); }
+.mapa-punto.punto-err { background: var(--red); box-shadow: 0 0 0 1px rgba(239,68,68,0.3); }
+.mapa-titulo { font-family: var(--mono); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.mapa-decision { font-size: 13px; color: var(--text-2); line-height: 1.4; padding-left: 8px; border-left: 2px solid rgba(99,102,241,0.3); margin-left: 2px; }
