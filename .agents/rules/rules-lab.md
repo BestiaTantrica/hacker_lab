@@ -30,15 +30,17 @@ trigger: always_on
 
 ---
 
-## 2. ROTACION DE MODELOS POR FASES
+## 2. ROTACION DINAMICA DE MODELOS (Uso Inteligente de Tokens)
 
-| Fase | Modelo | Acciones |
-|------|--------|----------|
-| **F1 — Análisis/Estrategia** | Gemini Pro | Leer logs, FS, diagnóstico, armar Implementation Plan |
-| **F2 — Código / UI** | Claude Sonnet (Thinking) | Escribir/refactorizar `main.py`, `app.js`, scripts, algoritmos, UI |
-| **F3 — Deploy / Pruebas** | Gemini Flash | `scp`, reinicio Uvicorn, `curl`, logs, `git commit`, auto-purga |
+La rotación ya no es estrictamente por "Fases 1, 2, 3", sino por la **complejidad de la tarea** para evitar quemar tokens caros en tareas simples.
 
-**REGLA DE DETENCIÓN F2→F3:** En cuanto el código esté escrito, sugerir cambio inmediato a Gemini Flash. Prohibido usar Sonnet para correr la terminal o hacer `git push`.
+| Modelo | Rol | Cuándo usarlo |
+|--------|-----|---------------|
+| **Gemini Flash (Rápido/Eco)** | Operario | Tareas mecánicas, inyectar targets, comandos bash simples, leer logs, git push, SCP. |
+| **Gemini Pro (Equilibrado)** | Estratega | Investigar arquitectura, crons, redactar planes (Implementation Plan), diagnósticos de sistema. |
+| **Claude Sonnet (Cirujano)** | Arquitecto Code | Única y exclusivamente para algoritmos complejos (ej. modificar FastAPI, React, lógica pesada de Python). |
+
+**REGLA DE DETENCIÓN:** Prohibido usar Claude Sonnet para ejecutar comandos de terminal, listar archivos, o agregar líneas de texto a un JSON. Sonnet es solo para cirugía de código profundo.
 
 ---
 
