@@ -48,3 +48,5 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 - **Archivado de Reportes:** ✅ Implementado. Ciclo de vida M4 activo (Pending -> Validated -> Archived).
 - **Exportación Forense:** ✅ Implementado. Reportes nativos Markdown y PDF exportables desde UI sin overhead.
 - **Memoria de IA (Pegaso):** ✅ Implementado. Endpoint `/api/chat/context` inyecta el estado de OCI-1/OCI-2 sin gastar tokens extra en cada mensaje.
+- **MicroSecure & Botonera de Enlaces:** ✅ Implementado. Servidor estático en `/microsecure/`, centro de enlaces en UI y vista HTML dedicada en `/portfolio`.
+- **Tokens Canario (Señuelos Pasivos):** ✅ Implementado. 8 rutas trampa (`/.env`, `/.git/config`, etc.) con notificaciones automáticas a Telegram en background.
