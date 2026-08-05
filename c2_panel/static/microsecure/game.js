@@ -1,376 +1,409 @@
-// MicroSecure V4 — game.js
-const TIMER_S=8, META=5.00;
+// MicroSecure V5 — Motor "Choose Your Own Adventure"
+const META_DOLARES = 5.00;
 
-const MULTS={
-  'BUG BOUNTY':     {m:3.0,l:'3x BOUNTY',c:'#f59e0b'},
-  '2FA':            {m:2.0,l:'2x',        c:'#6366f1'},
-  'RANSOMWARE':     {m:2.0,l:'2x',        c:'#a78bfa'},
-  'PHISHING':       {m:1.5,l:'1.5x',      c:'#fbbf24'},
-  'DATA BREACH':    {m:1.5,l:'1.5x',      c:'#f87171'},
-  'CONTRASEÑAS':    {m:1.2,l:'1.2x',      c:'#94a3b8'},
-  'WI-FI':          {m:1.0,l:'1x',        c:'#64748b'},
-  'ACTUALIZACIONES':{m:1.0,l:'1x',        c:'#64748b'},
+// Multiplicadores por Mercado Laboral
+const MULTS = {
+  'BUG BOUNTY':     {m: 3.0, l: '3x BOUNTY',  c: '#f59e0b'},
+  'CLOUD SECURITY': {m: 2.5, l: '2.5x CLOUD', c: '#06b6d4'},
+  'INCIDENTES':     {m: 2.0, l: '2x SOC',     c: '#a78bfa'},
+  'SOCIAL':         {m: 1.5, l: '1.5x HUMAN', c: '#fbbf24'},
+  'BASE':           {m: 1.0, l: '1x BASE',    c: '#64748b'},
+};
+const getMInfo = cat => MULTS[cat] || MULTS['BASE'];
+
+// Grafo Narrativo de Nodos
+const NODOS = {
+  "inicio": {
+    categoria: "SOCIAL",
+    titulo: "El Gancho Perfecto",
+    narracion: "Es viernes a las 17:45. Llega un mail de 'Recursos Humanos': 'Actualización de política de bonos 2026. Acción requerida hoy'. Tiene un link a un portal de login.",
+    videoPrompt: "🎬 POV Escritorio. Pantalla muestra notificación de correo. Asunto jugoso. Reloj marca 17:45. Música de tensión sutil.",
+    sponsor: "Patrocinado por Proofpoint",
+    opciones: [
+      { t: "Hacer clic rápido para no perder el bono.", next: "caida_phishing", rew: 0, exp: "La urgencia es la táctica #1 del phishing. Acabás de caer en la trampa." },
+      { t: "Revisar la dirección del remitente cuidadosamente.", next: "analisis_remitente", rew: 0.10, exp: "Excelente instinto. Detenerse a mirar es tu primera línea de defensa." },
+      { t: "Ignorarlo, RH siempre avisa por Slack.", next: "ignorar_seguro", rew: 0.05, exp: "Opción segura, pero como analista dejaste pasar un posible ataque a la empresa." }
+    ]
+  },
+  "caida_phishing": {
+    categoria: "INCIDENTES",
+    titulo: "Credenciales Comprometidas",
+    narracion: "El link te llevó a un login idéntico al de la empresa. Ingresaste tu clave. De repente, la pantalla se congela y un archivo .exe se descarga en background.",
+    videoPrompt: "🎬 Pantalla de login clonada. El usuario teclea. Al apretar 'Enter', glitch digital. Terminal oculta descargando payload.",
+    sponsor: "Patrocinado por CrowdStrike",
+    opciones: [
+      { t: "Apagar la computadora de un tirón (Hard Reset).", next: "apagon_hard", rew: 0.15, exp: "Medida drástica pero efectiva para detener un cifrado en progreso por Ransomware." },
+      { t: "Llamar a IT de inmediato sin tocar nada.", next: "reporte_incidente", rew: 0.20, exp: "Protocolo correcto. Preservar la escena permite a IT contener la brecha." },
+      { t: "Borrar el historial del navegador para que no te reten.", next: "peor_error", rew: 0, exp: "Acabás de destruir la evidencia forense y el atacante sigue en la red." }
+    ]
+  },
+  "analisis_remitente": {
+    categoria: "SOCIAL",
+    titulo: "La Letra Oculta",
+    narracion: "Mirás de cerca. El correo viene de 'rrhh@empresa-corp.co' en lugar de '.com'. Es un dominio registrado hace 2 días.",
+    videoPrompt: "🎬 Zoom extremo al cliente de correo. Resaltado en rojo intenso: '.co' en lugar de '.com'. Efecto de revelación sonora.",
+    sponsor: "Patrocinado por Cloudflare",
+    opciones: [
+      { t: "Reportarlo como phishing al equipo de seguridad.", next: "reporte_exitoso", rew: 0.25, exp: "¡Perfecto! Identificaste el IOC (Indicador de Compromiso) y protegiste a tus compañeros." },
+      { t: "Responderle al atacante insultándolo.", next: "error_novato", rew: 0, exp: "Pésima idea. Le confirmaste al atacante que tu correo está activo y que lo lees." }
+    ]
+  },
+  "ignorar_seguro": {
+    categoria: "INCIDENTES",
+    titulo: "Propagación Silenciosa",
+    narracion: "Lo ignoraste, pero 10 minutos después, escuchás a tu compañero decir 'Uy, me pidieron el login para el bono'.",
+    videoPrompt: "🎬 POV mirando al compañero. Él hace clic. Vos sabés lo que va a pasar. Tensión.",
+    sponsor: "Patrocinado por Microsoft Security",
+    opciones: [
+      { t: "Gritarle que desconecte el cable de red YA.", next: "apagon_hard", rew: 0.15, exp: "Aislar la máquina es el paso 1 de contención." },
+      { t: "Reenviar el correo de advertencia a todos.", next: "reporte_exitoso", rew: 0.10, exp: "Buena iniciativa, aunque IT debería coordinar la comunicación." }
+    ]
+  },
+  "peor_error": {
+    categoria: "INCIDENTES",
+    titulo: "Día Cero",
+    narracion: "Por ocultar tu error, el ransomware tuvo tiempo de escanear la red. Al día siguiente, todos los servidores están cifrados.",
+    videoPrompt: "🎬 Time-lapse de noche. Pantallas de toda la oficina encendiéndose rojas con calaveras. Fin del juego corporativo.",
+    sponsor: "Patrocinado por Backblaze",
+    opciones: [
+      { t: "Aceptar tu error y reiniciar tu carrera.", next: "inicio", rew: 0, exp: "La transparencia en seguridad salva empresas. Ocultarlo las destruye." }
+    ]
+  },
+  "apagon_hard": {
+    categoria: "INCIDENTES",
+    titulo: "Contención Brutal",
+    narracion: "Tiraste del cable. La máquina se apagó. IT llega corriendo. Te dicen que salvaste la red principal por segundos.",
+    videoPrompt: "🎬 Acción rápida: mano arranca cable Ethernet. Fundido a negro. IT llega agitado.",
+    sponsor: "Patrocinado por Mandiant",
+    opciones: [
+      { t: "Exigir un aumento de sueldo.", next: "exploracion_cloud", rew: 0.20, exp: "Salvaste el día. Ahora pasemos a ligas mayores: Seguridad en la Nube." },
+      { t: "Pedir que te enseñen qué pasó exactamente.", next: "exploracion_cloud", rew: 0.25, exp: "Esa es la actitud de un verdadero profesional de seguridad." }
+    ]
+  },
+  "error_novato": {
+    categoria: "SOCIAL",
+    titulo: "Ataque Dirigido",
+    narracion: "Al responderle, el atacante sabe que existís. Al día siguiente, recibís un SMS en tu celular privado simulando ser tu banco.",
+    videoPrompt: "🎬 Plano de celular vibrando. Notificación de SMS urgente. El atacante pivoteó del email corporativo a tu vida personal.",
+    sponsor: "Patrocinado por Authy",
+    opciones: [
+      { t: "Empezar de nuevo y ser más cauteloso.", next: "inicio", rew: 0, exp: "En seguridad, nunca interactúes con la infraestructura del atacante." }
+    ]
+  },
+  "reporte_exitoso": {
+    categoria: "CLOUD SECURITY",
+    titulo: "Ascenso a la Nube",
+    narracion: "Por tu buen accionar, te dan acceso a auditar la infraestructura en la nube de la empresa (AWS). Encontrás un bucket S3 llamado 'backups-2026' configurado como 'Público'.",
+    videoPrompt: "🎬 Pantalla de AWS S3. Un switch amarillo enorme dice 'Público'. Adentro hay archivos .sql con datos de clientes.",
+    sponsor: "Patrocinado por AWS Security",
+    opciones: [
+      { t: "Descargar los datos para ver si son reales.", next: "error_legal", rew: 0, exp: "Acabás de violar la cadena de custodia y las leyes de privacidad (GDPR). No extraigas datos." },
+      { t: "Cambiar el bucket a 'Privado' inmediatamente.", next: "cloud_hero", rew: 0.40, exp: "Remediación instantánea. Frenaste una fuga masiva de datos (Data Breach)." },
+      { t: "Dejarlo así y reportarlo pasivamente a DevOps.", next: "cloud_lento", rew: 0.10, exp: "Mientras DevOps lee el ticket, un bot de Telegram ya indexó el bucket." }
+    ]
+  },
+  "error_legal": {
+    categoria: "CLOUD SECURITY",
+    titulo: "Problemas Legales",
+    narracion: "Al descargar la base de datos de clientes, el sistema DLP (Data Loss Prevention) te marca como amenaza interna. RRHH te llama a la oficina.",
+    videoPrompt: "🎬 Notificación de alerta roja en consola de SOC. Perfil del empleado (tú) marcado como 'Amenaza Severa'.",
+    sponsor: "Patrocinado por Varonis",
+    opciones: [
+      { t: "Aprender la lección sobre leyes forenses.", next: "inicio", rew: 0, exp: "En Bug Bounty y auditorías, NUNCA exfiltres datos de usuarios reales." }
+    ]
+  },
+  "cloud_lento": {
+    categoria: "CLOUD SECURITY",
+    titulo: "Demasiado Tarde",
+    narracion: "DevOps tardó 2 días en leer el ticket. En ese tiempo, el grupo de ransomware LockBit descargó la base de datos y la publicó en la Dark Web.",
+    videoPrompt: "🎬 Foro de la Dark Web. Un post anuncia: 'Database EMPRESA-CORP leaked'. Precio: $500.",
+    sponsor: "Patrocinado por HaveIBeenPwned",
+    opciones: [
+      { t: "Aprender que la criticidad requiere acción inmediata.", next: "inicio", rew: 0, exp: "Un bucket público es un incidente activo (P1), no un ticket normal." }
+    ]
+  },
+  "cloud_hero": {
+    categoria: "BUG BOUNTY",
+    titulo: "Cazador de Recompensas",
+    narracion: "Cerraste la brecha. Te das cuenta que tenés talento para esto. Descubrís que empresas como Uber y Airbnb pagan miles de dólares por encontrar vulnerabilidades legalmente en HackerOne.",
+    videoPrompt: "🎬 Pantalla mostrando un reporte aprobado en HackerOne. Bounty Awarded: $5,000. Lluvia de billetes sutil.",
+    sponsor: "Patrocinado por HackerOne",
+    opciones: [
+      { t: "Probar interceptar peticiones con Burp Suite.", next: "bounty_idor", rew: 0.30, exp: "Bienvenido al lado técnico. El proxy HTTP es tu mejor amigo." },
+      { t: "Buscar subdominios olvidados (Takeovers).", next: "bounty_recon", rew: 0.30, exp: "El reconocimiento pasivo es la base del Bug Bounty moderno." }
+    ]
+  },
+  "bounty_idor": {
+    categoria: "BUG BOUNTY",
+    titulo: "El IDOR de $3,000",
+    narracion: "Usando Burp Suite, notás que la API pide tus datos en `/api/user/100`. Cambiás el 100 por el 101... ¡y ves los datos de otra persona!",
+    videoPrompt: "🎬 Interfaz de Burp Suite Repeater. Número 100 se borra, se tipea 101. Botón SEND. El Response muestra 'Juan Perez' y su tarjeta.",
+    sponsor: "Patrocinado por PortSwigger",
+    opciones: [
+      { t: "Reportarlo inmediatamente en HackerOne.", next: "fin_victoria", rew: 0.50, exp: "IDOR (Insecure Direct Object Reference) es la vulnerabilidad más lucrativa." }
+    ]
+  },
+  "bounty_recon": {
+    categoria: "BUG BOUNTY",
+    titulo: "Subdomain Takeover",
+    narracion: "Encontrás un subdominio `soporte.empresa.com` que apunta a un bucket de AWS que ya no existe (404 NoSuchBucket).",
+    videoPrompt: "🎬 Consola negra. Herramienta 'nuclei' encuentra un target. Texto verde brilla: [takeover] soporte.empresa.com.",
+    sponsor: "Patrocinado por ProjectDiscovery",
+    opciones: [
+      { t: "Registrar un bucket con ese mismo nombre.", next: "fin_victoria", rew: 0.50, exp: "Al hacerlo, tomas control del subdominio de la empresa. Impacto crítico." }
+    ]
+  },
+  "fin_victoria": {
+    categoria: "BASE",
+    titulo: "Operador de Élite",
+    narracion: "Recibís tu primer pago de Bug Bounty de $3,000. Has demostrado que podés pensar como un atacante para defender a otros. Tu viaje recién comienza.",
+    videoPrompt: "🎬 Notificación de transferencia bancaria entrante. Fondo oscuro hacker. Texto final: 'El conocimiento es poder'.",
+    sponsor: "Patrocinado por MicroSecure",
+    opciones: [
+      { t: "Registrarme para más misiones y guardar mi progreso.", next: "registro_lead", rew: 0.0, exp: "Fidelización de talento." },
+      { t: "Volver al inicio.", next: "inicio", rew: 0.0, exp: "Reiniciar el loop." }
+    ]
+  },
+  "registro_lead": {
+    categoria: "BASE",
+    titulo: "Únete a la Red",
+    narracion: "Para guardar tu billetera y subir al ranking global, necesitamos tu email. No enviamos spam, solo alertas de misiones nuevas.",
+    videoPrompt: "🎬 Interfaz futurista de creación de identidad digital.",
+    sponsor: "MicroSecure Network",
+    isLeadCapture: true,
+    opciones: []
+  }
 };
 
-const HITOS=[
-  {id:'h1',pts:100, emoji:'🎯',titulo:'¡Primer Acierto!',       desc:'Desbloqueaste el modo básico de protección digital.',          bonus:0,    badge:'INICIADO',          txt:'Completé mi primer desafío de ciberseguridad en MicroSecure 🛡️ #CyberSecurity #LearnToEarn'},
-  {id:'h2',pts:300, emoji:'🎓',titulo:'Consciente Digital',      desc:'Equivale al Módulo 1 del Google Cybersecurity Cert. +10%.',    bonus:0.10, badge:'GOOGLE CERT MOD.1',  txt:'Alcancé "Consciente Digital" en MicroSecure 🎓 Equivale al Google Cybersecurity Cert Módulo 1. #LearnToEarn'},
-  {id:'h3',pts:600, emoji:'🛡️',titulo:'Guardaespaldas Digital', desc:'Dominás los vectores de ataque principales. +25% permanente.', bonus:0.25, badge:'SECURITY+ READY',    txt:'Alcancé "Guardaespaldas Digital" en MicroSecure 🛡️ #CyberSecurity #BugBounty'},
-  {id:'h4',pts:1000,emoji:'🏆',titulo:'Bug Hunter Nivel 1',      desc:'Listo para Bug Bounty en HackerOne. +50% permanente.',         bonus:0.50, badge:'H1 HUNTER',          txt:'Alcancé "Bug Hunter Nivel 1" en MicroSecure 🏆 Listo para HackerOne. #BugBounty #HackerOne'},
-];
-
-const NIVELES=[
-  {min:0,   max:149,  nombre:'Novato',     emoji:'🔵',desc:'¡Todo lo que aprendás es ganancia!'},
-  {min:150, max:349,  nombre:'Consciente', emoji:'🟡',desc:'Sabés más que el 80% de la población.'},
-  {min:350, max:599,  nombre:'Informado',  emoji:'🟠',desc:'Pensás como alguien que sabe protegerse.'},
-  {min:600, max:9999, nombre:'Avanzado',   emoji:'🔴',desc:'Nivel profesional. Podés enseñarle a otros.'},
-];
-
-const getNivel=pts=>NIVELES.find(n=>pts>=n.min&&pts<=n.max)||NIVELES[0];
-const getMult =cat=>(MULTS[cat]||{m:1.0}).m;
-const getMInfo=cat=> MULTS[cat]||{m:1.0,l:'1x',c:'#64748b'};
-
-const INSIGHTS=[
-  {emoji:'📶',stat:{n:'147',u:'contraseñas robadas por hora en Wi-Fi pública'},
-   headline:'Tu Wi-Fi pública es una trampa silenciosa.',
-   context:'Un atacante en la misma red captura tu tráfico con herramientas gratuitas. Una VPN cifra todo y lo hace ilegible.',
-   categoria:'WI-FI',bg:'rgba(239,68,68,0.12)',col:'#f87171',sponsor:'Patrocinado por NordVPN',rb:0.07,
-   vp:{esc:'Café lleno de gente. Overlay: paquetes de red interceptados en tiempo real.',nar:'147 contraseñas robadas por hora en Wi-Fi pública. Una VPN lo previene.',cta:'¿Cuántas redes públicas usaste hoy sin protección?'},
-   q:'¿Qué herramienta protege tu tráfico en redes públicas?',
-   opts:[{t:'Un antivirus actualizado',c:false},{t:'Una VPN (Red Privada Virtual)',c:true},{t:'Modo incógnito',c:false},{t:'Usar solo HTTPS',c:false}],
-   exp:'Una VPN cifra todo el tráfico antes de salir del dispositivo. El modo incógnito solo oculta el historial local.'},
-
-  {emoji:'🎣',stat:{n:'91%',u:'de los hackeos empieza con un email falso'},
-   headline:'El phishing es el arma #1 del cibercrimen.',
-   context:'Un atacante clona el email de tu banco en minutos. La diferencia está en una sola letra del dominio del remitente.',
-   categoria:'PHISHING',bg:'rgba(245,158,11,0.1)',col:'#fbbf24',sponsor:'Patrocinado por Proofpoint',rb:0.06,
-   vp:{esc:'Email del banco en pantalla. Zoom al remitente: "bancc0.com" resaltado en rojo.',nar:'91% de los hackeos empieza con un email falso. La trampa es casi invisible.',cta:'Verificá siempre el dominio exacto. No el nombre visible, el dominio.'},
-   q:'Recibes un email de "seguridad@bancc0.com". ¿Qué hacés?',
-   opts:[{t:'Clic en el link si parece urgente',c:false},{t:'Verificar el dominio exacto del remitente',c:true},{t:'Responder para confirmar',c:false},{t:'Abrir el adjunto',c:false}],
-   exp:'"bancc0.com" no es el dominio real de ningún banco. Verificar el dominio exacto (no el nombre visible) es la defensa clave.'},
-
-  {emoji:'🔑',stat:{n:'23M',u:'personas usan "123456" como contraseña'},
-   headline:'La contraseña más fácil = la primera que prueban.',
-   context:'Los atacantes usan diccionarios con millones de contraseñas comunes. Una de 12 caracteres aleatorios tardaría miles de años.',
-   categoria:'CONTRASEÑAS',bg:'rgba(99,102,241,0.12)',col:'#818cf8',sponsor:'Patrocinado por 1Password',rb:0.05,
-   vp:{esc:'Terminal corriendo un diccionario de contraseñas. En 2 segundos: "123456: FOUND".',nar:'23 millones de personas usan la contraseña que prueban primero.',cta:'Tu contraseña más débil es la puerta de entrada a todo lo demás.'},
-   q:'¿Cuál de estas contraseñas es más segura?',
-   opts:[{t:'MiPerro2024!',c:false},{t:'P@ssw0rd',c:false},{t:'kX#9mQ2!vLpR',c:true},{t:'123456789',c:false}],
-   exp:'"kX#9mQ2!vLpR" es aleatoria, larga y mezcla tipos de caracteres. Las basadas en palabras son vulnerables a ataques de diccionario.'},
-
-  {emoji:'📱',stat:{n:'99.9%',u:'de ataques automáticos bloqueados por 2FA'},
-   headline:'El doble factor tarda 30 segundos en activarse.',
-   context:'El 2FA exige contraseña + código de teléfono. Aunque te roben la contraseña, sin el código no pueden entrar.',
-   categoria:'2FA',bg:'rgba(6,182,212,0.1)',col:'#22d3ee',sponsor:'Patrocinado por Authy',rb:0.07,
-   vp:{esc:'Login con contraseña exitoso. Sistema pide 2FA. Atacante en otra ciudad: acceso bloqueado.',nar:'99.9% de los hackeos automáticos fallan con 2FA activo. 30 segundos de configuración.',cta:'Activá 2FA en tu email hoy. Es lo más importante que podés hacer.'},
-   q:'¿Cuál es el segundo "factor" en la autenticación de dos factores?',
-   opts:[{t:'Una contraseña más larga',c:false},{t:'Un código enviado a tu teléfono o app',c:true},{t:'Tu nombre de usuario',c:false},{t:'Un CAPTCHA',c:false}],
-   exp:'El segundo factor es algo físico que tenés: tu teléfono. Sin ese código temporal, el atacante no puede acceder aunque tenga tu contraseña.'},
-
-  {emoji:'💉',stat:{n:'#1',u:'vulnerabilidad más reportada en HackerOne: IDOR'},
-   headline:'Cambiar un número en la URL puede exponer datos ajenos.',
-   context:'IDOR: si la app no verifica que sos el dueño, cambiar /usuario/123 a /usuario/124 puede mostrar datos de otro usuario.',
-   categoria:'BUG BOUNTY',bg:'rgba(16,185,129,0.1)',col:'#34d399',sponsor:'Patrocinado por HackerOne',rb:0.09,
-   vp:{esc:'Browser: URL /api/perfil/100. Mano cambia "100" a "101". Aparecen datos de otra persona.',nar:'Esta vulnerabilidad se llama IDOR. Es la más pagada en HackerOne y solo requiere cambiar un número.',cta:'Se paga hasta $10,000 por encontrarla. El conocimiento es el activo que no te pueden robar.'},
-   q:'Una app muestra /api/perfil/100. Cambiás a /api/perfil/101 y ves datos de otro usuario. ¿Qué vulnerabilidad es?',
-   opts:[{t:'SQL Injection',c:false},{t:'XSS (Cross-Site Scripting)',c:false},{t:'IDOR (Referencia directa insegura)',c:true},{t:'CSRF',c:false}],
-   exp:'IDOR ocurre cuando el servidor no verifica que el usuario es el dueño del objeto solicitado. Es la vulnerabilidad #1 en Bug Bounty por su alto impacto.'},
-
-  {emoji:'⚡',stat:{n:'60%',u:'de brechas explotan vulnerabilidades ya parcheadas'},
-   headline:'"Actualizar después" puede costarte todo.',
-   context:'Cuando aparece un parche, los atacantes crean exploits en horas. Sin actualizar sos un blanco conocido y documentado.',
-   categoria:'ACTUALIZACIONES',bg:'rgba(245,158,11,0.1)',col:'#fbbf24',sponsor:'Patrocinado por Microsoft',rb:0.05,
-   vp:{esc:'Notificación de actualización ignorada 3 veces. Luego: pantalla de ransomware.',nar:'60% de los hackeos usan vulnerabilidades que ya tenían parche disponible.',cta:'Actualizar hoy es la diferencia entre ser víctima o no serlo.'},
-   q:'¿Por qué es urgente instalar actualizaciones de seguridad el mismo día que salen?',
-   opts:[{t:'Para tener las últimas funciones',c:false},{t:'Porque los atacantes crean exploits en horas tras el parche',c:true},{t:'Para mejorar la velocidad',c:false},{t:'Porque lo pide el fabricante',c:false}],
-   exp:'El parche publica qué bug fue corregido. Los atacantes lo usan como mapa para atacar sistemas sin actualizar. Cuanto más tardás, más expuesto estás.'},
-
-  {emoji:'💸',stat:{n:'$1.50',u:'vale tu perfil completo en la dark web'},
-   headline:'Tus datos se venden al por mayor sin que lo sepas.',
-   context:'Las filtraciones masivas se venden en mercados ilegales. Tu email + contraseña + fecha de nacimiento permiten ataques en cadena.',
-   categoria:'DATA BREACH',bg:'rgba(239,68,68,0.1)',col:'#f87171',sponsor:'Patrocinado por HaveIBeenPwned',rb:0.08,
-   vp:{esc:'Marketplace dark web. Lista de emails y contraseñas. Precio: $1.50 por perfil completo.',nar:'Tu identidad digital completa vale $1.50 en la dark web. ¿Ya fue filtrada?',cta:'Buscá tu email en haveibeenpwned.com. Es gratis y tarda 5 segundos.'},
-   q:'¿Qué podés hacer HOY para saber si tus datos fueron filtrados?',
-   opts:[{t:'Cambiar contraseñas por "admin123"',c:false},{t:'Consultar haveibeenpwned.com con tu email',c:true},{t:'Formatear la computadora',c:false},{t:'No hay forma de saberlo',c:false}],
-   exp:'HaveIBeenPwned.com indexa todas las filtraciones conocidas. Ingresás tu email y te dice si fue comprometido en segundos.'},
-
-  {emoji:'💾',stat:{n:'11s',u:'— cada 11 segundos una empresa es atacada con ransomware'},
-   headline:'Sin backup, un ataque borra años de trabajo.',
-   context:'El ransomware cifra todo y pide rescate. La única defensa real es una copia offline. Regla 3-2-1: 3 copias, 2 medios, 1 fuera del sitio.',
-   categoria:'RANSOMWARE',bg:'rgba(139,92,246,0.1)',col:'#a78bfa',sponsor:'Patrocinado por Backblaze',rb:0.09,
-   vp:{esc:'Reloj en pantalla. Cada 11 segundos: nueva empresa con pantalla de rescate ransomware.',nar:'Cada 11 segundos una empresa paga rescate por sus propios archivos. Un backup los habría salvado.',cta:'¿Cuándo fue tu último backup? Si no recordás la fecha, es demasiado tarde.'},
-   q:'Si un ransomware cifra tu disco, ¿cuál es la única defensa real?',
-   opts:[{t:'Pagar el rescate rápidamente',c:false},{t:'Tener backups offline actualizados',c:true},{t:'Apagar la computadora',c:false},{t:'Usar Windows Defender',c:false}],
-   exp:'Pagar no garantiza recuperar los archivos. Solo un backup offline garantiza recuperación total sin depender del atacante.'},
-];
-
-// ESTADO
-let E={
-  idx:0,orden:[],pts:0,wallet:0,correctas:0,racha:0,rachaMax:0,
-  timerInt:null,respondido:false,enTimer:false,hitoPend:null,
-  walletTotal:0,ptsTotal:0,hitosOk:[],multBonus:0,
+// ESTADO V5
+let E = {
+  nodoActual: "inicio",
+  wallet: 0.0,
+  walletTotal: 0.0,
+  historial: [],
+  email: null
 };
 
 // PERSISTENCIA
 function cargar(){
-  E.walletTotal=parseFloat(localStorage.getItem('ms_wt')||'0');
-  E.ptsTotal   =parseInt(  localStorage.getItem('ms_pt')||'0');
-  E.hitosOk    =JSON.parse(localStorage.getItem('ms_h') ||'[]');
-  E.multBonus  =parseFloat(localStorage.getItem('ms_mb')||'0');
+  E.walletTotal = parseFloat(localStorage.getItem('ms5_wt') || '0');
+  E.email = localStorage.getItem('ms5_mail');
 }
 function guardar(){
-  localStorage.setItem('ms_wt',E.walletTotal.toFixed(4));
-  localStorage.setItem('ms_pt',E.ptsTotal);
-  localStorage.setItem('ms_h', JSON.stringify(E.hitosOk));
-  localStorage.setItem('ms_mb',E.multBonus.toFixed(4));
+  localStorage.setItem('ms5_wt', E.walletTotal.toFixed(4));
+  if(E.email) localStorage.setItem('ms5_mail', E.email);
 }
 
 // INTRO
 function initIntro(){
   cargar();
-  const wp=document.getElementById('wallet-prev');
-  if(wp) wp.textContent='$'+E.walletTotal.toFixed(2);
-  const hb=document.getElementById('hitos-prev');
-  if(hb&&E.hitosOk.length){
-    hb.innerHTML=E.hitosOk.map(id=>{const h=HITOS.find(x=>x.id===id);return h?`<span class="hito-prev-badge">${h.emoji} ${h.badge}</span>`:''}).join('');
-    hb.style.display='flex';
+  const wp = document.getElementById('wallet-prev');
+  if(wp) wp.textContent = '$' + E.walletTotal.toFixed(2);
+  
+  if(E.email) {
+    const s = document.querySelector('.sponsor-note');
+    if(s) s.innerHTML = `Bienvenido de vuelta, <b>${E.email}</b>.`;
   }
 }
-function iniciarFeed(){
-  E.orden=INSIGHTS.map((_,i)=>i);
-  for(let i=E.orden.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[E.orden[i],E.orden[j]]=[E.orden[j],E.orden[i]];}
-  Object.assign(E,{idx:0,pts:0,wallet:0,correctas:0,racha:0,rachaMax:0});
-  construirBarra();cambiarPantalla('screen-intro','screen-feed');mostrarInsight();
+
+// FLUJO CYOA
+function iniciarHistoria(){
+  E.wallet = 0.0;
+  E.historial = [];
+  E.nodoActual = "inicio";
+  cambiarPantalla('screen-intro', 'screen-feed');
+  mostrarNodo(E.nodoActual);
 }
+
 function cambiarPantalla(a,b){
   document.getElementById(a).classList.remove('active');
   document.getElementById(b).classList.add('active');
   window.scrollTo(0,0);
 }
-function mostrarInsight(){
-  if(E.idx>=E.orden.length){mostrarResumen();return;}
-  const ins=INSIGHTS[E.orden[E.idx]];
-  E.respondido=false;E.enTimer=true;
-  document.getElementById('action-panel').style.display='none';
-  document.getElementById('mc-feedback').style.display='none';
-  document.getElementById('vp-accordion').style.display='none';
-  const mi=getMInfo(ins.categoria);
-  const mult=mi.m*(1+E.multBonus);
-  const mb=document.getElementById('mult-badge');
-  mb.textContent=mi.l;
-  mb.style.cssText='color:'+mi.c+';border-color:'+mi.c+'55;background:'+mi.c+'18;';
-  document.getElementById('reel-sponsor').textContent=ins.sponsor;
-  document.getElementById('reel-body').innerHTML=
-    '<div class="reel-hero" style="background:'+ins.bg+'">'
-    +'<div class="reel-emoji">'+ins.emoji+'</div>'
-    +'<div class="reel-stat-wrapper">'
-    +'<div class="reel-stat-number" style="color:'+ins.col+'">'+ins.stat.n+'</div>'
-    +'<div class="reel-stat-unit">'+ins.stat.u+'</div></div>'
-    +'<div class="reel-headline">'+ins.headline+'</div>'
-    +'<div class="reel-context">'+ins.context+'</div></div>'
-    +'<div class="reel-footer">'
-    +'<div class="reel-category" style="color:'+ins.col+'">'+ins.categoria+'</div>'
-    +'<div class="reel-reward-preview">+$'+(ins.rb*mult).toFixed(2)+' &middot; '+mi.l+'</div></div>';
-  document.getElementById('vp-escena').textContent    =ins.vp.esc;
-  document.getElementById('vp-narracion').textContent =ins.vp.nar;
-  document.getElementById('vp-cta').textContent       =ins.vp.cta;
-  const card=document.getElementById('reel-card');
-  card.style.animation='none';card.offsetWidth;card.style.animation='';
-  actualizarBarra();iniciarTimer(ins);
-}
-function iniciarTimer(ins){
-  clearInterval(E.timerInt);
-  const ring=document.getElementById('ring-fill'),sec=document.getElementById('timer-seconds'),CIRC=163.36;
-  ring.style.transition='none';ring.style.strokeDashoffset='0';ring.classList.remove('urgent');
-  sec.textContent=TIMER_S;
-  const sf=document.querySelector('.ep-seg:nth-child('+(E.idx+1)+') .ep-seg-fill');
-  if(sf){sf.style.transition='none';sf.style.width='0%';sf.offsetWidth;sf.style.transition='width '+TIMER_S+'s linear';sf.style.width='100%';}
-  let elapsed=0;
-  E.timerInt=setInterval(function(){
-    elapsed+=100;
-    ring.style.strokeDashoffset=String(CIRC*elapsed/(TIMER_S*1000));
-    const rem=Math.ceil((TIMER_S*1000-elapsed)/1000);
-    sec.textContent=Math.max(0,rem);
-    if(rem<=2)ring.classList.add('urgent');
-    if(elapsed>=TIMER_S*1000){clearInterval(E.timerInt);E.enTimer=false;if(!E.respondido)mostrarPregunta(ins);}
-  },100);
-}
-function mostrarPregunta(ins){
-  document.getElementById('mc-question').textContent=ins.q;
-  const letras=['A','B','C','D'],orden=[0,1,2,3].sort(function(){return Math.random()-0.5;});
-  const el=document.getElementById('mc-options');el.innerHTML='';
-  orden.forEach(function(opIdx,i){
-    const op=ins.opts[opIdx],btn=document.createElement('button');
-    btn.className='mc-opt';btn.dataset.c=op.c;
-    btn.innerHTML='<span class="opt-letter">'+letras[i]+'</span> '+op.t;
-    btn.onclick=function(){responder(btn,ins);};
-    el.appendChild(btn);
-  });
-  document.getElementById('action-panel').style.display='block';
-}
-function responder(btn,ins){
-  if(E.respondido)return;
-  E.respondido=true;
-  const ok=btn.dataset.c==='true';
-  document.querySelectorAll('.mc-opt').forEach(function(b){
-    b.disabled=true;
-    if(b.dataset.c==='true')b.classList.add('correct-opt');
-    else if(b===btn&&!ok)b.classList.add('wrong-opt');
-  });
-  const mult=getMult(ins.categoria)*(1+E.multBonus);
-  var pts,rew;
-  if(ok){
-    pts=100;rew=ins.rb*mult;E.correctas++;E.racha++;
-    if(E.racha>E.rachaMax)E.rachaMax=E.racha;
-    if(E.racha>1){pts+=20*(E.racha-1);rew+=0.01*(E.racha-1)*mult;}
-    actualizarCombo();
-  }else{
-    pts=20;rew=ins.rb*0.2;E.racha=0;
-    document.getElementById('combo-badge').classList.remove('show');
-    document.getElementById('reel-card').classList.remove('combo-glow');
+
+function mostrarNodo(id) {
+  E.nodoActual = id;
+  const nodo = NODOS[id];
+  if(!nodo) return; // Error de ruta
+
+  E.historial.push(id);
+  
+  // UI de la Tarjeta
+  const mi = getMInfo(nodo.categoria);
+  
+  // Actualizar Badge Multiplicador
+  const mb = document.getElementById('mult-badge');
+  mb.textContent = mi.l;
+  mb.style.cssText = `color:${mi.c};border-color:${mi.c}55;background:${mi.c}18;`;
+  
+  document.getElementById('reel-sponsor').textContent = nodo.sponsor;
+  document.getElementById('nodo-titulo').textContent = nodo.titulo;
+  document.getElementById('nodo-narracion').textContent = nodo.narracion;
+  
+  // Video Prompt (Integrado en el diseño principal, no acordeón)
+  const vpText = document.getElementById('vp-text');
+  vpText.textContent = nodo.videoPrompt;
+  
+  // Generar Opciones Dinámicas
+  const optsContainer = document.getElementById('opciones-container');
+  optsContainer.innerHTML = '';
+  
+  if(nodo.isLeadCapture) {
+    // Renderizar Formulario de Lead
+    optsContainer.innerHTML = `
+      <div class="lead-form">
+        <input type="email" id="lead-email" placeholder="tu@email.com" class="lead-input" required>
+        <button class="btn-lead" onclick="guardarLead()">Guardar Progreso</button>
+        <button class="btn-lead-skip" onclick="mostrarResumen()">Omitir y ver resumen</button>
+      </div>
+    `;
+  } else {
+    // Renderizar Botones Narrativos
+    nodo.opciones.forEach((op, i) => {
+      const mult = mi.m;
+      const recompensaReal = op.rew * mult;
+      const btn = document.createElement('button');
+      btn.className = 'btn-opcion-narrativa';
+      
+      let rewardHTML = '';
+      if(recompensaReal > 0) {
+        rewardHTML = `<span class="op-reward-tag">+$${recompensaReal.toFixed(2)}</span>`;
+      }
+      
+      btn.innerHTML = `<div class="op-texto">${op.t}</div> ${rewardHTML}`;
+      btn.onclick = () => procesarDecision(op, recompensaReal, mi);
+      optsContainer.appendChild(btn);
+    });
   }
-  E.pts+=pts;E.wallet+=rew;E.ptsTotal+=pts;E.walletTotal+=rew;
-  actualizarWalletHUD(rew);actualizarNivelHUD();checkHitos();mostrarFeedback(ok,pts,rew,ins);
+
+  // Animación de entrada de la tarjeta
+  const card = document.getElementById('reel-card');
+  card.style.animation = 'none'; card.offsetWidth; card.style.animation = '';
+  
+  // Limpiar panel de feedback
+  document.getElementById('feedback-panel').style.display = 'none';
+  optsContainer.style.display = 'flex';
 }
-function checkHitos(){
-  for(var i=0;i<HITOS.length;i++){
-    var h=HITOS[i];
-    if(E.hitosOk.indexOf(h.id)>=0)continue;
-    if(E.ptsTotal>=h.pts){E.hitosOk.push(h.id);E.multBonus+=h.bonus;E.hitoPend=h;guardar();}
+
+function procesarDecision(opcion, recompensaReal, mi) {
+  // Ocultar opciones, mostrar feedback
+  document.getElementById('opciones-container').style.display = 'none';
+  
+  // Actualizar Billetera
+  if(recompensaReal > 0) {
+    E.wallet += recompensaReal;
+    E.walletTotal += recompensaReal;
+    actualizarWalletHUD(recompensaReal);
+    guardar();
+  }
+  
+  const fbPanel = document.getElementById('feedback-panel');
+  const esBuena = recompensaReal > 0;
+  
+  document.getElementById('fb-icon').textContent = esBuena ? '📈' : '📉';
+  document.getElementById('fb-icon').className = 'fb-icon ' + (esBuena ? 'buena' : 'mala');
+  
+  document.getElementById('fb-recompensa').textContent = esBuena ? `+$${recompensaReal.toFixed(2)} ganados` : `Sin recompensa`;
+  document.getElementById('fb-recompensa').style.color = esBuena ? '#10b981' : '#f87171';
+  
+  document.getElementById('fb-explicacion').textContent = opcion.exp;
+  
+  // Configurar botón "Siguiente Escena"
+  const btnSig = document.getElementById('btn-siguiente-escena');
+  btnSig.onclick = () => mostrarNodo(opcion.next);
+  
+  fbPanel.style.display = 'flex';
+}
+
+function guardarLead() {
+  const mail = document.getElementById('lead-email').value;
+  if(mail && mail.includes('@')) {
+    E.email = mail;
+    guardar();
+    mostrarResumen();
+  } else {
+    alert("Por favor ingresa un correo válido.");
   }
 }
-function mostrarFeedback(ok,pts,rew,ins){
-  document.getElementById('action-panel').style.display='none';
-  document.getElementById('mc-fb-icon').textContent=ok?'X correcto':'X incorrecto';
-  document.getElementById('mc-fb-icon').textContent=ok?'OK':'ERROR';
-  document.getElementById('mc-fb-msg').innerHTML=(ok?'+'+pts+' pts / +$'+rew.toFixed(2):'+'+pts+' pts / +$'+rew.toFixed(2)+' (viste el contenido)')+'<br>'+ins.exp;
-  document.getElementById('mc-feedback').style.display='flex';
-  document.getElementById('vp-accordion').style.display='block';
-  if(E.hitoPend){var h=E.hitoPend;E.hitoPend=null;setTimeout(function(){mostrarModalHito(h);},800);}
-}
-function siguienteInsight(){
-  document.getElementById('mc-feedback').style.display='none';
-  document.getElementById('vp-accordion').style.display='none';
-  marcarDone();E.idx++;mostrarInsight();
-}
+
+// HUD
 function actualizarWalletHUD(delta){
-  document.getElementById('wallet-display').textContent='$'+E.wallet.toFixed(2);
-  var d=document.getElementById('wallet-delta');
-  d.textContent='+$'+delta.toFixed(2);d.classList.add('show');
-  setTimeout(function(){d.classList.remove('show');},1200);
+  document.getElementById('wallet-display').textContent = '$' + E.wallet.toFixed(2);
+  const d = document.getElementById('wallet-delta');
+  d.textContent = '+$' + delta.toFixed(2);
+  d.classList.add('show');
+  setTimeout(() => d.classList.remove('show'), 1200);
 }
-function actualizarNivelHUD(){document.getElementById('level-badge').textContent='Nv. '+getNivel(E.pts).nombre;}
-function actualizarCombo(){
-  var badge=document.getElementById('combo-badge');
-  if(E.racha>=3){
-    badge.textContent=E.racha>=5?'COMBO x'+E.racha:'RACHA x'+E.racha;
-    badge.classList.add('show');
-    document.getElementById('reel-card').classList.toggle('combo-glow',E.racha>=5);
-  }
-}
-function construirBarra(){
-  var bar=document.getElementById('episodes-bar');bar.innerHTML='';
-  E.orden.forEach(function(){
-    var s=document.createElement('div');s.className='ep-seg';
-    var f=document.createElement('div');f.className='ep-seg-fill';
-    s.appendChild(f);bar.appendChild(s);
-  });
-}
-function actualizarBarra(){document.querySelectorAll('.ep-seg').forEach(function(s,i){s.classList.toggle('done',i<E.idx);});}
-function marcarDone(){var segs=document.querySelectorAll('.ep-seg');if(segs[E.idx])segs[E.idx].classList.add('done');}
-function mostrarModalHito(h){
-  document.getElementById('hito-emoji').textContent    =h.emoji;
-  document.getElementById('hito-titulo').textContent   =h.titulo;
-  document.getElementById('hito-desc').textContent     =h.desc;
-  document.getElementById('hito-badge-txt').textContent=h.badge;
-  document.getElementById('hito-bonus-txt').textContent=h.bonus>0?'+'+Math.round(h.bonus*100)+'% multiplicador permanente':'';
-  document.getElementById('hito-li-btn').dataset.txt   =h.txt;
-  document.getElementById('hito-x-btn').dataset.txt    =h.txt;
-  document.getElementById('modal-hito').classList.add('show');
-  lanzarConfetti();
-}
-function cerrarModalHito(){document.getElementById('modal-hito').classList.remove('show');}
-function compartirLI(){
-  var txt=document.getElementById('hito-li-btn').dataset.txt;
-  window.open('https://www.linkedin.com/feed/?shareActive=true&text='+encodeURIComponent(txt+'\n'+location.href),'_blank');
-}
-function compartirX(){
-  var txt=document.getElementById('hito-x-btn').dataset.txt;
-  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt)+'&url='+encodeURIComponent(location.href),'_blank');
-}
-function lanzarConfetti(){
-  var c=document.getElementById('confetti-container');if(!c)return;c.innerHTML='';
-  var cols=['#6366f1','#f59e0b','#10b981','#f87171','#22d3ee','#a78bfa'];
-  for(var i=0;i<48;i++){
-    var p=document.createElement('div');p.className='confetti-piece';
-    p.style.cssText='left:'+Math.random()*100+'%;background:'+cols[i%cols.length]+';animation-delay:'+Math.random()*0.4+'s;animation-duration:'+(0.7+Math.random()*0.8)+'s;width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>0.5?'50%':'2px');
-    c.appendChild(p);
-  }
-  setTimeout(function(){c.innerHTML='';},2000);
-}
+
+// SHARE CARD V5
 function descargarShareCard(){
-  var nv=getNivel(E.ptsTotal);
-  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=566;
-  var ctx=canvas.getContext('2d');
-  var g=ctx.createLinearGradient(0,0,1080,566);g.addColorStop(0,'#060810');g.addColorStop(1,'#0d0f1e');
-  ctx.fillStyle=g;ctx.fillRect(0,0,1080,566);
-  var ga=ctx.createRadialGradient(150,80,0,150,80,380);ga.addColorStop(0,'rgba(99,102,241,0.35)');ga.addColorStop(1,'transparent');
-  ctx.fillStyle=ga;ctx.fillRect(0,0,1080,566);
-  ctx.fillStyle='#818cf8';ctx.font='bold 26px monospace';ctx.fillText('MicroSecure',60,72);
-  ctx.fillStyle='rgba(255,255,255,0.05)';ctx.fillRect(60,100,960,130);
-  ctx.fillStyle='#f1f5f9';ctx.font='bold 60px monospace';ctx.fillText(nv.emoji+'  '+nv.nombre.toUpperCase(),80,188);
-  ctx.fillStyle='#94a3b8';ctx.font='22px monospace';ctx.fillText(nv.desc,80,245);
-  ctx.fillStyle='#10b981';ctx.font='bold 52px monospace';ctx.fillText('$'+E.walletTotal.toFixed(2),80,340);
-  ctx.fillStyle='#64748b';ctx.font='18px monospace';ctx.fillText('RECOMPENSA ACUMULADA',80,374);
-  ctx.fillStyle='#6366f1';ctx.font='bold 20px monospace';ctx.fillText(E.ptsTotal+' pts  |  '+E.hitosOk.length+' hitos',80,428);
-  ctx.fillStyle='#3f4a5e';ctx.font='16px monospace';ctx.fillText('Aprende ciberseguridad en 8 segundos - link.mercadopago.com.ar/trwe',80,510);
-  var url=canvas.toDataURL('image/png');
-  var a=document.createElement('a');a.download='microsecure-logro.png';a.href=url;a.click();
+  const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 566;
+  const ctx = canvas.getContext('2d');
+  
+  const g = ctx.createLinearGradient(0,0,1080,566);
+  g.addColorStop(0,'#060810'); g.addColorStop(1,'#0d0f1e');
+  ctx.fillStyle = g; ctx.fillRect(0,0,1080,566);
+  
+  const ga = ctx.createRadialGradient(150,80,0,150,80,380);
+  ga.addColorStop(0,'rgba(99,102,241,0.35)'); ga.addColorStop(1,'transparent');
+  ctx.fillStyle = ga; ctx.fillRect(0,0,1080,566);
+  
+  ctx.fillStyle = '#818cf8'; ctx.font = 'bold 26px monospace'; ctx.fillText('MicroSecure', 60, 72);
+  
+  ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.beginPath();
+  if(ctx.roundRect) ctx.roundRect(60,100,960,130,16); else ctx.rect(60,100,960,130);
+  ctx.fill();
+  
+  ctx.fillStyle = '#f1f5f9'; ctx.font = 'bold 64px monospace'; 
+  ctx.fillText(`CIBER-AGENTE`, 80, 188);
+  
+  ctx.fillStyle = '#94a3b8'; ctx.font = '22px monospace'; 
+  ctx.fillText('Ha sobrevivido a la simulación corporativa.', 80, 248);
+  
+  ctx.fillStyle = '#10b981'; ctx.font = 'bold 52px monospace'; ctx.fillText('$' + E.walletTotal.toFixed(2), 80, 340);
+  ctx.fillStyle = '#64748b'; ctx.font = '18px monospace'; ctx.fillText('RECOMPENSA ACUMULADA', 80, 374);
+  
+  ctx.fillStyle = '#6366f1'; ctx.font = 'bold 20px monospace'; ctx.fillText(`${E.historial.length} decisiones tomadas`, 80, 428);
+  
+  ctx.fillStyle = '#3f4a5e'; ctx.font = '16px monospace'; ctx.fillText('Sobrevive vos también en link.mercadopago.com.ar/trwe', 80, 510);
+  
+  const url = canvas.toDataURL('image/png');
+  const a = document.createElement('a'); a.download = 'microsecure-logro.png'; a.href = url; a.click();
 }
+
+// RESUMEN
 function mostrarResumen(){
   guardar();
-  cambiarPantalla('screen-feed','screen-summary');
-  var nv=getNivel(E.pts);
-  document.getElementById('summary-amount').textContent    ='$'+E.wallet.toFixed(2);
-  document.getElementById('wallet-bar-current').textContent='$'+E.walletTotal.toFixed(2);
-  document.getElementById('wallet-total-label').textContent='Total acumulado: $'+E.walletTotal.toFixed(2);
-  document.getElementById('ss-pts').textContent    =E.pts;
-  document.getElementById('ss-correct').textContent=E.correctas+'/'+E.orden.length;
-  document.getElementById('ss-streak').textContent =E.rachaMax;
-  document.getElementById('level-result-icon').textContent=nv.emoji;
-  document.getElementById('level-result-name').textContent=nv.nombre.toUpperCase();
-  document.getElementById('level-result-desc').textContent=nv.desc;
-  var pct=Math.min((E.walletTotal/META)*100,100);
-  setTimeout(function(){document.getElementById('wallet-bar-fill').style.width=pct+'%';},600);
-  var hBox=document.getElementById('hitos-sesion');
-  if(hBox&&E.hitosOk.length){
-    hBox.innerHTML=E.hitosOk.map(function(id){var h=HITOS.find(function(x){return x.id===id;});return h?'<span class="hito-chip">'+h.emoji+' '+h.badge+'</span>':'';}).join('');
-    hBox.style.display='flex';
-  }
+  cambiarPantalla('screen-feed', 'screen-summary');
+  
+  document.getElementById('summary-amount').textContent = '$' + E.wallet.toFixed(2);
+  document.getElementById('wallet-bar-current').textContent = '$' + E.walletTotal.toFixed(2);
+  document.getElementById('wallet-total-label').textContent = 'Total acumulado histórico: $' + E.walletTotal.toFixed(2);
+  
+  document.getElementById('ss-pts').textContent = E.historial.length; // Nodos visitados
+  document.getElementById('ss-correct').textContent = E.email ? "Sí" : "No"; // Registrado
+  
+  const pct = Math.min((E.walletTotal / META_DOLARES) * 100, 100);
+  setTimeout(() => { document.getElementById('wallet-bar-fill').style.width = pct + '%'; }, 600);
 }
+
+// DONACIONES Y LINKS
 function abrirRetiro(m){
-  var urls={mp:'https://link.mercadopago.com.ar/trwe',paypal:'https://www.paypal.com/donate/?business=tomasreis44%40gmail.com&currency_code=USD'};
-  window.open(urls[m]||urls.mp,'_blank');
+  const urls = {
+    mp: 'https://link.mercadopago.com.ar/trwe',
+    paypal: 'https://www.paypal.com/donate/?business=tomasreis44%40gmail.com&currency_code=USD'
+  };
+  window.open(urls[m] || urls.mp, '_blank');
 }
+
 function compartir(){
-  var nv=getNivel(E.pts);
-  var txt='Alcance el nivel "'+nv.nombre+'" en MicroSecure y gane $'+E.wallet.toFixed(2)+' aprendiendo ciberseguridad!';
-  if(navigator.share)navigator.share({title:'MicroSecure',text:txt,url:location.href});
-  else navigator.clipboard.writeText(txt+'\n'+location.href).then(function(){alert('Copiado!');});
+  const txt = `Acabo de completar una simulación de ciberseguridad en MicroSecure y gané $${E.wallet.toFixed(2)}. ¿Podrías sobrevivir vos? 🛡️`;
+  if(navigator.share) navigator.share({title:'MicroSecure', text:txt, url:location.href});
+  else navigator.clipboard.writeText(txt + '\n' + location.href).then(() => alert('¡Copiado al portapapeles!'));
 }
-function irProfundidad(){window.open('https://www.youtube.com/@BestiaTantrica','_blank');}
+
 function reiniciar(){
-  Object.assign(E,{idx:0,pts:0,wallet:0,correctas:0,racha:0,rachaMax:0});
-  for(var i=E.orden.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=E.orden[i];E.orden[i]=E.orden[j];E.orden[j]=tmp;}
-  construirBarra();cambiarPantalla('screen-summary','screen-feed');mostrarInsight();
+  iniciarHistoria();
 }
-function toggleVP(){
-  var body=document.getElementById('vp-body'),icon=document.getElementById('vp-icon');
-  var open=body.style.display==='block';
-  body.style.display=open?'none':'block';
-  icon.textContent=open?'ABRIR':'CERRAR';
-}
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&document.getElementById('mc-feedback').style.display!=='none')siguienteInsight();
-});
-window.addEventListener('DOMContentLoaded',initIntro);
+
+window.addEventListener('DOMContentLoaded', initIntro);
