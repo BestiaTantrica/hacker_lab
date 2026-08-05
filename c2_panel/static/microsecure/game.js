@@ -1,7 +1,7 @@
-// MicroSecure V5.1 — CYOA con Mapa de Decisiones
+// MicroSecure V6 — Economía Realista, Energía y Perfilamiento
 const META_DOLARES = 5.00;
 
-// Multiplicadores
+// Multiplicadores Base de Mercado
 const MULTS = {
   'BUG BOUNTY':     {m: 3.0, l: '3x BOUNTY',  c: '#f59e0b'},
   'CLOUD SECURITY': {m: 2.5, l: '2.5x CLOUD', c: '#06b6d4'},
@@ -11,318 +11,293 @@ const MULTS = {
 };
 const getMInfo = cat => MULTS[cat] || MULTS['BASE'];
 
-// Grafo Narrativo - TODAS 4 OPCIONES
+// Grafo Narrativo - Recompensas realistas ($0.01 - $0.05)
 const NODOS = {
   "inicio": {
     categoria: "SOCIAL",
     titulo: "El Gancho Perfecto",
     narracion: "Es viernes a las 17:45. Llega un mail de 'RRHH': 'Actualización de política salarial 2026. Acción requerida hoy'. Tiene un PDF adjunto.",
-    videoPrompt: "🎬 POV Escritorio. Pantalla muestra notificación de correo. Asunto jugoso. Reloj de PC marca 17:45. Música de tensión sutil.",
+    videoPrompt: "🎬 POV Escritorio. Pantalla muestra notificación de correo. Asunto jugoso. Reloj de PC marca 17:45.",
     sponsor: "Patrocinado por Proofpoint",
     opciones: [
-      { t: "Abrir el PDF rápido para ver el bono.", next: "caida_phishing", rew: 0, exp: "La curiosidad mató al gato. Los PDFs pueden ejecutar código malicioso." },
-      { t: "Revisar la dirección del remitente detalladamente.", next: "analisis_remitente", rew: 0.10, exp: "Excelente instinto. La pausa táctica es tu mejor defensa." },
-      { t: "Ignorarlo, RRHH avisa estas cosas por Slack.", next: "ignorar_seguro", rew: 0.05, exp: "Decisión segura, pero dejaste pasar la oportunidad de cazar una amenaza activa." },
-      { t: "Subir el PDF a VirusTotal sin abrirlo.", next: "virustotal_win", rew: 0.20, exp: "Pensamiento avanzado. Analizar antes de detonar es de profesionales." }
+      { t: "Abrir el PDF rápido para ver el bono.", next: "caida_phishing", rew: 0, exp: "La curiosidad mató al gato. Los PDFs pueden ejecutar malware. Perdiste energía." },
+      { t: "Revisar la dirección del remitente.", next: "analisis_remitente", rew: 0.01, exp: "Excelente instinto. La pausa táctica es tu mejor defensa. +Energía." },
+      { t: "Ignorarlo, RRHH avisa estas cosas por Slack.", next: "ignorar_seguro", rew: 0.01, exp: "Decisión segura, pero dejaste pasar la oportunidad de cazar una amenaza. +Energía." },
+      { t: "Subir el PDF a VirusTotal sin abrirlo.", next: "virustotal_win", rew: 0.02, exp: "Pensamiento avanzado. Analizar antes de detonar es de profesionales. ++Energía." }
     ]
   },
   "virustotal_win": {
     categoria: "INCIDENTES",
     titulo: "Cazador de Malware",
-    narracion: "VirusTotal marca el archivo con 45/70 detecciones. Es un troyano Emotet. Acabás de evitar que toda tu empresa se infecte.",
-    videoPrompt: "🎬 Pantalla de VirusTotal. Interfaz roja parpadeando con la palabra 'MALICIOUS'. Zoom a la firma 'Emotet'.",
+    narracion: "VirusTotal marca el archivo con 45/70 detecciones. Es un troyano Emotet.",
+    videoPrompt: "🎬 Pantalla de VirusTotal en rojo 'MALICIOUS'.",
     sponsor: "Patrocinado por VirusTotal",
     opciones: [
-      { t: "Avisar al equipo de seguridad (SOC) urgente.", next: "soc_hero", rew: 0.30, exp: "Protocolo perfecto. La inteligencia compartida salva redes enteras." },
-      { t: "Ejecutarlo en una máquina virtual propia para analizarlo.", next: "analisis_forense", rew: 0.25, exp: "Riesgoso, pero es lo que hace un analista de malware de élite." },
-      { t: "Borrar el mail y seguir con tu vida.", next: "ignorar_seguro", rew: 0, exp: "Destruiste evidencia y otros empleados podrían caer. Pésimo." },
-      { t: "Responderle al hacker con un meme.", next: "error_novato", rew: 0, exp: "Nunca confirmes que existís interactuando con la infraestructura atacante." }
+      { t: "Avisar al equipo de seguridad (SOC).", next: "soc_hero", rew: 0.03, exp: "Protocolo perfecto. La inteligencia compartida salva redes enteras." },
+      { t: "Ejecutarlo en una máquina virtual propia.", next: "analisis_forense", rew: 0.02, exp: "Riesgoso pero útil para análisis forense." },
+      { t: "Borrar el mail y seguir con tu vida.", next: "ignorar_seguro", rew: 0, exp: "Destruiste evidencia. Pésimo." },
+      { t: "Responderle al hacker con un meme.", next: "error_novato", rew: 0, exp: "Nunca confirmes que existís." }
     ]
   },
   "caida_phishing": {
     categoria: "INCIDENTES",
     titulo: "Día Cero",
-    narracion: "Abriste el PDF. Adobe Reader se cuelga un segundo. De repente, el fondo de pantalla cambia a negro y aparece un candado rojo.",
-    videoPrompt: "🎬 Mouse hace doble clic. El cursor gira cargando. Glitch visual y la pantalla se inunda de calaveras ASCII rojas.",
+    narracion: "Abriste el PDF. El fondo de pantalla cambia a negro y aparece un candado rojo.",
+    videoPrompt: "🎬 Pantalla inunda de calaveras ASCII rojas. Ransomware activo.",
     sponsor: "Patrocinado por CrowdStrike",
     opciones: [
-      { t: "Desconectar la PC de la red y el WiFi brutalmente.", next: "apagon_hard", rew: 0.15, exp: "Contención nivel hardware. Evitaste que el ransomware salte a servidores." },
-      { t: "Pagar el rescate en Bitcoin con tu tarjeta.", next: "fin_quiebra", rew: 0, exp: "Financiar el terrorismo digital no garantiza que te devuelvan los datos." },
-      { t: "Llamar a tu jefe llorando.", next: "fin_despido", rew: 0, exp: "El pánico no resuelve incidentes. Hay que accionar técnicamente." },
-      { t: "Intentar matar el proceso desde el Administrador de Tareas.", next: "malware_persistente", rew: 0.05, exp: "Demasiado tarde. El malware ya inyectó código en procesos del sistema (svchost.exe)." }
+      { t: "Desconectar la PC de la red y el WiFi.", next: "apagon_hard", rew: 0.02, exp: "Contención nivel hardware. Evitaste propagación lateral." },
+      { t: "Pagar el rescate en Bitcoin.", next: "fin_quiebra", rew: 0, exp: "Financiar terrorismo digital no garantiza nada." },
+      { t: "Llamar a tu jefe llorando.", next: "fin_despido", rew: 0, exp: "El pánico no resuelve incidentes." },
+      { t: "Matar el proceso desde el Administrador de Tareas.", next: "malware_persistente", rew: 0, exp: "Demasiado tarde. Ya inyectó en svchost.exe." }
     ]
   },
   "analisis_remitente": {
     categoria: "SOCIAL",
     titulo: "El Truco Visual",
-    narracion: "El correo viene de 'rrhh@empresa-corp.co' (falta la 'm'). Es un ataque de 'Typosquatting'.",
-    videoPrompt: "🎬 Zoom extremo a la barra 'De:'. El '.co' brilla en rojo mientras suena un efecto sonoro de revelación (inception horn).",
+    narracion: "El correo viene de 'rrhh@empresa-corp.co' (falta la 'm'). Es Typosquatting.",
+    videoPrompt: "🎬 Zoom a la barra 'De:'. El '.co' brilla en rojo.",
     sponsor: "Patrocinado por Cloudflare",
     opciones: [
-      { t: "Reportarlo con el botón de Outlook 'Phishing'.", next: "soc_hero", rew: 0.25, exp: "Entrenás los filtros de correo de toda la compañía. Héroe anónimo." },
-      { t: "Comprar el dominio .com real para protegerlo.", next: "cloud_hero", rew: 0.15, exp: "Buena iniciativa de marca, pero el ataque vino desde el .co." },
-      { t: "Insultar al remitente por correo.", next: "error_novato", rew: 0, exp: "Mala Opsec. Ahora saben que tu correo es válido y lo lee un humano irascible." },
-      { t: "Hacer Ingeniería Inversa al servidor del atacante.", next: "analisis_forense", rew: 0.30, exp: "Hackear al hacker (Hack-back) es ilegal, pero en simulación... ¡vamos a ver!" }
+      { t: "Reportarlo con el botón de Phishing.", next: "soc_hero", rew: 0.03, exp: "Entrenás los filtros de correo. Héroe anónimo." },
+      { t: "Comprar el dominio .com real.", next: "cloud_hero", rew: 0.01, exp: "Iniciativa de marca, pero el ataque vino desde el .co." },
+      { t: "Insultar al remitente.", next: "error_novato", rew: 0, exp: "Mala Opsec. Confirmaste tu existencia." },
+      { t: "Hacer Ing. Inversa al server atacante.", next: "analisis_forense", rew: 0.03, exp: "Hack-back es ilegal, pero en simulación suma." }
     ]
   },
   "ignorar_seguro": {
     categoria: "INCIDENTES",
     titulo: "Propagación Silenciosa",
-    narracion: "Lo ignoraste. 10 minutos después, ves a tu compañero de finanzas abrir exactamente ese mismo PDF. Su PC se congela.",
-    videoPrompt: "🎬 Vista de reojo a la pantalla del compañero. Él hace doble clic. Susurrás 'No...' en cámara lenta.",
+    narracion: "10 minutos después, tu compañero abre el PDF y su PC se congela.",
+    videoPrompt: "🎬 Compañero haciendo doble clic. Susurrás 'No...' en cámara lenta.",
     sponsor: "Patrocinado por SentinelOne",
     opciones: [
-      { t: "Gritar '¡Fuego!' y tirarle del cable de red a su PC.", next: "apagon_hard", rew: 0.20, exp: "Extremo, pero aislar el nodo infectado es la regla #1 de contención." },
-      { t: "Hacerte el distraído e ir a buscar café.", next: "fin_quiebra", rew: 0, exp: "La inacción en seguridad te convierte en cómplice de la brecha." },
-      { t: "Sacar una foto para subir a Twitter.", next: "fin_despido", rew: 0, exp: "Violar políticas de confidencialidad de incidentes te asegura el despido." },
-      { t: "Reportar el incidente desde tu PC mientras él entra en pánico.", next: "soc_hero", rew: 0.15, exp: "Cabeza fría. Notificaste a los que pueden resolverlo." }
+      { t: "Tirarle del cable de red a su PC.", next: "apagon_hard", rew: 0.02, exp: "Aislar el nodo infectado es regla #1." },
+      { t: "Hacerte el distraído.", next: "fin_quiebra", rew: 0, exp: "La inacción te hace cómplice." },
+      { t: "Sacar una foto para Twitter.", next: "fin_despido", rew: 0, exp: "Violar confidencialidad = despido." },
+      { t: "Reportar el incidente desde tu PC.", next: "soc_hero", rew: 0.02, exp: "Notificaste a los que pueden resolverlo." }
     ]
   },
   "soc_hero": {
     categoria: "CLOUD SECURITY",
     titulo: "Ascenso a la Nube",
-    narracion: "IT te agradece por frenar el ataque. Como premio por tu instinto, te piden revisar una migración a la nube (AWS). Encontrás un Bucket S3 marcado 'Público'.",
-    videoPrompt: "🎬 Consola de AWS. Un enorme cartel naranja dice 'Publicly Accessible' en un bucket llamado 'backups-db-clientes'.",
-    sponsor: "Patrocinado por AWS Security",
+    narracion: "IT te agradece. Te piden auditar AWS. Encontrás un Bucket S3 marcado 'Público'.",
+    videoPrompt: "🎬 Consola AWS. Cartel naranja 'Publicly Accessible' en bucket 'backups'.",
+    sponsor: "Patrocinado por Wiz",
     opciones: [
-      { t: "Cambiar permisos a 'Privado' inmediatamente.", next: "cloud_hero", rew: 0.40, exp: "Reflejos de tigre. Acabás de evitar una demanda millonaria." },
-      { t: "Descargar los archivos para ver si tienen datos reales.", next: "error_legal", rew: 0, exp: "Violar leyes de privacidad (GDPR/HIPAA). Convertiste un hallazgo en un delito." },
-      { t: "Mandar un ticket a DevOps y esperar.", next: "cloud_lento", rew: 0.05, exp: "La burocracia no frena a los bots que escanean buckets abiertos 24/7." },
-      { t: "Escribir un script de Python para buscar más buckets abiertos.", next: "bounty_recon", rew: 0.30, exp: "Mentalidad ofensiva (Red Team). Escalar el descubrimiento." }
+      { t: "Cambiar permisos a 'Privado' inmediatamente.", next: "cloud_hero", rew: 0.04, exp: "Remediación instantánea. Salvaste la empresa." },
+      { t: "Descargar archivos para ver si son reales.", next: "error_legal", rew: 0, exp: "Violar leyes de privacidad (GDPR). Es un delito." },
+      { t: "Mandar un ticket a DevOps.", next: "cloud_lento", rew: 0, exp: "La burocracia no frena a los bots." },
+      { t: "Escribir script para buscar más buckets.", next: "bounty_recon", rew: 0.03, exp: "Mentalidad de Red Team." }
     ]
   },
   "cloud_hero": {
     categoria: "BUG BOUNTY",
-    titulo: "El Camino del Cazador",
-    narracion: "Impresionados por tu agilidad, te invitan al programa privado de Bug Bounty de la empresa. Te pagan por encontrar agujeros. ¿Por dónde empezás?",
-    videoPrompt: "🎬 Perfil de HackerOne abriéndose. Estadísticas en cero, pero tu reputación corporativa te da acceso VIP.",
+    titulo: "El Cazador",
+    narracion: "Te invitan al programa de Bug Bounty. Te pagan por encontrar vulnerabilidades. ¿Por dónde empezás?",
+    videoPrompt: "🎬 Perfil HackerOne abriéndose.",
     sponsor: "Patrocinado por HackerOne",
     opciones: [
-      { t: "Interceptar tráfico API con Burp Suite.", next: "bounty_idor", rew: 0.35, exp: "El análisis dinámico de API es la mina de oro moderna." },
-      { t: "Escanear subdominios abandonados.", next: "bounty_recon", rew: 0.30, exp: "Reconocimiento de superficie de ataque. Fundamental." },
-      { t: "Lanzar un escáner automatizado (Nessus) ruidoso.", next: "error_ruido", rew: 0.05, exp: "Mucho ruido, poco valor. El WAF te va a bloquear en 3 minutos." },
-      { t: "Buscar credenciales hardcodeadas en GitHub.", next: "bounty_github", rew: 0.40, exp: "Inteligencia de fuentes abiertas (OSINT). Los developers dejan llaves por todos lados." }
+      { t: "Interceptar API con Burp Suite.", next: "bounty_idor", rew: 0.04, exp: "Análisis dinámico. Mina de oro." },
+      { t: "Escanear subdominios abandonados.", next: "bounty_recon", rew: 0.03, exp: "Reconocimiento de superficie." },
+      { t: "Lanzar escáner automatizado.", next: "error_ruido", rew: 0, exp: "Genera mucho ruido y WAF te bloquea." },
+      { t: "Buscar credenciales en GitHub.", next: "bounty_github", rew: 0.04, exp: "OSINT. Los devs dejan llaves expuestas." }
     ]
   },
   "analisis_forense": {
     categoria: "INCIDENTES",
     titulo: "Juego Peligroso",
-    narracion: "Ejecutás el malware en tu laboratorio. El troyano intenta conectarse a un servidor de Comando y Control (C2) en Rusia. Tenés la IP.",
-    videoPrompt: "🎬 Terminal Wireshark fluyendo a mil por hora. Filtro IP aplicado. Se ilumina una conexión saliente misteriosa.",
+    narracion: "El troyano intenta conectarse a un C2 en Rusia. Tenés la IP.",
+    videoPrompt: "🎬 Wireshark fluyendo. Filtro IP aplicado.",
     sponsor: "Patrocinado por Wireshark",
     opciones: [
-      { t: "Bloquear esa IP en el firewall de la empresa.", next: "soc_hero", rew: 0.30, exp: "Contención inteligente basada en Indicadores de Compromiso (IOCs)." },
-      { t: "Atacar el servidor C2 ruso con DDoS.", next: "error_legal", rew: 0, exp: "Atacar infraestructura extranjera te convierte en un objetivo estatal. Ilegal." },
-      { t: "Vender la IP en un foro de ciberseguridad.", next: "fin_quiebra", rew: 0, exp: "Tráfico de inteligencia ilícito. Perdiste tu brújula moral." },
-      { t: "Analizar qué datos intentaba enviar el malware.", next: "cloud_hero", rew: 0.20, exp: "Descubrís que apuntaban a robar tokens de la Nube." }
+      { t: "Bloquear IP en firewall.", next: "soc_hero", rew: 0.03, exp: "Contención inteligente (IOC)." },
+      { t: "Atacar el servidor C2 (DDoS).", next: "error_legal", rew: 0, exp: "Hack-back es un crimen." },
+      { t: "Vender la IP en la Dark Web.", next: "fin_quiebra", rew: 0, exp: "Perdiste tu brújula moral." },
+      { t: "Analizar qué datos enviaba.", next: "cloud_hero", rew: 0.02, exp: "Descubrís que apuntaban a AWS." }
     ]
   },
   "bounty_idor": {
     categoria: "BUG BOUNTY",
     titulo: "Vulnerabilidad Lógica",
-    narracion: "Encontrás un endpoint `/api/factura/4040`. Cambiás el ID a `4041` en Burp Suite y... ¡ves la factura de otra empresa!",
-    videoPrompt: "🎬 Interfaz de Repeater en Burp. Se edita el número. Botón SEND. El panel derecho arroja datos JSON de otra corporación.",
+    narracion: "Endpoint `/api/factura/4040`. Cambiás a `4041` y ves la factura de otra empresa.",
+    videoPrompt: "🎬 Interfaz de Burp. Se edita el ID y arroja datos de otra corp.",
     sponsor: "Patrocinado por PortSwigger",
     opciones: [
-      { t: "Reportar Insecure Direct Object Reference (IDOR).", next: "fin_victoria", rew: 0.50, exp: "IDOR crítico. Es la vulnerabilidad web que más paga hoy." },
-      { t: "Escribir un script para bajar todas las facturas.", next: "error_legal", rew: 0, exp: "Demostraste el impacto excediendo los límites éticos. Te banean." },
-      { t: "Cobrar rescate a la otra empresa por su factura.", next: "fin_quiebra", rew: 0, exp: "Extorsión. Te convertiste en el villano de la historia." },
-      { t: "Probar si podés modificar la factura además de verla.", next: "fin_victoria", rew: 0.60, exp: "Escalar el impacto. Mass Assignment IDOR. ¡Bono extra!" }
+      { t: "Reportar IDOR crítico.", next: "boss_aws", rew: 0.05, exp: "Reporte perfecto de impacto alto." },
+      { t: "Bajar todas las facturas.", next: "error_legal", rew: 0, exp: "Excediste límites éticos." },
+      { t: "Cobrar rescate a la empresa.", next: "fin_quiebra", rew: 0, exp: "Extorsión." },
+      { t: "Probar modificar la factura.", next: "boss_aws", rew: 0.05, exp: "Mass Assignment. Aún más crítico." }
     ]
   },
   "bounty_github": {
     categoria: "BUG BOUNTY",
     titulo: "Secretos a Voces",
-    narracion: "Buscás en repositorios públicos de GitHub. Un dev subió por error un archivo `.env` con la llave maestra de la base de datos de producción.",
-    videoPrompt: "🎬 Búsqueda en GitHub. Un archivo .env crudo con el texto 'AWS_SECRET_ACCESS_KEY=AKIA...'. Lluvia dorada.",
+    narracion: "Encontrás un archivo `.env` con credenciales de DB de producción en GitHub.",
+    videoPrompt: "🎬 Búsqueda en GitHub. Archivo .env crudo.",
     sponsor: "Patrocinado por Truffle Security",
     opciones: [
-      { t: "Reportarlo de inmediato pidiendo rotación de llave.", next: "fin_victoria", rew: 0.60, exp: "Riesgo Crítico P1. Reporte perfecto." },
-      { t: "Loguearte a la DB para confirmar que funciona.", next: "error_legal", rew: 0, exp: "Nunca uses credenciales filtradas de producción en Bug Bounty." },
-      { t: "Crear un Pull Request borrando el archivo.", next: "error_novato", rew: 0, exp: "Borrarlo no lo elimina del historial de Git. Hay que rotar la llave." },
-      { t: "Reportar y escribir una regla de detección para el CI/CD.", next: "fin_victoria", rew: 0.80, exp: "DevSecOps puro. Solucionás el problema de raíz." }
+      { t: "Reportar pidiendo rotación de llave.", next: "boss_aws", rew: 0.05, exp: "Riesgo Crítico P1." },
+      { t: "Loguearte a la DB.", next: "error_legal", rew: 0, exp: "Nunca uses credenciales ajenas." },
+      { t: "Crear Pull Request borrándolo.", next: "error_novato", rew: 0, exp: "Borrar no lo saca del historial de git." },
+      { t: "Escribir regla de CI/CD.", next: "boss_aws", rew: 0.06, exp: "Solución de raíz. DevSecOps puro." }
     ]
   },
-  // Nodos de "Retorno/Castigo" - Ahora con 4 opciones
+  
+  // BOSS NODE (Examen Técnico)
+  "boss_aws": {
+    categoria: "CLOUD SECURITY",
+    titulo: "BOSS: Arquitectura de Escala",
+    narracion: "Llegaste a la etapa técnica de una entrevista. Te preguntan: '¿Cómo asegurarías un bucket S3 que necesita ser público para imágenes de una web, pero bloqueando bots raspatodo?'",
+    videoPrompt: "🎬 Panel de entrevistadores serios. Un cronómetro invisible de presión.",
+    sponsor: "ENTREVISTA PATROCINADA POR MERCADO LIBRE TECH",
+    isBoss: true,
+    opciones: [
+      { t: "Poner un WAF (CloudFront + AWS WAF) delante del Bucket.", next: "fin_victoria", rew: 0.15, exp: "¡EXCELENTE! Respuesta arquitectónica correcta de Nivel Senior. Te llevás el jackpot de energía." },
+      { t: "Hacer el Bucket privado y usar presigned URLs.", next: "fin_victoria", rew: 0.10, exp: "Respuesta válida para casos específicos, pero poco escalable para imágenes estáticas." },
+      { t: "Ocultar la URL del bucket en el código fuente.", next: "error_ruido", rew: 0, exp: "Seguridad por oscuridad. Fallaste la entrevista técnica." },
+      { t: "Configurar un CAPTCHA en el bucket.", next: "error_novato", rew: 0, exp: "AWS S3 no soporta lógica de CAPTCHA nativa. Falta de conocimientos Cloud." }
+    ]
+  },
+
+  // Retornos
   "apagon_hard": {
     categoria: "INCIDENTES",
     titulo: "Control de Daños",
-    narracion: "Tiraste del cable. IT te agradece, pero el equipo está inutilizable. Hay que investigar por qué el antivirus no saltó.",
-    videoPrompt: "🎬 Placa base humeando (metafóricamente). Un técnico forense conecta un pendrive de arranque.",
+    narracion: "IT te agradece, pero el equipo está frito.",
+    videoPrompt: "🎬 Placa base humeando.",
     sponsor: "Patrocinado por Mandiant",
     opciones: [
-      { t: "Exigir un aumento por salvar el día.", next: "soc_hero", rew: 0.15, exp: "Audaz. Te envían a entrenarte en Seguridad Cloud." },
-      { t: "Pedir que te enseñen a hacer análisis de memoria RAM.", next: "analisis_forense", rew: 0.25, exp: "El hambre de conocimiento forense es invaluable." },
-      { t: "Volver a tu puesto y hacer de cuenta que no pasó nada.", next: "ignorar_seguro", rew: 0, exp: "La apatía es enemiga de la seguridad." },
-      { t: "Culpar a RRHH por mandar correos tan obvios.", next: "fin_despido", rew: 0, exp: "Falta de profesionalismo. La seguridad es un problema de todos." }
+      { t: "Pedir aprender forense de RAM.", next: "analisis_forense", rew: 0.02, exp: "Hambre de conocimiento." },
+      { t: "Exigir aumento.", next: "soc_hero", rew: 0.01, exp: "Audaz." },
+      { t: "Volver al puesto en silencio.", next: "ignorar_seguro", rew: 0, exp: "Apatía." },
+      { t: "Culpar a RRHH.", next: "fin_despido", rew: 0, exp: "Cero profesionalismo." }
     ]
   },
   "malware_persistente": {
     categoria: "INCIDENTES",
-    titulo: "El Bicho Inmortal",
-    narracion: "El administrador de tareas no sirvió. El malware inyectó un Rootkit. Has perdido control total de la máquina.",
-    videoPrompt: "🎬 Ventanas multiplicándose solas. El puntero del mouse se mueve solo. Hackers controlando tu sesión por VNC.",
+    titulo: "Rootkit Inmortal",
+    narracion: "El malware inyectó un Rootkit.",
+    videoPrompt: "🎬 Ventanas multiplicándose solas.",
     sponsor: "Patrocinado por Malwarebytes",
     opciones: [
-      { t: "Desenroscar el disco duro físico.", next: "apagon_hard", rew: 0.10, exp: "Hardware beats Software. Frenaste la exfiltración." },
-      { t: "Reinstalar Windows encima.", next: "error_novato", rew: 0, exp: "Borrás la evidencia forense sin entender la persistencia de BIOS/UEFI." },
-      { t: "Dejar un cartel de 'HACKEADA' y salir corriendo.", next: "fin_despido", rew: 0, exp: "Abandono de puesto." },
-      { t: "Intentar lanzar un antivirus portátil desde un USB.", next: "virustotal_win", rew: 0.15, exp: "Buena reacción técnica, aunque los rootkits suelen esconderse de AVs básicos." }
+      { t: "Desconectar disco duro.", next: "apagon_hard", rew: 0.02, exp: "Hardware beats software." },
+      { t: "Reinstalar Windows encima.", next: "error_novato", rew: 0, exp: "Persistencia de BIOS/UEFI existe." },
+      { t: "Huir corriendo.", next: "fin_despido", rew: 0, exp: "Abandono." },
+      { t: "Lanzar AV portátil.", next: "virustotal_win", rew: 0.01, exp: "Los rootkits se esconden de AVs simples." }
     ]
   },
   "cloud_lento": {
     categoria: "CLOUD SECURITY",
-    titulo: "Dormirse en los Laureles",
-    narracion: "DevOps ignoró tu ticket. Un grupo de Ransomware robó los datos y extorsiona al CEO amenazando con publicar todo.",
-    videoPrompt: "🎬 Noticiero en TV. Titular urgente: 'Empresa sufre mega filtración. Acciones caen 40%'.",
+    titulo: "Demasiado Tarde",
+    narracion: "Ransomware robó los datos del bucket.",
+    videoPrompt: "🎬 TV: 'Empresa sufre mega filtración'.",
     sponsor: "Patrocinado por Varonis",
     opciones: [
-      { t: "Aprender que las fallas de Nube son incidentes críticos.", next: "cloud_hero", rew: 0, exp: "Lección aprendida: Escalar al CISO si es necesario." },
-      { t: "Decir 'Yo les avisé' y cruzarse de brazos.", next: "fin_despido", rew: 0, exp: "Tener razón no sirve si la empresa quiebra." },
-      { t: "Ofrecerte a rastrear los logs de AWS para ver qué robaron.", next: "analisis_forense", rew: 0.20, exp: "Mentalidad de respuesta a incidentes (IR). Resiliencia." },
-      { t: "Buscar nuevo trabajo antes de que se sepa.", next: "fin_quiebra", rew: 0, exp: "Cobardía corporativa." }
+      { t: "Escalar al CISO.", next: "cloud_hero", rew: 0.01, exp: "Fallaste el proceso, pero corregís." },
+      { t: "Decir 'Yo avisé'.", next: "fin_despido", rew: 0, exp: "Tener razón no sirve si quiebran." },
+      { t: "Rastrear logs de AWS (CloudTrail).", next: "analisis_forense", rew: 0.02, exp: "Mentalidad forense." },
+      { t: "Buscar nuevo trabajo.", next: "fin_quiebra", rew: 0, exp: "Cobardía." }
     ]
   },
   "error_novato": {
     categoria: "SOCIAL",
-    titulo: "Ataque Dirigido",
-    narracion: "El atacante sabe que existís. Al otro día, te llama por teléfono tu 'Jefe' (voz clonada por IA) pidiendo una transferencia urgente.",
-    videoPrompt: "🎬 Teléfono sonando. La pantalla dice 'Jefe (Urgente)'. Audio distorsionado clonando su voz.",
+    titulo: "Ataque Dirigido (Vishing)",
+    narracion: "Llama tu 'Jefe' (voz clonada por IA) pidiendo una transferencia.",
+    videoPrompt: "🎬 Teléfono suena: 'Jefe (Urgente)'.",
     sponsor: "Patrocinado por ElevenLabs Security",
     opciones: [
-      { t: "Hacer la transferencia, es tu jefe.", next: "fin_despido", rew: 0, exp: "Deepfake de voz (Vishing). Caíste en la estafa moderna más peligrosa." },
-      { t: "Cortar y llamarlo vos por otro canal (Slack/Teléfono oficial).", next: "soc_hero", rew: 0.25, exp: "Verificación Fuera de Banda (OOB). Evitaste el fraude." },
-      { t: "Preguntarle algo que solo él sabría.", next: "soc_hero", rew: 0.15, exp: "Autenticación basada en conocimiento. Buena estrategia humana." },
-      { t: "Empezar a insultar a la voz robot.", next: "inicio", rew: 0, exp: "Volvé a empezar y aprendé a mantener el profesionalismo." }
+      { t: "Hacer transferencia.", next: "fin_despido", rew: 0, exp: "Caíste en Deepfake." },
+      { t: "Cortar y llamar por Slack oficial.", next: "soc_hero", rew: 0.02, exp: "Verificación Fuera de Banda (OOB)." },
+      { t: "Preguntar algo privado.", next: "soc_hero", rew: 0.01, exp: "Autenticación basada en conocimiento." },
+      { t: "Insultar a la IA.", next: "inicio", rew: 0, exp: "Mantén el profesionalismo." }
     ]
   },
   "error_legal": {
     categoria: "CLOUD SECURITY",
-    titulo: "Problemas Legales",
-    narracion: "Por extraer datos o atacar de vuelta, el área legal (Compliance) frena tus operaciones. Estás bajo investigación.",
-    videoPrompt: "🎬 Oficina gris. Abogado de la empresa empujando papeles. Cartel 'Confidential Investigation'.",
+    titulo: "Problemas de Compliance",
+    narracion: "Por extraer datos/atacar, Legal te investiga.",
+    videoPrompt: "🎬 Oficina gris. Abogado investigando.",
     sponsor: "Patrocinado por LegalTech",
     opciones: [
-      { t: "Contratar un abogado propio y renunciar.", next: "fin_quiebra", rew: 0, exp: "Fin de tu carrera de ciberseguridad corporativa." },
-      { t: "Colaborar mostrando que fue sin mala intención (Mens rea).", next: "inicio", rew: 0, exp: "Zafás del despido, pero volvés a cero. Lección: Cuidado con las leyes (CFAA/GDPR)." },
-      { t: "Intentar borrar los logs de AWS CloudTrail.", next: "fin_despido", rew: 0, exp: "Obstrucción de justicia. Ahora es un caso criminal." },
-      { t: "Escribir un reporte post-mortem asumiendo la culpa procesal.", next: "cloud_hero", rew: 0.10, exp: "Admitir errores de proceso demuestra madurez gerencial." }
+      { t: "Contratar abogado y renunciar.", next: "fin_quiebra", rew: 0, exp: "Fin de carrera." },
+      { t: "Colaborar mostrando falta de intención.", next: "inicio", rew: 0, exp: "Zafás pero volvés a cero." },
+      { t: "Borrar logs de AWS.", next: "fin_despido", rew: 0, exp: "Obstrucción de justicia." },
+      { t: "Escribir reporte post-mortem asumiendo culpa.", next: "cloud_hero", rew: 0.01, exp: "Madurez corporativa." }
     ]
   },
   "error_ruido": {
     categoria: "BUG BOUNTY",
-    titulo: "El Elefante en la Cacharrería",
-    narracion: "Tu escáner automatizado mandó 10,000 requests por segundo. Tiraste el servidor de staging y tu IP fue bloqueada permanentemente por el WAF.",
-    videoPrompt: "🎬 Pantalla inyectando logs a lo loco. De repente: 'Error 403 Forbidden - WAF Blocked'.",
+    titulo: "Fuerza Bruta Ciega",
+    narracion: "Tu escáner tiró el servidor de staging y tu IP fue bloqueada.",
+    videoPrompt: "🎬 'Error 403 Forbidden - WAF Blocked'.",
     sponsor: "Patrocinado por Imperva",
     opciones: [
-      { t: "Cambiar tu IP con una VPN y seguir escaneando igual.", next: "error_legal", rew: 0, exp: "Evasión activa. Estás cruzando la línea a atacante malicioso." },
-      { t: "Aprender a hacer escaneos sigilosos y pausados.", next: "bounty_recon", rew: 0.20, exp: "La precisión siempre le gana a la fuerza bruta." },
-      { t: "Reportar como vuln que 'el servidor se cae fácil' (DoS).", next: "fin_despido", rew: 0, exp: "Los DoS están casi siempre fuera de scope. No hagas perder tiempo." },
-      { t: "Usar Google Dorks pasivamente para no tocar el server.", next: "bounty_github", rew: 0.30, exp: "OSINT no genera ruido. Inteligencia táctica pura." }
+      { t: "Usar VPN y seguir escaneando.", next: "error_legal", rew: 0, exp: "Evasión maliciosa." },
+      { t: "Hacer escaneos pausados.", next: "bounty_recon", rew: 0.02, exp: "La precisión gana a la fuerza bruta." },
+      { t: "Reportar 'se cae fácil' (DoS).", next: "fin_despido", rew: 0, exp: "DoS está fuera de scope." },
+      { t: "Usar Google Dorks (Pasivo).", next: "bounty_github", rew: 0.03, exp: "OSINT no hace ruido." }
     ]
   },
   "bounty_recon": {
     categoria: "BUG BOUNTY",
-    titulo: "Reconocimiento de Área",
-    narracion: "Haciendo recon pasivo, encontrás un subdominio `soporte.empresa.com` que apunta a un bucket de AWS que ya fue borrado.",
-    videoPrompt: "🎬 Consola negra. Herramienta 'subfinder' encuentra un target. Un ping devuelve '404 NoSuchBucket'.",
+    titulo: "Subdominio Abandonado",
+    narracion: "Subdominio soporte apunta a un S3 que devuelve 404 NoSuchBucket.",
+    videoPrompt: "🎬 Ping devuelve '404 NoSuchBucket'.",
     sponsor: "Patrocinado por ProjectDiscovery",
     opciones: [
-      { t: "Registrar ese bucket vacío con tu cuenta de AWS.", next: "fin_victoria", rew: 0.50, exp: "¡Subdomain Takeover! Tenés control total del dominio de la empresa." },
-      { t: "Tratar de adivinar archivos dentro del bucket 404.", next: "error_ruido", rew: 0, exp: "Pérdida de tiempo. El bucket ya no existe físicamente." },
-      { t: "Buscar credenciales de AWS en el código fuente de la página.", next: "bounty_github", rew: 0.25, exp: "Buen pivote de ataque." },
-      { t: "Reportar el 404 como 'Informativo'.", next: "error_novato", rew: 0, exp: "Desperdiciaste un impacto Crítico (Takeover) reportándolo como un error de diseño." }
+      { t: "Registrar el bucket vacío a tu nombre.", next: "boss_aws", rew: 0.04, exp: "Subdomain Takeover." },
+      { t: "Adivinar archivos adentro.", next: "error_ruido", rew: 0, exp: "Pérdida de tiempo, no existe." },
+      { t: "Buscar credenciales en el HTML.", next: "bounty_github", rew: 0.02, exp: "Buen pivote." },
+      { t: "Reportar 404 como 'Informativo'.", next: "error_novato", rew: 0, exp: "Desperdiciaste un impacto Crítico." }
     ]
   },
-  "fin_quiebra": {
-    categoria: "BASE",
-    titulo: "Carrera Terminada",
-    narracion: "Tus decisiones erráticas llevaron a pérdidas financieras y reputacionales irreparables. Ya nadie confía en tu criterio.",
-    videoPrompt: "🎬 Pantalla de cajero automático diciendo 'Fondos Insuficientes'. Lluvia.",
-    sponsor: "MicroSecure Awareness",
-    opciones: [
-      { t: "Reflexionar sobre qué es el profesionalismo y reiniciar.", next: "inicio", rew: 0, exp: "A veces la vida requiere un hard reset." },
-      { t: "Culpar a la 'Matrix' corporativa.", next: "inicio", rew: 0, exp: "Cero auto-percepción." },
-      { t: "Empezar a estudiar programación desde cero.", next: "inicio", rew: 0, exp: "Saber construir ayuda a saber destruir de forma segura." },
-      { t: "Crear una nueva cuenta en LinkedIn y empezar otra vez.", next: "inicio", rew: 0, exp: "El ecosistema olvida, pero la base de datos no." }
-    ]
-  },
-  "fin_despido": {
-    categoria: "BASE",
-    titulo: "Tarjeta Roja",
-    narracion: "Seguridad Corporativa desactivó tu badge. Estás afuera. Tomaste decisiones irracionales bajo presión.",
-    videoPrompt: "🎬 Puerta de vidrio corporativa. Un guardia de seguridad pide tu tarjeta. Fundido a negro.",
-    sponsor: "MicroSecure Training",
-    opciones: [
-      { t: "Entrenar tu inteligencia emocional y volver a intentar.", next: "inicio", rew: 0, exp: "Ciberseguridad es 50% técnica, 50% control del pánico." },
-      { t: "Revisar los logs mentales de dónde fallaste.", next: "inicio", rew: 0, exp: "Análisis post-mortem personal. Vital." },
-      { t: "Intentar hackear a tu ex-empresa por venganza.", next: "error_legal", rew: 0, exp: "Insistís con la criminalidad." },
-      { t: "Estudiar leyes de cumplimiento (Compliance) para entenderlos.", next: "cloud_lento", rew: 0, exp: "Interesante giro de carrera." }
-    ]
-  },
-  "fin_victoria": {
-    categoria: "BASE",
-    titulo: "Operador de Élite",
-    narracion: "Resolviste brechas, descubriste bugs y demostraste madurez técnica. Has sobrevivido a la simulación con saldo a favor.",
-    videoPrompt: "🎬 Pantalla estilo matriz verde. Texto fluyendo: 'Misión Completada. Estatus: Agente Validado'.",
-    sponsor: "Patrocinado por MicroSecure",
-    opciones: [
-      { t: "Registrar mi identidad en la base de datos (Guardar progreso).", next: "registro_lead", rew: 0, exp: "Inmortaliza tu nombre en la red." },
-      { t: "Descargar mi portafolio forense directamente.", next: "resumen", rew: 0, exp: "Vamos al reporte final." },
-      { t: "Volver a jugar para maximizar recompensas.", next: "inicio", rew: 0, exp: "Loop infinito de minado de atención." },
-      { t: "Desafiar al creador de la simulación.", next: "registro_lead", rew: 0, exp: "Solo los audaces sobreviven." }
-    ]
-  },
-  "registro_lead": {
-    categoria: "BASE",
-    titulo: "Conexión a la Red",
-    narracion: "Para archivar tu mapa de decisiones en el ranking global, necesitamos autenticar tu entidad. Ingresa tu correo cifrado.",
-    videoPrompt: "🎬 Interfaz futurista de escaneo biométrico simulado. 'Esperando input humano...'",
-    sponsor: "MicroSecure Network",
-    isLeadCapture: true,
-    opciones: []
-  },
-  "resumen": {
-    isResumen: true // Atajo técnico para salir
-  }
+  "fin_quiebra": { categoria: "BASE", titulo: "Carrera Terminada", narracion: "Perdiste credibilidad profesional.", videoPrompt: "🎬 Fondos Insuficientes.", sponsor: "MicroSecure Awareness", opciones: [ { t: "Reflexionar y reiniciar.", next: "inicio", rew: 0, exp: "Hard reset mental." }, { t: "Estudiar programación.", next: "inicio", rew: 0, exp: "Saber construir ayuda a destruir seguro." }, { t: "Crear otro LinkedIn.", next: "inicio", rew: 0, exp: "La DB no olvida." }, { t: "Culpar a todos.", next: "inicio", rew: 0, exp: "Cero autocrítica." } ] },
+  "fin_despido": { categoria: "BASE", titulo: "Despedido", narracion: "Tu badge corporativo fue desactivado.", videoPrompt: "🎬 Guardia pide tu tarjeta.", sponsor: "MicroSecure Training", opciones: [ { t: "Entrenar control de pánico.", next: "inicio", rew: 0, exp: "50% técnica, 50% pánico." }, { t: "Análisis post-mortem.", next: "inicio", rew: 0, exp: "Vital." }, { t: "Hackear ex-empresa.", next: "error_legal", rew: 0, exp: "Criminal." }, { t: "Estudiar Compliance.", next: "cloud_lento", rew: 0, exp: "Giro de carrera." } ] },
+  "fin_victoria": { categoria: "BASE", titulo: "Agente Validado", narracion: "Has demostrado madurez técnica.", videoPrompt: "🎬 'Misión Completada'.", sponsor: "Patrocinado por MicroSecure", opciones: [ { t: "Registrar mi perfil vocacional.", next: "registro_lead", rew: 0, exp: "Guarda tu data." }, { t: "Ver mi portafolio directo.", next: "resumen", rew: 0, exp: "Vamos al reporte." }, { t: "Farmear más simulaciones.", next: "inicio", rew: 0, exp: "Sigue el minado." }, { t: "Desafiar al sistema.", next: "registro_lead", rew: 0, exp: "Audaz." } ] },
+  "registro_lead": { categoria: "BASE", titulo: "Perfil Forense", narracion: "Guardá tu mapa vocacional para ofertas laborales patrocinadas.", videoPrompt: "🎬 Escaneo biométrico.", sponsor: "MicroSecure Talent Hub", isLeadCapture: true, opciones: [] },
+  "resumen": { isResumen: true }
 };
 
-// ESTADO V5.1
+// ESTADO V6
 let E = {
   nodoActual: "inicio",
-  wallet: 0.0,
-  walletTotal: 0.0,
-  historial: [], // Array de { id, txt, esBuena }
-  email: null
+  wallet: 0.0, // Sesión actual
+  walletTotal: 0.0, // Histórico
+  historial: [], 
+  email: null,
+  racha: 1.0 // Sistema de Energía
 };
 
-// PERSISTENCIA
+// PERSISTENCIA FIXEADA
 function cargar(){
-  E.walletTotal = parseFloat(localStorage.getItem('ms5_wt') || '0');
-  E.email = localStorage.getItem('ms5_mail');
+  E.walletTotal = parseFloat(localStorage.getItem('ms6_wt') || '0');
+  E.email = localStorage.getItem('ms6_mail');
+  try {
+    const hs = localStorage.getItem('ms6_hist');
+    if(hs) E.historial = JSON.parse(hs);
+  } catch(e) { E.historial = []; }
 }
 function guardar(){
-  localStorage.setItem('ms5_wt', E.walletTotal.toFixed(4));
-  if(E.email) localStorage.setItem('ms5_mail', E.email);
+  localStorage.setItem('ms6_wt', E.walletTotal.toFixed(4));
+  if(E.email) localStorage.setItem('ms6_mail', E.email);
+  localStorage.setItem('ms6_hist', JSON.stringify(E.historial));
 }
 
-// INTRO
 function initIntro(){
   cargar();
   const wp = document.getElementById('wallet-prev');
   if(wp) wp.textContent = '$' + E.walletTotal.toFixed(2);
-  
   if(E.email) {
     const s = document.querySelector('.sponsor-note');
     if(s) s.innerHTML = `Identidad verificada: <b>${E.email}</b>.`;
   }
 }
 
-// FLUJO CYOA
 function iniciarHistoria(){
   E.wallet = 0.0;
-  E.historial = [];
+  E.racha = 1.0; 
+  // No vaciamos E.historial para que el portafolio sea acumulativo a lo largo de las vidas
   cambiarPantalla('screen-intro', 'screen-feed');
   mostrarNodo("inicio");
 }
@@ -331,6 +306,14 @@ function cambiarPantalla(a,b){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(b).classList.add('active');
   window.scrollTo(0,0);
+}
+
+function actualizarEnergiaUI() {
+  const energyDisplay = document.getElementById('racha-display');
+  if(energyDisplay) {
+    energyDisplay.textContent = `⚡ ${E.racha.toFixed(1)}x`;
+    energyDisplay.style.color = E.racha < 1 ? '#ef4444' : (E.racha >= 2 ? '#f59e0b' : '#10b981');
+  }
 }
 
 function mostrarNodo(id) {
@@ -345,8 +328,14 @@ function mostrarNodo(id) {
   mb.textContent = mi.l;
   mb.style.cssText = `color:${mi.c};border-color:${mi.c}55;background:${mi.c}18;`;
   
-  document.getElementById('reel-sponsor').textContent = nodo.sponsor;
+  actualizarEnergiaUI();
+  
+  document.getElementById('reel-sponsor').innerHTML = nodo.isBoss ? `<a href="https://mercadolibre.com/empleos" target="_blank" style="color:inherit;text-decoration:underline;">${nodo.sponsor}</a>` : nodo.sponsor;
   document.getElementById('nodo-titulo').textContent = nodo.titulo;
+  
+  if(nodo.isBoss) document.getElementById('nodo-titulo').style.color = '#f59e0b';
+  else document.getElementById('nodo-titulo').style.color = '#fff';
+
   document.getElementById('nodo-narracion').textContent = nodo.narracion;
   document.getElementById('vp-text').textContent = nodo.videoPrompt;
   
@@ -357,21 +346,18 @@ function mostrarNodo(id) {
     optsContainer.innerHTML = `
       <div class="lead-form">
         <input type="email" id="lead-email" placeholder="agente@dominio.com" class="lead-input" value="${E.email || ''}">
-        <button class="btn-lead" onclick="guardarLead()">Autenticar Identidad</button>
+        <button class="btn-lead" onclick="guardarLead()">Conectar Perfil Vocacional</button>
         <button class="btn-lead-skip" onclick="mostrarResumen()">Omitir (Forense Anónimo)</button>
       </div>
     `;
   } else {
-    // Mezclar opciones para que no sea predecible
     const orden = [...nodo.opciones].sort(() => Math.random() - 0.5);
     orden.forEach(op => {
-      const mult = mi.m;
-      const recompensaReal = op.rew * mult;
       const btn = document.createElement('button');
       btn.className = 'btn-opcion-narrativa';
-      let rewardHTML = recompensaReal > 0 ? `<span class="op-reward-tag">+$${recompensaReal.toFixed(2)}</span>` : '';
-      btn.innerHTML = `<div class="op-texto">${op.t}</div> ${rewardHTML}`;
-      btn.onclick = () => procesarDecision(id, op, recompensaReal, nodo.titulo);
+      // OCULTANDO RECOMPENSA PREVIA
+      btn.innerHTML = `<div class="op-texto">${op.t}</div>`;
+      btn.onclick = () => procesarDecision(id, op, nodo);
       optsContainer.appendChild(btn);
     });
   }
@@ -383,31 +369,46 @@ function mostrarNodo(id) {
   optsContainer.style.display = 'flex';
 }
 
-function procesarDecision(nodeId, opcion, recompensaReal, tituloNodo) {
+function procesarDecision(nodeId, opcion, nodoObj) {
   document.getElementById('opciones-container').style.display = 'none';
   
-  const esBuena = recompensaReal > 0;
+  const mi = getMInfo(nodoObj.categoria);
+  const esBuena = opcion.rew > 0;
   
-  // Guardar en historial rico para el Mapa
+  // SISTEMA DE ENERGÍA (RACHA)
+  if(esBuena) {
+    E.racha = Math.min(E.racha + 0.2, 2.5);
+  } else {
+    // Si falla en un BOSS, castigo severo. Sino castigo normal.
+    E.racha = nodoObj.isBoss ? 0.1 : Math.max(E.racha - 0.4, 0.1);
+  }
+
+  // CÁLCULO FINAL RECOMPENSA
+  const recompensaFinal = opcion.rew * mi.m * E.racha;
+  
+  // Guardar en historial rico para el Mapa/Perfil Vocacional
   E.historial.push({
     id: nodeId,
-    titulo: tituloNodo,
+    titulo: nodoObj.titulo,
+    categoria: nodoObj.categoria,
     decision: opcion.t,
     buena: esBuena
   });
 
-  if(esBuena) {
-    E.wallet += recompensaReal;
-    E.walletTotal += recompensaReal;
-    actualizarWalletHUD(recompensaReal);
+  if(recompensaFinal > 0) {
+    E.wallet += recompensaFinal;
+    E.walletTotal += recompensaFinal;
+    actualizarWalletHUD(recompensaFinal);
     guardar();
   }
   
+  actualizarEnergiaUI();
+
   const fbPanel = document.getElementById('feedback-panel');
   document.getElementById('fb-icon').textContent = esBuena ? '📈' : '📉';
   document.getElementById('fb-icon').className = 'fb-icon ' + (esBuena ? 'buena' : 'mala');
   
-  document.getElementById('fb-recompensa').textContent = esBuena ? `+$${recompensaReal.toFixed(2)} ganados` : `Sin recompensa`;
+  document.getElementById('fb-recompensa').textContent = esBuena ? `+$${recompensaFinal.toFixed(3)} ganados (Racha ${E.racha.toFixed(1)}x)` : `Sin recompensa. Energía reducida.`;
   document.getElementById('fb-recompensa').style.color = esBuena ? '#10b981' : '#f87171';
   document.getElementById('fb-explicacion').textContent = opcion.exp;
   
@@ -422,48 +423,77 @@ function guardarLead() {
   if(mail && mail.includes('@')) {
     E.email = mail;
     guardar();
-    
-    // Feedback visual antes de saltar
     const btn = document.querySelector('.btn-lead');
-    btn.textContent = "¡Identidad Validada! ✔️";
+    btn.textContent = "¡Perfil Enlazado! ✔️";
     btn.style.background = "#10b981";
     setTimeout(() => { mostrarResumen(); }, 800);
   } else {
-    alert("Formato de correo cifrado (email) inválido.");
+    alert("Formato de correo inválido.");
   }
 }
 
 function actualizarWalletHUD(delta){
-  document.getElementById('wallet-display').textContent = '$' + E.wallet.toFixed(2);
+  document.getElementById('wallet-display').textContent = '$' + E.wallet.toFixed(3);
   const d = document.getElementById('wallet-delta');
-  d.textContent = '+$' + delta.toFixed(2); d.classList.add('show');
+  d.textContent = '+$' + delta.toFixed(3); d.classList.add('show');
   setTimeout(() => d.classList.remove('show'), 1200);
 }
 
-// RENDER MAPA DECISIONES
+// RENDER MAPA Y PERFIL VOCACIONAL
 function renderizarMapaDecisiones() {
   const container = document.getElementById('mapa-decisiones-lista');
+  const perfilContainer = document.getElementById('perfil-vocacional');
   if(!container) return;
   container.innerHTML = '';
   
   if(E.historial.length === 0) {
-    container.innerHTML = '<div class="mapa-vacio">No hay datos forenses en esta sesión.</div>';
+    container.innerHTML = '<div class="mapa-vacio">No hay datos forenses acumulados.</div>';
+    if(perfilContainer) perfilContainer.innerHTML = '';
     return;
   }
 
+  // Vocacional Stats
+  let stats = {};
+  let totalBuenas = 0;
+  
   E.historial.forEach((h, i) => {
+    // Render Lista
     const div = document.createElement('div');
     div.className = 'mapa-nodo';
     div.innerHTML = `
       <div class="mapa-linea"></div>
       <div class="mapa-punto ${h.buena ? 'punto-ok' : 'punto-err'}"></div>
       <div class="mapa-info">
-        <div class="mapa-titulo">${i+1}. ${h.titulo}</div>
+        <div class="mapa-titulo">${i+1}. ${h.titulo} <span style="opacity:0.5;font-size:10px">(${h.categoria})</span></div>
         <div class="mapa-decision">↳ ${h.decision}</div>
       </div>
     `;
     container.appendChild(div);
+    
+    // Contar vocacional
+    if(h.buena) {
+      stats[h.categoria] = (stats[h.categoria] || 0) + 1;
+      totalBuenas++;
+    }
   });
+  
+  // Dibujar Perfil Vocacional
+  if(perfilContainer && totalBuenas > 0) {
+    let topCat = Object.keys(stats).reduce((a, b) => stats[a] > stats[b] ? a : b);
+    perfilContainer.innerHTML = `
+      <div style="font-family:monospace;font-size:13px;color:#818cf8;margin-bottom:8px;">💡 Análisis Vocacional:</div>
+      <div style="font-size:14px;line-height:1.5;color:#f1f5f9;">
+        Tu perfil forense indica una alta afinidad hacia <b>${topCat}</b>. 
+        <br>Las empresas que buscan este perfil están monitoreando simulaciones como esta.
+      </div>
+    `;
+  }
+  
+  // Scrollear el mapa al fondo para ver las últimas decisiones
+  setTimeout(() => {
+    const mapaPanel = document.querySelector('.mapa-lista');
+    if(mapaPanel) mapaPanel.scrollTop = mapaPanel.scrollHeight;
+  }, 100);
 }
 
 // SHARE CARD
@@ -490,19 +520,18 @@ function descargarShareCard(){
   ctx.fillStyle = '#10b981'; ctx.font = 'bold 52px monospace'; ctx.fillText('$' + E.walletTotal.toFixed(2), 80, 340);
   ctx.fillStyle = '#64748b'; ctx.font = '18px monospace'; ctx.fillText('RECOMPENSA ACUMULADA', 80, 374);
   
-  ctx.fillStyle = '#6366f1'; ctx.font = 'bold 20px monospace'; ctx.fillText(`${E.historial.length} decisiones en bitácora`, 80, 428);
-  ctx.fillStyle = '#3f4a5e'; ctx.font = '16px monospace'; ctx.fillText('Sobreviví vos también en link.mercadopago.com.ar/trwe', 80, 510);
+  ctx.fillStyle = '#6366f1'; ctx.font = 'bold 20px monospace'; ctx.fillText(`${E.historial.length} decisiones analizadas`, 80, 428);
+  ctx.fillStyle = '#3f4a5e'; ctx.font = '16px monospace'; ctx.fillText('Postulate para entrevistas en link.mercadopago.com.ar/trwe', 80, 510);
   
   const url = canvas.toDataURL('image/png');
   const a = document.createElement('a'); a.download = 'microsecure-agente.png'; a.href = url; a.click();
 }
 
-// RESUMEN
 function mostrarResumen(){
   guardar();
   cambiarPantalla('screen-feed', 'screen-summary');
   
-  document.getElementById('summary-amount').textContent = '$' + E.wallet.toFixed(2);
+  document.getElementById('summary-amount').textContent = '$' + E.wallet.toFixed(3);
   document.getElementById('wallet-bar-current').textContent = '$' + E.walletTotal.toFixed(2);
   document.getElementById('wallet-total-label').textContent = 'Total histórico: $' + E.walletTotal.toFixed(2);
   
@@ -525,8 +554,6 @@ function abrirRetiro(m){
 
 function compartir(){
   const txt = `Acabo de completar un análisis forense en MicroSecure y gané $${E.wallet.toFixed(2)}. ¿Podrías sobrevivir vos? 🛡️\n${location.href}`;
-  
-  // Fallback robusto para PC/HTTP
   if(navigator.share && navigator.canShare && navigator.canShare({text:txt})) {
     navigator.share({title:'MicroSecure', text:txt, url:location.href}).catch(console.error);
   } else {

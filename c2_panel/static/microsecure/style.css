@@ -142,7 +142,9 @@ body { background: var(--bg); color: var(--text-1); font-family: var(--sans); mi
 /* MAPA DE DECISIONES */
 .mapa-panel { width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 22px; margin: 8px 0; text-align: left; }
 .mapa-title { font-size: 15px; font-weight: 700; margin-bottom: 18px; color: var(--text-1); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-.mapa-lista { display: flex; flex-direction: column; }
+.mapa-lista { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+.mapa-lista::-webkit-scrollbar { width: 6px; }
+.mapa-lista::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.5); border-radius: 4px; }
 .mapa-vacio { font-size: 13px; color: var(--text-3); font-style: italic; text-align: center; }
 .mapa-nodo { position: relative; padding-left: 24px; padding-bottom: 16px; }
 .mapa-nodo:last-child { padding-bottom: 0; }
