@@ -29,6 +29,7 @@
             <!-- TOP NAV -->
             <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
                 <button class="nav-item active" onclick="switchView('dashboard', this)" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold; padding: 5px 10px;">📊 Panel Principal</button>
+                <button class="nav-item" onclick="switchView('links', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">🎛️ Botonera de Enlaces</button>
                 <button class="nav-item" onclick="switchView('propuesta', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">💡 Propuesta / Donaciones</button>
             </div>
             
@@ -135,6 +136,89 @@
                 </div>
             </section>
 
+            <!-- VISTA BOTONERA DE ENLACES -->
+            <section id="view-links" class="view">
+                <h3 class="section-title">🎛️ Centro de Enlaces & Botonera Pública</h3>
+                <p class="view-desc" style="font-size: 11px; color: #94a3b8; margin-bottom: 15px;">Gestiona y promociona tus recursos públicos sin exponer la consola C2 privada.</p>
+
+                <!-- RECURSOS DESTACADOS -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <div class="card" style="padding: 14px; background: #0f172a; border: 1px solid #3b82f6;">
+                        <h4 style="color: #60a5fa; margin: 0 0 6px 0; font-size: 13px;">🎮 Juego Educativo MicroSecure</h4>
+                        <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 10px;">Simulador educativo en HTML/JS servido directamente desde OCI-2.</p>
+                        <div style="display: flex; gap: 6px;">
+                            <a id="link-microsecure-open" href="/microsecure/" target="_blank" class="btn btn-primary" style="font-size: 10px; padding: 6px; flex: 1; text-align: center; text-decoration: none;">🚀 Abrir Juego</a>
+                            <button onclick="copiarTexto(window.location.origin + '/microsecure/')" class="btn btn-secondary" style="font-size: 10px; padding: 6px; flex: 1;">📋 Copiar Link</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 14px; background: #0f172a; border: 1px solid #10b981;">
+                        <h4 style="color: #34d399; margin: 0 0 6px 0; font-size: 13px;">🛡️ Portafolio / Estado en Vivo</h4>
+                        <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 10px;">Estadísticas públicas de monitoreo 24/7 y transparencia técnica.</p>
+                        <div style="display: flex; gap: 6px;">
+                            <a id="link-status-open" href="/api/status" target="_blank" class="btn btn-primary" style="font-size: 10px; padding: 6px; flex: 1; text-align: center; text-decoration: none; background: #059669;">📊 Abrir Status</a>
+                            <button onclick="copiarTexto(window.location.origin + '/api/status')" class="btn btn-secondary" style="font-size: 10px; padding: 6px; flex: 1;">📋 Copiar Link</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRAMPAS CANARIO (SEÑUELOS PASIVOS) -->
+                <div class="card" style="padding: 14px; background: #0f172a; border: 1px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #f87171; margin: 0 0 6px 0; font-size: 13px;">🪤 Trampas Canario (Detección Pasiva de Escáneres)</h4>
+                    <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 12px;">Rutas trampa en la API. Si alguien las visita, te llega una alerta inmediata a Telegram.</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/.env</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/.env')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/.env')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/.git/config</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/.git/config')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/.git/config')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/wp-login.php</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/wp-login.php')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/wp-login.php')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/wp-admin</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/wp-admin')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/wp-admin')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/phpmyadmin</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/phpmyadmin')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/phpmyadmin')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-family: monospace; font-size: 11px; color: #fca5a5;">/config.php</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button onclick="probarCanario('/config.php')" class="btn btn-danger" style="font-size: 9px; padding: 3px 6px;">⚡ Probar</button>
+                                <button onclick="copiarTexto(window.location.origin + '/config.php')" class="btn btn-secondary" style="font-size: 9px; padding: 3px 6px;">📋 Copiar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- VISTA PROPUESTA DE VALOR & DONACIONES -->
             <section id="view-propuesta" class="view">
                 <h3 class="section-title">💡 Propuesta de Valor & Donaciones</h3>
@@ -220,17 +304,30 @@
             });
         });
     });
+    // Función auxiliar para copiar cualquier texto
+    function copiarTexto(texto) {
+        navigator.clipboard.writeText(texto).then(() => {
+            alert("📋 Enlace copiado al portapapeles:\n" + texto);
+        }).catch(err => {
+            alert("Error al copiar enlace.");
+        });
+    }
+
+    // Función para probar un canario directamente
+    function probarCanario(path) {
+        const fullUrl = window.location.origin + path;
+        fetch(fullUrl).then(() => {
+            alert("⚡ Trampa disparada para " + path + ". Revisá tu Telegram!");
+        }).catch(err => {
+            alert("Trampa ejecutada. Revisá tu Telegram.");
+        });
+    }
+
     // Función para copiar enlaces públicos
     function copiarEnlacesPublicos() {
-        // En OCI-2, la IP o el dominio están en location.origin, pero si es un túnel Cloudflare, será ese dominio.
         const origin = window.location.origin;
         const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/api/status\n\n🎮 Piloto Educativo MicroSecure:\n${origin}/microsecure/`;
-        navigator.clipboard.writeText(texto).then(() => {
-            alert("✅ Enlaces públicos copiados al portapapeles. Listos para pegar en LinkedIn o YouTube.");
-        }).catch(err => {
-            alert("Error al copiar enlaces.");
-            console.error(err);
-        });
+        copiarTexto(texto);
     }
     </script>
 </body>

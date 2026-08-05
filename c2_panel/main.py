@@ -1400,7 +1400,7 @@ async def canary_env(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /.env | IP={ip}")
     background_tasks.add_task(_canary_notify, "/.env", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/.git/config", include_in_schema=False)
 async def canary_git(request: Request, background_tasks: BackgroundTasks):
@@ -1408,7 +1408,7 @@ async def canary_git(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /.git/config | IP={ip}")
     background_tasks.add_task(_canary_notify, "/.git/config", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/wp-login.php", include_in_schema=False)
 async def canary_wp_login(request: Request, background_tasks: BackgroundTasks):
@@ -1416,7 +1416,7 @@ async def canary_wp_login(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /wp-login.php | IP={ip}")
     background_tasks.add_task(_canary_notify, "/wp-login.php", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/wp-admin", include_in_schema=False)
 @app.get("/wp-admin/", include_in_schema=False)
@@ -1425,7 +1425,7 @@ async def canary_wp_admin(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /wp-admin | IP={ip}")
     background_tasks.add_task(_canary_notify, "/wp-admin", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/phpmyadmin", include_in_schema=False)
 @app.get("/phpmyadmin/", include_in_schema=False)
@@ -1434,7 +1434,7 @@ async def canary_phpmyadmin(request: Request, background_tasks: BackgroundTasks)
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /phpmyadmin | IP={ip}")
     background_tasks.add_task(_canary_notify, "/phpmyadmin", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/config.php", include_in_schema=False)
 async def canary_config_php(request: Request, background_tasks: BackgroundTasks):
@@ -1442,7 +1442,7 @@ async def canary_config_php(request: Request, background_tasks: BackgroundTasks)
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /config.php | IP={ip}")
     background_tasks.add_task(_canary_notify, "/config.php", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/actuator/health", include_in_schema=False)
 async def canary_actuator(request: Request, background_tasks: BackgroundTasks):
@@ -1450,7 +1450,7 @@ async def canary_actuator(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /actuator/health | IP={ip}")
     background_tasks.add_task(_canary_notify, "/actuator/health", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 @app.get("/admin", include_in_schema=False)
 @app.get("/admin/", include_in_schema=False)
@@ -1459,7 +1459,7 @@ async def canary_admin(request: Request, background_tasks: BackgroundTasks):
     ua = request.headers.get("user-agent", "")
     print(f"[CANARY] /admin | IP={ip}")
     background_tasks.add_task(_canary_notify, "/admin", ip, ua)
-    raise HTTPException(status_code=404)
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
 if __name__ == "__main__":
