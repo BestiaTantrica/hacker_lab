@@ -30,7 +30,6 @@
             <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
                 <button class="nav-item active" onclick="switchView('dashboard', this)" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold; padding: 5px 10px;">📊 Panel Principal</button>
                 <button class="nav-item" onclick="switchView('links', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">🎛️ Botonera de Enlaces</button>
-                <button class="nav-item" onclick="switchView('propuesta', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">💡 Propuesta / Donaciones</button>
             </div>
             
             <!-- VISTA DASHBOARD -->
@@ -218,31 +217,6 @@
                     </div>
                 </div>
             </section>
-
-            <!-- VISTA PROPUESTA DE VALOR & DONACIONES -->
-            <section id="view-propuesta" class="view">
-                <h3 class="section-title">💡 Propuesta de Valor & Donaciones</h3>
-                <p class="view-desc">Monitoreo pasivo ético, transparente y abierto. Ayudá a sostener este proyecto.</p>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
-                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(30,20,60,0.9)); border: 1px solid rgba(124,58,237,0.4); border-radius: 12px;">
-                        <div style="font-size: 26px; font-weight: 700; color: #a78bfa; font-family: 'Fira Code', monospace;" id="metric-dominios">0</div>
-                        <div style="font-size: 10px; color: #c4b5fd; margin-top: 4px;">🌐 Dominios Monitoreados</div>
-                    </div>
-                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(46,204,113,0.15), rgba(20,40,30,0.9)); border: 1px solid rgba(46,204,113,0.4); border-radius: 12px;">
-                        <div style="font-size: 26px; font-weight: 700; color: #2ecc71; font-family: 'Fira Code', monospace;">24/7</div>
-                        <div style="font-size: 10px; color: #86efac; margin-top: 4px;">🔍 Monitoreo Continuo</div>
-                    </div>
-                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(251,191,36,0.12), rgba(40,30,10,0.9)); border: 1px solid rgba(251,191,36,0.35); border-radius: 12px;">
-                        <div style="font-size: 26px; font-weight: 700; color: #fbbf24; font-family: 'Fira Code', monospace;" id="metric-meses">0</div>
-                        <div style="font-size: 10px; color: #fde68a; margin-top: 4px;">📅 Meses Activo</div>
-                    </div>
-                    <div class="card stat-card" style="padding: 14px; text-align: center; background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(10,20,40,0.9)); border: 1px solid rgba(59,130,246,0.35); border-radius: 12px;">
-                        <div style="font-size: 26px; font-weight: 700; color: #60a5fa; font-family: 'Fira Code', monospace;">Open</div>
-                        <div style="font-size: 10px; color: #93c5fd; margin-top: 4px;">🛡️ Transparencia Técnica</div>
-                    </div>
-                </div>
-            </section>
         </div>
 
         <div class="split-sidebar">
@@ -304,13 +278,32 @@
             });
         });
     });
-    // Función auxiliar para copiar cualquier texto
+    // Función auxiliar para copiar cualquier texto (Compatible con HTTP e IPs sin SSL)
     function copiarTexto(texto) {
-        navigator.clipboard.writeText(texto).then(() => {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("📋 Enlace copiado al portapapeles:\n" + texto);
+            }).catch(() => fallbackCopiar(texto));
+        } else {
+            fallbackCopiar(texto);
+        }
+    }
+
+    function fallbackCopiar(texto) {
+        const textArea = document.createElement("textarea");
+        textArea.value = texto;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
             alert("📋 Enlace copiado al portapapeles:\n" + texto);
-        }).catch(err => {
-            alert("Error al copiar enlace.");
-        });
+        } catch (err) {
+            alert("No se pudo copiar automáticamente. Enlace:\n" + texto);
+        }
+        document.body.removeChild(textArea);
     }
 
     // Función para probar un canario directamente
