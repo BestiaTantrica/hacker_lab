@@ -135,6 +135,27 @@ def init_db():
         cursor.execute("ALTER TABLE findings ADD COLUMN poc_quality TEXT DEFAULT 'MEDIUM'")
     if "status_interno" not in cols_findings:
         cursor.execute("ALTER TABLE findings ADD COLUMN status_interno TEXT DEFAULT 'Pendiente'")
+
+    # Tabla de Leads MicroSecure V7 — perfiles vocacionales capturados
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS leads (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            historial_json TEXT NOT NULL DEFAULT '[]',
+            merito_score REAL DEFAULT 0.0,
+            jackpot_desbloqueado INTEGER DEFAULT 0,
+            perfil_top_categoria TEXT DEFAULT '',
+            reflexion_final TEXT DEFAULT '',
+            captured_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    # Migracion preventiva si la tabla ya existia sin columnas nuevas
+    cursor.execute("PRAGMA table_info(leads)")
+    cols_leads = [r[1] for r in cursor.fetchall()]
+    for col, default in [("merito_score", "0.0"), ("jackpot_desbloqueado", "0"),
+                         ("perfil_top_categoria", "''"), ("reflexion_final", "''")]:
+        if col not in cols_leads:
+            cursor.execute(f"ALTER TABLE leads ADD COLUMN {col} TEXT DEFAULT {default}")
     conn.commit()
     conn.close()
 
@@ -1606,6 +1627,69 @@ async def canary_admin(request: Request, background_tasks: BackgroundTasks):
     print(f"[CANARY] /admin | IP={ip}")
     background_tasks.add_task(_canary_notify, "/admin", ip, ua)
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+# --- MICROSECURE V7: LEADS & PERFILES VOCACIONALES ---
+
+class LeadPayload(BaseModel):
+    email: str
+    historial: Optional[List[dict]] = []
+    merito_score: Optional[float] = 0.0
+    jackpot_desbloqueado: Optional[bool] = False
+    perfil_top_categoria: Optional[str] = ""
+    reflexion_final: Optional[str] = ""
+
+@app.post("/api/leads")
+async def capturar_lead(payload: LeadPayload):
+    """
+    Endpoint para recibir perfiles vocacionales de MicroSecure V7.
+    Guarda email, historial de decisiones, metricas de merito y reflexion
+    del alumno en c2_db.sqlite para analisis de talento y contacto.
+    """
+    if not payload.email or "@" not in payload.email:
+        raise HTTPException(status_code=400, detail="Email invalido")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO leads (email, historial_json, merito_score, jackpot_desbloqueado,
+                           perfil_top_categoria, reflexion_final)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        payload.email,
+        json.dumps(payload.historial, ensure_ascii=False),
+        round(payload.merito_score, 4),
+        1 if payload.jackpot_desbloqueado else 0,
+        payload.perfil_top_categoria,
+        payload.reflexion_final
+    ))
+    lead_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    print(f"[LEAD] #{lead_id} | {payload.email} | score={payload.merito_score:.4f} | cat={payload.perfil_top_categoria}")
+    return {
+        "status": "captured",
+        "lead_id": lead_id,
+        "email": payload.email,
+        "merito_score": payload.merito_score,
+        "jackpot_desbloqueado": payload.jackpot_desbloqueado
+    }
+
+@app.get("/api/leads")
+async def listar_leads(limit: int = 50):
+    """Lista los ultimos leads capturados desde MicroSecure (solo para el operador C2)."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, email, merito_score, jackpot_desbloqueado,
+               perfil_top_categoria, reflexion_final, captured_at
+        FROM leads ORDER BY captured_at DESC LIMIT ?
+    """, (limit,))
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return {"status": "success", "total": len(rows), "leads": rows}
 
 
 if __name__ == "__main__":

@@ -144,19 +144,48 @@ const NODOS = {
     ]
   },
   
-  // BOSS NODE (Examen Técnico)
+  // BOSS NODE V7 — Cadena de 3 Fases Mutantes
   "boss_aws": {
     categoria: "CLOUD SECURITY",
-    titulo: "BOSS: Arquitectura de Escala",
-    narracion: "Llegaste a la etapa técnica de una entrevista. Te preguntan: '¿Cómo asegurarías un bucket S3 que necesita ser público para imágenes de una web, pero bloqueando bots raspatodo?'",
-    videoPrompt: "🎬 Panel de entrevistadores serios. Un cronómetro invisible de presión.",
-    sponsor: "ENTREVISTA PATROCINADA POR MERCADO LIBRE TECH",
+    titulo: "BOSS: Auditoría Cloud — Patrocinado por Mercado Libre Tech",
     isBoss: true,
-    opciones: [
-      { t: "Poner un WAF (CloudFront + AWS WAF) delante del Bucket.", next: "fin_victoria", rew: 0.15, exp: "¡EXCELENTE! Respuesta arquitectónica correcta de Nivel Senior. Te llevás el jackpot de energía." },
-      { t: "Hacer el Bucket privado y usar presigned URLs.", next: "fin_victoria", rew: 0.10, exp: "Respuesta válida para casos específicos, pero poco escalable para imágenes estáticas." },
-      { t: "Ocultar la URL del bucket en el código fuente.", next: "error_ruido", rew: 0, exp: "Seguridad por oscuridad. Fallaste la entrevista técnica." },
-      { t: "Configurar un CAPTCHA en el bucket.", next: "error_novato", rew: 0, exp: "AWS S3 no soporta lógica de CAPTCHA nativa. Falta de conocimientos Cloud." }
+    isBossChain: true,
+    sponsor: "MERCADO LIBRE TECH — PATROCINADOR DE ESTA AUDITORÍA",
+    profe: "Ing. Martín Soto — Cloud Security Lead",
+    fases: [
+      {
+        tipo: "video",
+        titulo: "Fase 1 / 3 — Escenario",
+        narracion: "El Ing. Soto explica: 'Tenemos un bucket S3 público para imágenes de la web. Los bots lo están raspando y nos cuesta $2,000/mes en transferencia. ¿Cómo lo cortamos sin romper la web?'",
+        videoPrompt: "🎬 Diagrama: Usuario → CloudFront → S3. Flechas de bots golpeando directo al S3.",
+        opciones: [
+          { t: "Entendido. Continuemos al análisis.", correcto: true, exp: "Bien. Primero entender el problema antes de actuar." },
+          { t: "Cerrar el bucket directamente.", correcto: false, exp: "Error: La web dejaría de cargar imágenes. Hay que entender antes de actuar." }
+        ]
+      },
+      {
+        tipo: "dragdrop",
+        titulo: "Fase 2 / 3 — Asociación Técnica",
+        narracion: "Arrastrá cada amenaza a su contramedida correcta.",
+        videoPrompt: "🎬 Panel de control. Líneas de asociación para conectar.",
+        pares: [
+          { amenaza: "Bots raspadores",      defensa: "AWS WAF + Rate Limit" },
+          { amenaza: "Acceso directo al S3", defensa: "CloudFront como CDN frontal" },
+          { amenaza: "Costo de transferencia", defensa: "Cache agresivo en Edge" }
+        ]
+      },
+      {
+        tipo: "logica",
+        titulo: "Fase 3 / 3 — Decisión Final",
+        narracion: "El CTO te pregunta: ¿Cuál es la arquitectura correcta para exponer imágenes públicas con protección anti-bot?",
+        videoPrompt: "🎬 CTO con los brazos cruzados. Esta es tu respuesta final.",
+        opciones: [
+          { t: "CloudFront + WAF delante del S3. El bucket queda privado.", correcto: true,  exp: "PERFECTO. Arquitectura Senior: CDN absorbe el tráfico, WAF filtra bots, S3 nunca queda expuesto directamente." },
+          { t: "Hacer el S3 público pero con signed URLs de corta duración.", correcto: false, exp: "Parcialmente correcto, pero no escala para imágenes estáticas públicas." },
+          { t: "Usar un CAPTCHA en la URL del bucket.", correcto: false, exp: "S3 no tiene CAPTCHA nativo. Imposible técnicamente." },
+          { t: "Esconder la URL en variables de entorno del frontend.", correcto: false, exp: "Seguridad por oscuridad. Cualquier Dev Tools lo expone." }
+        ]
+      }
     ]
   },
 
@@ -259,14 +288,22 @@ const NODOS = {
   "resumen": { isResumen: true }
 };
 
-// ESTADO V6
+// ESTADO V7 — Motor de Mérito + Boss Chains
 let E = {
   nodoActual: "inicio",
-  wallet: 0.0, // Sesión actual
-  walletTotal: 0.0, // Histórico
-  historial: [], 
+  wallet: 0.0,
+  walletTotal: 0.0,
+  historial: [],
   email: null,
-  racha: 1.0 // Sistema de Energía
+  racha: 1.0,
+  // V7: Mérito
+  tiempoInicioNodo: 0,       // Date.now() al mostrar cada nodo
+  tiemposRespuesta: [],      // ms de respuesta por decision correcta
+  aciertosConsecutivos: 0,   // racha limpia sin fallos
+  fallosEnBoss: 0,           // fallos dentro de la cadena del boss actual
+  // V7: Boss Chain
+  bossChain: null,           // {fases:[], faseActual:0, aciertos:0, tiempos:[]}
+  reflexionPendiente: false  // espera input del alumno post-boss
 };
 
 // PERSISTENCIA FIXEADA
@@ -566,4 +603,335 @@ function compartir(){
 }
 
 function reiniciar(){ iniciarHistoria(); }
+
+// ============================================================
+// MOTOR V7: MERITOCRACIA, BOSS CHAINS Y FEEDBACK BIDIRECCIONAL
+// ============================================================
+
+// Registrar inicio de timer al mostrar cada nodo
+const _mostrarNodoOrig = mostrarNodo;
+mostrarNodo = function(id) {
+  E.tiempoInicioNodo = Date.now();
+  const nodo = NODOS[id];
+  if (nodo && nodo.isBossChain) {
+    iniciarBossChain(id, nodo);
+    return;
+  }
+  _mostrarNodoOrig(id);
+};
+
+// ── Algoritmo de Mérito ──────────────────────────────────────
+// Evalúa velocidad + precisión. Solo el top 5% en ambas dimensiones
+// desbloquea el Jackpot patrocinado ($1.00+).
+function calcularMerito() {
+  const totalDecisiones = E.historial.length;
+  if (totalDecisiones === 0) return { score: 0, jackpot: false };
+
+  const buenas = E.historial.filter(h => h.buena).length;
+  const precision = buenas / totalDecisiones; // 0.0 - 1.0
+
+  // Velocidad promedio (solo decisiones correctas con tiempo registrado)
+  let velocidadScore = 0.5; // default
+  if (E.tiemposRespuesta.length > 0) {
+    const avgMs = E.tiemposRespuesta.reduce((a, b) => a + b, 0) / E.tiemposRespuesta.length;
+    // < 4s = excelente (1.0), 4-10s = bueno (0.6), > 10s = lento (0.2)
+    velocidadScore = avgMs < 4000 ? 1.0 : avgMs < 10000 ? 0.6 : 0.2;
+  }
+
+  // Score compuesto: 60% precisión, 40% velocidad
+  const score = (precision * 0.6) + (velocidadScore * 0.4);
+
+  // Jackpot: score > 0.90 Y racha activa >= 5 Y 0 fallos en el último Boss
+  const jackpot = score >= 0.90 && E.aciertosConsecutivos >= 5 && E.fallosEnBoss === 0;
+
+  return { score: parseFloat(score.toFixed(4)), jackpot };
+}
+
+// ── Boss Chain Engine ────────────────────────────────────────
+function iniciarBossChain(bossId, nodo) {
+  E.bossChain = {
+    id: bossId,
+    fases: nodo.fases,
+    faseActual: 0,
+    aciertos: 0,
+    fallos: 0,
+    tiempos: [],
+    sponsor: nodo.sponsor,
+    profe: nodo.profe,
+    titulo: nodo.titulo
+  };
+  E.fallosEnBoss = 0;
+  renderFaseBoss();
+}
+
+function renderFaseBoss() {
+  const bc = E.bossChain;
+  const fase = bc.fases[bc.faseActual];
+  E.tiempoInicioNodo = Date.now();
+
+  // Cabecera del Boss
+  document.getElementById('mult-badge').textContent = `BOSS ${bc.faseActual + 1}/${bc.fases.length}`;
+  document.getElementById('mult-badge').style.cssText = 'color:#f59e0b;border-color:#f59e0b55;background:#f59e0b18;';
+  document.getElementById('reel-sponsor').innerHTML =
+    `<span style="color:#f59e0b;font-weight:700;">${bc.sponsor}</span>`;
+  document.getElementById('nodo-titulo').textContent = fase.titulo;
+  document.getElementById('nodo-titulo').style.color = '#f59e0b';
+  document.getElementById('nodo-narracion').textContent = fase.narracion;
+  document.getElementById('vp-text').textContent = fase.videoPrompt;
+  document.getElementById('feedback-panel').style.display = 'none';
+
+  const container = document.getElementById('opciones-container');
+  container.style.display = 'flex';
+  container.innerHTML = '';
+
+  if (fase.tipo === 'dragdrop') {
+    renderDragDrop(fase, container);
+  } else {
+    // tipo 'video' o 'logica': múltiple choice estándar
+    const orden = [...fase.opciones].sort(() => Math.random() - 0.5);
+    orden.forEach(op => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-opcion-narrativa';
+      btn.innerHTML = `<div class="op-texto">${op.t}</div>`;
+      btn.onclick = () => procesarFaseBoss(op);
+      container.appendChild(btn);
+    });
+  }
+}
+
+function renderDragDrop(fase, container) {
+  // Mezcla defensas para que no aparezcan en el orden correcto
+  const defensasMezcladas = [...fase.pares.map(p => p.defensa)].sort(() => Math.random() - 0.5);
+
+  container.style.flexDirection = 'column';
+  container.innerHTML = `
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;text-align:center;">
+      Tocá una amenaza y luego su contramedida correcta.
+    </div>
+    <div id="dd-arena" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;">
+      <div id="dd-amenazas" style="display:flex;flex-direction:column;gap:6px;">
+        ${fase.pares.map((p, i) => `
+          <div class="dd-item dd-amenaza" data-idx="${i}" data-tipo="amenaza"
+               style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;transition:all .2s;">
+            ${p.amenaza}
+          </div>`).join('')}
+      </div>
+      <div id="dd-defensas" style="display:flex;flex-direction:column;gap:6px;">
+        ${defensasMezcladas.map((d, i) => `
+          <div class="dd-item dd-defensa" data-defensa="${d}"
+               style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;transition:all .2s;">
+            ${d}
+          </div>`).join('')}
+      </div>
+    </div>
+    <div id="dd-status" style="font-size:12px;color:#64748b;margin-top:8px;text-align:center;">
+      Pares correctos: <span id="dd-correctos">0</span> / ${fase.pares.length}
+    </div>`;
+
+  // Estado de selección
+  let amenazaSeleccionada = null;
+  const paresCorrectos = {};
+  const mapCorrect = {};
+  fase.pares.forEach(p => { mapCorrect[p.amenaza] = p.defensa; });
+
+  container.querySelectorAll('.dd-amenaza').forEach(el => {
+    el.addEventListener('click', () => {
+      if (el.dataset.matched) return;
+      container.querySelectorAll('.dd-amenaza').forEach(e => e.style.border = '1px solid #334155');
+      amenazaSeleccionada = el;
+      el.style.border = '2px solid #f59e0b';
+    });
+  });
+
+  container.querySelectorAll('.dd-defensa').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!amenazaSeleccionada || el.dataset.matched) return;
+      const amenazaTxt = amenazaSeleccionada.textContent.trim();
+      const defensaTxt = el.dataset.defensa;
+
+      if (mapCorrect[amenazaTxt] === defensaTxt) {
+        amenazaSeleccionada.style.background = '#064e3b';
+        amenazaSeleccionada.style.border = '1px solid #10b981';
+        el.style.background = '#064e3b';
+        el.style.border = '1px solid #10b981';
+        amenazaSeleccionada.dataset.matched = '1';
+        el.dataset.matched = '1';
+        paresCorrectos[amenazaTxt] = true;
+        const total = Object.keys(paresCorrectos).length;
+        document.getElementById('dd-correctos').textContent = total;
+        amenazaSeleccionada = null;
+        // Si todos correctos → avanzar fase
+        if (total === fase.pares.length) {
+          setTimeout(() => procesarFaseBoss({ correcto: true, exp: '¡Asociaciones perfectas! Conocés las contramedidas.' }), 600);
+        }
+      } else {
+        el.style.border = '2px solid #ef4444';
+        amenazaSeleccionada.style.border = '1px solid #334155';
+        amenazaSeleccionada = null;
+        setTimeout(() => { el.style.border = '1px solid #334155'; }, 600);
+        // Penalizar fallo
+        procesarFaseBoss({ correcto: false, exp: 'Asociación incorrecta. Revisá los conceptos.' }, true);
+      }
+    });
+  });
+}
+
+function procesarFaseBoss(opcion, esPenalizacion = false) {
+  const bc = E.bossChain;
+  const ms = Date.now() - E.tiempoInicioNodo;
+
+  if (opcion.correcto) {
+    bc.aciertos++;
+    bc.tiempos.push(ms);
+    E.tiemposRespuesta.push(ms);
+    E.aciertosConsecutivos++;
+  } else {
+    bc.fallos++;
+    E.fallosEnBoss++;
+    E.aciertosConsecutivos = 0;
+    if (esPenalizacion) return; // No avanzar fase en drag&drop hasta completar
+  }
+
+  // Mostrar feedback de fase
+  const fbPanel = document.getElementById('feedback-panel');
+  document.getElementById('fb-icon').textContent = opcion.correcto ? '✅' : '❌';
+  document.getElementById('fb-icon').className = 'fb-icon ' + (opcion.correcto ? 'buena' : 'mala');
+  document.getElementById('fb-recompensa').textContent =
+    opcion.correcto ? `Fase ${bc.faseActual + 1} superada. Tiempo: ${(ms/1000).toFixed(1)}s` : 'Fase fallida. Continúas igualmente.';
+  document.getElementById('fb-recompensa').style.color = opcion.correcto ? '#10b981' : '#f87171';
+  document.getElementById('fb-explicacion').textContent = opcion.exp;
+  document.getElementById('opciones-container').style.display = 'none';
+  fbPanel.style.display = 'flex';
+
+  bc.faseActual++;
+
+  const btnSig = document.getElementById('btn-siguiente-escena');
+  if (bc.faseActual < bc.fases.length) {
+    btnSig.textContent = `→ Fase ${bc.faseActual + 1}`;
+    btnSig.onclick = () => { fbPanel.style.display = 'none'; renderFaseBoss(); };
+  } else {
+    btnSig.textContent = '→ Ver Devolución del Profe';
+    btnSig.onclick = () => mostrarFeedbackBoss();
+  }
+}
+
+// ── Feedback Bidireccional Post-Boss ────────────────────────
+function mostrarFeedbackBoss() {
+  const bc = E.bossChain;
+  const merito = calcularMerito();
+  const aprobado = bc.aciertos >= Math.ceil(bc.fases.length * 0.66);
+  const avgTiempo = bc.tiempos.length > 0
+    ? (bc.tiempos.reduce((a,b)=>a+b,0)/bc.tiempos.length/1000).toFixed(1) : '?';
+
+  // Diagnóstico automático del sistema
+  const diagnostico = aprobado
+    ? `Superaste ${bc.aciertos}/${bc.fases.length} fases con un tiempo promedio de ${avgTiempo}s. Tu score de mérito general es ${(merito.score*100).toFixed(0)}%.`
+    : `Pasaste ${bc.aciertos}/${bc.fases.length} fases. Hubo ${bc.fallos} error(es). Score de mérito: ${(merito.score*100).toFixed(0)}%.`;
+
+  const container = document.getElementById('opciones-container');
+  container.style.display = 'flex';
+  container.style.flexDirection = 'column';
+  document.getElementById('feedback-panel').style.display = 'none';
+  document.getElementById('nodo-titulo').textContent = `Devolución del Profe`;
+  document.getElementById('nodo-narracion').textContent =
+    `${bc.profe} analiza tu desempeño en esta auditoría.`;
+
+  container.innerHTML = `
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:12px;">
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">📊 DIAGNÓSTICO DEL SISTEMA</div>
+      <div style="font-size:14px;color:#f1f5f9;line-height:1.5;">${diagnostico}</div>
+      ${aprobado ? '<div style="color:#10b981;font-weight:700;margin-top:8px;">✅ Boss Superado</div>'
+                 : '<div style="color:#f87171;font-weight:700;margin-top:8px;">⚠️ Boss completado con errores. Seguís avanzando.</div>'}
+    </div>
+    <div style="background:#1e293b;border:1px solid #6366f1;border-radius:12px;padding:16px;margin-bottom:12px;">
+      <div style="font-size:11px;color:#818cf8;margin-bottom:6px;">✍️ TU REFLEXIÓN (obligatoria)</div>
+      <textarea id="reflexion-input" placeholder="¿Qué aprendiste en esta auditoría? (mínimo 10 caracteres)"
+        style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#f1f5f9;padding:10px;
+               font-size:13px;resize:none;height:70px;box-sizing:border-box;"></textarea>
+    </div>
+    ${aprobado && merito.jackpot ? `
+      <div style="background:linear-gradient(135deg,#f59e0b22,#10b98122);border:2px solid #f59e0b;border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;">
+        <div style="font-size:18px;font-weight:800;color:#f59e0b;">🏆 JACKPOT PATROCINADO</div>
+        <div style="color:#f1f5f9;margin:6px 0;">Estás en el Top 5% de rendimiento. Mercado Libre Tech te fondea esta victoria.</div>
+        <div style="font-size:22px;color:#10b981;font-weight:800;">+$2.00 BONUS</div>
+      </div>` : ''}
+    <button onclick="confirmarReflexion(${aprobado})" 
+      style="background:#6366f1;color:#fff;border:none;border-radius:10px;padding:12px 24px;
+             font-size:14px;font-weight:700;cursor:pointer;width:100%;">
+      Confirmar y Continuar →
+    </button>`;
+
+  // Calcular y aplicar recompensa del boss
+  if (aprobado) {
+    const base = 0.10;
+    const bonusMerito = merito.score > 0.80 ? 0.05 : 0;
+    const bonusJackpot = merito.jackpot ? 2.00 : 0;
+    const recompensaTotal = (base + bonusMerito + bonusJackpot) * E.racha;
+    E.wallet += recompensaTotal;
+    E.walletTotal += recompensaTotal;
+    actualizarWalletHUD(recompensaTotal);
+    E.racha = Math.min(E.racha + 0.3, 2.5);
+    guardar();
+  } else {
+    E.racha = Math.max(E.racha - 0.2, 0.1);
+  }
+  actualizarEnergiaUI();
+}
+
+function confirmarReflexion(aprobado) {
+  const reflexion = (document.getElementById('reflexion-input')?.value || '').trim();
+  if (reflexion.length < 10) {
+    alert('Por favor dejá tu reflexión antes de continuar (mínimo 10 caracteres).');
+    return;
+  }
+  const bc = E.bossChain;
+  const merito = calcularMerito();
+
+  // Guardar en historial local
+  E.historial.push({
+    id: bc.id,
+    titulo: bc.titulo,
+    categoria: 'CLOUD SECURITY',
+    decision: `Boss completado: ${bc.aciertos}/${bc.fases.length} fases`,
+    buena: aprobado,
+    reflexion: reflexion,
+    merito_score: merito.score
+  });
+  guardar();
+
+  // Enviar lead a OCI-2 si hay email
+  if (E.email) enviarLeadOCI2(reflexion, merito);
+
+  E.bossChain = null;
+  mostrarNodo('fin_victoria');
+}
+
+// ── Envío de Lead a OCI-2 ───────────────────────────────────
+function enviarLeadOCI2(reflexionFinal, merito) {
+  const topCat = Object.entries(
+    E.historial.reduce((acc, h) => {
+      if (h.buena) acc[h.categoria] = (acc[h.categoria] || 0) + 1;
+      return acc;
+    }, {})
+  ).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+
+  const payload = {
+    email: E.email,
+    historial: E.historial.slice(-20), // últimas 20 decisiones
+    merito_score: merito.score,
+    jackpot_desbloqueado: merito.jackpot,
+    perfil_top_categoria: topCat,
+    reflexion_final: reflexionFinal
+  };
+
+  fetch('/api/leads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(r => r.json())
+    .then(data => console.log('[V7] Lead capturado:', data))
+    .catch(err => console.warn('[V7] Lead no enviado (offline?):', err));
+}
+
 window.addEventListener('DOMContentLoaded', initIntro);
+
