@@ -50,3 +50,10 @@ El directorio `c2_panel/` alberga el servidor del **Web C2 Panel (OCI-2)**, la c
 - **Memoria de IA (Pegaso):** ✅ Implementado. Endpoint `/api/chat/context` inyecta el estado de OCI-1/OCI-2 sin gastar tokens extra en cada mensaje.
 - **MicroSecure & Botonera de Enlaces:** ✅ Implementado. Servidor estático en `/microsecure/`, centro de enlaces en UI y vista HTML dedicada en `/portfolio`.
 - **Tokens Canario (Señuelos Pasivos):** ✅ Implementado. 8 rutas trampa (`/.env`, `/.git/config`, etc.) con notificaciones automáticas a Telegram en background.
+
+---
+
+## 5. Herramientas de Saneamiento y Memoria (Swarm)
+- **`purga_eventual.py`:** Purga orientada a eventos. Elimina registros de `deltas` de objetivos fuera de scope y ejecuta `VACUUM` en SQLite.
+- **`comprimir_historial.py`:** Summarization interactiva de `chat_history`. Comprime mensajes antiguos en resúmenes ejecutivos con IA tras aprobación del operador.
+

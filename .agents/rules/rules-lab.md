@@ -146,3 +146,17 @@ ssh -i llave_oci ubuntu@143.47.115.34 "pkill -f uvicorn; sleep 3; cd /home/ubunt
 - [ ] Revisar si hay cambios pendientes de sync a OCI-2
 - [ ] Confirmar modelo correcto para la tarea (Flash → Pro → Sonnet)
 - [ ] Si involucra reportes H1 → leer `HACKERONE_MANUAL_CHEATSHEET.md`
+
+---
+
+## 9. ARQUITECTURA SWARM & RED TAILSCALE (MULTI-AGENTE)
+
+**Malla VPN Privada (Tailnet `bestiatantrica.github`):**
+- **OCI-2 (Cerebro C2):** `100.121.103.19` (Exit Node / Bot Telegram / `c2_db.sqlite` Central).
+- **Nodriza (PC Principal):** `100.117.252.8` (`ssdswap` / IDE Auditoría / Control de Red).
+- **PC Beni (Worker):** `100.94.131.56` (`pcbeni` / `bgamer22` / ASISTENTE JARVIS `/home/bgamer22/Desktop/JARVIS_ASISTENTE/`).
+
+**Credenciales & Interconexión SSH:**
+- Llave `telegram_bot@oci2` autorizada en PC Beni (`~/.ssh/authorized_keys`) para ejecución remota vía Telegram.
+- Llave `beni_agent@tailscale` autorizada en OCI-2.
+- **Memoria Compartida:** OCI-2 (`c2_db.sqlite`) es la Fuente Única de Verdad. Todos los agentes leen/escriben en OCI-2 para mantener contexto unificado.
