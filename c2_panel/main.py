@@ -575,7 +575,7 @@ def get_status():
     }
 
 @app.get("/portfolio", response_class=HTMLResponse)
-async def get_portfolio_html():
+async def get_portfolio_html(request: Request):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM deltas")
@@ -584,141 +584,7 @@ async def get_portfolio_html():
     total_findings = cursor.fetchone()[0]
     conn.close()
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Técnico — Ciberseguridad & Telemetría</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {{
-            --bg: #090d16;
-            --card-bg: #111827;
-            --card-border: #1f2937;
-            --text: #f3f4f6;
-            --text-sub: #9ca3af;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-purple: #8b5cf6;
-        }}
-        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 40px 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }}
-        .container {{
-            max-width: 900px;
-            width: 100%;
-        }}
-        .header {{
-            text-align: center;
-            margin-bottom: 40px;
-        }}
-        .badge {{
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }}
-        .dot {{ width: 8px; height: 8px; background: #34d399; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #34d399; }}
-        h1 {{ font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #fff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }}
-        p.subtitle {{ color: var(--text-sub); font-size: 14px; max-width: 600px; margin: 0 auto; }}
-        .grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 30px;
-        }}
-        .card {{
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.2s;
-        }}
-        .card:hover {{ transform: translateY(-2px); }}
-        .card-val {{ font-size: 32px; font-weight: 800; font-family: 'Fira Code', monospace; margin: 8px 0; }}
-        .card-lbl {{ font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; }}
-        .section-box {{
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }}
-        .section-title {{ font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }}
-        .btn {{
-            display: inline-block;
-            background: var(--accent-blue);
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: background 0.2s;
-        }}
-        .btn:hover {{ background: #2563eb; }}
-        footer {{ text-align: center; color: var(--text-sub); font-size: 11px; margin-top: 40px; }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="badge"><span class="dot"></span> MONITOREO ACTIVO 24/7</div>
-            <h1>Portafolio Técnico & Telemetría</h1>
-            <p class="subtitle">Infraestructura autónoma de monitoreo pasivo de ciberseguridad, reconciliación de activos y validación ética de vuln-scans.</p>
-        </div>
-
-        <div class="grid">
-            <div class="card" style="border-top: 3px solid var(--accent-blue);">
-                <div class="card-lbl">Activos Recogidos</div>
-                <div class="card-val" style="color: #60a5fa;">{total_deltas:,}</div>
-                <div style="font-size: 10px; color: var(--text-sub);">Subdominios Monitoreados</div>
-            </div>
-
-            <div class="card" style="border-top: 3px solid var(--accent-green);">
-                <div class="card-lbl">Hallazgos Verificados</div>
-                <div class="card-val" style="color: #34d399;">{total_findings}</div>
-                <div style="font-size: 10px; color: var(--text-sub);">PoCs Forenses Validados</div>
-            </div>
-
-            <div class="card" style="border-top: 3px solid var(--accent-purple);">
-                <div class="card-lbl">Infraestructura</div>
-                <div class="card-val" style="color: #a78bfa; font-size: 24px;">OCI Free</div>
-                <div style="font-size: 10px; color: var(--text-sub);">Go-Stack v2 + FastAPI</div>
-            </div>
-        </div>
-
-        <div class="section-box">
-            <div class="section-title">🎮 Proyectos Destacados</div>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">
-                <strong>MicroSecure:</strong> Piloto educativo interactivo diseñado para concientización y aprendizaje de ciberseguridad. Servido de forma autónoma desde la instancia OCI-2.
-            </p>
-            <a href="/microsecure/" target="_blank" class="btn">🚀 Abrir Juego MicroSecure</a>
-        </div>
-
-        <footer>
-            HackerLab Operations &copy; 2026 — Monitoreo Pasivo y Ciberseguridad Ética
-        </footer>
-    </div>
-</body>
-</html>"""
-    return HTMLResponse(content=html_content)
+    return templates.TemplateResponse(request=request, name="portfolio.html", context={"total_deltas": total_deltas, "total_findings": total_findings})
 
 @app.get("/api/zones_health")
 def get_zones_health():
