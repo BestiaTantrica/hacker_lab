@@ -1,0 +1,30 @@
+# SaaS B2B y Herramientas de Productividad
+typeform.com
+calendly.com
+miro.com
+grammarly.com
+intercom.com
+algolia.com
+auth0.com
+datadoghq.com
+postman.com
+
+# FinTech y Cripto (Startups / Tier 2)
+revolut.com
+n26.com
+kraken.com
+gemini.com
+plaid.com
+
+# EdTech / Plataformas de Educación
+udemy.com
+coursera.org
+duolingo.com
+skillshare.com
+
+# E-commerce e Infraestructura
+shopify.com
+bigcommerce.com
+contentful.com
+netlify.app
+vercel.app
