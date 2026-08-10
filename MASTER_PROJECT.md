@@ -28,6 +28,7 @@ El laboratorio se divide físicamente en dos entornos de ejecución:
 - **Función:** Desarrollo de herramientas, pruebas locales, análisis forense offline y almacenamiento de la documentación del portafolio.
 - **Proyectos Clave:**
   - `network-toolkit`: Herramienta modular en Bash para diagnóstico de red y Honeypot Local (trampas pasivas y alertas Telegram).
+  - `asalto_local.sh` ("Modo Bestia Protegido"): Infraestructura de escaneo local en dos fases (recon y attack) con límites de concurrencia y filtros de CDN para no saturar la red doméstica.
   - `juego_piloto_cibersec`: Piloto educativo "MicroSecure" (Attention Mining, Feed de micro-insights ciberseguridad, Gamificación 1-clic).
   - `caso fuerza bruta btc`: Entorno de análisis forense y descifrado bayesiano para carteras Bitcoin (wallet.dat 2013).
   - `portafolio-ciberseguridad`: Estructura académica alineada con el Certificado de Ciberseguridad de Google.
