@@ -59,10 +59,10 @@ if [ "$MODE" == "--recon" ]; then
     # --------------------------------------------------------------------------
     # FASE 3: PROBING HTTP & FILTRO CDN (httpx)
     # FRENO RED: -t 20 y -rl 50.
-    # FILTRO CDN: -exclude-cdn (descarta Cloudflare, Akamai, etc. automáticamente)
+    # FILTRO CDN: -exclude cdn (descarta Cloudflare, Akamai, etc. automáticamente)
     # --------------------------------------------------------------------------
     echo "⏳ [Fase 3/3] Escaneando puertos web y descartando CDNs (Cloudflare) con httpx..."
-    $TOOLS_DIR/httpx -l "2_vivos_$FECHA.txt" -t 20 -rl 50 -exclude-cdn -title -tech-detect -status-code -silent -o "3_web_$FECHA.txt"
+    $TOOLS_DIR/httpx -l "2_vivos_$FECHA.txt" -t 20 -rl 50 -exclude cdn -title -tech-detect -status-code -silent -o "3_web_$FECHA.txt"
 
     # Limpiamos el archivo de salida para quedarnos solo con las URLs puras
     cat "3_web_$FECHA.txt" | awk '{print $1}' > "3_urls_limpias_$FECHA.txt"
