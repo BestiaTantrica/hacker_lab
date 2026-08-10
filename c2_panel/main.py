@@ -250,7 +250,7 @@ SKILLS_PROMPTS = {
 
 ## Steps To Reproduce:
 1. Send the following request (copied verbatim from evidence):
-```
+```http
 [value of evidence["curl-command"] OR evidence["request"] — copy it EXACTLY]
 ```
 2. Observe the server response confirms the vulnerability (see Supporting Material).
@@ -580,7 +580,7 @@ async def get_portfolio_html(request: Request):
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM deltas")
     total_deltas = cursor.fetchone()[0]
-    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1 AND status_interno NOT IN ('FalsoPositivo', 'Falso Positivo')")
     total_findings = cursor.fetchone()[0]
     conn.close()
 
@@ -689,11 +689,11 @@ def get_findings(status: Optional[str] = "Pendiente"):
     cursor = conn.cursor()
     
     if status == "Historico":
-        cursor.execute("SELECT * FROM findings WHERE status_interno IN ('Enviado', 'FalsoPositivo', 'Archivado') ORDER BY id DESC LIMIT 50")
+        cursor.execute("SELECT * FROM findings WHERE status_interno IN ('Enviado', 'Archivado') ORDER BY id DESC LIMIT 50")
     elif status in ["Pendiente", "Validado"]:
         cursor.execute("SELECT * FROM findings WHERE status_interno = ? ORDER BY id DESC LIMIT 50", (status,))
     else:
-        cursor.execute("SELECT * FROM findings ORDER BY id DESC LIMIT 50")
+        cursor.execute("SELECT * FROM findings WHERE status_interno NOT IN ('FalsoPositivo', 'Falso Positivo') ORDER BY id DESC LIMIT 50")
         
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
