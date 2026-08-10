@@ -553,7 +553,7 @@ def get_status():
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM deltas")
     total_deltas = cursor.fetchone()[0]
-    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1 AND status_interno NOT IN ('FalsoPositivo', 'Falso Positivo')")
     total_findings = cursor.fetchone()[0]
     conn.close()
 
@@ -861,7 +861,7 @@ def get_session_context():
     # Estadisticas globales del pipeline
     cursor.execute("SELECT COUNT(*) FROM deltas")
     total_deltas = cursor.fetchone()[0]
-    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1 AND status_interno NOT IN ('FalsoPositivo', 'Falso Positivo')")
     total_findings = cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(*) FROM findings WHERE status_interno = 'Pendiente'")
     pending = cursor.fetchone()[0]
@@ -1346,7 +1346,7 @@ def get_public_stats():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1")
+    cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1 AND status_interno NOT IN ('FalsoPositivo', 'Falso Positivo')")
     total_findings = cursor.fetchone()[0]
 
     cursor.execute("""
