@@ -9,6 +9,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import urllib.request
 import paramiko
@@ -51,7 +52,24 @@ except ImportError:
     def rotate_headers(attempt=1): return {"User-Agent": "Mozilla/5.0"}
     def build_triager_curl(url, h): return "curl -s -i --max-time 10 {}".format(url)
 
+# Motor Astrológico (Ephem)
+try:
+    import ephem
+    import math
+    import datetime
+    _EPHEM_AVAILABLE = True
+except ImportError:
+    _EPHEM_AVAILABLE = False
+
 app = FastAPI(title="C2 Panel & Copilot Hub — HackerLab", version="2.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Base de datos local SQLite para OCI-2
 DB_PATH = os.path.join(os.path.dirname(__file__), "c2_db.sqlite")
@@ -796,8 +814,86 @@ def generate_copilot_prompt(req: GenerateReportRequest):
     system_prefix = ""
     if req.skill_key != "traductor_espanol":
         system_prefix += "SYSTEM DIRECTIVE: OUTPUT ONLY IN ENGLISH. ZERO SPANISH WORDS.\n"
-        system_prefix += "SYSTEM DIRECTIVE 2: YOU ARE A STRICT PARSER. DO NOT INVENT ANY URL, ENDPOINT, PAYLOAD, HEADER, OR FILENAME NOT EXPLICITLY PRESENT IN THE RAW EVIDENCE. IF A FIELD IS MISSING, WRITE: NOT FOUND IN EVIDENCE\n"
         system_prefix += "SYSTEM DIRECTIVE 3: DO NOT HALLUCINATE. DO NOT ADD CONTEXT. DO NOT EXPLAIN CONCEPTS. ONLY EXTRACT AND FORMAT.\n"
+
+# --- MOTOR ASTROLÓGICO (ASTRO-CURRÍCULUM) ---
+
+SIGNOS_ES = {
+    'Aries': 'Aries', 'Taurus': 'Tauro', 'Gemini': 'Géminis', 'Cancer': 'Cáncer',
+    'Leo': 'Leo', 'Virgo': 'Virgo', 'Libra': 'Libra', 'Scorpio': 'Escorpio',
+    'Sagittarius': 'Sagitario', 'Capricorn': 'Capricornio', 'Aquarius': 'Acuario', 'Pisces': 'Piscis'
+}
+
+class NatalRequest(BaseModel):
+    fecha: str  # YYYY-MM-DD
+    hora: str   # HH:MM
+    utc_offset: Optional[str] = "-03:00"
+    lat: Optional[float] = -34.6037
+    lon: Optional[float] = -58.3816
+
+@app.post("/api/astrology/natal")
+def calculate_natal(req: NatalRequest):
+    if not _EPHEM_AVAILABLE:
+        return {"status": "error", "message": "Motor astrológico (ephem) no disponible."}
+    
+    try:
+        dt = datetime.datetime.strptime(f"{req.fecha} {req.hora}", "%Y-%m-%d %H:%M")
+        # Ajuste rudimentario de zona horaria (MVP Argentina -03:00)
+        dt_utc = dt + datetime.timedelta(hours=3)
+        
+        obs = ephem.Observer()
+        obs.lat = str(req.lat)
+        obs.lon = str(req.lon)
+        obs.date = dt_utc
+        
+        def get_sign(deg):
+            signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo', 'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis']
+            return signs[int((deg % 360) / 30.0)]
+            
+        cuerpos = {
+            'sol': ephem.Sun(),
+            'luna': ephem.Moon(),
+            'mercurio': ephem.Mercury(),
+            'venus': ephem.Venus(),
+            'marte': ephem.Mars(),
+            'jupiter': ephem.Jupiter(),
+            'saturno': ephem.Saturn(),
+            'urano': ephem.Uranus(),
+            'neptuno': ephem.Neptune(),
+            'pluton': ephem.Pluto()
+        }
+        
+        carta = {}
+        
+        for nombre, cuerpo in cuerpos.items():
+            cuerpo.compute(obs)
+            ecl = ephem.Ecliptic(ephem.Equatorial(cuerpo.a_ra, cuerpo.a_dec, epoch=obs.date))
+            carta[nombre] = get_sign(math.degrees(ecl.lon))
+        
+        # Ejes Críticos
+        ramc = float(obs.sidereal_time())
+        obliquity = 23.439 * math.pi / 180.0
+        lat_rad = float(obs.lat)
+        
+        # Ascendente
+        num = math.cos(ramc)
+        den = -(math.sin(ramc) * math.cos(obliquity) + math.tan(lat_rad) * math.sin(obliquity))
+        asc_rad = math.atan2(num, den)
+        if asc_rad < 0: asc_rad += 2 * math.pi
+        carta['asc'] = get_sign(math.degrees(asc_rad))
+        
+        # Medio Cielo (MC)
+        dec_mc = math.atan(math.tan(obliquity) * math.sin(ramc))
+        mc_eq = ephem.Equatorial(ramc, dec_mc, epoch=obs.date)
+        mc_ecl = ephem.Ecliptic(mc_eq)
+        carta['mc'] = get_sign(math.degrees(mc_ecl.lon))
+
+        return {
+            "status": "success",
+            "carta": carta
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
     else:
         system_prefix += "REGLA CRÍTICA: TRADUCE EL TEXTO EXACTAMENTE AL ESPAÑOL. NO INVENTES NI AGREGUES NADA NUEVO.\n"
 
