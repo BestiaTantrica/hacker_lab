@@ -93,6 +93,15 @@ elif [ "$MODE" == "--attack" ]; then
     if [ -f "$RESULT_DIR/4_vulnerabilidades_$FECHA.json" ]; then
         python3 /home/tomas2/WORKSPACE/LAB/espejo_oci1/monitores/parsear_nuclei.py --nuclei-json "$RESULT_DIR/4_vulnerabilidades_$FECHA.json" --zone local
     fi
+
+    echo "⏳ [Fase 6] Cold Storage: Respaldando c2_db.sqlite desde OCI-2..."
+    BACKUP_DIR="/home/tomas2/historial_profundo/backups_db"
+    mkdir -p "$BACKUP_DIR"
+    # Se ignora la comprobacion estricta de host key para ejecucion fluida
+    scp -o StrictHostKeyChecking=no -i /home/tomas2/WORKSPACE/LAB/llave_oci ubuntu@143.47.115.34:/home/ubuntu/c2_panel/c2_db.sqlite "$BACKUP_DIR/c2_db_$FECHA.sqlite" 2>/dev/null || echo "⚠️ Advertencia: No se pudo conectar a OCI-2 para el respaldo."
+    if [ -f "$BACKUP_DIR/c2_db_$FECHA.sqlite" ]; then
+        echo "✅ Respaldo (Cold Storage) exitoso en: $BACKUP_DIR/c2_db_$FECHA.sqlite"
+    fi
     echo "========================================================================"
 else
     echo "❌ Error: Modo no reconocido. Usa --recon o --attack."

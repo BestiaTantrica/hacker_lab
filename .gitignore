@@ -39,3 +39,8 @@ llave_ssh
 *.sqlite
 **/*.sqlite
 
+# Backups y temporales de video
+juego_piloto_cibersec/backup_rigi/
+herramientas/fabrica_magica/assets_generados/
+herramientas/fabrica_magica/temp/
+*.mp4

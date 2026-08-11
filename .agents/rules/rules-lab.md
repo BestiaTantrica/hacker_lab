@@ -160,4 +160,4 @@ ssh -i llave_oci ubuntu@143.47.115.34 "pkill -f uvicorn; sleep 3; cd /home/ubunt
 - Llave `telegram_bot@oci2` autorizada en PC Beni (`~/.ssh/authorized_keys`) para ejecución remota vía Telegram.
 - Llave `beni_agent@tailscale` autorizada en OCI-2.
 - **Memoria Compartida:** OCI-2 (`c2_db.sqlite`) es la Fuente Única de Verdad.
-- **Respaldo:** Cron diario (03:00 AM) en la Nodriza (`ssdswap`) que realiza un pull backup (vía SCP) de `c2_db.sqlite` hacia `/historial_profundo/backups_db/` con retención de 30 días.
+- **Respaldo ("Cold Storage"):** Ejecutado de forma lógica al finalizar operaciones de ataque/recon locales (SIN crons automáticos), la Nodriza (`ssdswap`) realiza un pull backup (vía SCP) de `c2_db.sqlite` hacia `/historial_profundo/backups_db/`.
