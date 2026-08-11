@@ -88,6 +88,11 @@ elif [ "$MODE" == "--attack" ]; then
     echo "========================================================================"
     echo "✅ ASALTO DE VULNERABILIDADES TERMINADO"
     echo "📂 Revisa tus resultados en: $RESULT_DIR/4_vulnerabilidades_$FECHA.json"
+    
+    echo "⏳ [Fase 5] Sincronizando con C2 Panel..."
+    if [ -f "$RESULT_DIR/4_vulnerabilidades_$FECHA.json" ]; then
+        python3 /home/tomas2/WORKSPACE/LAB/espejo_oci1/monitores/parsear_nuclei.py --nuclei-json "$RESULT_DIR/4_vulnerabilidades_$FECHA.json" --zone local
+    fi
     echo "========================================================================"
 else
     echo "❌ Error: Modo no reconocido. Usa --recon o --attack."
