@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termómetro Social</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+        }
+
+        .poll-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .theme-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .poll-question {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:active {
+            transform: translateY(0);
+        }
+
+        .option-btn.voted {
+            cursor: default;
+            transform: none;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .result-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(99, 102, 241, 0.2);
+            border-right: 2px solid var(--accent);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .option-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .option-pct {
+            position: relative;
+            z-index: 2;
+            font-weight: 800;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .option-btn.voted .option-pct {
+            opacity: 1;
+        }
+
+        .cross-sell {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            display: none;
+            animation: fadeIn 1s forwards;
+        }
+
+        .cross-sell h4 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="poll-container" id="poll-container">
+        <div style="text-align: center; margin-bottom: 2rem;" id="loading">
+            <div class="loader"></div>
+        </div>
+        
+        <div id="poll-content" style="display: none;">
+            <div class="theme-tag" id="poll-theme">Tema</div>
+            <h1 class="poll-question" id="poll-question">Cargando pregunta...</h1>
+            <div class="options-list" id="options-list">
+            </div>
+            
+            <div class="cross-sell" id="cross-sell">
+                <h4>¿Querés saber qué significa tu voto?</h4>
+                <a href="/microsecure/" class="cta-btn">Descubrí tu perfil sociológico</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pollId = {{ poll_id }};
+        const apiUrl = `/api/polls/${pollId}`;
+        const voteUrl = `/api/polls/${pollId}/vote`;
+
+        let pollData = null;
+
+        async function loadPoll() {
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error("Poll not found");
+                pollData = await res.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('poll-content').style.display = 'block';
+                
+                if (pollData.poll.theme) {
+                    document.getElementById('poll-theme').textContent = pollData.poll.theme;
+                } else {
+                    document.getElementById('poll-theme').style.display = 'none';
+                }
+                
+                document.getElementById('poll-question').textContent = pollData.poll.question;
+
+                const optionsList = document.getElementById('options-list');
+                optionsList.innerHTML = '';
+
+                pollData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.onclick = () => castVote(opt.id);
+                    btn.innerHTML = `
+                        <div class="result-fill" id="fill-${opt.id}"></div>
+                        <span class="option-text">${opt.option_text}</span>
+                        <span class="option-pct" id="pct-${opt.id}">0%</span>
+                    `;
+                    optionsList.appendChild(btn);
+                });
+
+            } catch (err) {
+                document.getElementById('loading').innerHTML = '<p style="color: #ef4444;">Encuesta no encontrada.</p>';
+            }
+        }
+
+        async function castVote(optionId) {
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => {
+                b.onclick = null;
+                b.classList.add('voted');
+            });
+
+            try {
+                const res = await fetch(voteUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ option_id: optionId })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    animateResults(data.results);
+                }
+            } catch (err) {
+                console.error("Error casting vote", err);
+            }
+        }
+
+        function animateResults(resultsData) {
+            let totalVotes = resultsData.reduce((acc, curr) => acc + curr.votes, 0);
+            if (totalVotes === 0) totalVotes = 1;
+
+            pollData.options.forEach(opt => {
+                const result = resultsData.find(r => r.option_id === opt.id);
+                const votes = result ? result.votes : 0;
+                const pct = Math.round((votes / totalVotes) * 100);
+
+                const fillEl = document.getElementById(`fill-${opt.id}`);
+                const pctEl = document.getElementById(`pct-${opt.id}`);
+
+                if (fillEl && pctEl) {
+                    setTimeout(() => {
+                        fillEl.style.width = `${pct}%`;
+                        pctEl.textContent = `${pct}%`;
+                    }, 100);
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('cross-sell').style.display = 'block';
+            }, 800);
+        }
+
+        loadPoll();
+    </script>
+</body>
+</html>

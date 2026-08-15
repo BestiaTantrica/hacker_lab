@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="MicroSecure: Capacitación industrial gamificada. Aprendé Seguridad Minera y ganá Tokens RWA.">
+    <title>MicroSecure — Capacitación Industrial RIGI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ── AUDIOS ────────────────────────────────────────────── -->
+<audio id="sfx-coin" src="assets/coin.webm" preload="auto"></audio>
+<audio id="sfx-swoosh" src="assets/swoosh.webm" preload="auto"></audio>
+<audio id="sfx-error" src="assets/error.webm" preload="auto"></audio>
+
+<!-- ── PANTALLA INTRO ────────────────────────────────────── -->
+<div id="screen-intro" class="screen active">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+        <div class="intro-badge">
+            <span class="badge-dot"></span> SPONSOR: Minera San Juan (RIGI)
+        </div>
+        <div class="intro-icon">👷🏽‍♂️</div>
+        <h1 class="intro-title">Aprende.<br><span class="t-gradient">Certifica.<br>Gana.</span></h1>
+        <p class="intro-desc">Micro-capacitaciones de seguridad industrial a tu ritmo. Leer, entender y responder — cada acierto suma a tu billetera de tokens.</p>
+
+        <div class="wallet-preview">
+            <div class="wallet-label">Tu recompensa acumulada</div>
+            <div class="wallet-amount-preview" id="wallet-display-intro">0 TKS</div>
+            <div class="wallet-sub">Meta del módulo: 50 TKS</div>
+        </div>
+
+        <button id="btn-start" class="btn-start" onclick="iniciarFeed()">
+            EMPEZAR →
+        </button>
+        <div class="sponsor-note">Cada visualización y respuesta correcta genera micro-pagos directos al usuario en forma de Tokens RWA.</div>
+    </div>
+</div>
+
+<!-- ── PANTALLA FEED (TikTok Scroll) ────────────────────── -->
+<div id="screen-feed" class="screen">
+
+    <!-- Header fijo -->
+    <header class="feed-header">
+        <div class="brand">👷🏽‍♂️ MicroSecure RIGI</div>
+        <div class="header-right">
+            <div class="level-badge" id="level-badge">Nv. Operario</div>
+            <div class="wallet-chip">
+                <span class="wallet-icon">💎</span>
+                <span class="wallet-value" id="wallet-display">0 TKS</span>
+                <span class="wallet-delta" id="wallet-delta"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de episodios -->
+    <div class="episodes-bar" id="episodes-bar"></div>
+
+    <!-- Secciones TikTok (generadas por JS) -->
+    <div class="feed-scroll" id="feed-scroll"></div>
+
+    <!-- Panel de acción (pregunta MC o Minijuego) -->
+    <div class="action-panel" id="action-panel" style="display:none">
+        <div class="action-panel-inner">
+            
+            <!-- Modo Multiple Choice -->
+            <div id="action-mc" style="display:none">
+                <div class="mc-question" id="mc-question">Cargando pregunta...</div>
+                <div class="mc-options" id="mc-options"></div>
+            </div>
+
+            <!-- Modo Minijuego LOTO -->
+            <div id="action-loto" style="display:none">
+                <div class="mc-question">Arrastrá el candado para bloquear el interruptor:</div>
+                <div class="loto-game-area">
+                    <div class="loto-breaker" id="loto-breaker">
+                        <div class="loto-breaker-hole"></div>
+                    </div>
+                    <div class="loto-lock" id="loto-lock" draggable="true">🔒</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Feedback (overlay fijo) -->
+    <div class="mc-feedback" id="mc-feedback" style="display:none">
+        <div class="mc-fb-icon" id="mc-fb-icon"></div>
+        <div class="mc-fb-msg" id="mc-fb-msg"></div>
+        <button class="btn-siguiente" onclick="siguienteInsight()">SIGUIENTE &rarr;</button>
+    </div>
+
+    <!-- Modal Aprender en Profundidad -->
+    <div class="deep-modal" id="deep-modal" style="display:none">
+        <div class="deep-modal-inner">
+            <div class="deep-modal-header">
+                <span id="deep-modal-title">Aprender en Profundidad</span>
+                <button class="deep-close-btn" onclick="cerrarProfundidad()">✕</button>
+            </div>
+            <div class="deep-embed-wrap">
+                <iframe id="deep-iframe" src="" frameborder="0" allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                </iframe>
+            </div>
+            <div class="deep-mining-bar">
+                <span>⛏️ Minando TKS por minuto de atención...</span>
+                <span id="deep-tks-counter" class="deep-tks-badge">0 TKS</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── PANTALLA RESUMEN / WALLET ─────────────────────────── -->
+<div id="screen-summary" class="screen">
+    <div class="summary-content">
+        <div class="summary-icon">💰</div>
+        <h2 class="summary-title">¡Sesión Completada!</h2>
+
+        <!-- Wallet Card -->
+        <div class="wallet-card">
+            <div class="wallet-card-label">Total ganado en el módulo</div>
+            <div class="wallet-card-amount" id="summary-amount">0 TKS</div>
+            <div id="bonus-esfuerzo" class="bonus-esfuerzo-tag" style="display:none"></div>
+            <div class="wallet-progress-wrap">
+                <div class="wallet-bar">
+                    <div class="wallet-bar-fill" id="wallet-bar-fill"></div>
+                </div>
+                <div class="wallet-bar-labels">
+                    <span id="wallet-bar-current">0 TKS</span>
+                    <span>Meta: 50 TKS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nivel -->
+        <div class="level-result" id="level-result">
+            <div class="level-result-icon" id="level-result-icon">🟢</div>
+            <div class="level-result-name" id="level-result-name">Novato</div>
+            <div class="level-result-desc" id="level-result-desc"></div>
+        </div>
+
+        <!-- Perfil Vocacional -->
+        <div class="vocational-card">
+            <div class="voc-header">🧭 Tu Perfil Vocacional</div>
+            <div id="vocational-result" class="vocational-result"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="summary-stats">
+            <div class="sstat"><div class="sstat-val" id="ss-pts">0</div><div class="sstat-label">Puntos</div></div>
+            <div class="sstat"><div class="sstat-val" id="ss-correct">0</div><div class="sstat-label">Correctas</div></div>
+            <div class="sstat"><div class="sstat-val" id="ss-streak">0</div><div class="sstat-label">Racha</div></div>
+        </div>
+
+        <!-- Ecosistema -->
+        <div class="withdraw-panel">
+            <div class="withdraw-title">🌍 Acciones del Ecosistema</div>
+            <div class="ecosystem-grid">
+                <div class="ecosystem-card">
+                    <div class="eco-icon">🥦</div>
+                    <div class="eco-label">Canjear por Alimentos</div>
+                    <div class="eco-desc">Bienes RWA de productores locales auspiciantes</div>
+                    <button class="btn-eco" onclick="alert('Próximamente: Canje RWA con productores locales')">Canjear TKS</button>
+                </div>
+                <div class="ecosystem-card highlight">
+                    <div class="eco-icon">👨‍🏫</div>
+                    <div class="eco-label">Validación Docente</div>
+                    <div class="eco-desc">Videoconferencia con Profesor certificado. Desbloquea postulaciones.</div>
+                    <button class="btn-eco" onclick="alert('Próximamente: Agendar con red de profesores')">Agendar Sesión</button>
+                </div>
+                <div class="ecosystem-card">
+                    <div class="eco-icon">🏠</div>
+                    <div class="eco-label">Contribuir a la Comunidad</div>
+                    <div class="eco-desc">Donar TKS al fondo de alojamiento estudiantil.</div>
+                    <button class="btn-eco" onclick="alert('Próximamente: Pool comunitario de vivienda')">Donar TKS</button>
+                </div>
+                <div class="ecosystem-card locked">
+                    <div class="eco-icon">💸</div>
+                    <div class="eco-label">Retiro Fiat</div>
+                    <div class="eco-desc">MercadoPago / PayPal. Requiere currícula completa y validación docente.</div>
+                    <button class="btn-eco" onclick="alert('Completá la currícula y la validación docente para desbloquear')">🔒 Bloqueado</button>
+                </div>
+            </div>
+            <p class="withdraw-note">La validación docente desbloquea tu postulación directa · El retiro fiat requiere currícula completa.</p>
+        </div>
+
+        <!-- Compartir -->
+        <div class="share-panel">
+            <div class="share-title">📢 Invitá a otros y ganan el doble</div>
+            <button class="btn-share" onclick="compartir()">Compartir MicroSecure</button>
+        </div>
+
+        <div class="summary-actions">
+            <button class="btn-replay" onclick="reiniciar()">🔄 Nuevo Módulo</button>
+            <button class="btn-deep" onclick="irProfundidad()">📚 Aprender en Profundidad</button>
+        </div>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

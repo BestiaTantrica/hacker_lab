@@ -592,6 +592,17 @@ def get_status():
         "total_findings": total_findings
     }
 
+@app.get("/poll/{poll_id}", response_class=HTMLResponse)
+async def get_poll_html(request: Request, poll_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM polls WHERE id = ?", (poll_id,))
+    if not cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=404, detail="Poll not found")
+    conn.close()
+    return templates.TemplateResponse(request=request, name="poll.html", context={"poll_id": poll_id})
+
 @app.get("/portfolio", response_class=HTMLResponse)
 async def get_portfolio_html(request: Request):
     conn = sqlite3.connect(DB_PATH)
@@ -1652,6 +1663,87 @@ async def listar_leads(limit: int = 50):
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return {"status": "success", "total": len(rows), "leads": rows}
+
+
+# --- MOTOR DE TERMÓMETRO SOCIAL (ENCUESTAS) ---
+
+class PollCreatePayload(BaseModel):
+    question: str
+    theme: Optional[str] = ""
+    options: List[dict]  # [{"text": "Opcion A", "meta": "Autoritario"}, ...]
+
+@app.post("/api/polls")
+async def create_poll(payload: PollCreatePayload):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO polls (question, theme) VALUES (?, ?)", (payload.question, payload.theme))
+    poll_id = cursor.lastrowid
+    for opt in payload.options:
+        cursor.execute("INSERT INTO poll_options (poll_id, option_text, psychological_metadata) VALUES (?, ?, ?)", 
+                       (poll_id, opt.get("text"), opt.get("meta", "")))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "poll_id": poll_id}
+
+@app.get("/api/polls/{poll_id}")
+async def get_poll(poll_id: int):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM polls WHERE id = ?", (poll_id,))
+    poll = cursor.fetchone()
+    if not poll:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Poll not found")
+    
+    cursor.execute("SELECT * FROM poll_options WHERE poll_id = ?", (poll_id,))
+    options = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return {"status": "success", "poll": dict(poll), "options": options}
+
+class PollVotePayload(BaseModel):
+    option_id: int
+    user_id: Optional[int] = None
+    fingerprint: Optional[str] = ""
+
+@app.post("/api/polls/{poll_id}/vote")
+async def vote_poll(poll_id: int, payload: PollVotePayload, request: Request):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # Simple fingerprint (IP + UserAgent) si no viene en payload
+    ip = request.client.host if request.client else "unknown"
+    ua = request.headers.get("user-agent", "")
+    fp = payload.fingerprint or f"{ip}-{ua}"
+
+    cursor.execute("""
+        INSERT INTO poll_votes (poll_id, option_id, user_id, fingerprint)
+        VALUES (?, ?, ?, ?)
+    """, (poll_id, payload.option_id, payload.user_id, fp))
+    conn.commit()
+    
+    # Devolver los resultados actuales para mostrar a tiempo real
+    cursor.execute("""
+        SELECT option_id, COUNT(*) as votes 
+        FROM poll_votes 
+        WHERE poll_id = ? 
+        GROUP BY option_id
+    """, (poll_id,))
+    results = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    
+    return {"status": "success", "results": results}
+
+@app.get("/api/polls")
+async def list_polls(limit: int = 50):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM polls ORDER BY created_at DESC LIMIT ?", (limit,))
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return {"status": "success", "polls": rows}
 
 
 if __name__ == "__main__":

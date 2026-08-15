@@ -83,7 +83,7 @@ elif [ "$MODE" == "--attack" ]; then
     # --------------------------------------------------------------------------
     echo "⏳ [Fase 4] Buscando vulnerabilidades con Nuclei (Frenos de Red Activados)..."
     $TOOLS_DIR/nuclei -l "$TARGET_FILE" -t cves/ -t exposed-panels/ -t misconfiguration/ -t vulnerabilities/ \
-        -c 15 -bs 10 -rl 50 -timeout 10 -silent -o "4_vulnerabilidades_$FECHA.json" -jsonl
+        -c 15 -bs 10 -rl 50 -timeout 10 -silent -o "4_vulnerabilidades_$FECHA.json" -jsonl -resume "$RESULT_DIR/nuclei_resume.cfg"
 
     echo "========================================================================"
     echo "✅ ASALTO DE VULNERABILIDADES TERMINADO"

@@ -38,9 +38,17 @@ llave_ssh
 # Bases de datos SQLite locales
 *.sqlite
 **/*.sqlite
+*.sqlite_backup
 
 # Backups y temporales de video
 juego_piloto_cibersec/backup_rigi/
 herramientas/fabrica_magica/assets_generados/
 herramientas/fabrica_magica/temp/
+backup_2026_proyectos_viejos/**/ffmpeg
+backup_2026_proyectos_viejos/**/ffprobe
+backup_2026_proyectos_viejos/**/yt-dlp
+backup_2026_proyectos_viejos/**/temp/
+backup_2026_proyectos_viejos/**/assets_generados/
+backup_2026_proyectos_viejos/**/venv/
 *.mp4
+*.srt
