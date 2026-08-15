@@ -3,49 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BATALLA CULTURAL — Hub de Curaduría, Transcripciones de Streamers y Análisis Liberal.">
+    <meta name="description" content="PULSO LIBERAL 360 — Aglutinador del Ecosistema de YouTubers, Streamers, Batalla Cultural y Geopolítica.">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=7.0">
+    <link rel="stylesheet" href="/static/css/style.css?v=8.0">
 </head>
 <body>
 
-    <!-- HEADER Y NAVEGACIÓN PRINCIPAL -->
+    <!-- HEADER Y NAVEGACIÓN DE ALTO IMPACTO -->
     <header>
         <div class="nav-container">
             <a href="/" class="brand">
                 <div class="brand-logo">🦁</div>
-                <div class="brand-title">BATALLA<span>CULTURAL</span></div>
+                <div class="brand-title">PULSO<span>LIBERAL 360</span></div>
             </a>
 
-            <!-- Pestañas de Ejes Temáticos -->
+            <!-- PESTAÑAS DE NAVEGACIÓN POR CREADORES Y TEMÁTICAS -->
             <div class="ejes-selector">
-                <button class="eje-btn active" data-eje="todos">🔥 Todos los Ejes</button>
-                <button class="eje-btn" data-eje="batalla_cultural">🏛️ Agustín Laje & Filosofía</button>
+                <button class="eje-btn active" data-eje="todos">🔥 Todos (14+ Creadores)</button>
+                <button class="eje-btn" data-eje="streamers_youtubers">📺 YouTubers & Streamers</button>
+                <button class="eje-btn" data-eje="batalla_cultural">🎓 Agustín Laje & Filosofía</button>
                 <button class="eje-btn" data-eje="geopolitica">🌍 Geopolítica Rucauf</button>
-                <button class="eje-btn" data-eje="economia_gobierno">📈 Economía & Gobierno</button>
-                <button class="eje-btn" data-eje="streamers_redes">⚡ Streamers & Redes</button>
+                <button class="eje-btn" data-eje="economia_gobierno">📈 Economía & Reformas</button>
+                <button class="eje-btn" data-eje="medios_digitales">📰 Medios Digitales</button>
             </div>
 
             <div class="badge-live">
-                <div class="dot-live"></div> HUB EN VIVO
+                <div class="dot-live"></div> ECOSISTEMA EN VIVO
             </div>
         </div>
     </header>
 
     <main>
 
-        <!-- HERO BANNER COMERCIAL & PROPÓSITO -->
+        <!-- HERO BANNER COMERCIAL -->
         <section class="hero-commercial">
-            <h1>Inteligencia de la Batalla Cultural & Análisis Liberal</h1>
-            <p>Conferencias de Agustín Laje, análisis geopolíticos de Rucauf, discursos de Javier Milei y transmisiones de La Derecha Diario, Neura, Carajo y Break Cero sintetizados en 1 minuto.</p>
+            <h1>El Aglutinador del Ecosistema Liberal & Batalla Cultural</h1>
+            <p>Todos los YouTubers, streamers, analistas geopolíticos, intelectuales y medios digitales de la libertad reunidos en un solo lugar sin la distorsión de la prensa tradicional.</p>
         </section>
 
-        <!-- MÓDULO 1: CONCEPTOS CANDENTES DEL DÍA -->
-        <section class="card-widget">
+        <!-- DIRECTORIO DE CREADORES INCLUIDOS EN EL HUB -->
+        <section class="card-widget creators-bar-widget">
             <div class="cloud-header-box">
-                <h2 class="section-title">☁️ Conceptos Clave de la Batalla de Ideas</h2>
+                <h2 class="section-title">⭐ Creadores & Referentes Aglutinados</h2>
                 <p style="font-size: 0.88rem; color: var(--text-muted);">
-                    💡 Haz clic en cualquier concepto para filtrar intervenciones, análisis y conferencias asociadas:
+                    💡 Haz clic en cualquier referente para aislar sus análisis, videos y frases destacadas:
                 </p>
             </div>
             
@@ -54,7 +55,7 @@
                 <span class="word-literal-tag" 
                       data-word="{{ tag.text|lower }}"
                       style="font-size: {{ tag.weight }}rem !important; color: {{ tag.color }};" 
-                      title="Ver contenidos sobre '{{ tag.text }}'">
+                      title="Ver análisis de '{{ tag.text }}'">
                     {{ tag.text }}
                 </span>
                 {% endfor %}
@@ -63,24 +64,31 @@
 
         <!-- BANNER DE FILTRADO ACTIVO -->
         <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
-            <span>🔍 Filtrando contenidos por: <strong id="active-word-text" style="color: var(--accent-amber);">LAJE</strong></span>
-            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo</button>
+            <span>🔍 Creador / Concepto activo: <strong id="active-word-text" style="color: var(--accent-amber);">MATE CON MOTE</strong></span>
+            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo el Ecosistema</button>
         </div>
 
 
-        <!-- MÓDULO 2: FRASES BOMBA DEL DÍA (CITARIO) -->
-        <section id="frases-bomba" class="card-widget" style="background: linear-gradient(135deg, rgba(31,41,55,0.9), rgba(17,24,39,0.95)); border-color: var(--accent-amber);">
-            <h2 class="section-title" style="color: var(--accent-amber);">🔥 Frases Bomba del Día</h2>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">Las declaraciones e intervenciones más destacadas preparadas para difundir en redes:</p>
+        <!-- MÓDULO: FRASES BOMBA DEL DÍA -->
+        <section id="frases-bomba" class="card-widget" style="background: linear-gradient(135deg, rgba(31,41,55,0.95), rgba(17,24,39,0.98)); border-color: var(--accent-amber);">
+            <div class="quotes-header-box">
+                <h2 class="section-title" style="color: var(--accent-amber);">💥 Frases Bomba & Citas del Día</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Las declaraciones más virales e impactantes preparadas para difundir en redes:</p>
+            </div>
 
             <div class="quotes-grid">
                 {% for q in data.top_quotes %}
                 <div class="quote-card">
-                    <span class="quote-author">{{ q.author }}</span>
-                    <p class="quote-text">{{ q.quote }}</p>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="quote-author">{{ q.author }}</span>
+                            <span style="font-size: 0.75rem; color: var(--accent-blue);">{{ q.handle }}</span>
+                        </div>
+                        <p class="quote-text">{{ q.quote }}</p>
+                    </div>
                     <div class="quote-footer">
                         <span style="font-size: 0.78rem; color: var(--text-muted);">{{ q.source }}</span>
-                        <button class="btn-copy-quote" data-quote="{{ q.author }}: {{ q.quote }}">📋 Copiar Frase</button>
+                        <button class="btn-copy-quote" data-quote="{{ q.author }} ({{ q.handle }}): {{ q.quote }}">📋 Copiar Frase</button>
                     </div>
                 </div>
                 {% endfor %}
@@ -88,31 +96,35 @@
         </section>
 
 
-        <!-- MÓDULO 3: CATÁLOGO DE CONTENIDOS CON SÍNTESIS EJECUTIVA -->
+        <!-- MÓDULO: CATÁLOGO DE VIDEOS, STREAMS Y ANÁLISIS DE CREADORES -->
         <section id="catalogo-contenidos">
             <div class="section-header-box">
-                <h2 class="section-title">📺 Conferencias, Discursos & Streamers Sintetizados</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Los 3 puntos clave extraídos de cada intervención sin distorsión:</p>
+                <h2 class="section-title">📺 Transmisiones, Videos & Anotaciones Sintetizadas</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Los 3 puntos ejecutivos de cada video o transmisión de tus creadores favoritos:</p>
             </div>
 
             <div class="hub-items-grid" id="hub-items-container">
                 {% for item in data.hub_items %}
-                <div class="card-hub-item" data-category="{{ item.category }}" data-author="{{ item.author|lower }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
+                <div class="card-hub-item" data-category="{{ item.category }}" data-author="{{ item.author|lower }}" data-handle="{{ item.handle|lower }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
                     <div class="item-header">
                         <span class="badge-tag {{ item.category }}">{{ item.tag }}</span>
                         <span class="item-pubdate">{{ item.pub_date }}</span>
                     </div>
 
-                    <h3 class="item-author">{{ item.author }}</h3>
+                    <div style="margin-bottom: 0.4rem;">
+                        <h3 class="item-author">{{ item.author }}</h3>
+                        <span style="font-size: 0.8rem; color: var(--accent-blue); font-weight: 600;">{{ item.handle }}</span>
+                    </div>
+
                     <a href="{{ item.link }}" target="_blank" class="item-title" rel="noopener">{{ item.title }}</a>
                     
                     <div class="sintesis-box">
-                        <p class="sintesis-label">📌 Síntesis Ejecutiva:</p>
+                        <p class="sintesis-label">📌 Puntos Clave Extraídos:</p>
                         <p class="sintesis-text">{{ item.snippet }}</p>
                     </div>
 
                     <div class="item-footer">
-                        <span>Fuente: <strong>{{ item.source }}</strong></span>
+                        <span>Canal: <strong>{{ item.source }}</strong></span>
                         <a href="{{ item.link }}" target="_blank" rel="noopener" class="btn-link-video">Ver en YouTube ↗</a>
                     </div>
                 </div>
@@ -121,11 +133,11 @@
         </section>
 
 
-        <!-- MÓDULO 4: DEBATES & ENCUESTAS DE COMUNIDAD -->
+        <!-- MÓDULO: DEBATES & ENCUESTAS DE LA COMUNIDAD -->
         <section id="seccion-encuestas">
             <div class="section-header-box">
-                <h2 class="section-title">🗳️ Debates de la Comunidad & Batalla Cultural</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Sumá tu voto anónimo sobre los temas centrales de la agenda política y económica:</p>
+                <h2 class="section-title">🗳️ Debates de la Comunidad & Batalla de Ideas</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Votá y participá en los debates centrales del ecosistema liberal:</p>
             </div>
 
             <div class="multi-polls-grid">
@@ -147,7 +159,7 @@
 
                     <div class="poll-actions-bar">
                         <span class="poll-total-counter" id="poll-total-{{ p.id }}">
-                            {{ p.total_votes }} votos acumulados en tiempo real
+                            {{ p.total_votes }} votos registrados acumulados
                         </span>
                         <button class="btn-action btn-export-poll-social" data-poll-id="{{ p.id }}" data-poll-question="{{ p.question }}">
                             📱 Exportar a Redes (1-Clic)
@@ -159,16 +171,16 @@
         </section>
 
 
-        <!-- MÓDULO 5: REPRODUCTOR DE VIDEO SHORT Y GENERADOR CON VOZ NEURAL -->
+        <!-- MÓDULO: FÁBRICA DE SHORTS AUTOMÁTICOS -->
         <section id="seccion-video" class="card-widget">
             <div class="two-column-grid">
                 
                 <div class="player-card-box">
                     <h3 style="font-family: var(--font-heading); color: var(--text-bright); margin-bottom: 0.4rem;">
-                        🎬 Short de Video de Batalla Cultural (1080x1920)
+                        🎬 Video Short del Ecosistema (1080x1920)
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        Resumen generado automáticamente con locución en español argentino para publicar en TikTok y Shorts.
+                        Resumen automático generado con locución en español listo para compartir en TikTok y Shorts.
                     </p>
 
                     <div class="video-player-container">
@@ -178,9 +190,9 @@
                         </video>
                         {% else %}
                         <div class="video-placeholder">
-                            <div style="font-size: 2.8rem;">🎥</div>
+                            <div style="font-size: 2.8rem;">📹</div>
                             <p style="margin-top: 0.5rem; font-weight: 600;">Short de Video listo para generar</p>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para generar el MP4 con locución hablada.</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para crear el video MP4 con voz hablada.</p>
                         </div>
                         {% endif %}
                     </div>
@@ -192,12 +204,13 @@
 
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
                     <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="font-family: var(--font-heading); color: var(--accent-amber); margin-bottom: 0.4rem;">💡 Batalla Cultural sin Filtros</h4>
-                        <ul style="font-size: 0.88rem; color: var(--text-main); display: flex; flex-direction: column; gap: 0.6rem; padding-left: 1.2rem;">
-                            <li><strong>Información Directa:</strong> Sin la distorsión ni el aburrimiento de los medios tradicionales.</li>
-                            <li><strong>Síntesis en 3 Puntos:</strong> Las mejores partes de conferencias de 2h leídas en 30 segundos.</li>
-                            <li><strong>Multi-difusión:</strong> Copia frases bomba o genera el video short en 1 solo clic.</li>
-                        </ul>
+                        <h4 style="font-family: var(--font-heading); color: var(--accent-amber); margin-bottom: 0.4rem;">⚡ El Ecosistema Digital Más Activo</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 0.75rem;">
+                            Reunimos a más de 14 referentes clave: desde el análisis didáctico de Mate con Mote y Tipito Enojado, la trinchera del Gordo Dan en Carajo, las recorridas de Fran Fijap, hasta las conferencias de Laje, Rucauf y la gestión gubernamental.
+                        </p>
+                        <p style="font-size: 0.82rem; color: var(--text-muted);">
+                            Todo organizado sin censura, sin intermediarios y con sintetizador automático de discursos.
+                        </p>
                     </div>
                 </div>
 
@@ -205,15 +218,15 @@
         </section>
 
 
-        <!-- MÓDULO 6: SUSCRIPCIÓN BOLETÍN DE BATALLA CULTURAL -->
+        <!-- MÓDULO: SUSCRIPCIÓN BOLETÍN -->
         <section id="captura-leads">
             <div class="lead-box">
                 <div>
                     <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-bright);">
-                        📬 Suscribite al Boletín de Batalla Cultural
+                        📬 Suscribite al Boletín de Pulso Liberal
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">
-                        Recibí las transcripciones de Agustín Laje, Rucauf y discursos clave directamente en tu correo.
+                        Recibí las transcripciones de discursos, análisis geopolíticos y mejores momentos del streaming en tu correo.
                     </p>
                 </div>
                 <form class="lead-form" id="lead-form">
@@ -233,7 +246,7 @@
                 <button class="modal-close" id="modal-social-close">✕</button>
             </div>
             <p style="font-size: 0.88rem; color: var(--text-muted);">
-                Copia este texto formateado para publicar en X, Telegram o YouTube:
+                Copia este texto listo para publicar en X, Telegram o YouTube Comunidad:
             </p>
             <div class="social-text-box" id="social-copy-text"></div>
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
@@ -243,9 +256,9 @@
     </div>
 
     <footer>
-        <p>BATALLA CULTURAL © 2026 — Hub de Ideas Liberales, Geopolítica & Streamers</p>
+        <p>PULSO LIBERAL 360 © 2026 — Aglutinador del Ecosistema de YouTubers, Streamers & Batalla Cultural</p>
     </footer>
 
-    <script src="/static/js/app.js?v=7.0"></script>
+    <script src="/static/js/app.js?v=8.0"></script>
 </body>
 </html>

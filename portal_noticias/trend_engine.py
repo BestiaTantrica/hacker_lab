@@ -1,80 +1,83 @@
 #!/usr/bin/env python3
 """
-trend_engine.py — Motor de Clasificación Temática y Encuestas de Batalla Cultural
-Agrupa contenidos en 4 Ejes: Batalla Cultural, Geopolítica Rucauf, Economía Libre y Streamers/Redes.
+trend_engine.py — Motor de Clasificación Temática y Encuestas del Ecosistema Liberal
+Agrupa contenidos en 5 Ejes: Streamers/YouTubers, Batalla Cultural (Laje), Geopolítica (Rucauf), Economía Libre y Medios Digitales.
 """
 
 from typing import Dict, List, Any
 
 def categorize_hub_items(items: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-    """Clasifica los contenidos del Hub por los 4 ejes principales."""
+    """Clasifica los contenidos del Hub por los 5 ejes principales del ecosistema."""
     categorized = {
+        "streamers_youtubers": [],
         "batalla_cultural": [],
         "geopolitica": [],
         "economia_gobierno": [],
-        "streamers_redes": []
+        "medios_digitales": []
     }
     
     for item in items:
-        cat = item.get("category", "batalla_cultural")
+        cat = item.get("category", "streamers_youtubers")
         if cat in categorized:
             categorized[cat].append(item)
         else:
-            categorized["batalla_cultural"].append(item)
+            categorized["streamers_youtubers"].append(item)
             
     return categorized
 
 
 def extract_top_quotes(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extrae las frases bomba destacadas del día para compartir en redes."""
+    """Extrae las frases bomba destacadas de influencers, streamers y referentes del día."""
     quotes = []
     for item in items:
         if item.get("quote"):
             quotes.append({
                 "author": item.get("author"),
+                "handle": item.get("handle", ""),
                 "quote": item.get("quote"),
                 "source": item.get("source"),
                 "link": item.get("link")
             })
-    return quotes[:6]
+    return quotes[:8]
 
 
 def get_active_polls() -> List[Dict[str, Any]]:
-    """Encuestas Activas de Batalla Cultural & Reformas de Estado."""
+    """Encuestas Activas de la Comunidad Liberal & Batalla Cultural."""
     return [
         {
-            "id": 201,
-            "topic": "🏛️ Batalla de las Ideas",
-            "question": "¿Cuál considerás que es la prioridad clave en la batalla cultural hoy?",
-            "context": "Encuesta 1 — Formación de pensamiento y defensa de la libertad:",
+            "id": 301,
+            "topic": "📺 Creadores & Streamers Favoritos",
+            "question": "¿Qué tipo de formato o creador preferís para seguir la actualidad diaria?",
+            "context": "Encuesta de Comunidad — Formatos digitales más valorados:",
             "options": [
-                {"id": 1, "text": "🎓 Dar la batalla en las universidades e instituciones educativas.", "votes": 0},
-                {"id": 2, "text": "📱 Derribar el relato en redes sociales y medios digitales.", "votes": 0},
-                {"id": 3, "text": "📈 Demostrar con datos el éxito de la economía de libre mercado.", "votes": 0}
+                {"id": 1, "text": "🔥 YouTubers & Análisis Diario (Mate con Mote, Tipito Enojado, Peluca Milei).", "votes": 0},
+                {"id": 2, "text": "🎙️ Streaming & Debates en Vivo (Carajo / La Misa, Break Cero, Neura).", "votes": 0},
+                {"id": 3, "text": "🎓 Batalla Cultural & Filosofía (Agustín Laje, Axel Kaiser, FPP).", "votes": 0},
+                {"id": 4, "text": "📰 Noticias Digitales Directas (La Derecha Diario).", "votes": 0}
             ],
             "total_votes": 0
         },
         {
-            "id": 202,
-            "topic": "🌍 Geopolítica Occidental",
-            "question": "Análisis Geopolítico (Rucauf): ¿Cómo evaluás la inserción internacional de Argentina?",
-            "context": "Encuesta 2 — Posicionamiento trasatlántico e inversiones:",
+            "id": 302,
+            "topic": "🌍 Geopolítica Occidental (Rucauf)",
+            "question": "¿Cómo evaluás el nuevo posicionamiento estratégico internacional de Argentina?",
+            "context": "Encuesta de Geopolítica — Alineación trasatlántica y comercio libre:",
             "options": [
-                {"id": 1, "text": "🌐 Excelente: Nos afianza como polo de atracción y seguridad en el Atlántico Sur.", "votes": 0},
-                {"id": 2, "text": "👍 Positiva: Atrae inversiones privadas RIGI en energía y minerales.", "votes": 0},
-                {"id": 3, "text": "🔄 En proceso: Requiere mayor integración comercial estratégica.", "votes": 0}
+                {"id": 1, "text": "🌐 Excelente: Nos consolida como potencia de libertad en el Atlántico Sur.", "votes": 0},
+                {"id": 2, "text": "📈 Muy bueno: Atrae inversiones privadas RIGI en energía y minerales.", "votes": 0},
+                {"id": 3, "text": "🔄 En desarrollo: Requiere acelerar acuerdos de libre comercio.", "votes": 0}
             ],
             "total_votes": 0
         },
         {
-            "id": 203,
-            "topic": "📺 Formatos de Difusión",
-            "question": "¿A través de qué vía te informás y seguís los análisis políticos?",
-            "context": "Encuesta 3 — Nuevos medios vs prensa tradicional:",
+            "id": 303,
+            "topic": "📈 Reformas & Desregulación",
+            "question": "De las reformas estructurales en marcha, ¿cuál impacta más positivamente en el día a día?",
+            "context": "Encuesta de Economía — Impacto en el sector privado y familias:",
             "options": [
-                {"id": 1, "text": "📺 Streams en YouTube / Twitch (Neura, Carajo, Break Cero).", "votes": 0},
-                {"id": 2, "text": "📱 X (Twitter), TikTok y canales directos de referentes.", "votes": 0},
-                {"id": 3, "text": "📰 Portales digitales especializados (La Derecha Diario).", "votes": 0}
+                {"id": 1, "text": "🚫 Cero Inflación y fin del déficit fiscal como regla sagrada.", "votes": 0},
+                {"id": 2, "text": "📜 Desregulación (Sturzenegger): Eliminación de trámites e impuestos distorsivos.", "votes": 0},
+                {"id": 3, "text": "💼 Libertad de contratación y auge del crédito hipotecario/PyME.", "votes": 0}
             ],
             "total_votes": 0
         }

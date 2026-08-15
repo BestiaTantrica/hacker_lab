@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-rss_collector.py — Colector Especializado: Hub de Batalla Cultural, Geopolítica & Streamers Liberales
-Aglutina la información de referentes (Milei, Agustín Laje, Rucauf, La Derecha Diario, Neura, Carajo, Break Cero, Iñaki).
+rss_collector.py — Aglutinador Completo del Ecosistema Liberal, Geopolítica & Streamers (Argentina e Hispanoamérica)
+Curaduría de creadores masivos: Agustín Laje, Mate con Mote, Tipito Enojado, El Gordo Dan (Carajo), Rucauf, Fran Fijap, 
+Peluca Milei, Los Herederos de Alberdi, La Derecha Diario, Neura Media, El Presto, Mariano Pérez, Federico Sturzenegger.
 """
 
 import sys
@@ -9,144 +10,219 @@ import json
 from datetime import datetime
 from typing import Dict, List, Any
 
-DATOS_HUB_BATALLA_CULTURAL = [
-    # 🏛️ BATALLA CULTURAL & FILOSOFÍA (AGUSTÍN LAJE Y REFERENTES)
+# DIRECTORIO Y FEED COMPLETO DE CREADORES E INFLUENCERS LIBERALES
+CREADORES_ECOSISTEMA_LIBERAL = [
+    # 📺 YOUTUBERS Y STREAMERS MASIVOS DE ACTUALIDAD Y BÚNKER LIBERAL
+    {
+        "category": "streamers_youtubers",
+        "author": "Mate con Mote",
+        "handle": "@MateConMote",
+        "title": "Análisis Diario: Las repercusiones económicas del superávit y la caída de la inflación",
+        "source": "YouTube Streamer (1.2M+ subs)",
+        "snippet": "1. Reacción a las medidas económicas. 2. Análisis del consumo real y precios. 3. Desmontando el relato mediático tradicional.",
+        "link": "https://www.youtube.com/@MateConMote",
+        "pub_date": "Hace 15 min",
+        "tag": "YouTuber / Actualidad",
+        "quote": "«El sentido común le ganó a los eslóganes vacíos del estatismo.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "Tipito Enojado",
+        "handle": "@TipitoEnojado",
+        "title": "Batalla Cultural en vivo: Filosofía política, desregulación y debate contra la hegemonía cultural",
+        "source": "YouTube / Twitch (500K+ subs)",
+        "snippet": "1. Debate sobre libertad individual y propiedad privada. 2. Análisis del discurso político. 3. Preguntas de la audiencia en vivo.",
+        "link": "https://www.youtube.com/@TipitoEnojado",
+        "pub_date": "Hace 30 min",
+        "tag": "Filosofía & Humor",
+        "quote": "«La libertad no se pide por favor; se ejerce y se defiende todos los días.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "El Gordo Dan (La Misa / Carajo)",
+        "handle": "@GordoDan_",
+        "title": "La Misa en Carajo Stream: Actualidad política, tendencias en X y batalla cultural sin filtro",
+        "source": "Carajo Stream / Twitch",
+        "snippet": "1. Análisis de tendencias virales en X (Twitter). 2. Repercusiones de las medidas de gobierno. 3. Debate picante en vivo.",
+        "link": "https://www.youtube.com/@canalcarajo",
+        "pub_date": "Hace 45 min",
+        "tag": "Streaming / X Trends",
+        "quote": "«En redes la verdad no pide permiso: se viraliza sola.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "Fran Fijap",
+        "handle": "@FranFijap",
+        "title": "Cobertura en la calle: Lo que dice la gente real sobre la estabilidad y las reformas",
+        "source": "YouTube Cronista Digital",
+        "snippet": "1. Entrevistas mano a mano en la calle. 2. Reacción de comerciantes e inquilinos. 3. Opiniones espontáneas del ciudadano común.",
+        "link": "https://www.youtube.com/@FranFijap",
+        "pub_date": "Hace 1 hora",
+        "tag": "Cronista Digital",
+        "quote": "«La gente en la calle entiende el esfuerzo mucho mejor que los analistas de televisión.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "Peluca Milei",
+        "handle": "@ElPelucaMilei",
+        "title": "Compilado Histórico: Discursos clave sobre desregulación, superávit y banco central",
+        "source": "YouTube (1.5M+ subs)",
+        "snippet": "1. El camino de las reformas de mercado. 2. Explicación didáctica del superávit fiscal. 3. Comparativa internacional de libertad económica.",
+        "link": "https://www.youtube.com/@ElPelucaMilei",
+        "pub_date": "Hace 1 hora",
+        "tag": "Compilados & Discursos",
+        "quote": "«No vine a guiar corderos, vine a despertar leones.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "Los Herederos de Alberdi",
+        "handle": "@HerederosDeAlberdi",
+        "title": "Bases de la Prosperidad: Las enseñanzas de Juan Bautista Alberdi aplicadas al 2026",
+        "source": "YouTube Divulgación",
+        "snippet": "1. Principios de la Constitución de 1853. 2. Libertad de comercio y propiedad. 3. Por qué el modelo de Alberdi hizo próspera a la Argentina.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 2 horas",
+        "tag": "Historia & Economía",
+        "quote": "«La libertad de comercio es la madre de la riqueza de las naciones.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "El Presto (Data 24)",
+        "handle": "@ElPrestoOK",
+        "title": "Informe de Periodismo Independiente: Investigación sobre el gasto burocrático y los privilegios",
+        "source": "YouTube / Data24",
+        "snippet": "1. Auditorías en organismos estatales. 2. Revelaciones sobre contrataciones del pasado. 3. Opinión de actualidad.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 2 horas",
+        "tag": "Periodismo Independiente",
+        "quote": "«La transparencia no es negociable en una democracia libre.»"
+    },
+    {
+        "category": "streamers_youtubers",
+        "author": "Mariano Pérez (Break Cero)",
+        "handle": "@MarianoPerezOK",
+        "title": "Break Cero Stream: Reacciones a la conferencia de prensa y debate de reformas en el Congreso",
+        "source": "Break Cero Stream",
+        "snippet": "1. Cobertura desde los pasillos del Congreso. 2. Declaraciones exclusivas de legisladores. 3. Chat en vivo.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 3 horas",
+        "tag": "Streaming / Cobertura",
+        "quote": "«Contando lo que pasa en el Congreso sin los filtros de la prensa tradicional.»"
+    },
+
+    # 🏛️ REFERENTES DE BATALLA CULTURAL & FILOSOFÍA (AGUSTÍN LAJE, FUNDACIÓN FARO, AXEL KAISER)
     {
         "category": "batalla_cultural",
         "author": "Agustín Laje",
-        "title": "La batalla cultural en 2026: Por qué la defensa de la propiedad y la libertad individual es el único camino",
-        "source": "Conferencia & Canal Oficial",
-        "snippet": "Síntesis del discurso: 1. Desmontar los mitos del estatismo. 2. La importancia de la batalla en las universidades. 3. La batalla ideológica en la cultura popular.",
+        "handle": "@AgustinLaje",
+        "title": "La Batalla Cultural 2026: Por qué la defensa de la familia, la propiedad y la libertad es el único camino",
+        "source": "Fundación FARO & Canal Oficial",
+        "snippet": "1. Desmontar la hegemonía del relato estatista. 2. La importancia de la formación de jóvenes intelectuales. 3. El rol de las redes en la batalla cultural.",
         "link": "https://www.youtube.com/@AgustinLajeOficial",
         "pub_date": "Hace 20 min",
         "tag": "Batalla Cultural",
-        "quote": "«La batalla cultural no es una opción, es una obligación moral para defender la libertad.»"
+        "quote": "«La batalla cultural es la madre de todas las batallas políticamente victoriosas.»"
     },
     {
         "category": "batalla_cultural",
-        "author": "Agustín Laje",
-        "title": "Análisis del avance del liberalismo en Hispanoamérica y el modelo argentino",
-        "source": "Conferencia Internacional",
-        "snippet": "1. El impacto de las reformas argentinas en la región. 2. Cómo los jóvenes abrazan las ideas de la libertad. 3. Redes sociales vs hegemonía mediática.",
-        "link": "https://www.youtube.com/@AgustinLajeOficial",
+        "author": "Axel Kaiser / Fundación para el Progreso",
+        "handle": "@AxelKaiser",
+        "title": "El colapso del modelo intervencionista y el renacimiento de las ideas de la libertad en América Latina",
+        "source": "FPP / Conferencia Internacional",
+        "snippet": "1. Análisis comparativo de libertad económica en Hispanoamérica. 2. Por qué el respeto a la propiedad privada genera prosperidad. 3. La lección argentina.",
+        "link": "https://www.youtube.com/",
         "pub_date": "Hace 1 hora",
-        "tag": "Filosofía Política",
-        "quote": "«Las ideas de la libertad vencieron al monopolio del relato de los medios tradicionales.»"
+        "tag": "Economía Política",
+        "quote": "«Sin propiedad privada ni Estado de Derecho no hay libertad ni desarrollo posible.»"
     },
 
-    # 🌍 GEOPOLÍTICA & ESTRATEGIA OCCIDENTAL (RUCAUF & POLÍTICA EXTERIOR)
+    # 🌍 GEOPOLÍTICA & POLÍTICA EXTERIOR (RUCAUF & ANÁLISIS OCCIDENTAL)
     {
         "category": "geopolitica",
         "author": "Rucauf (Análisis Geopolítico)",
-        "title": "Geopolítica 2026: El nuevo eje trasatlántico, la alineación con Occidente y el rol de Argentina",
-        "source": "Análisis Geopolítico Especializado",
-        "snippet": "1. Reconfiguración del comercio global y alianzas de seguridad. 2. El posicionamiento estratégico de Argentina en el Atlántico Sur. 3. Impacto de las inversiones internacionales.",
+        "handle": "@RucaufGeopolitica",
+        "title": "Geopolítica 2026: La reconfiguración del eje trasatlántico y la posición de Argentina en el Atlántico Sur",
+        "source": "Informe Geopolítico Especializado",
+        "snippet": "1. Alineación estratégica con las democracias occidentales. 2. Seguridad en las rutas marítimas y el valor del Litio/Vaca Muerta. 3. Atracción de capitales globales.",
         "link": "https://www.youtube.com/",
         "pub_date": "Hace 15 min",
         "tag": "Geopolítica",
-        "quote": "«Argentina afianza su lugar en el bloque occidental y se consolida como polo de atracción estratégica.»"
-    },
-    {
-        "category": "geopolitica",
-        "author": "Rucauf (Análisis Geopolítico)",
-        "title": "Poder global y recursos energéticos: El papel de Vaca Muerta y el Litio en la agenda internacional",
-        "source": "Informe Geopolítico",
-        "snippet": "1. Independencia energética y exportaciones a gran escala. 2. Seguridad en las cadenas de suministro globales. 3. El interés de las potencias en la infraestructura argentina.",
-        "link": "https://www.youtube.com/",
-        "pub_date": "Hace 45 min",
-        "tag": "Estrategia Global",
-        "quote": "«La libertad de comercio y la seguridad jurídica convierten a la Argentina en un actor central del G20.»"
+        "quote": "«Argentina recupera su lugar de potencia regional alineada con el mundo libre.»"
     },
 
-    # 📈 ECONOMÍA DE MERCADO & GOBIERNO (JAVIER MILEI & OFICINA DEL PRESIDENTE)
+    # 📈 ECONOMÍA LIBRE & GESTIÓN DE ESTADO (MILEI, STURZENEGGER, LIBERTAD Y PROGRESO)
     {
         "category": "economia_gobierno",
         "author": "Javier Milei",
-        "title": "Discurso Magistral: El superávit fiscal como regla innegociable y la eliminación definitiva de la inflación",
+        "handle": "@JMilei",
+        "title": "Discurso Magistral: El superávit fiscal financiero y la eliminación de la inflación como mandato",
         "source": "Oficina del Presidente",
-        "snippet": "1. Consolidación de la estabilidad monetaria. 2. Desregulación masiva y libertad de contratación. 3. Crecimiento económico sostenible impulsado por el sector privado.",
+        "snippet": "1. El rigor fiscal como principio innegociable. 2. Libertad de contratación y desregulación de la economía. 3. El crecimiento liderado por el sector privado.",
         "link": "https://www.youtube.com/@JavierMileiOficial",
-        "pub_date": "Hace 30 min",
-        "tag": "Economía Libre",
-        "quote": "«El superávit fiscal es sagrado. Cada peso que no se gasta es un peso que vuelve al bolsillo de los argentinos.»"
+        "pub_date": "Hace 25 min",
+        "tag": "Economía de Mercado",
+        "quote": "«El superávit fiscal es sagrado; es la única garantía de que no habrá más inflación.»"
     },
     {
         "category": "economia_gobierno",
-        "author": "Oficina del Presidente",
-        "title": "Informe Oficial: Balance de la reducción del gasto público y desregulación de mercados",
-        "source": "Comunicado Oficial",
-        "snippet": "1. Cierre de organismos burocráticos innecesarios. 2. Apertura comercial y atracción de inversiones RIGI. 3. Crecimiento del crédito privado a PyMEs y familias.",
-        "link": "https://x.com/OPRArgentina",
-        "pub_date": "Hace 1 hora",
-        "tag": "Gestión Oficial",
-        "quote": "«La libertad abre caminos; la burocracia destruye empleo.»"
-    },
-
-    # ⚡ STREAMERS & MEDIOS DIGITALES (LA DERECHA DIARIO, NEURA, CARAJO, BREAK CERO, IÑAKI)
-    {
-        "category": "streamers_redes",
-        "author": "La Derecha Diario",
-        "title": "Cobertura en vivo: Las repercusiones de la reforma económica y el desplome del riesgo país",
-        "source": "La Derecha Diario",
-        "snippet": "1. El mercado celebra la consolidación fiscal. 2. Reacciones en el Congreso ante los proyectos de ley. 3. Tendencia viral en redes.",
-        "link": "https://laderechadiario.com.ar/",
-        "pub_date": "Hace 10 min",
-        "tag": "Noticias Digitales",
-        "quote": "«El cambio de época se siente en la calle y en las cifras económicas reales.»"
-    },
-    {
-        "category": "streamers_redes",
-        "author": "Neura Media",
-        "title": "Debate de Streamers: Cómo los jóvenes lideran la conversación digital sobre las ideas libertarias",
-        "source": "Neura Stream",
-        "snippet": "1. El auge de canales independientes en YouTube y Twitch. 2. Por qué los medios tradicionales perdieron el monopolio del debate. 3. Opiniones en vivo del chat.",
-        "link": "https://www.youtube.com/@neuramedia",
-        "pub_date": "Hace 25 min",
-        "tag": "Streaming & Debate",
-        "quote": "«La televisión abierta ya no marca la agenda; hoy la agenda la hace la gente en las redes.»"
-    },
-    {
-        "category": "streamers_redes",
-        "author": "Break Cero / Carajo",
-        "title": "Resumen de Noticias & Stream: La batalla contra el relato estatista en las redes sociales",
-        "source": "Canal Carajo",
-        "snippet": "1. Análisis humorístico de los debates políticos. 2. Los videos más virales de TikTok de la semana. 3. Interacción en directo.",
-        "link": "https://www.youtube.com/",
-        "pub_date": "Hace 40 min",
-        "tag": "Batalla Digital",
-        "quote": "«Desmontando el relato minuto a minuto con datos reales y sin filtros.»"
-    },
-    {
-        "category": "streamers_redes",
-        "author": "Iñaki Gutiérrez",
-        "title": "Estrategia Digital: El impacto de la comunicación directa sin intermediarios mediáticos",
-        "source": "Análisis en X & TikTok",
-        "snippet": "1. Cómo TikTok se convirtió en la plaza pública del debate juvenil. 2. El valor de la autenticidad en las redes. 3. Métricas de alcance sin pauta oficial.",
+        "author": "Federico Sturzenegger",
+        "handle": "@FSturzenegger",
+        "title": "Balance de Desregulación: Eliminación de trámites, simplificación impositiva y libertad económica",
+        "source": "Ministerio de Desregulación",
+        "snippet": "1. Derogación de leyes obsoletas que trababan el comercio. 2. Reducción del costo argentino para PyMEs y exportadores. 3. Eficiencia en la administración pública.",
         "link": "https://x.com/",
         "pub_date": "Hace 50 min",
-        "tag": "Estrategia Digital",
-        "quote": "«Sin pauta oficial, la verdad y las ideas de la libertad se abren paso solas en las redes.»"
+        "tag": "Desregulación",
+        "quote": "«Cada trámite eliminado es más tiempo y libertad para trabajar y producir.»"
+    },
+
+    # 📰 MEDIOS DIGITALES ALTERNATIVOS DE NOTICIAS
+    {
+        "category": "medios_digitales",
+        "author": "La Derecha Diario",
+        "handle": "@LaDerechaDiario",
+        "title": "Última Hora: El riesgo país perfora nuevos mínimos y los mercados respaldan las reformas de mercado",
+        "source": "La Derecha Diario",
+        "snippet": "1. Suba de bonos soberanos en Wall Street. 2. Balance del comercio exterior. 3. Reacciones internacionales.",
+        "link": "https://laderechadiario.com.ar/",
+        "pub_date": "Hace 10 min",
+        "tag": "Noticias de Mercado",
+        "quote": "«La confianza económica se traduce en números récord en los mercados financieros.»"
+    },
+    {
+        "category": "medios_digitales",
+        "author": "Neura Media (Alejandro Fantino / Trebucq)",
+        "handle": "@NeuraMedia",
+        "title": "La Trinchera Digital: El impacto de las medidas económicas explicadas por especialistas",
+        "source": "Neura Streaming",
+        "snippet": "1. Entrevista mano a mano sobre el futuro del crédito bancario. 2. Preguntas de la gente en el chat. 3. Análisis de la semana.",
+        "link": "https://www.youtube.com/@neuramedia",
+        "pub_date": "Hace 40 min",
+        "tag": "Entrevistas & Streaming",
+        "quote": "«Discutiendo la economía real de la calle sin casetes ni censura.»"
     }
 ]
 
 CONCEPTOS_BATALLA_CULTURAL = [
-    {"text": "LIBERTAD", "weight": 3.4, "color": "#f59e0b"},
-    {"text": "LAJE", "weight": 2.8, "color": "#3b82f6"},
+    {"text": "MATE CON MOTE", "weight": 3.4, "color": "#f59e0b"},
+    {"text": "AGUSTÍN LAJE", "weight": 3.0, "color": "#3b82f6"},
+    {"text": "GORDO DAN", "weight": 2.8, "color": "#8b5cf6"},
+    {"text": "TIPITO ENOJADO", "weight": 2.6, "color": "#ec4899"},
     {"text": "RUCAUF", "weight": 2.5, "color": "#10b981"},
-    {"text": "MILEI", "weight": 2.4, "color": "#8b5cf6"},
-    {"text": "SUPERÁVIT", "weight": 2.0, "color": "#ec4899"},
-    {"text": "PROPIEDAD", "weight": 1.7, "color": "#f59e0b"},
-    {"text": "OCCIDENTE", "weight": 1.5, "color": "#3b82f6"},
-    {"text": "DERECHA DIARIO", "weight": 1.3, "color": "#10b981"},
-    {"text": "CARAJO", "weight": 1.1, "color": "#8b5cf6"},
-    {"text": "NEURA", "weight": 1.0, "color": "#ec4899"}
+    {"text": "MILEI", "weight": 2.4, "color": "#f59e0b"},
+    {"text": "FRAN FIJAP", "weight": 2.2, "color": "#3b82f6"},
+    {"text": "LA DERECHA DIARIO", "weight": 2.0, "color": "#10b981"},
+    {"text": "PELUCA MILEI", "weight": 1.8, "color": "#8b5cf6"},
+    {"text": "STURZENEGGER", "weight": 1.5, "color": "#ec4899"},
+    {"text": "HEREDEROS DE ALBERDI", "weight": 1.3, "color": "#f59e0b"},
+    {"text": "NEURA MEDIA", "weight": 1.1, "color": "#3b82f6"}
 ]
 
 def collect_all_data() -> Dict[str, Any]:
     return {
         "timestamp": datetime.now().isoformat(),
-        "total_items": len(DATOS_HUB_BATALLA_CULTURAL),
-        "hub_items": DATOS_HUB_BATALLA_CULTURAL,
+        "total_creadores": len(CREADORES_ECOSISTEMA_LIBERAL),
+        "hub_items": CREADORES_ECOSISTEMA_LIBERAL,
         "conceptos": CONCEPTOS_BATALLA_CULTURAL
     }
 

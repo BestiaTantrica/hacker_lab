@@ -1,5 +1,5 @@
 /* ==========================================================================
-   portal_noticias — BATALLA CULTURAL HUB (v7.0 Design System)
+   portal_noticias — PULSO LIBERAL 360 (v8.0 Design System)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
@@ -110,9 +110,9 @@ header {
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    padding: 0.4rem 0.85rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -178,7 +178,7 @@ main {
 .hero-commercial p {
     font-size: 0.95rem;
     color: var(--text-muted);
-    max-width: 820px;
+    max-width: 840px;
     margin: 0.4rem auto 0 auto;
 }
 
@@ -234,7 +234,7 @@ main {
 /* FRASES BOMBA (QUOTES GRID) */
 .quotes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     gap: 1.25rem;
     margin-top: 0.5rem;
 }
@@ -255,14 +255,13 @@ main {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--accent-amber);
-    margin-bottom: 0.4rem;
 }
 
 .quote-text {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--text-bright);
     font-style: italic;
-    margin-bottom: 0.85rem;
+    margin: 0.5rem 0 0.85rem 0;
 }
 
 .quote-footer {
@@ -332,13 +331,14 @@ main {
     border-radius: 6px;
 }
 
-.badge-tag.batalla_cultural { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+.badge-tag.streamers_youtubers { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+.badge-tag.batalla_cultural { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
 .badge-tag.geopolitica { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
 .badge-tag.economia_gobierno { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
-.badge-tag.streamers_redes { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+.badge-tag.medios_digitales { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
 
 .item-pubdate { font-size: 0.75rem; color: var(--text-muted); }
-.item-author { font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 0.3rem; }
+.item-author { font-family: var(--font-heading); font-size: 1.15rem; color: var(--accent-gold); display: inline-block; }
 
 .item-title {
     font-size: 0.98rem;
