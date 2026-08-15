@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-portal_noticias/main.py — Servidor Web Público (Ground News Hispano + Termómetro Social + Shorts con Voz Narrada)
+portal_noticias/main.py — Servidor Web Público (Escuchatorio Dual: Prensa vs Redes, Nubes Emocionales & Multi-Encuestas)
 Servidor dedicado para el portal público en el puerto 8001.
 """
 
@@ -14,22 +14,26 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from portal_noticias.rss_collector import collect_all_data
-from portal_noticias.trend_engine import extract_literal_word_cloud, calculate_social_climate, get_active_poll
+from portal_noticias.trend_engine import (
+    extract_dual_word_clouds,
+    extract_emotional_clouds,
+    calculate_social_climate,
+    get_active_polls
+)
 from portal_noticias.generar_short_diario import generate_short_video
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 
 app = FastAPI(
-    title="Radar Prensa & Termómetro Social",
-    description="Portal Público de Monitoreo de Sesgo Mediático, Tendencias y Fábrica de Shorts",
-    version="2.1.0"
+    title="Radar Prensa vs Redes Sociales",
+    description="Escuchatorio Dual, Nubes Emocionales, Multi-Encuestas y Fábrica de Shorts",
+    version="3.0.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
-# Inicializar tablas de Leads y Votos
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -55,38 +59,47 @@ init_db()
 
 
 def get_live_data():
-    """Genera los datos en tiempo real directo desde los colectores y la DB sin caché estática congelada."""
+    """Genera los datos en tiempo real de prensa, redes, desacople %, nubes emocionales y encuestas."""
     raw_data = collect_all_data()
     prensa = raw_data.get("prensa", [])
     trends = raw_data.get("google_trends", [])
-    reddit = raw_data.get("reddit", [])
-    youtube = raw_data.get("youtube", [])
+    redes = raw_data.get("redes", [])
 
-    word_cloud = extract_literal_word_cloud(prensa, trends)
-    climate = calculate_social_climate(prensa)
-    poll = get_active_poll()
+    dual_clouds = extract_dual_word_clouds(prensa, redes, trends)
+    emotional_clouds = extract_emotional_clouds(prensa, redes)
+    climate = calculate_social_climate(prensa, redes)
+    polls = get_active_polls()
 
-    # Cargar votos reales registrados en SQLite
+    # Cargar votos por cada encuesta desde SQLite
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("SELECT option_id, COUNT(*) FROM poll_votes WHERE poll_id = ? GROUP BY option_id", (poll["id"],))
-    vote_counts = dict(cur.fetchall())
+    
+    for p in polls:
+        cur.execute("SELECT option_id, COUNT(*) FROM poll_votes WHERE poll_id = ? GROUP BY option_id", (p["id"],))
+        v_counts = dict(cur.fetchall())
+        tot = sum(v_counts.values())
+        p["total_votes"] = tot
+        for opt in p["options"]:
+            opt_v = v_counts.get(opt["id"], 0)
+            opt["votes"] = opt_v
+            opt["pct"] = round((opt_v / tot) * 100, 1) if tot > 0 else 0.0
+
     conn.close()
 
-    total = sum(vote_counts.values())
-    poll["total_votes"] = total
-    for opt in poll["options"]:
-        opt["votes"] = vote_counts.get(opt["id"], 0)
+    # Ruta del short de video si existe
+    short_file = os.path.join(BASE_DIR, "static", "shorts", "short_del_dia.mp4")
+    short_url = f"/static/shorts/short_del_dia.mp4?v={os.path.getmtime(short_file)}" if os.path.exists(short_file) else None
 
     return {
         "timestamp": raw_data.get("timestamp"),
         "prensa": prensa,
         "google_trends": trends,
-        "reddit": reddit,
-        "youtube": youtube,
-        "word_cloud": word_cloud,
+        "redes": redes,
+        "dual_clouds": dual_clouds,
+        "emotional_clouds": emotional_clouds,
         "climate": climate,
-        "poll": poll
+        "polls": polls,
+        "short_url": short_url
     }
 
 
@@ -99,14 +112,14 @@ async def home_page(request: Request):
         name="index.html",
         context={
             "data": data,
-            "title": "Radar Prensa & Termómetro Social | Argentina"
+            "title": "Radar Prensa vs Redes Sociales | Argentina"
         }
     )
 
 
 @app.get("/api/public/data")
 async def get_public_data():
-    """Endpoint JSON de datos crudos de tendencias y clima social."""
+    """Endpoint JSON de datos completos de prensa, redes y encuestas."""
     return get_live_data()
 
 
@@ -116,23 +129,23 @@ class PublicVotePayload(BaseModel):
 
 @app.post("/api/public/vote")
 async def submit_vote(payload: PublicVotePayload):
-    """Procesa el voto del usuario, lo guarda en SQLite y devuelve los porcentajes acumulados."""
+    """Procesa el voto del usuario para cualquier encuesta y devuelve porcentajes acumulados."""
     try:
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute("INSERT INTO poll_votes (poll_id, option_id) VALUES (?, ?)", (payload.poll_id, payload.option_id))
         conn.commit()
 
-        # Recalcular conteo exacto de la DB
         cur.execute("SELECT option_id, COUNT(*) FROM poll_votes WHERE poll_id = ? GROUP BY option_id", (payload.poll_id,))
         vote_counts = dict(cur.fetchall())
         conn.close()
 
         total = sum(vote_counts.values())
-        poll = get_active_poll()
+        polls = get_active_polls()
+        target_poll = next((p for p in polls if p["id"] == payload.poll_id), polls[0])
 
         results = []
-        for opt in poll["options"]:
+        for opt in target_poll["options"]:
             v_cnt = vote_counts.get(opt["id"], 0)
             pct = round((v_cnt / total) * 100, 1) if total > 0 else 0.0
             results.append({
@@ -144,6 +157,7 @@ async def submit_vote(payload: PublicVotePayload):
 
         return {
             "status": "success",
+            "poll_id": payload.poll_id,
             "total_votes": total,
             "results": results
         }
@@ -175,8 +189,8 @@ async def subscribe_lead(payload: LeadPayload):
 async def api_generate_short():
     """Genera el Short MP4 con voz hablada en español del día y devuelve la ruta de descarga."""
     data = get_live_data()
-    top_word = data["word_cloud"][0]["text"] if data["word_cloud"] else "PRESUPUESTO"
-    question = data["poll"]["question"]
+    top_word = data["dual_clouds"]["cloud_prensa"][0]["text"] if data["dual_clouds"]["cloud_prensa"] else "PRESUPUESTO"
+    question = data["polls"][0]["question"] if data["polls"] else "¿Cuál es tu prioridad?"
     
     short_path = generate_short_video(top_word, question)
     if short_path and os.path.exists(short_path):

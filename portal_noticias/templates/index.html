@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Radar Prensa & Termómetro Social. Escuchatorio mediático y tendencias en Argentina sin sesgos.">
+    <meta name="description" content="Radar Prensa vs Redes Sociales. Escuchatorio Dual, Nubes Emocionales, Multi-Encuestas y Videos Explicativos en Argentina.">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3.5">
+    <link rel="stylesheet" href="/static/css/style.css?v=5.0">
 </head>
 <body>
 
-    <!-- HEADER & REGIONAL SELECTOR -->
+    <!-- HEADER & MAIN NAV -->
     <header>
         <div class="nav-container">
             <a href="/" class="brand">
                 <div class="brand-logo">📊</div>
-                <div class="brand-title">RADAR<span>PRENSA</span></div>
+                <div class="brand-title">RADAR<span>DUAL</span></div>
             </a>
 
-            <!-- Selector Regional / Federal con Filtro Real -->
+            <!-- Selector de Modos de Visualización Principal -->
+            <div class="view-mode-selector">
+                <button class="view-mode-btn active" data-view="mode-comparativo">📊 Prensa vs Redes</button>
+                <button class="view-mode-btn" data-view="mode-emociones">☁️ Nubes Emocionales</button>
+                <button class="view-mode-btn" data-view="mode-encuestas">🗳️ Multi-Encuestas (3)</button>
+                <button class="view-mode-btn" data-view="mode-video">📺 Videos Explicativos</button>
+            </div>
+
+            <!-- Selector Regional / Federal -->
             <div class="region-selector">
                 <button class="region-btn active" data-region="nacional">🇦🇷 Nacional</button>
-                <button class="region-btn" data-region="caba_gba">🏢 CABA / GBA</button>
-                <button class="region-btn" data-region="centro">🌾 Región Centro</button>
-                <button class="region-btn" data-region="noa_cuyo">🏔️ NOA / Cuyo</button>
+                <button class="region-btn" data-region="caba_gba">🏢 CABA/GBA</button>
+                <button class="region-btn" data-region="centro">🌾 Centro</button>
+                <button class="region-btn" data-region="noa_cuyo">🏔️ NOA/Cuyo</button>
                 <button class="region-btn" data-region="patagonia">❄️ Patagonia</button>
             </div>
 
             <div class="badge-live">
-                <div class="dot-live"></div> ESCUCHATORIO EN VIVO (AR)
+                <div class="dot-live"></div> ESCUCHATORIO DUAL EN VIVO
             </div>
         </div>
     </header>
@@ -35,179 +43,312 @@
     <!-- MAIN CONTENT -->
     <main>
 
-        <!-- BANNER DE TRAZABILIDAD POR PALABRAS (SE ACTIVA AL HACER CLIC EN LA NUBE) -->
+        <!-- BANNER DE DESTAQUE: INDICADOR DE DIVERGENCIA DE AGENDA (PRENSA VS REDES) -->
+        <section id="banner-divergencia" class="card-divergence">
+            <div class="divergence-info">
+                <div class="divergence-badge">⚡ GAUGE DE DIVERGENCIA DE AGENDA</div>
+                <h2 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-bright); margin-top: 0.3rem;">
+                    Desacople Mediático-Ciudadano: <span style="color: var(--accent-rose); font-weight: 800;">{{ data.dual_clouds.divergence_score }}%</span>
+                </h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">
+                    Los periódicos priorizan <strong>{{ data.dual_clouds.cloud_prensa[0].text }}</strong> y debates parlamentarios, mientras que en redes sociales la conversación se centra en <strong>{{ data.dual_clouds.cloud_redes[0].text }}</strong> y costo de vida.
+                </p>
+            </div>
+            <div class="divergence-gauge-box">
+                <div class="gauge-bar">
+                    <div class="gauge-fill" style="width: {{ data.dual_clouds.divergence_score }}%;"></div>
+                </div>
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Alto Desacople de Agenda (Prensa vs Redes)</span>
+            </div>
+        </section>
+
+        <!-- BANNER DE TRAZABILIDAD POR PALABRAS -->
         <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
-            <span>🔍 Filtrando cobertura mediática por el concepto: <strong id="active-word-text" style="color: var(--accent-blue);">PRESUPUESTO</strong></span>
-            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todas las Noticias</button>
+            <span>🔍 Filtrando por concepto / emoción: <strong id="active-word-text" style="color: var(--accent-blue);">PRESUPUESTO</strong></span>
+            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Restablecer Filtros</button>
         </div>
 
-        <!-- SECCIÓN 1: MATRIZ GROUND NEWS HISPANO (28+ MEDIOS FEDERALES) -->
-        <section id="matriz-prensa">
-            <h2 class="section-title">📰 Cobertura Mediática Nacional y Provincial ({{ data.prensa|length }} Medios)</h2>
-            <div class="grid-matrix" id="news-matrix">
-                {% for item in data.prensa %}
-                <div class="card-news" data-region="{{ item.region }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
-                    <div>
-                        <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
-                        <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
-                        <p class="news-snippet">{{ item.snippet }}</p>
+        <!-- ===================================================================
+             SECCIÓN 1: VISTA DUAL COMPARATIVA (PRENSA VS REDES SOCIALES)
+             =================================================================== -->
+        <section id="mode-comparativo" class="view-section active">
+            <div class="section-header-box">
+                <h2 class="section-title">📊 Contrastador Dual: Agenda Mediática vs Agenda Ciudadana</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Compará lo que publican los 28+ periódicos del país contra lo que opina y comenta la gente en X/Twitter, Reddit, YouTube y Telegram.</p>
+            </div>
+
+            <div class="split-view-grid">
+                
+                <!-- COLUMNA IZQUIERDA: PRENSA TRADICIONAL -->
+                <div class="column-agenda prensa-agenda">
+                    <div class="column-header">
+                        <h3>📰 Agenda Mediática (Prensa Tradicional)</h3>
+                        <div class="cloud-mini">
+                            {% for w in data.dual_clouds.cloud_prensa[:6] %}
+                            <span class="mini-tag" style="color: {{ w.color }}">{{ w.text }}</span>
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div class="news-footer">
-                        <span>Fuente: <strong>{{ item.source }}</strong></span>
-                        <span>{{ item.pub_date }}</span>
+
+                    <div class="grid-matrix-column" id="prensa-matrix">
+                        {% for item in data.prensa %}
+                        <div class="card-news" data-region="{{ item.region }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
+                            <div>
+                                <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
+                                <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
+                                <p class="news-snippet">{{ item.snippet }}</p>
+                            </div>
+                            <div class="news-footer">
+                                <span>Fuente: <strong>{{ item.source }}</strong></span>
+                                <span>{{ item.pub_date }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: REDES SOCIALES & COMENTARIOS REALES -->
+                <div class="column-agenda redes-agenda">
+                    <div class="column-header">
+                        <h3>📱 Agenda Ciudadana (Redes Sociales & Comentarios)</h3>
+                        <div class="cloud-mini">
+                            {% for w in data.dual_clouds.cloud_redes[:6] %}
+                            <span class="mini-tag" style="color: {{ w.color }}">{{ w.text }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="grid-matrix-column" id="redes-matrix">
+                        {% for post in data.redes %}
+                        <div class="card-social" data-emotion="{{ post.emotion }}" data-content="{{ post.content|lower }}">
+                            <div class="social-header">
+                                <span class="network-badge {{ post.network|lower|replace(' ', '-') }}">{{ post.network }}</span>
+                                <span class="social-author">{{ post.author }}</span>
+                            </div>
+                            <p class="social-content">{{ post.content }}</p>
+                            <div class="social-comment-box">
+                                <p class="comment-text">{{ post.top_comment }}</p>
+                            </div>
+                            <div class="social-footer">
+                                <span>{{ post.engagement }}</span>
+                                <a href="{{ post.url }}" target="_blank" rel="noopener" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Ver post ↗</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ===================================================================
+             SECCIÓN 2: NUBES DE PALABRAS POR EMOCIONALIDAD
+             =================================================================== -->
+        <section id="mode-emociones" class="view-section">
+            <div class="section-header-box">
+                <h2 class="section-title">☁️ Nubes de Palabras por Espectro Emocional</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Seleccioná una emoción para desplegar su nube de conceptos clave y filtrar noticias + publicaciones en redes emparejadas.</p>
+            </div>
+
+            <!-- Pestañas de Selección de Emoción -->
+            <div class="emotion-tabs-bar">
+                <button class="emotion-tab-btn active" data-emotion="tension" style="--tab-color: #f59e0b;">
+                    🔴 Tensión & Conflicto
+                </button>
+                <button class="emotion-tab-btn" data-emotion="incertidumbre" style="--tab-color: #3b82f6;">
+                    🟠 Incerteza & Preocupación
+                </button>
+                <button class="emotion-tab-btn" data-emotion="esperanza" style="--tab-color: #10b981;">
+                    🟢 Esperanza & Estabilidad
+                </button>
+                <button class="emotion-tab-btn" data-emotion="indignacion" style="--tab-color: #ec4899;">
+                    🟣 Indignación Ciudadana
+                </button>
+            </div>
+
+            <!-- Contenedor Dinámico de la Nube Emocional Activa -->
+            <div class="card-widget emotion-cloud-widget">
+                <h3 id="emotion-title-display" style="font-family: var(--font-heading); color: #f59e0b; margin-bottom: 0.5rem;">
+                    🔴 Espectro Emocional: Tensión & Conflicto
+                </h3>
+                
+                <div class="word-cloud-literal" id="emotion-word-cloud-container">
+                    <!-- Se puebla dinámicamente o con Jinja2 por defecto -->
+                    {% for tag in data.emotional_clouds.tension.word_cloud %}
+                    <span class="word-literal-tag" 
+                          data-word="{{ tag.text|lower }}"
+                          style="font-size: {{ tag.weight }}rem !important; color: {{ data.emotional_clouds.tension.color }};">
+                        {{ tag.text }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Feed Emparejado para la Emoción Seleccionada -->
+            <div class="two-column-grid" style="margin-top: 1.5rem;">
+                <div class="card-widget">
+                    <h4 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--text-bright);">📰 Prensa asociada a esta emoción:</h4>
+                    <div id="emotion-prensa-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        {% for item in data.emotional_clouds.tension.prensa %}
+                        <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid #f59e0b;">
+                            <a href="{{ item.link }}" target="_blank" style="color: var(--text-bright); text-decoration: none; font-weight: 600;" rel="noopener">{{ item.title }}</a>
+                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">{{ item.source }} — {{ item.snippet }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card-widget">
+                    <h4 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--text-bright);">📱 Publicaciones en Redes asociadas:</h4>
+                    <div id="emotion-redes-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        {% for r in data.emotional_clouds.tension.redes %}
+                        <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid #f59e0b;">
+                            <span style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700;">{{ r.network }} ({{ r.author }})</span>
+                            <p style="font-size: 0.88rem; color: var(--text-main); font-weight: 500; margin-top: 0.2rem;">{{ r.content }}</p>
+                            <p style="font-size: 0.8rem; color: var(--accent-blue); margin-top: 0.3rem;">{{ r.top_comment }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================================
+             SECCIÓN 3: SUITE MULTI-ENCUESTAS (ABARCABILIDAD TOTAL)
+             =================================================================== -->
+        <section id="mode-encuestas" class="view-section">
+            <div class="section-header-box">
+                <h2 class="section-title">🗳️ Suite de Multi-Encuestas (Abarcabilidad Temática en 3 Ejes)</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Votá en tiempo real sobre los 3 ejes centrales de la opinión pública nacional:</p>
+            </div>
+
+            <div class="multi-polls-grid">
+                {% for p in data.polls %}
+                <div class="poll-container">
+                    <div class="poll-topic-badge">{{ p.topic }}</div>
+                    <h3 class="poll-question">{{ p.question }}</h3>
+                    <p class="poll-context">{{ p.context }}</p>
+
+                    <div class="poll-options" id="poll-options-{{ p.id }}">
+                        {% for opt in p.options %}
+                        <button class="poll-option-btn" data-poll-id="{{ p.id }}" data-option-id="{{ opt.id }}" data-option-text="{{ opt.text }}">
+                            <div class="progress-fill" style="width: {{ opt.pct }}%;"></div>
+                            <span class="option-text">{{ opt.text }}</span>
+                            <span class="option-pct">{% if p.total_votes > 0 %}{{ opt.pct }}%{% else %}Votar{% endif %}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <div class="poll-actions-bar">
+                        <span class="poll-total-counter" id="poll-total-{{ p.id }}">
+                            {{ p.total_votes }} votos registrados acumulados
+                        </span>
+                        <button class="btn-action btn-export-poll-social" data-poll-id="{{ p.id }}" data-poll-question="{{ p.question }}">
+                            📱 Exportar a Redes (1-Clic)
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
-        <!-- SECCIÓN 2: TERMÓMETRO SOCIAL CON BOTONERA VIRAL Y EXPORTACIÓN A REDES -->
-        <section id="termometro-social">
-            <div class="poll-container">
-                <h2 class="poll-question" id="poll-question-text">🔥 Termómetro Social: {{ data.poll.question }}</h2>
-                <p class="poll-context">{{ data.poll.context }}</p>
 
-                <div class="poll-options" id="poll-options-list">
-                    {% for opt in data.poll.options %}
-                    <button class="poll-option-btn" data-poll-id="{{ data.poll.id }}" data-option-id="{{ opt.id }}" data-option-text="{{ opt.text }}">
-                        <div class="progress-fill" style="width: 0%;"></div>
-                        <span class="option-text">{{ opt.text }}</span>
-                        <span class="option-pct">Votar</span>
-                    </button>
-                    {% endfor %}
-                </div>
+        <!-- ===================================================================
+             SECCIÓN 4: VIDEOS EXPLICATIVOS & SHORTS CON VOZ NEURAL
+             =================================================================== -->
+        <section id="mode-video" class="view-section">
+            <div class="section-header-box">
+                <h2 class="section-title">📺 Módulo de Video Explicativo & Shorts de Noticias</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Mirá el resumen diario de 1 minuto producido automáticamente con locución en español y síntesis gráfica.</p>
+            </div>
 
-                <div class="poll-actions-bar">
-                    <span id="poll-total-votes" style="font-size: 0.9rem; color: var(--text-muted);">
-                        {{ data.poll.total_votes }} votos registrados acumulados en tiempo real
-                    </span>
-                    <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-                        <button class="btn-action" id="btn-export-social">📱 Exportar Encuesta para Redes (1-Clic)</button>
-                        <button class="btn-action" id="btn-generate-short" style="background: var(--accent-blue); border: none;">🎥 Short Video con Voz Neural (1080x1920)</button>
+            <div class="two-column-grid">
+                
+                <!-- Card Reproductor del Short Vertical del Día -->
+                <div class="card-widget player-card-box">
+                    <h3 style="font-family: var(--font-heading); color: var(--text-bright); margin-bottom: 0.5rem;">
+                        🎬 Video Short del Día (1080x1920 con Voz Neural)
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        Locución automatizada en español argentino procesando la palabra más leída y la encuesta del día.
+                    </p>
+
+                    <div class="video-player-container">
+                        {% if data.short_url %}
+                        <video controls style="width: 100%; max-height: 480px; border-radius: 12px; background: #000;">
+                            <source src="{{ data.short_url }}" type="video/mp4">
+                            Tu navegador no soporta reproducción de video MP4.
+                        </video>
+                        {% else %}
+                        <div class="video-placeholder">
+                            <div style="font-size: 3rem;">📹</div>
+                            <p style="margin-top: 0.5rem; font-weight: 600;">Short de Video Diario no generado aún</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para generar el MP4 instantáneamente con voz en off.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-top: 1.25rem; display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                        <button class="btn-action" id="btn-generate-short" style="background: var(--accent-blue); border: none; flex: 1;">
+                            🎥 Generar / Actualizar Short MP4 con Voz Neural
+                        </button>
                     </div>
                 </div>
+
+                <!-- Transmisiones & Debates Trending en YouTube -->
+                <div class="card-widget">
+                    <h3 style="font-family: var(--font-heading); color: var(--text-bright); margin-bottom: 0.75rem;">
+                        🔴 Coberturas Explicativas & Transmisiones en Vivo
+                    </h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.85rem;">
+                        <li style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--accent-rose);">
+                            <span style="font-size: 0.75rem; color: var(--accent-rose); font-weight: 700;">Neura Media</span>
+                            <a href="https://www.youtube.com/@neuramedia" target="_blank" style="color: var(--text-bright); display: block; font-weight: 600; text-decoration: none;" rel="noopener">
+                                Análisis Político en Vivo: Impacto de Tarifas, Paritarias y Opinión de Audiencia
+                            </a>
+                            <span style="font-size: 0.8rem; color: var(--accent-emerald); font-weight: 600;">🔴 45K espectadores en vivo</span>
+                        </li>
+
+                        <li style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--accent-purple);">
+                            <span style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700;">Blender</span>
+                            <a href="https://www.youtube.com/@canalblender" target="_blank" style="color: var(--text-bright); display: block; font-weight: 600; text-decoration: none;" rel="noopener">
+                                Debate de Actualidad: ¿Qué busca la sociedad en el nuevo ciclo de consumo?
+                            </a>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">▶️ 28K visualizaciones</span>
+                        </li>
+
+                        <li style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--accent-blue);">
+                            <span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 700;">TN (Todo Noticias)</span>
+                            <a href="https://www.youtube.com/@tn" target="_blank" style="color: var(--text-bright); display: block; font-weight: 600; text-decoration: none;" rel="noopener">
+                                Cobertura Especial: Tarifas de Luz, Gas y Transporte en el AMBA
+                            </a>
+                            <span style="font-size: 0.8rem; color: var(--accent-emerald); font-weight: 600;">🔴 60K espectadores en vivo</span>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </section>
 
-        <!-- SECCIÓN 3: NUBE LITERAL ANIMADA E INTERACTIVA & CLIMA EMOCIONAL -->
-        <section id="analisis-visual" class="two-column-grid">
-            
-            <!-- Nube Literal Flotante e Interactiva (Haz clic en una palabra para filtrar) -->
-            <div class="card-widget">
-                <h3 class="section-title">☁️ Nube LITERAL Flotante del Día</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                    💡 <strong>Haz clic en cualquier palabra</strong> para filtrar instantáneamente todas las noticias de la prensa que la mencionan:
-                </p>
-                <div class="word-cloud-literal" id="word-cloud-container">
-                    {% for word in data.word_cloud %}
-                    <span class="word-literal-tag {% if word.is_top %}top-word{% endif %}" 
-                          data-word="{{ word.text|lower }}"
-                          style="font-size: {{ word.weight }}rem !important; color: {{ word.color }};" 
-                          title="Haz clic para ver noticias sobre '{{ word.text }}'">
-                        {{ word.text }}
-                    </span>
-                    {% endfor %}
-                </div>
-            </div>
 
-            <!-- Clima Emocional -->
-            <div class="card-widget">
-                <h3 class="section-title">🌡️ Clima Emocional Predominante</h3>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Estado general inferido de las conversaciones sociales:</p>
-                <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--accent-amber); margin-top: 0.4rem;">
-                    Estado: {{ data.climate.status }}
-                </h4>
-
-                <div class="climate-bar-container" style="margin-top: 1.25rem;">
-                    <div class="climate-item">
-                        <div class="climate-label">
-                            <span>Preocupación / Tensión</span>
-                            <span>{{ data.climate.tension }}%</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill tension" style="width: {{ data.climate.tension }}%;"></div>
-                        </div>
-                    </div>
-
-                    <div class="climate-item">
-                        <div class="climate-label">
-                            <span>Incerteza / Expectativa</span>
-                            <span>{{ data.climate.incertidumbre }}%</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill incertidumbre" style="width: {{ data.climate.incertidumbre }}%;"></div>
-                        </div>
-                    </div>
-
-                    <div class="climate-item">
-                        <div class="climate-label">
-                            <span>Optimismo / Estabilidad</span>
-                            <span>{{ data.climate.esperanza }}%</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill esperanza" style="width: {{ data.climate.esperanza }}%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- SECCIÓN 4: CAPTURA DE LEADS (NEWSLETTER DIARIO SIMPLE) -->
+        <!-- SECCIÓN DE SUSCRIPCIÓN NEWSLETTER -->
         <section id="captura-leads">
             <div class="lead-box">
                 <div>
                     <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-bright);">
-                        📬 Suscribite a nuestro Newsletter Diario
+                        📬 Suscribite al Escuchatorio Diario
                     </h3>
                     <p style="font-size: 0.88rem; color: var(--text-muted);">
-                        Recibí las noticias más leídas y las tendencias de las redes en 2 minutos en tu correo.
+                        Recibí las tendencias de la prensa y las redes contrastadas en 2 minutos en tu correo.
                     </p>
                 </div>
                 <form class="lead-form" id="lead-form">
                     <input type="email" class="lead-input" id="lead-email-input" placeholder="Tu correo electrónico..." required>
                     <button type="submit" class="btn-action" style="background: var(--accent-blue); border: none;">Suscribirme</button>
                 </form>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 5: YOUTUBE TRENDS & REDES SOCIALES -->
-        <section id="tendencias-redes">
-            <h2 class="section-title">🚀 Tendencias en YouTube & Debates en Redes</h2>
-            <div class="two-column-grid">
-                
-                <!-- YouTube Streams -->
-                <div class="card-widget">
-                    <h3 class="section-title" style="font-size: 1.1rem;">📺 Transmisiones & Videos Trending (YouTube AR)</h3>
-                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
-                        {% for yt in data.youtube %}
-                        <li style="font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--accent-rose); font-weight: 700;">{{ yt.channel }}</span>
-                            <a href="{{ yt.url }}" target="_blank" style="color: var(--text-main); text-decoration: none; display: block; font-weight: 500;" rel="noopener">
-                                {{ yt.title }}
-                            </a>
-                            <span style="font-size: 0.8rem; color: var(--accent-emerald); font-weight: 600;">{{ yt.views }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
-                <!-- Reddit Debates -->
-                <div class="card-widget">
-                    <h3 class="section-title" style="font-size: 1.1rem;">🗣️ Debates Reales en Foros</h3>
-                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
-                        {% for post in data.reddit %}
-                        <li style="font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700;">{{ post.subreddit }}</span>
-                            <a href="{{ post.url }}" target="_blank" style="color: var(--text-main); text-decoration: none; display: block; font-weight: 500;" rel="noopener">
-                                {{ post.title }}
-                            </a>
-                            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 {{ post.num_comments }} comentarios | ⬆️ {{ post.score }} votos</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
             </div>
         </section>
 
@@ -221,7 +362,7 @@
                 <button class="modal-close" id="modal-social-close">✕</button>
             </div>
             <p style="font-size: 0.88rem; color: var(--text-muted);">
-                Copia este texto listo con formato de encuesta para publicar en X (Twitter), YouTube Comunidad, Telegram o Instagram:
+                Copia este texto listo con formato de encuesta para publicar en X (Twitter), YouTube Comunidad o Telegram:
             </p>
             <div class="social-text-box" id="social-copy-text"></div>
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
@@ -231,9 +372,13 @@
     </div>
 
     <footer>
-        <p>Radar Prensa & Termómetro Social © 2026 — Plataforma Abierta de Inteligencia Mediática</p>
+        <p>Radar Prensa vs Redes Sociales © 2026 — Plataforma Abierta de Inteligencia Mediática & Ciudadana</p>
     </footer>
 
-    <script src="/static/js/app.js?v=3.5"></script>
+    <!-- Pasar datos JSON compilados al script JS -->
+    <script>
+        window.INITIAL_DATA = {{ data|tojson }};
+    </script>
+    <script src="/static/js/app.js?v=5.0"></script>
 </body>
 </html>

@@ -1,26 +1,134 @@
 /**
- * app.js — Lógica Interactiva (Trazabilidad por Palabras, Redes Social Modal, Termómetro & Filtro Regional)
+ * app.js — Escuchatorio Dual, Nubes Emocionales & Multi-Encuestas (v5.0)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initPollSystem();
+    initViewModeSelector();
+    initEmotionTabs();
+    initMultiPolls();
+    initWordTraceability();
     initLeadForm();
     initShortGenerator();
     initRegionSelector();
-    initWordTraceability();
     initSocialExportModal();
 });
 
-function initPollSystem() {
-    const pollOptions = document.querySelectorAll('.poll-option-btn');
-    if (!pollOptions.length) return;
+/** CAMBIO DE MODO DE VISTA PRINCIPAL (PESTAÑAS HEADER) **/
+function initViewModeSelector() {
+    const btns = document.querySelectorAll('.view-mode-btn');
+    const sections = document.querySelectorAll('.view-section');
 
-    pollOptions.forEach(btn => {
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetView = btn.getAttribute('data-view');
+            if (!targetView) return;
+
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            sections.forEach(sec => {
+                if (sec.id === targetView) {
+                    sec.classList.add('active');
+                } else {
+                    sec.classList.remove('active');
+                }
+            });
+        });
+    });
+}
+
+/** PESTAÑAS DE NUBES DE PALABRAS POR EMOCIÓN **/
+function initEmotionTabs() {
+    const btns = document.querySelectorAll('.emotion-tab-btn');
+    const cloudContainer = document.getElementById('emotion-word-cloud-container');
+    const titleDisplay = document.getElementById('emotion-title-display');
+    const prensaList = document.getElementById('emotion-prensa-list');
+    const redesList = document.getElementById('emotion-redes-list');
+
+    if (!btns.length || !window.INITIAL_DATA) return;
+
+    const emotionalData = window.INITIAL_DATA.emotional_clouds || {};
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const emotion = btn.getAttribute('data-emotion');
+            if (!emotion || !emotionalData[emotion]) return;
+
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const data = emotionalData[emotion];
+
+            // 1. Actualizar Título de la Emoción
+            if (titleDisplay) {
+                titleDisplay.innerText = data.title;
+                titleDisplay.style.color = data.color;
+            }
+
+            // 2. Renderizar Nube Emocional
+            if (cloudContainer) {
+                let tagsHTML = '';
+                data.word_cloud.forEach(tag => {
+                    tagsHTML += `
+                        <span class="word-literal-tag" 
+                              data-word="${tag.text.toLowerCase()}"
+                              style="font-size: ${tag.weight}rem !important; color: ${data.color};">
+                            ${tag.text}
+                        </span>
+                    `;
+                });
+                cloudContainer.innerHTML = tagsHTML;
+                bindCloudTagsTraceability();
+            }
+
+            // 3. Renderizar Noticias de Prensa asociadas
+            if (prensaList) {
+                let prensaHTML = '';
+                data.prensa.forEach(item => {
+                    prensaHTML += `
+                        <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid ${data.color};">
+                            <a href="${item.link}" target="_blank" style="color: var(--text-bright); text-decoration: none; font-weight: 600;" rel="noopener">${item.title}</a>
+                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">${item.source} — ${item.snippet}</p>
+                        </div>
+                    `;
+                });
+                prensaList.innerHTML = prensaHTML || '<p style="color: var(--text-muted); font-size: 0.85rem;">No hay noticias registradas bajo este espectro en este momento.</p>';
+            }
+
+            // 4. Renderizar Posts de Redes Sociales asociados
+            if (redesList) {
+                let redesHTML = '';
+                data.redes.forEach(r => {
+                    redesHTML += `
+                        <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid ${data.color};">
+                            <span style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700;">${r.network} (${r.author})</span>
+                            <p style="font-size: 0.88rem; color: var(--text-main); font-weight: 500; margin-top: 0.2rem;">${r.content}</p>
+                            <p style="font-size: 0.8rem; color: var(--accent-blue); margin-top: 0.3rem;">${r.top_comment}</p>
+                        </div>
+                    `;
+                });
+                redesList.innerHTML = redesHTML || '<p style="color: var(--text-muted); font-size: 0.85rem;">No hay publicaciones registradas bajo este espectro en este momento.</p>';
+            }
+        });
+    });
+}
+
+/** SISTEMA DE VOTO MULTI-ENCUESTAS **/
+function initMultiPolls() {
+    const pollBtns = document.querySelectorAll('.poll-option-btn');
+    if (!pollBtns.length) return;
+
+    pollBtns.forEach(btn => {
         btn.addEventListener('click', async () => {
             const pollId = btn.getAttribute('data-poll-id');
             const optionId = btn.getAttribute('data-option-id');
 
-            pollOptions.forEach(b => b.disabled = true);
+            if (!pollId || !optionId) return;
+
+            const container = document.getElementById(`poll-options-${pollId}`);
+            if (container) {
+                container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = true);
+            }
 
             try {
                 const response = await fetch('/api/public/vote', {
@@ -32,119 +140,131 @@ function initPollSystem() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    updatePollUI(data.results, data.total_votes);
+                    updatePollUI(data.poll_id, data.results, data.total_votes);
                 } else {
-                    alert(data.detail || 'Error al procesar el voto');
-                    pollOptions.forEach(b => b.disabled = false);
+                    alert(data.detail || 'Error al guardar el voto');
+                    if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
                 }
             } catch (err) {
                 console.error('Error enviando voto:', err);
-                alert('No se pudo enviar el voto. Intenta nuevamente.');
-                pollOptions.forEach(b => b.disabled = false);
+                alert('No se pudo conectar para guardar el voto.');
+                if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
             }
         });
     });
 }
 
-function updatePollUI(results, totalVotes) {
-    const totalElem = document.getElementById('poll-total-votes');
-    if (totalElem) {
-        totalElem.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
+function updatePollUI(pollId, results, totalVotes) {
+    const totalCounter = document.getElementById(`poll-total-${pollId}`);
+    if (totalCounter) {
+        totalCounter.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
     }
 
     results.forEach(res => {
-        const btn = document.querySelector(`.poll-option-btn[data-option-id="${res.id}"]`);
+        const btn = document.querySelector(`.poll-option-btn[data-poll-id="${pollId}"][data-option-id="${res.id}"]`);
         if (btn) {
             const pctElem = btn.querySelector('.option-pct');
             const fillElem = btn.querySelector('.progress-fill');
 
             if (pctElem) pctElem.innerText = `${res.percentage}%`;
             if (fillElem) fillElem.style.width = `${res.percentage}%`;
-
-            btn.classList.add('voted');
         }
     });
 }
 
-/** TRAZABILIDAD POR PALABRAS EN 1-CLIC **/
+/** TRAZABILIDAD POR PALABRAS EN AMBAS AGENDAS (PRENSA Y REDES) **/
 function initWordTraceability() {
+    bindCloudTagsTraceability();
+
+    const btnReset = document.getElementById('btn-reset-word-filter');
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            document.querySelectorAll('.card-news').forEach(c => c.classList.remove('hidden'));
+            document.querySelectorAll('.card-social').forEach(s => s.style.display = 'block');
+            const banner = document.getElementById('word-filter-banner');
+            if (banner) banner.style.display = 'none';
+        });
+    }
+}
+
+function bindCloudTagsTraceability() {
     const tags = document.querySelectorAll('.word-literal-tag');
     const newsCards = document.querySelectorAll('.card-news');
+    const socialCards = document.querySelectorAll('.card-social');
     const banner = document.getElementById('word-filter-banner');
     const activeText = document.getElementById('active-word-text');
-    const btnReset = document.getElementById('btn-reset-word-filter');
-
-    if (!tags.length || !newsCards.length) return;
 
     tags.forEach(tag => {
         tag.addEventListener('click', () => {
             const word = tag.getAttribute('data-word');
             if (!word) return;
 
-            tags.forEach(t => t.classList.remove('active-word'));
-            tag.classList.add('active-word');
-
-            let matchCount = 0;
+            let matchPrensa = 0;
             newsCards.forEach(card => {
                 const title = card.getAttribute('data-title') || '';
                 const snippet = card.getAttribute('data-snippet') || '';
-
                 if (title.includes(word) || snippet.includes(word)) {
                     card.classList.remove('hidden');
-                    matchCount++;
+                    matchPrensa++;
                 } else {
                     card.classList.add('hidden');
                 }
             });
 
+            let matchRedes = 0;
+            socialCards.forEach(card => {
+                const content = card.getAttribute('data-content') || '';
+                if (content.includes(word)) {
+                    card.style.display = 'block';
+                    matchRedes++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
             if (banner && activeText) {
-                activeText.innerText = `'${word.toUpperCase()}' (${matchCount} noticias)`;
+                activeText.innerText = `'${word.toUpperCase()}' (${matchPrensa} noticias | ${matchRedes} posts en redes)`;
                 banner.style.display = 'flex';
-                document.getElementById('matriz-prensa').scrollIntoView({ behavior: 'smooth' });
+                
+                // Activar automáticamente la vista comparativa si estamos filtrando
+                document.querySelector('.view-mode-btn[data-view="mode-comparativo"]')?.click();
             }
         });
     });
-
-    if (btnReset) {
-        btnReset.addEventListener('click', () => {
-            tags.forEach(t => t.classList.remove('active-word'));
-            newsCards.forEach(card => card.classList.remove('hidden'));
-            if (banner) banner.style.display = 'none';
-        });
-    }
 }
 
-/** MODAL EXPORTADOR DE ENCUESTA A REDES SOCIALES **/
+/** MODAL EXPORTADOR A REDES SOCIALES **/
 function initSocialExportModal() {
-    const btnExport = document.getElementById('btn-export-social');
+    const btnsExport = document.querySelectorAll('.btn-export-poll-social');
     const modal = document.getElementById('modal-social');
     const btnClose = document.getElementById('modal-social-close');
     const textContainer = document.getElementById('social-copy-text');
     const btnCopy = document.getElementById('btn-copy-to-clipboard');
 
-    if (!btnExport || !modal) return;
+    if (!modal) return;
 
-    btnExport.addEventListener('click', () => {
-        const question = document.getElementById('poll-question-text')?.innerText || '🔥 Encuesta del día en Argentina';
-        const optionsBtns = document.querySelectorAll('.poll-option-btn');
+    btnsExport.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pollId = btn.getAttribute('data-poll-id');
+            const question = btn.getAttribute('data-poll-question') || '🔥 Encuesta de opinión pública en Argentina';
+            
+            const optionsBtns = document.querySelectorAll(`.poll-option-btn[data-poll-id="${pollId}"]`);
 
-        let optionsText = '';
-        optionsBtns.forEach((btn, idx) => {
-            const txt = btn.getAttribute('data-option-text') || btn.innerText;
-            optionsText += `\n${idx + 1}️⃣ ${txt}`;
+            let optionsText = '';
+            optionsBtns.forEach((b, idx) => {
+                const txt = b.getAttribute('data-option-text') || b.innerText;
+                optionsText += `\n${idx + 1}️⃣ ${txt}`;
+            });
+
+            const socialPost = `📊 ${question}\n${optionsText}\n\n👇 ¡Sumá tu voto anónimo en vivo!\n🌐 http://localhost:8001/\n\n#Argentina #OpinionPublica #RedesVsPrensa #Encuesta`;
+
+            if (textContainer) textContainer.innerText = socialPost;
+            modal.classList.add('active');
         });
-
-        const socialPost = `${question}\n${optionsText}\n\n👇 ¡Sumá tu voto en tiempo real!\n🌐 http://localhost:8001/\n\n#Argentina #TermetroSocial #Noticias #Encuesta`;
-
-        if (textContainer) textContainer.innerText = socialPost;
-        modal.classList.add('active');
     });
 
     if (btnClose) btnClose.addEventListener('click', () => modal.classList.remove('active'));
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-    });
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
     if (btnCopy && textContainer) {
         btnCopy.addEventListener('click', async () => {
@@ -153,12 +273,13 @@ function initSocialExportModal() {
                 btnCopy.innerText = '✅ ¡Copiado!';
                 setTimeout(() => btnCopy.innerText = '📋 Copiar al Portapapeles', 2000);
             } catch (err) {
-                alert('Selecciona y copia el texto manualmente.');
+                alert('Copia el texto manualmente.');
             }
         });
     }
 }
 
+/** SUSCRIPCIÓN NEWSLETTER **/
 function initLeadForm() {
     const form = document.getElementById('lead-form');
     if (!form) return;
@@ -177,23 +298,24 @@ function initLeadForm() {
 
             const data = await res.json();
             if (data.status === 'success') {
-                alert('🎉 ¡Gracias! Te has suscrito exitosamente al Newsletter Diario.');
+                alert('🎉 ¡Gracias! Te has suscrito al Newsletter del Escuchatorio Dual.');
                 input.value = '';
             } else {
-                alert(data.detail || 'No se pudo guardar la suscripción.');
+                alert(data.detail || 'No se pudo registrar.');
             }
         } catch (err) {
-            alert('Error de conexión al guardar el email.');
+            alert('Error de conexión.');
         }
     });
 }
 
+/** GENERADOR DE SHORT VIDEO **/
 function initShortGenerator() {
     const btnGen = document.getElementById('btn-generate-short');
     if (!btnGen) return;
 
     btnGen.addEventListener('click', async () => {
-        btnGen.innerText = '🎬 Generando Short con Voz Neural...';
+        btnGen.innerText = '🎬 Generando Short con Voz Neural... (espera unos segundos)';
         btnGen.disabled = true;
 
         try {
@@ -201,20 +323,21 @@ function initShortGenerator() {
             const data = await res.json();
 
             if (data.status === 'success') {
-                alert(`✅ Short con Voz Neural Argentina generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
-                window.open(data.download_url, '_blank');
+                alert(`✅ Short de Video MP4 generado exitosamente.\nPuedes descargarlo o reproducirlo desded:\n${data.download_url}`);
+                window.location.reload();
             } else {
                 alert('No se pudo generar el video short.');
             }
         } catch (err) {
-            alert('Error al conectar con la fábrica de shorts.');
+            alert('Error conectando con el orquestador de video.');
         } finally {
-            btnGen.innerText = '🎥 Short Video con Voz Neural (1080x1920)';
+            btnGen.innerText = '🎥 Generar / Actualizar Short MP4 con Voz Neural';
             btnGen.disabled = false;
         }
     });
 }
 
+/** SELECTOR REGIONAL **/
 function initRegionSelector() {
     const btns = document.querySelectorAll('.region-btn');
     const newsCards = document.querySelectorAll('.card-news');
@@ -228,9 +351,7 @@ function initRegionSelector() {
 
             newsCards.forEach(card => {
                 const cardRegion = card.getAttribute('data-region');
-                if (selectedRegion === 'nacional') {
-                    card.classList.remove('hidden');
-                } else if (cardRegion === selectedRegion) {
+                if (selectedRegion === 'nacional' || cardRegion === selectedRegion) {
                     card.classList.remove('hidden');
                 } else {
                     card.classList.add('hidden');
