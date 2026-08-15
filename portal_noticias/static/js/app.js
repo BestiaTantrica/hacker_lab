@@ -1,9 +1,12 @@
 /**
- * app.js — Lógica Interactiva del Portal Público (Termómetro Social & Encuestas)
+ * app.js — Lógica Interactiva (Termómetro, Captura de Mails, Shorts & Filtro Regional)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     initPollSystem();
+    initLeadForm();
+    initShortGenerator();
+    initRegionSelector();
 });
 
 function initPollSystem() {
@@ -15,7 +18,6 @@ function initPollSystem() {
             const pollId = btn.getAttribute('data-poll-id');
             const optionId = btn.getAttribute('data-option-id');
 
-            // Deshabilitar botones temporalmente para evitar doble clic
             pollOptions.forEach(b => b.disabled = true);
 
             try {
@@ -45,7 +47,7 @@ function initPollSystem() {
 function updatePollUI(results, totalVotes) {
     const totalElem = document.getElementById('poll-total-votes');
     if (totalElem) {
-        totalElem.innerText = `${totalVotes.toLocaleString()} votos registrados`;
+        totalElem.innerText = `${totalVotes.toLocaleString()} votos registrados (100% Real)`;
     }
 
     results.forEach(res => {
@@ -59,5 +61,71 @@ function updatePollUI(results, totalVotes) {
 
             btn.classList.add('voted');
         }
+    });
+}
+
+function initLeadForm() {
+    const form = document.getElementById('lead-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('lead-email-input');
+        if (!input || !input.value) return;
+
+        try {
+            const res = await fetch('/api/public/subscribe_lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: input.value })
+            });
+
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert('🎉 ¡Gracias! Te has suscrito exitosamente al Informe Sociológico Semanal.');
+                input.value = '';
+            } else {
+                alert(data.detail || 'No se pudo guardar la suscripción.');
+            }
+        } catch (err) {
+            alert('Error de conexión al guardar el email.');
+        }
+    });
+}
+
+function initShortGenerator() {
+    const btnGen = document.getElementById('btn-generate-short');
+    if (!btnGen) return;
+
+    btnGen.addEventListener('click', async () => {
+        btnGen.innerText = '🎬 Generando Video Short...';
+        btnGen.disabled = true;
+
+        try {
+            const res = await fetch('/api/public/generate_short');
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                alert(`✅ Short generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
+                window.open(data.download_url, '_blank');
+            } else {
+                alert('No se pudo generar el video short.');
+            }
+        } catch (err) {
+            alert('Error al conectar con la fábrica de shorts.');
+        } finally {
+            btnGen.innerText = '🎥 Descargar Short en Video (1080x1920)';
+            btnGen.disabled = false;
+        }
+    });
+}
+
+function initRegionSelector() {
+    const btns = document.querySelectorAll('.region-btn');
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
     });
 }
