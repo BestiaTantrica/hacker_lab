@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Radar Prensa & Termómetro Social. Escuchatorio mediático y tendencias en Argentina sin sesgos.">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3.0">
+    <link rel="stylesheet" href="/static/css/style.css?v=3.5">
 </head>
 <body>
 
@@ -35,12 +35,18 @@
     <!-- MAIN CONTENT -->
     <main>
 
-        <!-- SECCIÓN 1: MATRIZ GROUND NEWS HISPANO -->
+        <!-- BANNER DE TRAZABILIDAD POR PALABRAS (SE ACTIVA AL HACER CLIC EN LA NUBE) -->
+        <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
+            <span>🔍 Filtrando cobertura mediática por el concepto: <strong id="active-word-text" style="color: var(--accent-blue);">PRESUPUESTO</strong></span>
+            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todas las Noticias</button>
+        </div>
+
+        <!-- SECCIÓN 1: MATRIZ GROUND NEWS HISPANO (28+ MEDIOS FEDERALES) -->
         <section id="matriz-prensa">
-            <h2 class="section-title">📰 Cobertura Mediática Nacional y Regional</h2>
-            <div class="grid-matrix">
+            <h2 class="section-title">📰 Cobertura Mediática Nacional y Provincial ({{ data.prensa|length }} Medios)</h2>
+            <div class="grid-matrix" id="news-matrix">
                 {% for item in data.prensa %}
-                <div class="card-news" data-region="{{ item.region }}">
+                <div class="card-news" data-region="{{ item.region }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
                     <div>
                         <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
                         <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
@@ -55,15 +61,15 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 2: TERMÓMETRO SOCIAL CON BOTONERA VIRAL Y SHORTS -->
+        <!-- SECCIÓN 2: TERMÓMETRO SOCIAL CON BOTONERA VIRAL Y EXPORTACIÓN A REDES -->
         <section id="termometro-social">
             <div class="poll-container">
-                <h2 class="poll-question">🔥 Termómetro Social: {{ data.poll.question }}</h2>
+                <h2 class="poll-question" id="poll-question-text">🔥 Termómetro Social: {{ data.poll.question }}</h2>
                 <p class="poll-context">{{ data.poll.context }}</p>
 
                 <div class="poll-options" id="poll-options-list">
                     {% for opt in data.poll.options %}
-                    <button class="poll-option-btn" data-poll-id="{{ data.poll.id }}" data-option-id="{{ opt.id }}">
+                    <button class="poll-option-btn" data-poll-id="{{ data.poll.id }}" data-option-id="{{ opt.id }}" data-option-text="{{ opt.text }}">
                         <div class="progress-fill" style="width: 0%;"></div>
                         <span class="option-text">{{ opt.text }}</span>
                         <span class="option-pct">Votar</span>
@@ -76,24 +82,28 @@
                         {{ data.poll.total_votes }} votos registrados acumulados en tiempo real
                     </span>
                     <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-                        <button class="btn-action" id="btn-generate-short">🎥 Descargar Short en Video con Voz (1080x1920)</button>
+                        <button class="btn-action" id="btn-export-social">📱 Exportar Encuesta para Redes (1-Clic)</button>
+                        <button class="btn-action" id="btn-generate-short" style="background: var(--accent-blue); border: none;">🎥 Short Video con Voz Neural (1080x1920)</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN 3: NUBE LITERAL DE PALABRAS & CLIMA EMOCIONAL -->
+        <!-- SECCIÓN 3: NUBE LITERAL ANIMADA E INTERACTIVA & CLIMA EMOCIONAL -->
         <section id="analisis-visual" class="two-column-grid">
             
-            <!-- Nube Literal con Alto Contraste de Tamaños (4.5rem vs 1.0rem) -->
+            <!-- Nube Literal Flotante e Interactiva (Haz clic en una palabra para filtrar) -->
             <div class="card-widget">
-                <h3 class="section-title">☁️ Nube LITERAL de Conceptos del Día</h3>
+                <h3 class="section-title">☁️ Nube LITERAL Flotante del Día</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                    Frecuencia matemática exacta de las palabras reales usadas por la prensa y las redes:
+                    💡 <strong>Haz clic en cualquier palabra</strong> para filtrar instantáneamente todas las noticias de la prensa que la mencionan:
                 </p>
-                <div class="word-cloud-literal">
+                <div class="word-cloud-literal" id="word-cloud-container">
                     {% for word in data.word_cloud %}
-                    <span class="word-literal-tag {% if word.is_top %}top-word{% endif %}" style="font-size: {{ word.weight }}rem !important; color: {{ word.color }};" title="{{ word.count }} menciones directas">
+                    <span class="word-literal-tag {% if word.is_top %}top-word{% endif %}" 
+                          data-word="{{ word.text|lower }}"
+                          style="font-size: {{ word.weight }}rem !important; color: {{ word.color }};" 
+                          title="Haz clic para ver noticias sobre '{{ word.text }}'">
                         {{ word.text }}
                     </span>
                     {% endfor %}
@@ -203,10 +213,27 @@
 
     </main>
 
+    <!-- MODAL DE EXPORTACIÓN A REDES SOCIALES -->
+    <div id="modal-social" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-family: var(--font-heading); color: var(--text-bright);">📱 Copiar Encuesta para Redes (1-Clic)</h3>
+                <button class="modal-close" id="modal-social-close">✕</button>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Copia este texto listo con formato de encuesta para publicar en X (Twitter), YouTube Comunidad, Telegram o Instagram:
+            </p>
+            <div class="social-text-box" id="social-copy-text"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn-action" id="btn-copy-to-clipboard" style="background: var(--accent-emerald); border: none;">📋 Copiar al Portapapeles</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>Radar Prensa & Termómetro Social © 2026 — Plataforma Abierta de Inteligencia Mediática</p>
     </footer>
 
-    <script src="/static/js/app.js?v=3.0"></script>
+    <script src="/static/js/app.js?v=3.5"></script>
 </body>
 </html>

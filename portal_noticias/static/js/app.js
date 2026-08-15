@@ -1,5 +1,5 @@
 /**
- * app.js — Lógica Interactiva (Termómetro, Newsletter, Shorts & Filtro Regional Exacto)
+ * app.js — Lógica Interactiva (Trazabilidad por Palabras, Redes Social Modal, Termómetro & Filtro Regional)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initLeadForm();
     initShortGenerator();
     initRegionSelector();
+    initWordTraceability();
+    initSocialExportModal();
 });
 
 function initPollSystem() {
@@ -64,6 +66,99 @@ function updatePollUI(results, totalVotes) {
     });
 }
 
+/** TRAZABILIDAD POR PALABRAS EN 1-CLIC **/
+function initWordTraceability() {
+    const tags = document.querySelectorAll('.word-literal-tag');
+    const newsCards = document.querySelectorAll('.card-news');
+    const banner = document.getElementById('word-filter-banner');
+    const activeText = document.getElementById('active-word-text');
+    const btnReset = document.getElementById('btn-reset-word-filter');
+
+    if (!tags.length || !newsCards.length) return;
+
+    tags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            const word = tag.getAttribute('data-word');
+            if (!word) return;
+
+            tags.forEach(t => t.classList.remove('active-word'));
+            tag.classList.add('active-word');
+
+            let matchCount = 0;
+            newsCards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const snippet = card.getAttribute('data-snippet') || '';
+
+                if (title.includes(word) || snippet.includes(word)) {
+                    card.classList.remove('hidden');
+                    matchCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (banner && activeText) {
+                activeText.innerText = `'${word.toUpperCase()}' (${matchCount} noticias)`;
+                banner.style.display = 'flex';
+                document.getElementById('matriz-prensa').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            tags.forEach(t => t.classList.remove('active-word'));
+            newsCards.forEach(card => card.classList.remove('hidden'));
+            if (banner) banner.style.display = 'none';
+        });
+    }
+}
+
+/** MODAL EXPORTADOR DE ENCUESTA A REDES SOCIALES **/
+function initSocialExportModal() {
+    const btnExport = document.getElementById('btn-export-social');
+    const modal = document.getElementById('modal-social');
+    const btnClose = document.getElementById('modal-social-close');
+    const textContainer = document.getElementById('social-copy-text');
+    const btnCopy = document.getElementById('btn-copy-to-clipboard');
+
+    if (!btnExport || !modal) return;
+
+    btnExport.addEventListener('click', () => {
+        const question = document.getElementById('poll-question-text')?.innerText || '🔥 Encuesta del día en Argentina';
+        const optionsBtns = document.querySelectorAll('.poll-option-btn');
+
+        let optionsText = '';
+        optionsBtns.forEach((btn, idx) => {
+            const txt = btn.getAttribute('data-option-text') || btn.innerText;
+            optionsText += `\n${idx + 1}️⃣ ${txt}`;
+        });
+
+        const socialPost = `${question}\n${optionsText}\n\n👇 ¡Sumá tu voto en tiempo real!\n🌐 http://localhost:8001/\n\n#Argentina #TermetroSocial #Noticias #Encuesta`;
+
+        if (textContainer) textContainer.innerText = socialPost;
+        modal.classList.add('active');
+    });
+
+    if (btnClose) btnClose.addEventListener('click', () => modal.classList.remove('active'));
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+
+    if (btnCopy && textContainer) {
+        btnCopy.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(textContainer.innerText);
+                btnCopy.innerText = '✅ ¡Copiado!';
+                setTimeout(() => btnCopy.innerText = '📋 Copiar al Portapapeles', 2000);
+            } catch (err) {
+                alert('Selecciona y copia el texto manualmente.');
+            }
+        });
+    }
+}
+
 function initLeadForm() {
     const form = document.getElementById('lead-form');
     if (!form) return;
@@ -98,7 +193,7 @@ function initShortGenerator() {
     if (!btnGen) return;
 
     btnGen.addEventListener('click', async () => {
-        btnGen.innerText = '🎬 Generando Video Short con Voz...';
+        btnGen.innerText = '🎬 Generando Short con Voz Neural...';
         btnGen.disabled = true;
 
         try {
@@ -106,7 +201,7 @@ function initShortGenerator() {
             const data = await res.json();
 
             if (data.status === 'success') {
-                alert(`✅ Short con Voz generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
+                alert(`✅ Short con Voz Neural Argentina generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
                 window.open(data.download_url, '_blank');
             } else {
                 alert('No se pudo generar el video short.');
@@ -114,7 +209,7 @@ function initShortGenerator() {
         } catch (err) {
             alert('Error al conectar con la fábrica de shorts.');
         } finally {
-            btnGen.innerText = '🎥 Descargar Short en Video con Voz (1080x1920)';
+            btnGen.innerText = '🎥 Short Video con Voz Neural (1080x1920)';
             btnGen.disabled = false;
         }
     });
