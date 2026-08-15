@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal de Monitoreo de Sesgo Mediático y Termómetro Social. Rastrillo de noticias y tendencias en Argentina y Sudamérica.">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-logo">📊</div>
+                <div class="brand-title">RADAR<span>PRENSA</span></div>
+            </a>
+            <div class="badge-live">
+                <div class="dot-live"></div> ESCLUCHATORIO EN VIVO (AR)
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- SECCIÓN 1: MATRIZ DE COBERTURA (GROUND NEWS HISPANO) -->
+        <section id="matriz-prensa">
+            <h2 class="section-title">📰 Matriz de Sesgo y Cobertura Mediática</h2>
+            <div class="grid-matrix">
+                {% for item in data.prensa %}
+                <div class="card-news">
+                    <div>
+                        <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
+                        <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
+                        <p class="news-snippet">{{ item.snippet }}</p>
+                    </div>
+                    <div class="news-footer">
+                        <span>Fuente: <strong>{{ item.source }}</strong></span>
+                        <span>{{ item.pub_date }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: TERMÓMETRO SOCIAL (ENCUESTA ORGANICA DE 1-CLIC) -->
+        <section id="termometro-social">
+            <div class="poll-container">
+                <h2 class="poll-question">🔥 Termómetro Social: {{ data.poll.question }}</h2>
+                <p class="poll-context">{{ data.poll.context }}</p>
+
+                <div class="poll-options" id="poll-options-list">
+                    {% for opt in data.poll.options %}
+                    <button class="poll-option-btn" data-poll-id="{{ data.poll.id }}" data-option-id="{{ opt.id }}">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                        <span class="option-text">{{ opt.text }}</span>
+                        <span class="option-pct">Votar</span>
+                    </button>
+                    {% endfor %}
+                </div>
+                <div class="news-footer" style="margin-top: 1.25rem;">
+                    <span id="poll-total-votes">{{ data.poll.total_votes }} votos registrados</span>
+                    <span>Encuesta anónima 1-clic</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: NUBE DE PALABRAS & CLIMA SOCIAL -->
+        <section id="analisis-visual" class="two-column-grid">
+            
+            <!-- Widget: Nube de Palabras Clave -->
+            <div class="card-widget">
+                <h3 class="section-title">☁️ Conceptos Más Hablados del Día</h3>
+                <div class="word-cloud-container">
+                    {% for word in data.word_cloud %}
+                    <span class="word-tag" style="font-size: {{ word.weight }}rem;" title="{{ word.count }} menciones">{{ word.text }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Widget: Índice de Clima Social -->
+            <div class="card-widget">
+                <h3 class="section-title">🌡️ Clima Emocional Predominante</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Estado general inferido de las noticias y tendencias:</p>
+                <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--accent-amber); margin-top: 0.4rem;">
+                    Estado: {{ data.climate.status }}
+                </h4>
+
+                <div class="climate-bar-container">
+                    <div class="climate-item">
+                        <div class="climate-label">
+                            <span>Preocupación / Tensión</span>
+                            <span>{{ data.climate.tension }}%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill tension" style="width: {{ data.climate.tension }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="climate-item">
+                        <div class="climate-label">
+                            <span>Incerteza / Expectativa</span>
+                            <span>{{ data.climate.incertidumbre }}%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill incertidumbre" style="width: {{ data.climate.incertidumbre }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="climate-item">
+                        <div class="climate-label">
+                            <span>Optimismo / Estabilidad</span>
+                            <span>{{ data.climate.esperanza }}%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill esperanza" style="width: {{ data.climate.esperanza }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 4: GOOGLE TRENDS & DEBATE DE REDES -->
+        <section id="tendencias-redes">
+            <h2 class="section-title">🚀 Tendencias en Buscadores & Redes Sociales</h2>
+            <div class="two-column-grid">
+                
+                <!-- Google Trends AR -->
+                <div class="card-widget">
+                    <h3 class="section-title" style="font-size: 1.1rem;">🔍 Búsquedas en Google (Argentina)</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.75rem;">
+                        {% for trend in data.google_trends %}
+                        <li style="display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                            <span>⚡ <strong>{{ trend.keyword }}</strong></span>
+                            <span style="color: var(--accent-emerald); font-weight: 600;">{{ trend.traffic }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Reddit Debates -->
+                <div class="card-widget">
+                    <h3 class="section-title" style="font-size: 1.1rem;">🗣️ Discusiones en Foros & Redes</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
+                        {% for post in data.reddit %}
+                        <li style="font-size: 0.9rem;">
+                            <span style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700;">{{ post.subreddit }}</span>
+                            <a href="{{ post.url }}" target="_blank" style="color: var(--text-main); text-decoration: none; display: block; font-weight: 500;" rel="noopener">
+                                {{ post.title }}
+                            </a>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 {{ post.num_comments }} comentarios | ⬆️ {{ post.score }} votos</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Radar Prensa & Termómetro Social © 2026 — Plataforma Abierta e Independiente</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
