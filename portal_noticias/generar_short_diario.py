@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-generar_short_diario.py — Fábrica de Shorts Promocionales con NUBE DE PALABRAS ENTERA + MINI-ENCUESTA
-Genera un video vertical 1080x1920 con la nube completa de conceptos, la encuesta interactiva y voz neural.
+generar_short_diario.py — Anzuelo Visual Limpio & Hipnótico para Redes (1080x1920 con Voz Neural)
+Genera un video short minimalista con la Nube de Palabras Flotante y llamado a la acción en los comentarios.
 """
 
 import os
@@ -17,7 +17,7 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "static", "shorts")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def generate_voice_narration(script_text: str, audio_path: str) -> bool:
-    """Genera locución en voz humana fluida en español (edge-tts / gTTS / espeak)."""
+    """Genera locución concisa en voz humana fluida en español (edge-tts / gTTS / espeak)."""
     edge_cmd = [
         os.path.abspath(os.path.join(BASE_DIR, "..", "c2_panel", "venv", "bin", "edge-tts")),
         "--voice", "es-AR-TomasNeural",
@@ -50,108 +50,76 @@ def generate_voice_narration(script_text: str, audio_path: str) -> bool:
 
 def generate_short_video(
     concepts: List[str] = None,
-    poll_question: str = "¿Cuál es tu prioridad principal ante el nuevo rumbo económico?",
-    poll_options: List[str] = None,
     base_url: str = "http://localhost:8001/"
 ) -> str:
-    """Genera un Short promocional 1080x1920 con la NUBE DE PALABRAS ENTERA y MINI-ENCUESTA."""
+    """Genera un Short minimalista y visual (1080x1920) de 6-8s con la NUBE DE PALABRAS COMPLETA y CTA en comentarios."""
     if concepts is None or not concepts:
-        concepts = ["LIBERTAD", "SUPERÁVIT", "TARIFAS", "INFLACIÓN", "DÓLAR", "PROPIEDAD", "PARITARIAS", "DESREGULACIÓN"]
-    
-    if poll_options is None or not poll_options:
-        poll_options = [
-            "1. Apoyar el superávit y fin de la inflación",
-            "2. Controlar tarifas y costo de servicios",
-            "3. Reducir impuestos y promover empleo"
-        ]
+        concepts = ["LIBERTAD", "SUPERÁVIT", "TARIFAS", "INFLACIÓN", "DÓLAR", "PARITARIAS", "PROPIEDAD", "DESREGULACIÓN"]
 
     img_path = os.path.join(OUTPUT_DIR, "frame_short.png")
     audio_path = os.path.join(OUTPUT_DIR, "voz_narracion.mp3")
     output_path = os.path.join(OUTPUT_DIR, "short_del_dia.mp4")
 
-    # Script de locución relatando la nube de palabras y la encuesta
-    concepts_str = ", ".join(concepts[:5])
-    script_voz = f"¡Medición en tiempo real! Esta es la nube de palabras del día en redes: {concepts_str}. Entrá a votar en la encuesta interactiva en {base_url} y sumá tu voto al termómetro directo."
+    # Narración súper corta y al grano para no aburrir
+    top_3 = ", ".join(concepts[:3]).capitalize()
+    script_voz = f"Este es el termómetro de hoy en redes: {top_3}. Decinos si estás de acuerdo en el link del primer comentario."
     has_audio = generate_voice_narration(script_voz, audio_path)
 
-    # Formatear la consigna en líneas limpias
-    words = poll_question.split()
-    line1 = " ".join(words[:5]) if len(words) >= 5 else poll_question
-    line2 = " ".join(words[5:10]) if len(words) >= 10 else (" ".join(words[5:]) if len(words) > 5 else "")
-    line3 = " ".join(words[10:]) if len(words) > 10 else ""
-
-    # Formatear la Nube de Palabras en 3 filas visuales con ImageMagick
-    c_row1 = "  ".join(concepts[:3]).upper()
-    c_row2 = "  ".join(concepts[3:6]).upper()
-    c_row3 = "  ".join(concepts[6:9]).upper() if len(concepts) > 6 else ""
-
-    opt1 = poll_options[0] if len(poll_options) > 0 else "1. Apoyo al rumbo económico"
-    opt2 = poll_options[1] if len(poll_options) > 1 else "2. Foco en tarifas y servicios"
-    opt3 = poll_options[2] if len(poll_options) > 2 else "3. Reducción impositiva"
+    # Formatear Nube de Palabras Visual en 4 Filas Multi-color
+    c1 = "  ".join(concepts[:2]).upper()
+    c2 = "  ".join(concepts[2:4]).upper()
+    c3 = "  ".join(concepts[4:6]).upper() if len(concepts) > 4 else ""
+    c4 = "  ".join(concepts[6:8]).upper() if len(concepts) > 6 else ""
 
     convert_cmd = [
         "convert",
         "-size", "1080x1920",
-        "xc:#0a0d14",
+        "xc:#070a12",
         "-font", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         
-        # Borde Neón Dorado
-        "-stroke", "#f59e0b", "-strokewidth", "8", "-fill", "none",
-        "-draw", "rectangle 40,40 1040,1880",
+        # Marco Neón Dorado Elegante
+        "-stroke", "#f59e0b", "-strokewidth", "6", "-fill", "none",
+        "-draw", "rectangle 35,35 1045,1885",
         "-stroke", "none",
         
-        # Encabezado Comercial
-        "-fill", "#f59e0b", "-pointsize", "44",
-        "-gravity", "north", "-annotate", "+0+120", "🔥 TERMOMETRO SOCIAL & NUBE DEL DIA",
+        # Encabezado Minimalista de Alto Impacto
+        "-fill", "#f59e0b", "-pointsize", "48",
+        "-gravity", "north", "-annotate", "+0+220", "🔥 TERMOMETRO SOCIAL AR",
         
         "-fill", "#9ca3af", "-pointsize", "30",
-        "-gravity", "north", "-annotate", "+0+175", "CONCEPTOS MAS REPETIDOS EN REDES HOY",
+        "-gravity", "north", "-annotate", "+0+285", "LO MAS HABLADO HOY EN REDES Y MEDIOS",
         
-        # NUBE DE PALABRAS ENTERA EN 3 FILAS MULTI-COLOR
-        "-fill", "#f59e0b", "-pointsize", "56",
-        "-gravity", "north", "-annotate", "+0+260", c_row1,
+        # NUBE VISUAL LIMPIA EN 4 FILAS CON COLORES CONTRASTANTES
+        "-fill", "#f59e0b", "-pointsize", "64",
+        "-gravity", "north", "-annotate", "+0+480", c1,
         
-        "-fill", "#3b82f6", "-pointsize", "52",
-        "-gravity", "north", "-annotate", "+0+330", c_row2,
+        "-fill", "#3b82f6", "-pointsize", "58",
+        "-gravity", "north", "-annotate", "+0+580", c2,
         
-        "-fill", "#10b981", "-pointsize", "48",
-        "-gravity", "north", "-annotate", "+0+400", c_row3,
-        
-        # Línea divisoria
-        "-stroke", "#ffffff", "-strokewidth", "2",
-        "-draw", "line 100,480 980,480",
-        "-stroke", "none",
+        "-fill", "#10b981", "-pointsize", "52",
+        "-gravity", "north", "-annotate", "+0+680", c3,
 
-        # Caja de la Pregunta / Encuesta
-        "-fill", "#ec4899", "-pointsize", "38",
-        "-gravity", "north", "-annotate", "+0+530", "📊 MINI ENCUESTA INTERACTIVA:",
-        
+        "-fill", "#ec4899", "-pointsize", "46",
+        "-gravity", "north", "-annotate", "+0+770", c4,
+
+        # Ilustración Gráfica / Icono Central
+        "-fill", "#8b5cf6", "-pointsize", "80",
+        "-gravity", "north", "-annotate", "+0+980", "📊",
+
+        # Llamado a la Acción (CTA en el comentario)
         "-fill", "#ffffff", "-pointsize", "42",
-        "-gravity", "north", "-annotate", "+0+610", line1,
-        "-gravity", "north", "-annotate", "+0+670", line2,
-        "-gravity", "north", "-annotate", "+0+730", line3,
+        "-gravity", "north", "-annotate", "+0+1380", "👉 ¿DE ACUERDO O EN DESACUERDO?",
         
-        # Opciones de Voto Visuales
-        "-fill", "#10b981", "-pointsize", "34",
-        "-gravity", "north", "-annotate", "+0+880", opt1[:55],
-        
-        "-fill", "#f59e0b", "-pointsize", "34",
-        "-gravity", "north", "-annotate", "+0+960", opt2[:55],
-        
-        "-fill", "#f43f5e", "-pointsize", "34",
-        "-gravity", "north", "-annotate", "+0+1040", opt3[:55],
-        
-        # Llamado a la Acción (CTA y Redirección a la Web)
-        "-fill", "#ffffff", "-pointsize", "42",
-        "-gravity", "north", "-annotate", "+0+1420", "👇 SUMA TU VOTO Y VISTA RESULTADOS:",
-        
-        "-fill", "#fbbf24", "-pointsize", "48",
-        "-gravity", "north", "-annotate", "+0+1520", base_url,
+        "-fill", "#10b981", "-pointsize", "38",
+        "-gravity", "north", "-annotate", "+0+1460", "VOTA EN EL LINK DEL PRIMER COMENTARIO",
+
+        "-fill", "#fbbf24", "-pointsize", "36",
+        "-gravity", "north", "-annotate", "+0+1580", base_url,
         
         img_path
     ]
 
-    print(f"🎬 Generando Frame con Nube de Palabras Completa (1080x1920)...", file=sys.stderr)
+    print(f"🎬 Generando Frame de Anzuelo Visual Minimalista (1080x1920)...", file=sys.stderr)
     res_img = subprocess.run(convert_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if res_img.returncode != 0 or not os.path.exists(img_path):
         print(f"❌ Error ImageMagick: {res_img.stderr}", file=sys.stderr)
@@ -180,7 +148,7 @@ def generate_short_video(
     else:
         ffmpeg_cmd.extend([
             "-c:v", "libx264",
-            "-t", "10",
+            "-t", "7",
             "-pix_fmt", "yuv420p",
             "-vf", "scale=1080:1920",
             "-r", "30",
@@ -190,7 +158,7 @@ def generate_short_video(
     try:
         res_vid = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if res_vid.returncode == 0 and os.path.exists(output_path):
-            print(f"✅ Short de Video con Nube Completa generado: {output_path}", file=sys.stderr)
+            print(f"✅ Short de Video Anzuelo generado exitosamente: {output_path}", file=sys.stderr)
             return output_path
         else:
             print(f"⚠️ Error FFmpeg: {res_vid.stderr[:300]}", file=sys.stderr)

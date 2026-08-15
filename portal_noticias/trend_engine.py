@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-trend_engine.py — Motor de Análisis de Conceptos, Termómetro Social y Medición de Opinión Pública
-Extrae ideas reales (no nombres de personas), calcula el índice de acuerdo social y orquesta las encuestas.
+trend_engine.py — Motor de Nube de Palabras General, Encuesta Interactiva por Conceptos y Registro de Palabras Propias
+Extrae tendencias de la red general (sin nombres), permite votar conceptos o proponer palabras personalizadas.
 """
 
 import re
@@ -15,44 +15,80 @@ STOPWORDS = set([
     "uno", "les", "ni", "contra", "otros", "ese", "eso", "ante", "ellos", "e", "esto", "mí", "antes", "algunos",
     "unos", "yo", "otro", "otras", "otra", "él", "tanto", "esa", "estos", "mucho", "quienes", "nada", "muchos",
     "hace", "después", "hacer", "ejemplo", "tras", "hacia", "hacen", "último", "última", "está", "están", "sobre",
-    "para", "cómo", "sobre", "entre", "luego", "cada", "tienen", "todos", "todas"
+    "para", "cómo", "sobre", "entre", "luego", "cada", "tienen", "todos", "todas", "estos", "hacer"
 ])
 
-def clean_concept_tokens(text: str) -> List[str]:
-    """Limpia y extrae solo conceptos de ideas, políticas y economía (omite nombres propios)."""
-    clean_text = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', text)
-    ignore_names = set(["mate", "mote", "tipito", "enojado", "gordo", "dan", "laje", "rucauf", "milei", "sturzenegger", "fijap", "perez", "presto", "neura", "carajo", "diario", "derecha", "iñaki"])
-    
+IGNORE_NAMES = set([
+    "mate", "mote", "tipito", "enojado", "gordo", "dan", "laje", "rucauf", "milei", "sturzenegger", "fijap", 
+    "perez", "presto", "neura", "carajo", "diario", "derecha", "iñaki", "adorni", "marquez", "alberdi"
+])
+
+def extract_general_word_cloud(prensa: List[Dict[str, Any]], redes: List[Dict[str, Any]], google_trends: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Extrae la Nube de Palabras REAL de la red general (prensa + redes + google trends), omitiendo nombres propios."""
     tokens = []
-    for w in clean_text.split():
-        w_lower = w.lower()
-        if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in ignore_names:
-            tokens.append(w.capitalize())
-    return tokens
 
+    for p in prensa:
+        text = p.get("title", "") + " " + p.get("snippet", "")
+        clean_text = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', text)
+        for w in clean_text.split():
+            w_lower = w.lower()
+            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
+                tokens.append(w.capitalize())
 
-def extract_concept_word_cloud(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extrae las IDEAS y CONCEPTOS más mencionados en las redes y medios."""
-    words = []
-    for item in items:
-        text = item.get("title", "") + " " + item.get("snippet", "") + " " + item.get("quote", "")
-        words.extend(clean_concept_tokens(text))
+    for r in redes:
+        text = r.get("content", "") + " " + r.get("top_comment", "")
+        clean_text = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', text)
+        for w in clean_text.split():
+            w_lower = w.lower()
+            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
+                tokens.append(w.capitalize())
 
-    counter = Counter(words)
-    top_concepts = counter.most_common(12)
+    for gt in google_trends:
+        kw = gt.get("keyword", "")
+        clean_kw = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', kw)
+        for w in clean_kw.split():
+            w_lower = w.lower()
+            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
+                tokens.extend([w.capitalize()] * 3)
+
+    counter = Counter(tokens)
+    top_words = counter.most_common(12)
 
     colors = ["#f59e0b", "#3b82f6", "#10b981", "#8b5cf6", "#ec4899", "#fb7185"]
-    sizes = [3.2, 2.6, 2.2, 1.8, 1.5, 1.3, 1.1, 1.0, 0.95, 0.9, 0.85, 0.8]
+    sizes = [3.4, 2.8, 2.4, 2.0, 1.7, 1.4, 1.2, 1.1, 1.0, 0.95, 0.9, 0.85]
 
     cloud = []
-    for idx, (word, count) in enumerate(top_concepts):
+    for idx, (word, count) in enumerate(top_words):
         cloud.append({
+            "id": idx + 1,
             "text": word,
             "count": count,
             "weight": sizes[idx] if idx < len(sizes) else 0.9,
             "color": colors[idx % len(colors)]
         })
     return cloud
+
+
+def get_interactive_concept_poll(word_cloud: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Genera la Encuesta Interactiva de la Nube de Palabras (Elección de 5 principales o propuesta propia)."""
+    top_5 = word_cloud[:5] if word_cloud else []
+    
+    options = []
+    for idx, item in enumerate(top_5):
+        options.append({
+            "id": idx + 1,
+            "text": f"🔥 {item['text']}",
+            "votes": 0,
+            "pct": 0.0
+        })
+
+    return {
+        "id": 501,
+        "question": "¿Cuál de estos conceptos dominantes representa mejor tu preocupación o prioridad hoy?",
+        "subtitle": "Lo que más se habla en las redes en este momento. Votá un concepto o escribí el tuyo propio:",
+        "options": options,
+        "total_votes": 0
+    }
 
 
 def calculate_opinion_thermometer(items: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -120,44 +156,3 @@ def extract_top_quotes(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "link": item.get("link")
             })
     return quotes[:6]
-
-
-def get_active_polls() -> List[Dict[str, Any]]:
-    """Encuestas de Medición Real para contrastar con encuestadoras tradicionales."""
-    return [
-        {
-            "id": 401,
-            "topic": "📈 Medición de Rumbo Económico",
-            "question": "¿Estás de acuerdo con el rumbo del superávit fiscal y las reformas de mercado?",
-            "context": "Termómetro Social Directo — Contraste con encuestadoras tradicionales:",
-            "options": [
-                {"id": 1, "text": "🟢 Apoyo total: El superávit y la estabilidad traerán crecimiento real.", "votes": 0},
-                {"id": 2, "text": "🟡 Apoyo crítico: De acuerdo con el rumbo, pero atento al costo de tarifas.", "votes": 0},
-                {"id": 3, "text": "🔴 Desacuerdo: Considero necesaria una mayor gradualidad en los servicios.", "votes": 0}
-            ],
-            "total_votes": 0
-        },
-        {
-            "id": 402,
-            "topic": "🏛️ Batalla Cultural & Educación",
-            "question": "¿Cuál considerás que es la prioridad en la batalla de las ideas hoy?",
-            "context": "Medición 2 — Batalla cultural y formación de jóvenes:",
-            "options": [
-                {"id": 1, "text": "🎓 Formar jóvenes en las ideas de la libertad en universidades y escuelas.", "votes": 0},
-                {"id": 2, "text": "📱 Derribar el relato estatista en redes sociales y medios digitales.", "votes": 0},
-                {"id": 3, "text": "💼 Demostrar con la desregulación el éxito del sector privado.", "votes": 0}
-            ],
-            "total_votes": 0
-        },
-        {
-            "id": 403,
-            "topic": "🌍 Inserción Geopolítica (Rucauf)",
-            "question": "¿Cómo valorás la alineación internacional de Argentina con el bloque occidental?",
-            "context": "Medición 3 — Geopolítica y atracción de inversiones RIGI:",
-            "options": [
-                {"id": 1, "text": "🌐 Muy positiva: Garantiza seguridad jurídica e inversiones estratégicas.", "votes": 0},
-                {"id": 2, "text": "🔄 Neutra: Dependerá de los avances concretos en acuerdos comerciales.", "votes": 0}
-            ],
-            "total_votes": 0
-        }
-    ]

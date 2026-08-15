@@ -1,271 +1,217 @@
-/**
- * app.js — Lógica Interactiva para el Hub de Batalla Cultural (v7.0)
- */
+/* ==========================================================================
+   portal_noticias — TERMÓMETRO SOCIAL AR (v10.0 Client Logic)
+   ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initEjesFilter();
-    initCopyQuotes();
-    initPollSystem();
-    initWordTraceability();
-    initLeadForm();
-    initShortGenerator();
-    initSocialExportModal();
-});
 
-/** FILTRADO POR EJES TEMÁTICOS **/
-function initEjesFilter() {
-    const btns = document.querySelectorAll('.eje-btn');
-    const items = document.querySelectorAll('.card-hub-item');
+    // 1. FILTRADO POR EJES TEMÁTICOS
+    const ejeButtons = document.querySelectorAll('.eje-btn');
+    const hubCards = document.querySelectorAll('.card-hub-item');
 
-    if (!btns.length || !items.length) return;
-
-    btns.forEach(btn => {
+    ejeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            const selectedEje = btn.getAttribute('data-eje');
-            if (!selectedEje) return;
-
-            btns.forEach(b => b.classList.remove('active'));
+            ejeButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            items.forEach(item => {
-                const itemCat = item.getAttribute('data-category');
-                if (selectedEje === 'todos' || itemCat === selectedEje) {
-                    item.classList.remove('hidden');
+            const selectedEje = btn.getAttribute('data-eje');
+
+            hubCards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                if (selectedEje === 'todos' || cardCat === selectedEje) {
+                    card.classList.remove('hidden');
                 } else {
-                    item.classList.add('hidden');
+                    card.classList.add('hidden');
                 }
             });
         });
     });
-}
 
-/** COPIAR FRASES BOMBA AL PORTAPAPELES **/
-function initCopyQuotes() {
-    const copyBtns = document.querySelectorAll('.btn-copy-quote');
-    if (!copyBtns.length) return;
+    // 2. FILTRADO POR CLIC EN PALABRAS DE LA NUBE
+    const wordTags = document.querySelectorAll('.word-literal-tag');
+    const filterBanner = document.getElementById('word-filter-banner');
+    const activeWordText = document.getElementById('active-word-text');
+    const btnResetWordFilter = document.getElementById('btn-reset-word-filter');
 
-    copyBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const quoteText = btn.getAttribute('data-quote');
-            if (!quoteText) return;
-
-            try {
-                await navigator.clipboard.writeText(quoteText);
-                const originalText = btn.innerText;
-                btn.innerText = '✅ ¡Copiada!';
-                setTimeout(() => btn.innerText = originalText, 2000);
-            } catch (err) {
-                alert('Selecciona y copia la frase manualmente.');
-            }
-        });
-    });
-}
-
-/** VOTO EN ENCUESTAS DE BATALLA CULTURAL **/
-function initPollSystem() {
-    const pollBtns = document.querySelectorAll('.poll-option-btn');
-    if (!pollBtns.length) return;
-
-    pollBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const pollId = btn.getAttribute('data-poll-id');
-            const optionId = btn.getAttribute('data-option-id');
-            if (!pollId || !optionId) return;
-
-            const container = document.getElementById(`poll-options-${pollId}`);
-            if (container) {
-                container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = true);
-            }
-
-            try {
-                const response = await fetch('/api/public/vote', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ poll_id: parseInt(pollId), option_id: parseInt(optionId) })
-                });
-
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    updatePollUI(data.poll_id, data.results, data.total_votes);
-                } else {
-                    alert(data.detail || 'Error al guardar el voto');
-                    if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
-                }
-            } catch (err) {
-                alert('Error al conectar para guardar el voto.');
-                if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
-            }
-        });
-    });
-}
-
-function updatePollUI(pollId, results, totalVotes) {
-    const totalCounter = document.getElementById(`poll-total-${pollId}`);
-    if (totalCounter) {
-        totalCounter.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
-    }
-
-    results.forEach(res => {
-        const btn = document.querySelector(`.poll-option-btn[data-poll-id="${pollId}"][data-option-id="${res.id}"]`);
-        if (btn) {
-            const pctElem = btn.querySelector('.option-pct');
-            const fillElem = btn.querySelector('.progress-fill');
-
-            if (pctElem) pctElem.innerText = `${res.percentage}%`;
-            if (fillElem) fillElem.style.width = `${res.percentage}%`;
-        }
-    });
-}
-
-/** TRAZABILIDAD EN 1-CLIC DE CONCEPTOS CLAVE **/
-function initWordTraceability() {
-    const tags = document.querySelectorAll('.word-literal-tag');
-    const items = document.querySelectorAll('.card-hub-item');
-    const banner = document.getElementById('word-filter-banner');
-    const activeText = document.getElementById('active-word-text');
-    const btnReset = document.getElementById('btn-reset-word-filter');
-
-    if (!tags.length) return;
-
-    tags.forEach(tag => {
+    wordTags.forEach(tag => {
         tag.addEventListener('click', () => {
             const word = tag.getAttribute('data-word');
             if (!word) return;
 
-            tags.forEach(t => t.style.opacity = '0.35');
-            tag.style.opacity = '1.0';
+            filterBanner.style.display = 'flex';
+            activeWordText.textContent = word.toUpperCase();
 
-            let matchCount = 0;
-            items.forEach(item => {
-                const author = item.getAttribute('data-author') || '';
-                const title = item.getAttribute('data-title') || '';
-                const snippet = item.getAttribute('data-snippet') || '';
+            hubCards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const snippet = card.getAttribute('data-snippet') || '';
+                const author = card.getAttribute('data-author') || '';
 
-                if (author.includes(word) || title.includes(word) || snippet.includes(word)) {
-                    item.classList.remove('hidden');
-                    matchCount++;
+                if (title.includes(word) || snippet.includes(word) || author.includes(word)) {
+                    card.classList.remove('hidden');
                 } else {
-                    item.classList.add('hidden');
+                    card.classList.add('hidden');
                 }
             });
 
-            if (banner && activeText) {
-                activeText.innerText = `'${word.toUpperCase()}' (${matchCount} análisis e intervenciones encontradas)`;
-                banner.style.display = 'flex';
-                document.getElementById('catalogo-contenidos').scrollIntoView({ behavior: 'smooth' });
-            }
+            // Scroll suave hacia los resultados
+            document.getElementById('catalogo-contenidos')?.scrollIntoView({ behavior: 'smooth' });
         });
     });
 
-    if (btnReset) {
-        btnReset.addEventListener('click', () => {
-            tags.forEach(t => t.style.opacity = '1.0');
-            items.forEach(item => item.classList.remove('hidden'));
-            if (banner) banner.style.display = 'none';
-        });
-    }
-}
-
-/** MODAL EXPORTADOR A REDES SOCIALES **/
-function initSocialExportModal() {
-    const btnsExport = document.querySelectorAll('.btn-export-poll-social');
-    const modal = document.getElementById('modal-social');
-    const btnClose = document.getElementById('modal-social-close');
-    const textContainer = document.getElementById('social-copy-text');
-    const btnCopy = document.getElementById('btn-copy-to-clipboard');
-
-    if (!modal) return;
-
-    btnsExport.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const pollId = btn.getAttribute('data-poll-id');
-            const question = btn.getAttribute('data-poll-question') || '🔥 Encuesta de Batalla Cultural';
-            const optionsBtns = document.querySelectorAll(`.poll-option-btn[data-poll-id="${pollId}"]`);
-
-            let optionsText = '';
-            optionsBtns.forEach((b, idx) => {
-                const txt = b.getAttribute('data-option-text') || b.innerText;
-                optionsText += `\n${idx + 1}️⃣ ${txt}`;
-            });
-
-            const socialPost = `🦁 BATALLA CULTURAL | ${question}\n${optionsText}\n\n👇 ¡Sumá tu voto en vivo!\n🌐 http://localhost:8001/\n\n#BatallaCultural #AgustinLaje #Rucauf #Milei #Libertad`;
-
-            if (textContainer) textContainer.innerText = socialPost;
-            modal.classList.add('active');
-        });
+    btnResetWordFilter?.addEventListener('click', () => {
+        filterBanner.style.display = 'none';
+        hubCards.forEach(card => card.classList.remove('hidden'));
     });
 
-    if (btnClose) btnClose.addEventListener('click', () => modal.classList.remove('active'));
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+    // 3. VOTACIÓN AJAX EN LA ENCUESTA INTERACTIVA DE CONCEPTOS
+    const pollButtons = document.querySelectorAll('.poll-option-btn');
 
-    if (btnCopy && textContainer) {
-        btnCopy.addEventListener('click', async () => {
+    pollButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const pollId = parseInt(btn.getAttribute('data-poll-id'));
+            const optionId = parseInt(btn.getAttribute('data-option-id'));
+
+            if (!pollId || !optionId) return;
+
             try {
-                await navigator.clipboard.writeText(textContainer.innerText);
-                btnCopy.innerText = '✅ ¡Copiado!';
-                setTimeout(() => btnCopy.innerText = '📋 Copiar al Portapapeles', 2000);
+                const res = await fetch('/api/public/vote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ poll_id: pollId, option_id: optionId })
+                });
+
+                const data = await res.json();
+                if (data.status === 'success') {
+                    // Actualizar porcentajes visuales en vivo
+                    const pollContainer = document.getElementById(`poll-options-${pollId}`);
+                    if (pollContainer) {
+                        data.results.forEach(resOpt => {
+                            const optBtn = pollContainer.querySelector(`[data-option-id="${resOpt.id}"]`);
+                            if (optBtn) {
+                                const fill = optBtn.querySelector('.progress-fill');
+                                const pctSpan = optBtn.querySelector('.option-pct');
+                                if (fill) fill.style.width = `${resOpt.percentage}%`;
+                                if (pctSpan) pctSpan.textContent = `${resOpt.percentage}%`;
+                            }
+                        });
+                    }
+
+                    const counter = document.getElementById(`poll-total-${pollId}`);
+                    if (counter) counter.textContent = `${data.total_votes} votos registrados acumulados`;
+
+                    alert('¡Voto registrado exitosamente en el Termómetro Social!');
+                }
             } catch (err) {
-                alert('Copia el texto manualmente.');
+                console.error('Error registrando voto:', err);
+                alert('No se pudo guardar el voto. Intenta nuevamente.');
             }
         });
-    }
-}
+    });
 
-/** SUSCRIPCIÓN NEWSLETTER **/
-function initLeadForm() {
-    const form = document.getElementById('lead-form');
-    if (!form) return;
+    // 4. REGISTRO DE PALABRA PERSONALIZADA DEL USUARIO
+    const formCustomWord = document.getElementById('form-custom-word');
+    const inputCustomWord = document.getElementById('input-custom-word');
+    const customWordsList = document.getElementById('custom-words-list');
 
-    form.addEventListener('submit', async (e) => {
+    formCustomWord?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const input = document.getElementById('lead-email-input');
-        if (!input || !input.value) return;
+        const word = inputCustomWord.value.trim();
+        if (!word) return;
 
         try {
-            const res = await fetch('/api/public/subscribe_lead', {
+            const res = await fetch('/api/public/submit_custom_word', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: input.value })
+                body: JSON.stringify({ word: word })
             });
 
             const data = await res.json();
             if (data.status === 'success') {
-                alert('🎉 ¡Gracias por suscribirte al Boletín de Batalla Cultural!');
-                input.value = '';
+                alert(data.message);
+                inputCustomWord.value = '';
+
+                // Actualizar la lista de palabras personalizadas visualmente
+                if (customWordsList && data.top_custom_words) {
+                    customWordsList.innerHTML = data.top_custom_words.map(([w, cnt]) => 
+                        `<span class="badge-tag streamers_youtubers" style="font-size: 0.75rem;">${w} (${cnt})</span>`
+                    ).join('');
+                }
             } else {
-                alert(data.detail || 'No se pudo registrar la suscripción.');
+                alert(data.detail || 'Error al guardar palabra');
             }
         } catch (err) {
-            alert('Error al conectar.');
+            console.error('Error enviando palabra:', err);
+            alert('No se pudo registrar la palabra. Intenta nuevamente.');
         }
     });
-}
 
-/** GENERADOR DE SHORT VIDEO CON VOZ NEURAL **/
-function initShortGenerator() {
-    const btnGen = document.getElementById('btn-generate-short');
-    if (!btnGen) return;
+    // 5. GENERACIÓN DEL SHORT ANZUELO VISUAL
+    const btnGenerateShort = document.getElementById('btn-generate-short');
+    const videoPlayer = document.getElementById('short-video-player');
 
-    btnGen.addEventListener('click', async () => {
-        btnGen.innerText = '🎬 Generando Short con Voz Neural...';
-        btnGen.disabled = true;
+    btnGenerateShort?.addEventListener('click', async () => {
+        btnGenerateShort.disabled = true;
+        btnGenerateShort.textContent = '⏳ Generando Short Anzuelo Visual...';
 
         try {
             const res = await fetch('/api/public/generate_short');
             const data = await res.json();
 
-            if (data.status === 'success') {
-                alert(`✅ Short de Video MP4 generado exitosamente.\nPuedes descargarlo o verlo en:\n${data.download_url}`);
-                window.location.reload();
+            if (data.status === 'success' && data.download_url) {
+                if (videoPlayer) {
+                    videoPlayer.src = data.download_url;
+                    videoPlayer.load();
+                    videoPlayer.play();
+                }
+                alert('¡Short Anzuelo Visual generado exitosamente!');
             } else {
                 alert('No se pudo generar el video short.');
             }
         } catch (err) {
-            alert('Error conectando con el generador de video.');
+            console.error('Error generando short:', err);
+            alert('Ocurrió un error generando el video short.');
         } finally {
-            btnGen.innerText = '🎥 Generar / Actualizar Video Short con Voz Neural';
-            btnGen.disabled = false;
+            btnGenerateShort.disabled = false;
+            btnGenerateShort.textContent = '🎥 Generar / Actualizar Video Short Anzuelo';
         }
     });
-}
+
+    // 6. BOTÓN 1-CLIC COPY DE TEXTO DE COMENTARIOS CON LINK
+    const btnCopyCommentText = document.getElementById('btn-copy-comment-text');
+
+    btnCopyCommentText?.addEventListener('click', () => {
+        const textToCopy = btnCopyCommentText.getAttribute('data-copy-text');
+        if (textToCopy) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('📋 ¡Texto + Link de Comentario copiado al portapapeles! Listo para pegar en TikTok, X o YouTube Shorts.');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+    });
+
+    // 7. CAPTURA DE BOLETÍN DE LEADS
+    const leadForm = document.getElementById('lead-form');
+    const leadEmailInput = document.getElementById('lead-email-input');
+
+    leadForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = leadEmailInput.value.trim();
+        if (!email) return;
+
+        try {
+            const res = await fetch('/api/public/subscribe_lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert('¡Gracias por suscribirte al Termómetro Social!');
+                leadEmailInput.value = '';
+            }
+        } catch (err) {
+            console.error('Error al suscribir lead:', err);
+        }
+    });
+
+});
