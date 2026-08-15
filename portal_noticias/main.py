@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-portal_noticias/main.py — Servidor Web Público (Escuchatorio Dual: Prensa vs Redes, Nubes Emocionales & Multi-Encuestas)
-Servidor dedicado para el portal público en el puerto 8001.
+portal_noticias/main.py — Hub de Batalla Cultural & Ecosistema Liberal (Puerto 8001)
+Servidor dedicado para el portal especializado en el puerto 8001.
 """
 
 import os
@@ -15,9 +15,8 @@ from pydantic import BaseModel
 
 from portal_noticias.rss_collector import collect_all_data
 from portal_noticias.trend_engine import (
-    extract_dual_word_clouds,
-    extract_emotional_clouds,
-    calculate_social_climate,
+    categorize_hub_items,
+    extract_top_quotes,
     get_active_polls
 )
 from portal_noticias.generar_short_diario import generate_short_video
@@ -26,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 
 app = FastAPI(
-    title="Radar Prensa vs Redes Sociales",
-    description="Escuchatorio Dual, Nubes Emocionales, Multi-Encuestas y Fábrica de Shorts",
-    version="3.0.0"
+    title="Hub Batalla Cultural & Ecosistema Liberal",
+    description="Portal de Curaduría, Transcripciones de Streamers/Conferencias y Debate",
+    version="4.0.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
@@ -59,15 +58,13 @@ init_db()
 
 
 def get_live_data():
-    """Genera los datos en tiempo real de prensa, redes, desacople %, nubes emocionales y encuestas."""
+    """Genera los datos del Hub de Batalla Cultural en tiempo real."""
     raw_data = collect_all_data()
-    prensa = raw_data.get("prensa", [])
-    trends = raw_data.get("google_trends", [])
-    redes = raw_data.get("redes", [])
+    hub_items = raw_data.get("hub_items", [])
+    conceptos = raw_data.get("conceptos", [])
 
-    dual_clouds = extract_dual_word_clouds(prensa, redes, trends)
-    emotional_clouds = extract_emotional_clouds(prensa, redes)
-    climate = calculate_social_climate(prensa, redes)
+    categorized = categorize_hub_items(hub_items)
+    top_quotes = extract_top_quotes(hub_items)
     polls = get_active_polls()
 
     # Cargar votos por cada encuesta desde SQLite
@@ -86,18 +83,15 @@ def get_live_data():
 
     conn.close()
 
-    # Ruta del short de video si existe
     short_file = os.path.join(BASE_DIR, "static", "shorts", "short_del_dia.mp4")
     short_url = f"/static/shorts/short_del_dia.mp4?v={os.path.getmtime(short_file)}" if os.path.exists(short_file) else None
 
     return {
         "timestamp": raw_data.get("timestamp"),
-        "prensa": prensa,
-        "google_trends": trends,
-        "redes": redes,
-        "dual_clouds": dual_clouds,
-        "emotional_clouds": emotional_clouds,
-        "climate": climate,
+        "hub_items": hub_items,
+        "categorized": categorized,
+        "top_quotes": top_quotes,
+        "conceptos": conceptos,
         "polls": polls,
         "short_url": short_url
     }
@@ -105,21 +99,21 @@ def get_live_data():
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
-    """Página de Inicio Pública."""
+    """Página de Inicio del Hub Batalla Cultural."""
     data = get_live_data()
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "data": data,
-            "title": "Radar Prensa vs Redes Sociales | Argentina"
+            "title": "BATALLA CULTURAL | Hub de Ideas Liberales & Streamers"
         }
     )
 
 
 @app.get("/api/public/data")
 async def get_public_data():
-    """Endpoint JSON de datos completos de prensa, redes y encuestas."""
+    """Endpoint JSON del Hub de Batalla Cultural."""
     return get_live_data()
 
 
@@ -170,7 +164,7 @@ class LeadPayload(BaseModel):
 
 @app.post("/api/public/subscribe_lead")
 async def subscribe_lead(payload: LeadPayload):
-    """Registra el email de un usuario interesado en el newsletter diario."""
+    """Registra el email del usuario para el newsletter de Batalla Cultural."""
     if not payload.email or "@" not in payload.email:
         raise HTTPException(status_code=400, detail="Email inválido")
         
@@ -180,17 +174,17 @@ async def subscribe_lead(payload: LeadPayload):
         cur.execute("INSERT OR IGNORE INTO leads (email) VALUES (?)", (payload.email.strip(),))
         conn.commit()
         conn.close()
-        return {"status": "success", "message": "¡Suscripción exitosa al Newsletter Diario!"}
+        return {"status": "success", "message": "¡Suscripción exitosa al Boletín de Batalla Cultural!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error al registrar suscripción")
 
 
 @app.get("/api/public/generate_short")
 async def api_generate_short():
-    """Genera el Short MP4 con voz hablada en español del día y devuelve la ruta de descarga."""
+    """Genera el Short MP4 con voz neural del día basado en discursos y conceptos clave."""
     data = get_live_data()
-    top_word = data["dual_clouds"]["cloud_prensa"][0]["text"] if data["dual_clouds"]["cloud_prensa"] else "PRESUPUESTO"
-    question = data["polls"][0]["question"] if data["polls"] else "¿Cuál es tu prioridad?"
+    top_word = "BATALLA CULTURAL"
+    question = "La batalla por las ideas de la libertad se gana día a día."
     
     short_path = generate_short_video(top_word, question)
     if short_path and os.path.exists(short_path):

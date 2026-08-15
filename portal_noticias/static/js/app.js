@@ -1,29 +1,81 @@
 /**
- * app.js — RADAR 360 Lógica Comercial Simple & Directa (v6.0)
+ * app.js — Lógica Interactiva para el Hub de Batalla Cultural (v7.0)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initEjesFilter();
+    initCopyQuotes();
     initPollSystem();
     initWordTraceability();
-    initPdfExporter();
     initLeadForm();
     initShortGenerator();
-    initRegionSelector();
     initSocialExportModal();
 });
 
-/** VOTACIÓN DE ENCUESTA PRINCIPAL **/
-function initPollSystem() {
-    const pollOptions = document.querySelectorAll('.poll-option-btn');
-    if (!pollOptions.length) return;
+/** FILTRADO POR EJES TEMÁTICOS **/
+function initEjesFilter() {
+    const btns = document.querySelectorAll('.eje-btn');
+    const items = document.querySelectorAll('.card-hub-item');
 
-    pollOptions.forEach(btn => {
+    if (!btns.length || !items.length) return;
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selectedEje = btn.getAttribute('data-eje');
+            if (!selectedEje) return;
+
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                if (selectedEje === 'todos' || itemCat === selectedEje) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+    });
+}
+
+/** COPIAR FRASES BOMBA AL PORTAPAPELES **/
+function initCopyQuotes() {
+    const copyBtns = document.querySelectorAll('.btn-copy-quote');
+    if (!copyBtns.length) return;
+
+    copyBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const quoteText = btn.getAttribute('data-quote');
+            if (!quoteText) return;
+
+            try {
+                await navigator.clipboard.writeText(quoteText);
+                const originalText = btn.innerText;
+                btn.innerText = '✅ ¡Copiada!';
+                setTimeout(() => btn.innerText = originalText, 2000);
+            } catch (err) {
+                alert('Selecciona y copia la frase manualmente.');
+            }
+        });
+    });
+}
+
+/** VOTO EN ENCUESTAS DE BATALLA CULTURAL **/
+function initPollSystem() {
+    const pollBtns = document.querySelectorAll('.poll-option-btn');
+    if (!pollBtns.length) return;
+
+    pollBtns.forEach(btn => {
         btn.addEventListener('click', async () => {
             const pollId = btn.getAttribute('data-poll-id');
             const optionId = btn.getAttribute('data-option-id');
             if (!pollId || !optionId) return;
 
-            pollOptions.forEach(b => b.disabled = true);
+            const container = document.getElementById(`poll-options-${pollId}`);
+            if (container) {
+                container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = true);
+            }
 
             try {
                 const response = await fetch('/api/public/vote', {
@@ -35,27 +87,27 @@ function initPollSystem() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    updatePollUI(data.results, data.total_votes);
+                    updatePollUI(data.poll_id, data.results, data.total_votes);
                 } else {
-                    alert(data.detail || 'Error registrando voto');
-                    pollOptions.forEach(b => b.disabled = false);
+                    alert(data.detail || 'Error al guardar el voto');
+                    if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
                 }
             } catch (err) {
-                alert('Error al conectar con la base de datos de encuestas.');
-                pollOptions.forEach(b => b.disabled = false);
+                alert('Error al conectar para guardar el voto.');
+                if (container) container.querySelectorAll('.poll-option-btn').forEach(b => b.disabled = false);
             }
         });
     });
 }
 
-function updatePollUI(results, totalVotes) {
-    const totalElem = document.getElementById('poll-total-votes');
-    if (totalElem) {
-        totalElem.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
+function updatePollUI(pollId, results, totalVotes) {
+    const totalCounter = document.getElementById(`poll-total-${pollId}`);
+    if (totalCounter) {
+        totalCounter.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
     }
 
     results.forEach(res => {
-        const btn = document.querySelector(`.poll-option-btn[data-option-id="${res.id}"]`);
+        const btn = document.querySelector(`.poll-option-btn[data-poll-id="${pollId}"][data-option-id="${res.id}"]`);
         if (btn) {
             const pctElem = btn.querySelector('.option-pct');
             const fillElem = btn.querySelector('.progress-fill');
@@ -66,11 +118,10 @@ function updatePollUI(results, totalVotes) {
     });
 }
 
-/** TRAZABILIDAD 1-CLIC EN LA NUBE DE TENDENCIAS **/
+/** TRAZABILIDAD EN 1-CLIC DE CONCEPTOS CLAVE **/
 function initWordTraceability() {
     const tags = document.querySelectorAll('.word-literal-tag');
-    const newsCards = document.querySelectorAll('.card-news');
-    const socialCards = document.querySelectorAll('.card-social');
+    const items = document.querySelectorAll('.card-hub-item');
     const banner = document.getElementById('word-filter-banner');
     const activeText = document.getElementById('active-word-text');
     const btnReset = document.getElementById('btn-reset-word-filter');
@@ -85,33 +136,24 @@ function initWordTraceability() {
             tags.forEach(t => t.style.opacity = '0.35');
             tag.style.opacity = '1.0';
 
-            let matchNews = 0;
-            newsCards.forEach(card => {
-                const title = card.getAttribute('data-title') || '';
-                const snippet = card.getAttribute('data-snippet') || '';
-                if (title.includes(word) || snippet.includes(word)) {
-                    card.classList.remove('hidden');
-                    matchNews++;
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
+            let matchCount = 0;
+            items.forEach(item => {
+                const author = item.getAttribute('data-author') || '';
+                const title = item.getAttribute('data-title') || '';
+                const snippet = item.getAttribute('data-snippet') || '';
 
-            let matchSocial = 0;
-            socialCards.forEach(card => {
-                const content = card.getAttribute('data-content') || '';
-                if (content.includes(word)) {
-                    card.style.display = 'block';
-                    matchSocial++;
+                if (author.includes(word) || title.includes(word) || snippet.includes(word)) {
+                    item.classList.remove('hidden');
+                    matchCount++;
                 } else {
-                    card.style.display = 'none';
+                    item.classList.add('hidden');
                 }
             });
 
             if (banner && activeText) {
-                activeText.innerText = `'${word.toUpperCase()}' (${matchNews} noticias | ${matchSocial} en redes)`;
+                activeText.innerText = `'${word.toUpperCase()}' (${matchCount} análisis e intervenciones encontradas)`;
                 banner.style.display = 'flex';
-                document.getElementById('seccion-comparativa').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('catalogo-contenidos').scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
@@ -119,48 +161,39 @@ function initWordTraceability() {
     if (btnReset) {
         btnReset.addEventListener('click', () => {
             tags.forEach(t => t.style.opacity = '1.0');
-            newsCards.forEach(c => c.classList.remove('hidden'));
-            socialCards.forEach(s => s.style.display = 'block');
+            items.forEach(item => item.classList.remove('hidden'));
             if (banner) banner.style.display = 'none';
         });
     }
 }
 
-/** BOTÓN REPORTE PDF PARA CLIENTES **/
-function initPdfExporter() {
-    const btnPdf = document.getElementById('btn-export-pdf');
-    if (!btnPdf) return;
-
-    btnPdf.addEventListener('click', () => {
-        alert('📄 Generando Reporte Ejecutivo de Opinión Pública & Cobertura Mediática en PDF...\n\n(Ideal para vender como informe semanal a marcas y consultoras).');
-        window.print();
-    });
-}
-
 /** MODAL EXPORTADOR A REDES SOCIALES **/
 function initSocialExportModal() {
-    const btnExport = document.getElementById('btn-export-social');
+    const btnsExport = document.querySelectorAll('.btn-export-poll-social');
     const modal = document.getElementById('modal-social');
     const btnClose = document.getElementById('modal-social-close');
     const textContainer = document.getElementById('social-copy-text');
     const btnCopy = document.getElementById('btn-copy-to-clipboard');
 
-    if (!btnExport || !modal) return;
+    if (!modal) return;
 
-    btnExport.addEventListener('click', () => {
-        const question = document.getElementById('poll-question-text')?.innerText || '🔥 Encuesta del día en Argentina';
-        const optionsBtns = document.querySelectorAll('.poll-option-btn');
+    btnsExport.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pollId = btn.getAttribute('data-poll-id');
+            const question = btn.getAttribute('data-poll-question') || '🔥 Encuesta de Batalla Cultural';
+            const optionsBtns = document.querySelectorAll(`.poll-option-btn[data-poll-id="${pollId}"]`);
 
-        let optionsText = '';
-        optionsBtns.forEach((btn, idx) => {
-            const txt = btn.getAttribute('data-option-text') || btn.innerText;
-            optionsText += `\n${idx + 1}️⃣ ${txt}`;
+            let optionsText = '';
+            optionsBtns.forEach((b, idx) => {
+                const txt = b.getAttribute('data-option-text') || b.innerText;
+                optionsText += `\n${idx + 1}️⃣ ${txt}`;
+            });
+
+            const socialPost = `🦁 BATALLA CULTURAL | ${question}\n${optionsText}\n\n👇 ¡Sumá tu voto en vivo!\n🌐 http://localhost:8001/\n\n#BatallaCultural #AgustinLaje #Rucauf #Milei #Libertad`;
+
+            if (textContainer) textContainer.innerText = socialPost;
+            modal.classList.add('active');
         });
-
-        const socialPost = `📊 ${question}\n${optionsText}\n\n👇 ¡Sumá tu voto en tiempo real!\n🌐 http://localhost:8001/\n\n#Argentina #Radar360 #Encuesta`;
-
-        if (textContainer) textContainer.innerText = socialPost;
-        modal.classList.add('active');
     });
 
     if (btnClose) btnClose.addEventListener('click', () => modal.classList.remove('active'));
@@ -173,13 +206,13 @@ function initSocialExportModal() {
                 btnCopy.innerText = '✅ ¡Copiado!';
                 setTimeout(() => btnCopy.innerText = '📋 Copiar al Portapapeles', 2000);
             } catch (err) {
-                alert('Selecciona y copia el texto manualmente.');
+                alert('Copia el texto manualmente.');
             }
         });
     }
 }
 
-/** SUSCRIPCIÓN AL NEWSLETTER **/
+/** SUSCRIPCIÓN NEWSLETTER **/
 function initLeadForm() {
     const form = document.getElementById('lead-form');
     if (!form) return;
@@ -198,13 +231,13 @@ function initLeadForm() {
 
             const data = await res.json();
             if (data.status === 'success') {
-                alert('🎉 ¡Gracias por suscribirte al Pulso Diario de Argentina!');
+                alert('🎉 ¡Gracias por suscribirte al Boletín de Batalla Cultural!');
                 input.value = '';
             } else {
-                alert(data.detail || 'No se pudo guardar la suscripción.');
+                alert(data.detail || 'No se pudo registrar la suscripción.');
             }
         } catch (err) {
-            alert('Error de conexión.');
+            alert('Error al conectar.');
         }
     });
 }
@@ -223,40 +256,16 @@ function initShortGenerator() {
             const data = await res.json();
 
             if (data.status === 'success') {
-                alert(`✅ Video Short MP4 generado exitosamente.\nPuedes descargarlo o verlo en:\n${data.download_url}`);
+                alert(`✅ Short de Video MP4 generado exitosamente.\nPuedes descargarlo o verlo en:\n${data.download_url}`);
                 window.location.reload();
             } else {
                 alert('No se pudo generar el video short.');
             }
         } catch (err) {
-            alert('Error de conexión con la fábrica de shorts.');
+            alert('Error conectando con el generador de video.');
         } finally {
-            btnGen.innerText = '🎥 Video Short con Voz Neural';
+            btnGen.innerText = '🎥 Generar / Actualizar Video Short con Voz Neural';
             btnGen.disabled = false;
         }
-    });
-}
-
-/** FILTRO REGIONAL **/
-function initRegionSelector() {
-    const btns = document.querySelectorAll('.region-btn');
-    const newsCards = document.querySelectorAll('.card-news');
-
-    btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            btns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const selectedRegion = btn.getAttribute('data-region');
-
-            newsCards.forEach(card => {
-                const cardRegion = card.getAttribute('data-region');
-                if (selectedRegion === 'nacional' || cardRegion === selectedRegion) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        });
     });
 }

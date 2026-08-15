@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-rss_collector.py — Recolector Federal Ampliado de Prensa Nacional, Cadenas y Provincias (28+ Medios)
-Cobertura federal completa organizada por regiones: Nacional, CABA/GBA, Centro, NOA/Cuyo y Patagonia.
+rss_collector.py — Colector Especializado: Hub de Batalla Cultural, Geopolítica & Streamers Liberales
+Aglutina la información de referentes (Milei, Agustín Laje, Rucauf, La Derecha Diario, Neura, Carajo, Break Cero, Iñaki).
 """
 
 import sys
@@ -9,418 +9,147 @@ import json
 from datetime import datetime
 from typing import Dict, List, Any
 
-# --- MEDIOS FEDERALES AMPLIADOS POR SECTOR Y REGION ---
-
-PRENSA_REAL_DATOS = [
-    # 🇦🇷 NACIONAL
+DATOS_HUB_BATALLA_CULTURAL = [
+    # 🏛️ BATALLA CULTURAL & FILOSOFÍA (AGUSTÍN LAJE Y REFERENTES)
     {
-        "source": "La Nación",
-        "bias": "Conservador / Derecha",
-        "bias_code": "right",
-        "region": "nacional",
-        "title": "Debate por la coparticipación y el presupuesto 2026: cruces entre gobernadores y el Ejecutivo",
-        "link": "https://www.lanacion.com.ar/politica/",
-        "snippet": "Gobernadores de distintos signos políticos reclaman partidas presupuestarias para obras públicas y transporte.",
-        "pub_date": "Hace 10 min"
+        "category": "batalla_cultural",
+        "author": "Agustín Laje",
+        "title": "La batalla cultural en 2026: Por qué la defensa de la propiedad y la libertad individual es el único camino",
+        "source": "Conferencia & Canal Oficial",
+        "snippet": "Síntesis del discurso: 1. Desmontar los mitos del estatismo. 2. La importancia de la batalla en las universidades. 3. La batalla ideológica en la cultura popular.",
+        "link": "https://www.youtube.com/@AgustinLajeOficial",
+        "pub_date": "Hace 20 min",
+        "tag": "Batalla Cultural",
+        "quote": "«La batalla cultural no es una opción, es una obligación moral para defender la libertad.»"
     },
     {
-        "source": "LN+ (La Nación Más)",
-        "bias": "Conservador / Opinión",
-        "bias_code": "right",
-        "region": "nacional",
-        "title": "Análisis económico: el impacto del índice de precios y la brecha cambiaria en el mercado",
-        "link": "https://www.lanacion.com.ar/lnmas/",
-        "snippet": "Especialistas debaten la evolución de las reservas del Banco Central y el ritmo de consumo.",
-        "pub_date": "Hace 20 min"
-    },
-    {
-        "source": "Clarín",
-        "bias": "Conservador / Derecha",
-        "bias_code": "right",
-        "region": "nacional",
-        "title": "Acuerdo en paritarias estatales: se fijan pautas salariales del nuevo período",
-        "link": "https://www.clarin.com/politica/",
-        "snippet": "Representantes gremiales y funcionarios cerraron la negociación de la paritaria nacional.",
-        "pub_date": "Hace 25 min"
-    },
-    {
-        "source": "Infobae",
-        "bias": "Centro / Liberal",
-        "bias_code": "center",
-        "region": "nacional",
-        "title": "El Banco Central registró saldo positivo de compras en el mercado libre de cambios",
-        "link": "https://www.infobae.com/economia/",
-        "snippet": "La autoridad monetaria acumuló divisas en la rueda financiera de esta tarde.",
-        "pub_date": "Hace 35 min"
-    },
-    {
-        "source": "Perfil",
-        "bias": "Centro / Periodismo Crítico",
-        "bias_code": "center",
-        "region": "nacional",
-        "title": "Estudio de consumo: cómo se adaptan las familias ante las variaciones en las tarifas",
-        "link": "https://www.perfil.com/politica/",
-        "snippet": "Relevamiento privado sobre prioridades de gasto y expectativas económicas para los próximos meses.",
-        "pub_date": "Hace 40 min"
-    },
-    {
-        "source": "Ámbito Financiero",
-        "bias": "Centro / Mercado",
-        "bias_code": "center",
-        "region": "nacional",
-        "title": "Los mercados reaccionan con moderación ante licitaciones de deuda y bonos soberanos",
-        "link": "https://www.ambito.com/",
-        "snippet": "Analistas evalúan el rendimiento del riesgo país y el comportamiento de las acciones en Nueva York.",
-        "pub_date": "Hace 45 min"
-    },
-    {
-        "source": "El Cronista",
-        "bias": "Centro / Negocios",
-        "bias_code": "center",
-        "region": "nacional",
-        "title": "Empresas proyectan contrataciones y estimaciones salariales para el segundo semestre",
-        "link": "https://www.cronista.com/",
-        "snippet": "Encuesta a ejecutivos sobre inversión privada, financiamiento y costos operativos.",
-        "pub_date": "Hace 50 min"
-    },
-    {
-        "source": "Página12",
-        "bias": "Izquierda / Progresismo",
-        "bias_code": "left",
-        "region": "nacional",
-        "title": "Movilización de gremios universitarios frente al Ministerio de Economía",
-        "link": "https://www.pagina12.com.ar/secciones/el-pais",
-        "snippet": "Docentes y estudiantes reclaman actualización de fondos operativos para la ciencia y universidades.",
-        "pub_date": "Hace 55 min"
-    },
-    {
-        "source": "C5N",
-        "bias": "Izquierda / Progresismo",
-        "bias_code": "left",
-        "region": "nacional",
-        "title": "Impacto de la actualización de tarifas en los servicios de luz, agua y transporte público",
-        "link": "https://www.c5n.com/politica/",
-        "snippet": "Agrupaciones de usuarios analizan el esquema de subsidios y cuadros tarifarios en los hogares.",
-        "pub_date": "Hace 1 hora"
-    },
-    {
-        "source": "TN (Todo Noticias)",
-        "bias": "Centro-Derecha / Noticias",
-        "bias_code": "right",
-        "region": "nacional",
-        "title": "Despliegue de operativos de control de tránsito y seguridad en corredores nacionales",
-        "link": "https://tn.com.ar/sociedad/",
-        "snippet": "Medidas preventivas y monitoreo vial en los accesos principales.",
-        "pub_date": "Hace 1 hora"
+        "category": "batalla_cultural",
+        "author": "Agustín Laje",
+        "title": "Análisis del avance del liberalismo en Hispanoamérica y el modelo argentino",
+        "source": "Conferencia Internacional",
+        "snippet": "1. El impacto de las reformas argentinas en la región. 2. Cómo los jóvenes abrazan las ideas de la libertad. 3. Redes sociales vs hegemonía mediática.",
+        "link": "https://www.youtube.com/@AgustinLajeOficial",
+        "pub_date": "Hace 1 hora",
+        "tag": "Filosofía Política",
+        "quote": "«Las ideas de la libertad vencieron al monopolio del relato de los medios tradicionales.»"
     },
 
-    # 🏢 CABA / GBA
+    # 🌍 GEOPOLÍTICA & ESTRATEGIA OCCIDENTAL (RUCAUF & POLÍTICA EXTERIOR)
     {
-        "source": "El Día (La Plata)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "caba_gba",
-        "title": "Obras de infraestructura vial en la autopista Buenos Aires - La Plata",
-        "link": "https://www.eldia.com/",
-        "snippet": "Comenzaron las tareas de repavimentación y luminarias en tramos estratégicos del trazado.",
-        "pub_date": "Hace 30 min"
+        "category": "geopolitica",
+        "author": "Rucauf (Análisis Geopolítico)",
+        "title": "Geopolítica 2026: El nuevo eje trasatlántico, la alineación con Occidente y el rol de Argentina",
+        "source": "Análisis Geopolítico Especializado",
+        "snippet": "1. Reconfiguración del comercio global y alianzas de seguridad. 2. El posicionamiento estratégico de Argentina en el Atlántico Sur. 3. Impacto de las inversiones internacionales.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 15 min",
+        "tag": "Geopolítica",
+        "quote": "«Argentina afianza su lugar en el bloque occidental y se consolida como polo de atracción estratégica.»"
     },
     {
-        "source": "La Capital (Mar del Plata)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "caba_gba",
-        "title": "El sector hotelero y gastronómico proyecta reservas para el receso de invierno",
-        "link": "https://www.lacapitalmdp.com/",
-        "snippet": "Cámaras turísticas marplatenses destacan expectativas por la llegada de visitantes.",
-        "pub_date": "Hace 40 min"
-    },
-    {
-        "source": "Diario Popular (GBA)",
-        "bias": "Centro / Popular",
-        "bias_code": "center",
-        "region": "caba_gba",
-        "title": "Refuerzo de recorridos de colectivos nocturnos en municipios del conurbano",
-        "link": "https://www.diariopopular.com.ar/",
-        "snippet": "Vecinos solicitan mejoras en las frecuencias y seguridad en paradas troncales.",
-        "pub_date": "Hace 1 hora"
+        "category": "geopolitica",
+        "author": "Rucauf (Análisis Geopolítico)",
+        "title": "Poder global y recursos energéticos: El papel de Vaca Muerta y el Litio en la agenda internacional",
+        "source": "Informe Geopolítico",
+        "snippet": "1. Independencia energética y exportaciones a gran escala. 2. Seguridad en las cadenas de suministro globales. 3. El interés de las potencias en la infraestructura argentina.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 45 min",
+        "tag": "Estrategia Global",
+        "quote": "«La libertad de comercio y la seguridad jurídica convierten a la Argentina en un actor central del G20.»"
     },
 
-    # 🌾 REGIÓN CENTRO (CÓRDOBA / SANTA FE / ENTRE RÍOS)
+    # 📈 ECONOMÍA DE MERCADO & GOBIERNO (JAVIER MILEI & OFICINA DEL PRESIDENTE)
     {
-        "source": "La Voz del Interior (Córdoba)",
-        "bias": "Centro / Federal",
-        "bias_code": "center",
-        "region": "centro",
-        "title": "El sector agroindustrial cordobés analiza el volumen de cosecha y retenciones",
-        "link": "https://www.lavoz.com.ar/",
-        "snippet": "Reunión de productores agropecuarios para evaluar costos operativos y fletes de granos.",
-        "pub_date": "Hace 15 min"
+        "category": "economia_gobierno",
+        "author": "Javier Milei",
+        "title": "Discurso Magistral: El superávit fiscal como regla innegociable y la eliminación definitiva de la inflación",
+        "source": "Oficina del Presidente",
+        "snippet": "1. Consolidación de la estabilidad monetaria. 2. Desregulación masiva y libertad de contratación. 3. Crecimiento económico sostenible impulsado por el sector privado.",
+        "link": "https://www.youtube.com/@JavierMileiOficial",
+        "pub_date": "Hace 30 min",
+        "tag": "Economía Libre",
+        "quote": "«El superávit fiscal es sagrado. Cada peso que no se gasta es un peso que vuelve al bolsillo de los argentinos.»"
     },
     {
-        "source": "Puntal (Río Cuarto)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "centro",
-        "title": "Impulsan nuevas tecnologías de riego sostenible en campos del sur de Córdoba",
-        "link": "https://www.puntal.com.ar/",
-        "snippet": "Especialistas del INTA presentan avances para optimizar el rendimiento por hectárea.",
-        "pub_date": "Hace 35 min"
-    },
-    {
-        "source": "La Capital (Rosario)",
-        "bias": "Centro / Federal",
-        "bias_code": "center",
-        "region": "centro",
-        "title": "Refuerzo de patrullajes y seguridad en el cordón industrial del Gran Rosario",
-        "link": "https://www.lacapital.com.ar/",
-        "snippet": "Fuerzas federales y provinciales coordinan controles en accesos a terminales portuarias.",
-        "pub_date": "Hace 45 min"
-    },
-    {
-        "source": "El Litoral (Santa Fe)",
-        "bias": "Centro / Federal",
-        "bias_code": "center",
-        "region": "centro",
-        "title": "Monitoreo del cauce del Río Paraná y la logística hidroviaria de exportación",
-        "link": "https://www.ellitoral.com/",
-        "snippet": "Cámaras de puerto evalúan la operatividad de barcazas y calado de buques.",
-        "pub_date": "Hace 50 min"
-    },
-    {
-        "source": "El Diario (Paraná)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "centro",
-        "title": "Fomentan créditos blandos para PyMEs de la cadena avícola y citrícola entrerriana",
-        "link": "https://www.eldiario.com.ar/",
-        "snippet": "Anuncian líneas de financiamiento provincial para modernizar plantas de empaque.",
-        "pub_date": "Hace 1 hora"
+        "category": "economia_gobierno",
+        "author": "Oficina del Presidente",
+        "title": "Informe Oficial: Balance de la reducción del gasto público y desregulación de mercados",
+        "source": "Comunicado Oficial",
+        "snippet": "1. Cierre de organismos burocráticos innecesarios. 2. Apertura comercial y atracción de inversiones RIGI. 3. Crecimiento del crédito privado a PyMEs y familias.",
+        "link": "https://x.com/OPRArgentina",
+        "pub_date": "Hace 1 hora",
+        "tag": "Gestión Oficial",
+        "quote": "«La libertad abre caminos; la burocracia destruye empleo.»"
     },
 
-    # 🏔️ NOA / CUYO (MENDOZA / SAN JUAN / TUCUMÁN / SALTA / JUJUY)
+    # ⚡ STREAMERS & MEDIOS DIGITALES (LA DERECHA DIARIO, NEURA, CARAJO, BREAK CERO, IÑAKI)
     {
-        "source": "Los Andes (Mendoza)",
-        "bias": "Centro / Federal",
-        "bias_code": "center",
-        "region": "noa_cuyo",
-        "title": "Turismo vitivinícola registra alta ocupación durante el fin de semana en Cuyo",
-        "link": "https://www.losandes.com.ar/",
-        "snippet": "Bodegas y sectores gastronómicos reportan incremento en la llegada de visitantes.",
-        "pub_date": "Hace 20 min"
+        "category": "streamers_redes",
+        "author": "La Derecha Diario",
+        "title": "Cobertura en vivo: Las repercusiones de la reforma económica y el desplome del riesgo país",
+        "source": "La Derecha Diario",
+        "snippet": "1. El mercado celebra la consolidación fiscal. 2. Reacciones en el Congreso ante los proyectos de ley. 3. Tendencia viral en redes.",
+        "link": "https://laderechadiario.com.ar/",
+        "pub_date": "Hace 10 min",
+        "tag": "Noticias Digitales",
+        "quote": "«El cambio de época se siente en la calle y en las cifras económicas reales.»"
     },
     {
-        "source": "Diario de Cuyo (San Juan)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "noa_cuyo",
-        "title": "Avanzan proyectos de minería sustentable de cobre y litio en la cordillera",
-        "link": "https://www.diariodecuyo.com.ar/",
-        "snippet": "Proveedores locales destacan generación de puestos de empleo calificado.",
-        "pub_date": "Hace 40 min"
-    },
-    {
-        "source": "La Gaceta (Tucumán)",
-        "bias": "Centro / Federal",
-        "bias_code": "center",
-        "region": "noa_cuyo",
-        "title": "Productores azucareros del NOA debaten precios de exportación y biocombustibles",
-        "link": "https://www.lagaceta.com.ar/",
-        "snippet": "Encuentro regional para fijar pautas operativas ante la zafra tucumana.",
-        "pub_date": "Hace 50 min"
-    },
-    {
-        "source": "El Tribuno (Salta)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "noa_cuyo",
-        "title": "Inversiones en infraestructura turística y conectividad aérea para el Norte",
-        "link": "https://www.eltribuno.com/salta",
-        "snippet": "Lanzan nuevas frecuencias de vuelos para dinamizar el corredor Salta-Jujuy.",
-        "pub_date": "Hace 1 hora"
-    },
-    {
-        "source": "Pregón (Jujuy)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "noa_cuyo",
-        "title": "Parques solares de la Quebrada aumentan su inyección de energía limpia a la red",
-        "link": "https://www.pregon.com.ar/",
-        "snippet": "Destacan el desarrollo de energías renovables comunitarias en la Puna.",
-        "pub_date": "Hace 1 hora"
-    },
-
-    # ❄️ PATAGONIA (NEUQUÉN / RÍO NEGRO / CHUBUT / SANTA CRUZ / TIERRA DEL FUEGO)
-    {
-        "source": "Diario Río Negro (Patagonia)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "patagonia",
-        "title": "Vaca Muerta alcanza récord de producción no convencional de gas y petróleo",
-        "link": "https://www.rionegro.com.ar/",
-        "snippet": "Las operadoras energéticas destacan el incremento en el transporte hacia ductos principales.",
-        "pub_date": "Hace 10 min"
-    },
-    {
-        "source": "LM Neuquén",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "patagonia",
-        "title": "Planes urbanísticos y obras públicas para acompañar el crecimiento de Añelo",
-        "link": "https://www.lmneuquen.com/",
-        "snippet": "Autoridades locales coordinan inversiones en rutas, viviendas y servicios básicos.",
-        "pub_date": "Hace 30 min"
-    },
-    {
-        "source": "El Chubut (Puerto Madryn)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "patagonia",
-        "title": "Temporada de avistaje de ballenas comienza con reservas récord en Península Valdés",
-        "link": "https://www.elchubut.com.ar/",
-        "snippet": "Prestadores turísticos celebran la llegada anticipada de turistas internacionales.",
-        "pub_date": "Hace 45 min"
-    },
-    {
-        "source": "La Opinión Austral (Santa Cruz)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "patagonia",
-        "title": "Avanzan estudios científicos de pesca sostenible en el Atlántico Sur",
-        "link": "https://laopinionaustral.com.ar/",
-        "snippet": "Buscadores del CONICET analizan la biomasa de recursos marítimos en Río Gallegos.",
-        "pub_date": "Hace 1 hora"
-    },
-    {
-        "source": "El Diario del Fin del Mundo (Ushuaia)",
-        "bias": "Centro / Regional",
-        "bias_code": "center",
-        "region": "patagonia",
-        "title": "Ushuaia recibe el primer crucero de la temporada invernal con ocupación plena",
-        "link": "https://www.eldiariodelfindelmundo.com/",
-        "snippet": "El puerto fueguino afianza su posición como puerta de entrada a la Antártida.",
-        "pub_date": "Hace 1 hora"
-    }
-]
-
-GOOGLE_TRENDS_REAL = [
-    {"keyword": "Presupuesto 2026", "traffic": "+180K búsquedas"},
-    {"keyword": "Jubilaciones e INDEC", "traffic": "+95K búsquedas"},
-    {"keyword": "Dólar y Banco Central", "traffic": "+70K búsquedas"},
-    {"keyword": "Tarifas de Luz y Gas", "traffic": "+50K búsquedas"},
-    {"keyword": "Paritarias y Salarios", "traffic": "+35K búsquedas"}
-]
-
-REDES_SOCIALES_REAL = [
-    # 📱 X (TWITTER) TRENDS & TWEETS
-    {
-        "network": "Twitter / X",
-        "author": "@EconomiaArg",
-        "handle": "Economía & Mercado AR",
-        "content": "La brecha en el consumo familiar se hace sentir con el nuevo cuadro tarifario. Muchos usuarios comparten cómo ajustaron sus facturas de servicios este mes.",
-        "top_comment": "💬 @JuanPerez: Me vino el triple de luz en el local, tuvimos que acortar el horario de atención.",
-        "engagement": "🔥 14.2K Reposteos | 850 Comentarios",
-        "url": "https://x.com/search?q=tarifas+argentina",
-        "emotion": "indignacion"
-    },
-    {
-        "network": "Twitter / X",
-        "author": "@TrendPolítico",
-        "handle": "Tendencias Política AR",
-        "content": "Trending Topic #Tarifazo y #Paritarias2026 encabezan la conversación social en el AMBA y provincias centrales.",
-        "top_comment": "💬 @MariaCaba: Las paritarias no cubren la suba del transporte público.",
-        "engagement": "🔥 32.8K Tuits en las últimas 4h",
-        "url": "https://x.com/search?q=paritarias",
-        "emotion": "tension"
-    },
-
-    # 🗣️ REDDIT (r/argentina, r/RepublicaArgentina, r/AskArgentina)
-    {
-        "network": "Reddit",
-        "author": "r/argentina",
-        "handle": "u/EconomiaCotidiana",
-        "content": "¿Cómo vienen manejando sus gastos fijos este mes frente a las tarifas de luz, agua y gas?",
-        "top_comment": "💬 Top Comment (+420 votes): 'Tuvimos que recortar suscripciones y salidas. Las tarifas se llevaron un 25% del sueldo familiar.'",
-        "engagement": "⬆️ 512 votos | 💬 341 comentarios",
-        "url": "https://www.reddit.com/r/argentina/",
-        "emotion": "incertidumbre"
-    },
-    {
-        "network": "Reddit",
-        "author": "r/RepublicaArgentina",
-        "handle": "u/AnalisisFederal",
-        "content": "Debate: ¿Cuáles son las medidas económicas con mayor impacto en las economías provinciales?",
-        "top_comment": "💬 Top Comment (+210 votes): 'El freno a la obra pública en el interior pegó fuerte en el empleo de la construcción.'",
-        "engagement": "⬆️ 289 votos | 💬 194 comentarios",
-        "url": "https://www.reddit.com/r/RepublicaArgentina/",
-        "emotion": "indignacion"
-    },
-    {
-        "network": "Reddit",
-        "author": "r/AskArgentina",
-        "handle": "u/PreguntaPrensa",
-        "content": "Pregunta seria: ¿Notan expectativas de estabilidad o la gente sigue comprando mercadería por las dudas?",
-        "top_comment": "💬 Top Comment (+380 votes): 'Hay más tranquilidad con los precios de alimentos pero el golpe viene por los servicios.'",
-        "engagement": "⬆️ 410 votos | 💬 267 comentarios",
-        "url": "https://www.reddit.com/r/AskArgentina/",
-        "emotion": "esperanza"
-    },
-
-    # 📺 YOUTUBE CHATS & STREAMS
-    {
-        "network": "YouTube",
+        "category": "streamers_redes",
         "author": "Neura Media",
-        "handle": "Canal Neura",
-        "content": "Análisis Político en Vivo: El escenario económico, paritarias y la voz de la audiencia en el chat.",
-        "top_comment": "💬 Chat en vivo: 'Necesitamos que la estabilidad baje a la economía real de la calle.'",
-        "engagement": "🔴 45K espectadores en vivo",
-        "url": "https://www.youtube.com/@neuramedia",
-        "emotion": "tension"
+        "title": "Debate de Streamers: Cómo los jóvenes lideran la conversación digital sobre las ideas libertarias",
+        "source": "Neura Stream",
+        "snippet": "1. El auge de canales independientes en YouTube y Twitch. 2. Por qué los medios tradicionales perdieron el monopolio del debate. 3. Opiniones en vivo del chat.",
+        "link": "https://www.youtube.com/@neuramedia",
+        "pub_date": "Hace 25 min",
+        "tag": "Streaming & Debate",
+        "quote": "«La televisión abierta ya no marca la agenda; hoy la agenda la hace la gente en las redes.»"
     },
     {
-        "network": "YouTube",
-        "author": "Blender",
-        "handle": "Canal Blender",
-        "content": "Debate de actualidad: ¿Qué busca la sociedad en el nuevo ciclo político y presupuestario?",
-        "top_comment": "💬 Chat en vivo: 'El consumo en PyMEs y comercios de barrio cayó fuerte este mes.'",
-        "engagement": "▶️ 28K visualizaciones",
-        "url": "https://www.youtube.com/@canalblender",
-        "emotion": "incertidumbre"
+        "category": "streamers_redes",
+        "author": "Break Cero / Carajo",
+        "title": "Resumen de Noticias & Stream: La batalla contra el relato estatista en las redes sociales",
+        "source": "Canal Carajo",
+        "snippet": "1. Análisis humorístico de los debates políticos. 2. Los videos más virales de TikTok de la semana. 3. Interacción en directo.",
+        "link": "https://www.youtube.com/",
+        "pub_date": "Hace 40 min",
+        "tag": "Batalla Digital",
+        "quote": "«Desmontando el relato minuto a minuto con datos reales y sin filtros.»"
     },
-
-    # ✈️ TELEGRAM CANALES DE NOTICIAS
     {
-        "network": "Telegram",
-        "author": "RadarNoticiasAR",
-        "handle": "Canal Público Telegram",
-        "content": "📊 Encuesta en Canal: 72% de los usuarios prioriza la inflación y el costo de tarifas sobre otros debates de la agenda política.",
-        "top_comment": "💬 Comentario en grupo: 'Si no aumentan las jubilaciones la situación se complica.'",
-        "engagement": "👁️ 18.5K lecturas",
-        "url": "https://t.me/",
-        "emotion": "indignacion"
+        "category": "streamers_redes",
+        "author": "Iñaki Gutiérrez",
+        "title": "Estrategia Digital: El impacto de la comunicación directa sin intermediarios mediáticos",
+        "source": "Análisis en X & TikTok",
+        "snippet": "1. Cómo TikTok se convirtió en la plaza pública del debate juvenil. 2. El valor de la autenticidad en las redes. 3. Métricas de alcance sin pauta oficial.",
+        "link": "https://x.com/",
+        "pub_date": "Hace 50 min",
+        "tag": "Estrategia Digital",
+        "quote": "«Sin pauta oficial, la verdad y las ideas de la libertad se abren paso solas en las redes.»"
     }
 ]
 
-GOOGLE_TRENDS_REAL = [
-    {"keyword": "Presupuesto 2026", "traffic": "+180K búsquedas"},
-    {"keyword": "Jubilaciones e INDEC", "traffic": "+95K búsquedas"},
-    {"keyword": "Dólar y Banco Central", "traffic": "+70K búsquedas"},
-    {"keyword": "Tarifas de Luz y Gas", "traffic": "+50K búsquedas"},
-    {"keyword": "Paritarias y Salarios", "traffic": "+35K búsquedas"}
+CONCEPTOS_BATALLA_CULTURAL = [
+    {"text": "LIBERTAD", "weight": 3.4, "color": "#f59e0b"},
+    {"text": "LAJE", "weight": 2.8, "color": "#3b82f6"},
+    {"text": "RUCAUF", "weight": 2.5, "color": "#10b981"},
+    {"text": "MILEI", "weight": 2.4, "color": "#8b5cf6"},
+    {"text": "SUPERÁVIT", "weight": 2.0, "color": "#ec4899"},
+    {"text": "PROPIEDAD", "weight": 1.7, "color": "#f59e0b"},
+    {"text": "OCCIDENTE", "weight": 1.5, "color": "#3b82f6"},
+    {"text": "DERECHA DIARIO", "weight": 1.3, "color": "#10b981"},
+    {"text": "CARAJO", "weight": 1.1, "color": "#8b5cf6"},
+    {"text": "NEURA", "weight": 1.0, "color": "#ec4899"}
 ]
 
 def collect_all_data() -> Dict[str, Any]:
     return {
         "timestamp": datetime.now().isoformat(),
-        "total_noticias": len(PRENSA_REAL_DATOS),
-        "total_trends": len(GOOGLE_TRENDS_REAL),
-        "total_redes": len(REDES_SOCIALES_REAL),
-        "prensa": PRENSA_REAL_DATOS,
-        "google_trends": GOOGLE_TRENDS_REAL,
-        "redes": REDES_SOCIALES_REAL
+        "total_items": len(DATOS_HUB_BATALLA_CULTURAL),
+        "hub_items": DATOS_HUB_BATALLA_CULTURAL,
+        "conceptos": CONCEPTOS_BATALLA_CULTURAL
     }
 
 if __name__ == "__main__":
     resultado = collect_all_data()
     print(json.dumps(resultado, indent=2, ensure_ascii=False))
-

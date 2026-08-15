@@ -3,186 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="RADAR 360 — Escuchatorio Mediático & Opinión Pública en Argentina.">
-    <title>RADAR 360 | Inteligencia Mediática & Opinión Social</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=6.0">
+    <meta name="description" content="BATALLA CULTURAL — Hub de Curaduría, Transcripciones de Streamers y Análisis Liberal.">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=7.0">
 </head>
 <body>
 
-    <!-- HEADER DE ALTA CONVERSIÓN Y MONETIZACIÓN -->
+    <!-- HEADER Y NAVEGACIÓN PRINCIPAL -->
     <header>
         <div class="nav-container">
             <a href="/" class="brand">
-                <div class="brand-logo">📡</div>
-                <div class="brand-title">RADAR<span>360</span></div>
+                <div class="brand-logo">🦁</div>
+                <div class="brand-title">BATALLA<span>CULTURAL</span></div>
             </a>
 
-            <!-- BOTONES DE MONETIZACIÓN Y ACCIÓN DIRECTA -->
-            <div class="monetization-bar">
-                <button class="btn-monetize" id="btn-export-pdf">
-                    📄 Reporte PDF para Clientes
-                </button>
-                <button class="btn-monetize highlight" id="btn-generate-short">
-                    🎥 Video Short con Voz Neural
-                </button>
-            </div>
-
-            <!-- FILTRO REGIONAL SIMPLE -->
-            <div class="region-selector">
-                <button class="region-btn active" data-region="nacional">🇦🇷 Nacional</button>
-                <button class="region-btn" data-region="caba_gba">🏢 CABA/GBA</button>
-                <button class="region-btn" data-region="centro">🌾 Centro</button>
-                <button class="region-btn" data-region="noa_cuyo">🏔️ NOA/Cuyo</button>
-                <button class="region-btn" data-region="patagonia">❄️ Patagonia</button>
+            <!-- Pestañas de Ejes Temáticos -->
+            <div class="ejes-selector">
+                <button class="eje-btn active" data-eje="todos">🔥 Todos los Ejes</button>
+                <button class="eje-btn" data-eje="batalla_cultural">🏛️ Agustín Laje & Filosofía</button>
+                <button class="eje-btn" data-eje="geopolitica">🌍 Geopolítica Rucauf</button>
+                <button class="eje-btn" data-eje="economia_gobierno">📈 Economía & Gobierno</button>
+                <button class="eje-btn" data-eje="streamers_redes">⚡ Streamers & Redes</button>
             </div>
 
             <div class="badge-live">
-                <div class="dot-live"></div> EN VIVO
+                <div class="dot-live"></div> HUB EN VIVO
             </div>
         </div>
     </header>
 
     <main>
 
-        <!-- BANNER PRINCIPAL: CONCEPTO CLARO DEL PRODUCTO -->
+        <!-- HERO BANNER COMERCIAL & PROPÓSITO -->
         <section class="hero-commercial">
-            <h1>El Pulso Diario de Argentina: Medios vs Opinión Pública</h1>
-            <p>Monitoreá en tiempo real lo que publican los 28+ periódicos principales del país y lo que comenta la gente en redes sociales.</p>
+            <h1>Inteligencia de la Batalla Cultural & Análisis Liberal</h1>
+            <p>Conferencias de Agustín Laje, análisis geopolíticos de Rucauf, discursos de Javier Milei y transmisiones de La Derecha Diario, Neura, Carajo y Break Cero sintetizados en 1 minuto.</p>
         </section>
 
-        <!-- BANNER DE TRAZABILIDAD / FILTRO ACTIVO -->
-        <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
-            <span>🔍 Concepto seleccionado: <strong id="active-word-text" style="color: var(--accent-blue);">TARIFAS</strong></span>
-            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo</button>
-        </div>
-
-        <!-- SECCIÓN 1: NUBE DE TENDENCIAS REALES (GIGANTE Y LIMPIA) -->
+        <!-- MÓDULO 1: CONCEPTOS CANDENTES DEL DÍA -->
         <section class="card-widget">
             <div class="cloud-header-box">
-                <h2 class="section-title">☁️ Tendencias Candentes de Hoy</h2>
+                <h2 class="section-title">☁️ Conceptos Clave de la Batalla de Ideas</h2>
                 <p style="font-size: 0.88rem; color: var(--text-muted);">
-                    💡 <strong>Haz clic en cualquier concepto</strong> para ver lo que dicen los medios y lo que opina la gente al respecto:
+                    💡 Haz clic en cualquier concepto para filtrar intervenciones, análisis y conferencias asociadas:
                 </p>
             </div>
             
             <div class="word-cloud-literal" id="word-cloud-container">
-                {% for tag in data.dual_clouds.cloud_prensa %}
+                {% for tag in data.conceptos %}
                 <span class="word-literal-tag" 
                       data-word="{{ tag.text|lower }}"
                       style="font-size: {{ tag.weight }}rem !important; color: {{ tag.color }};" 
-                      title="Ver cobertura sobre '{{ tag.text }}'">
-                    {{ tag.text }}
-                </span>
-                {% endfor %}
-
-                {% for tag in data.dual_clouds.cloud_redes[:5] %}
-                <span class="word-literal-tag" 
-                      data-word="{{ tag.text|lower }}"
-                      style="font-size: {{ tag.weight }}rem !important; color: {{ tag.color }};" 
-                      title="Ver publicaciones sobre '{{ tag.text }}'">
+                      title="Ver contenidos sobre '{{ tag.text }}'">
                     {{ tag.text }}
                 </span>
                 {% endfor %}
             </div>
         </section>
 
+        <!-- BANNER DE FILTRADO ACTIVO -->
+        <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
+            <span>🔍 Filtrando contenidos por: <strong id="active-word-text" style="color: var(--accent-amber);">LAJE</strong></span>
+            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo</button>
+        </div>
 
-        <!-- SECCIÓN 2: EL CONTRASTADOR (2 COLUMNAS CLARAS: PRENSA VS REDES) -->
-        <section id="seccion-comparativa">
-            <div class="split-view-grid">
-                
-                <!-- COLUMNA IZQUIERDA: MEDIOS DE PRENSA -->
-                <div class="column-agenda">
-                    <div class="column-header">
-                        <h3>📰 1. ¿Qué dicen los Medios? (Prensa)</h3>
-                        <p style="font-size: 0.82rem; color: var(--text-muted);">28+ Periódicos Nacionales y Provinciales organizados por postura:</p>
-                    </div>
 
-                    <div class="grid-matrix-column" id="prensa-matrix">
-                        {% for item in data.prensa %}
-                        <div class="card-news" data-region="{{ item.region }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
-                            <div>
-                                <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
-                                <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
-                                <p class="news-snippet">{{ item.snippet }}</p>
-                            </div>
-                            <div class="news-footer">
-                                <span>Fuente: <strong>{{ item.source }}</strong></span>
-                                <span>{{ item.pub_date }}</span>
-                            </div>
-                        </div>
-                        {% endfor %}
+        <!-- MÓDULO 2: FRASES BOMBA DEL DÍA (CITARIO) -->
+        <section id="frases-bomba" class="card-widget" style="background: linear-gradient(135deg, rgba(31,41,55,0.9), rgba(17,24,39,0.95)); border-color: var(--accent-amber);">
+            <h2 class="section-title" style="color: var(--accent-amber);">🔥 Frases Bomba del Día</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">Las declaraciones e intervenciones más destacadas preparadas para difundir en redes:</p>
+
+            <div class="quotes-grid">
+                {% for q in data.top_quotes %}
+                <div class="quote-card">
+                    <span class="quote-author">{{ q.author }}</span>
+                    <p class="quote-text">{{ q.quote }}</p>
+                    <div class="quote-footer">
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ q.source }}</span>
+                        <button class="btn-copy-quote" data-quote="{{ q.author }}: {{ q.quote }}">📋 Copiar Frase</button>
                     </div>
                 </div>
-
-                <!-- COLUMNA DERECHA: REDES SOCIALES -->
-                <div class="column-agenda">
-                    <div class="column-header">
-                        <h3>🗣️ 2. ¿Qué opina la Calle? (Redes Sociales)</h3>
-                        <p style="font-size: 0.82rem; color: var(--text-muted);">Comentarios y debates con mayor interacción en X, Reddit y YouTube:</p>
-                    </div>
-
-                    <div class="grid-matrix-column" id="redes-matrix">
-                        {% for post in data.redes %}
-                        <div class="card-social" data-emotion="{{ post.emotion }}" data-content="{{ post.content|lower }}">
-                            <div class="social-header">
-                                <span class="network-badge {{ post.network|lower|replace(' ', '-') }}">{{ post.network }}</span>
-                                <span class="social-author">{{ post.author }}</span>
-                            </div>
-                            <p class="social-content">{{ post.content }}</p>
-                            <div class="social-comment-box">
-                                <p class="comment-text">{{ post.top_comment }}</p>
-                            </div>
-                            <div class="social-footer">
-                                <span>{{ post.engagement }}</span>
-                                <a href="{{ post.url }}" target="_blank" rel="noopener" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Ver en Redes ↗</a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
+                {% endfor %}
             </div>
         </section>
 
 
-        <!-- SECCIÓN 3: TERMÓMETRO SOCIAL (ENCUESTA DEL DÍA) -->
-        <section id="seccion-encuesta">
-            <div class="poll-container">
-                <div class="poll-topic-badge">🔥 Encuesta Principal del Día</div>
-                <h2 class="poll-question" id="poll-question-text">{{ data.polls[0].question }}</h2>
-                <p class="poll-context">{{ data.polls[0].context }}</p>
+        <!-- MÓDULO 3: CATÁLOGO DE CONTENIDOS CON SÍNTESIS EJECUTIVA -->
+        <section id="catalogo-contenidos">
+            <div class="section-header-box">
+                <h2 class="section-title">📺 Conferencias, Discursos & Streamers Sintetizados</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Los 3 puntos clave extraídos de cada intervención sin distorsión:</p>
+            </div>
 
-                <div class="poll-options" id="poll-options-list">
-                    {% for opt in data.polls[0].options %}
-                    <button class="poll-option-btn" data-poll-id="{{ data.polls[0].id }}" data-option-id="{{ opt.id }}" data-option-text="{{ opt.text }}">
-                        <div class="progress-fill" style="width: {{ opt.pct }}%;"></div>
-                        <span class="option-text">{{ opt.text }}</span>
-                        <span class="option-pct">{% if data.polls[0].total_votes > 0 %}{{ opt.pct }}%{% else %}Votar{% endif %}</span>
-                    </button>
-                    {% endfor %}
-                </div>
+            <div class="hub-items-grid" id="hub-items-container">
+                {% for item in data.hub_items %}
+                <div class="card-hub-item" data-category="{{ item.category }}" data-author="{{ item.author|lower }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
+                    <div class="item-header">
+                        <span class="badge-tag {{ item.category }}">{{ item.tag }}</span>
+                        <span class="item-pubdate">{{ item.pub_date }}</span>
+                    </div>
 
-                <div class="poll-actions-bar">
-                    <span id="poll-total-votes" style="font-size: 0.85rem; color: var(--text-muted);">
-                        {{ data.polls[0].total_votes }} votos registrados acumulados en tiempo real
-                    </span>
-                    <button class="btn-action" id="btn-export-social">📱 Exportar Encuesta para Redes (1-Clic)</button>
+                    <h3 class="item-author">{{ item.author }}</h3>
+                    <a href="{{ item.link }}" target="_blank" class="item-title" rel="noopener">{{ item.title }}</a>
+                    
+                    <div class="sintesis-box">
+                        <p class="sintesis-label">📌 Síntesis Ejecutiva:</p>
+                        <p class="sintesis-text">{{ item.snippet }}</p>
+                    </div>
+
+                    <div class="item-footer">
+                        <span>Fuente: <strong>{{ item.source }}</strong></span>
+                        <a href="{{ item.link }}" target="_blank" rel="noopener" class="btn-link-video">Ver en YouTube ↗</a>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </section>
 
 
-        <!-- SECCIÓN 4: VIDEO EXPLICATIVO SHORT DEL DÍA -->
+        <!-- MÓDULO 4: DEBATES & ENCUESTAS DE COMUNIDAD -->
+        <section id="seccion-encuestas">
+            <div class="section-header-box">
+                <h2 class="section-title">🗳️ Debates de la Comunidad & Batalla Cultural</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Sumá tu voto anónimo sobre los temas centrales de la agenda política y económica:</p>
+            </div>
+
+            <div class="multi-polls-grid">
+                {% for p in data.polls %}
+                <div class="poll-container">
+                    <div class="poll-topic-badge">{{ p.topic }}</div>
+                    <h3 class="poll-question">{{ p.question }}</h3>
+                    <p class="poll-context">{{ p.context }}</p>
+
+                    <div class="poll-options" id="poll-options-{{ p.id }}">
+                        {% for opt in p.options %}
+                        <button class="poll-option-btn" data-poll-id="{{ p.id }}" data-option-id="{{ opt.id }}" data-option-text="{{ opt.text }}">
+                            <div class="progress-fill" style="width: {{ opt.pct }}%;"></div>
+                            <span class="option-text">{{ opt.text }}</span>
+                            <span class="option-pct">{% if p.total_votes > 0 %}{{ opt.pct }}%{% else %}Votar{% endif %}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <div class="poll-actions-bar">
+                        <span class="poll-total-counter" id="poll-total-{{ p.id }}">
+                            {{ p.total_votes }} votos acumulados en tiempo real
+                        </span>
+                        <button class="btn-action btn-export-poll-social" data-poll-id="{{ p.id }}" data-poll-question="{{ p.question }}">
+                            📱 Exportar a Redes (1-Clic)
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+
+        <!-- MÓDULO 5: REPRODUCTOR DE VIDEO SHORT Y GENERADOR CON VOZ NEURAL -->
         <section id="seccion-video" class="card-widget">
             <div class="two-column-grid">
                 
                 <div class="player-card-box">
                     <h3 style="font-family: var(--font-heading); color: var(--text-bright); margin-bottom: 0.4rem;">
-                        🎬 Video Short con Voz Neural (1080x1920)
+                        🎬 Short de Video de Batalla Cultural (1080x1920)
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        Resumen diario en 1 minuto listo para publicar en TikTok, YouTube Shorts y Reels.
+                        Resumen generado automáticamente con locución en español argentino para publicar en TikTok y Shorts.
                     </p>
 
                     <div class="video-player-container">
@@ -194,19 +180,23 @@
                         <div class="video-placeholder">
                             <div style="font-size: 2.8rem;">🎥</div>
                             <p style="margin-top: 0.5rem; font-weight: 600;">Short de Video listo para generar</p>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic en el botón superior para crear el video MP4 con locución en en off.</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para generar el MP4 con locución hablada.</p>
                         </div>
                         {% endif %}
                     </div>
+
+                    <button class="btn-action" id="btn-generate-short" style="margin-top: 1rem; background: var(--accent-amber); color: #000; font-weight: 800; border: none; width: 100%; justify-content: center;">
+                        🎥 Generar / Actualizar Video Short con Voz Neural
+                    </button>
                 </div>
 
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
                     <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="font-family: var(--font-heading); color: var(--accent-blue); margin-bottom: 0.4rem;">💡 ¿Cómo monetizar este portal?</h4>
-                        <ul style="font-size: 0.88rem; color: var(--text-main); display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1.2rem;">
-                            <li><strong>Venta de Reportes Ejecutivos:</strong> Ofrecé informes semanales de reputación a marcas y consultoras.</li>
-                            <li><strong>Contenido en Redes:</strong> Generá el Short automático diario y monetizá views en TikTok/YouTube.</li>
-                            <li><strong>Newsletter Premium:</strong> Cobrá una suscripción mensual para enviar el pulso mediático por correo.</li>
+                        <h4 style="font-family: var(--font-heading); color: var(--accent-amber); margin-bottom: 0.4rem;">💡 Batalla Cultural sin Filtros</h4>
+                        <ul style="font-size: 0.88rem; color: var(--text-main); display: flex; flex-direction: column; gap: 0.6rem; padding-left: 1.2rem;">
+                            <li><strong>Información Directa:</strong> Sin la distorsión ni el aburrimiento de los medios tradicionales.</li>
+                            <li><strong>Síntesis en 3 Puntos:</strong> Las mejores partes de conferencias de 2h leídas en 30 segundos.</li>
+                            <li><strong>Multi-difusión:</strong> Copia frases bomba o genera el video short en 1 solo clic.</li>
                         </ul>
                     </div>
                 </div>
@@ -215,20 +205,20 @@
         </section>
 
 
-        <!-- SECCIÓN 5: SUSCRIPCIÓN NEWSLETTER -->
+        <!-- MÓDULO 6: SUSCRIPCIÓN BOLETÍN DE BATALLA CULTURAL -->
         <section id="captura-leads">
             <div class="lead-box">
                 <div>
                     <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-bright);">
-                        📬 Suscribite al Pulso Diario de Argentina
+                        📬 Suscribite al Boletín de Batalla Cultural
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">
-                        Recibí las tendencias de los diarios y las redes en 2 minutos en tu correo.
+                        Recibí las transcripciones de Agustín Laje, Rucauf y discursos clave directamente en tu correo.
                     </p>
                 </div>
                 <form class="lead-form" id="lead-form">
                     <input type="email" class="lead-input" id="lead-email-input" placeholder="Tu correo electrónico..." required>
-                    <button type="submit" class="btn-action" style="background: var(--accent-blue); border: none;">Suscribirme</button>
+                    <button type="submit" class="btn-action" style="background: var(--accent-amber); color: #000; font-weight: 800; border: none;">Suscribirme</button>
                 </form>
             </div>
         </section>
@@ -253,9 +243,9 @@
     </div>
 
     <footer>
-        <p>RADAR 360 © 2026 — Inteligencia Mediática & Opinión Pública</p>
+        <p>BATALLA CULTURAL © 2026 — Hub de Ideas Liberales, Geopolítica & Streamers</p>
     </footer>
 
-    <script src="/static/js/app.js?v=6.0"></script>
+    <script src="/static/js/app.js?v=7.0"></script>
 </body>
 </html>
