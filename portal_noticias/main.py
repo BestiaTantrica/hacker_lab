@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-portal_noticias/main.py — Hub de Batalla Cultural & Ecosistema Liberal (Puerto 8001)
-Servidor dedicado para el portal especializado en el puerto 8001.
+portal_noticias/main.py — Termómetro Social 360 & Medición de Opinión Pública (Puerto 8001)
+Servidor dedicado para la plataforma de medición de opinión y contraste con encuestadoras.
 """
 
 import os
@@ -15,6 +15,8 @@ from pydantic import BaseModel
 
 from portal_noticias.rss_collector import collect_all_data
 from portal_noticias.trend_engine import (
+    extract_concept_word_cloud,
+    calculate_opinion_thermometer,
     categorize_hub_items,
     extract_top_quotes,
     get_active_polls
@@ -25,9 +27,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 
 app = FastAPI(
-    title="Hub Batalla Cultural & Ecosistema Liberal",
-    description="Portal de Curaduría, Transcripciones de Streamers/Conferencias y Debate",
-    version="4.0.0"
+    title="Termómetro Social 360 | Medición de Opinión Pública",
+    description="Plataforma de Medición de Ideas, Opinión en Redes y Contraste de Encuestas",
+    version="5.0.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
@@ -58,16 +60,17 @@ init_db()
 
 
 def get_live_data():
-    """Genera los datos del Hub de Batalla Cultural en tiempo real."""
+    """Genera los datos del Termómetro Social en tiempo real."""
     raw_data = collect_all_data()
     hub_items = raw_data.get("hub_items", [])
-    conceptos = raw_data.get("conceptos", [])
 
+    concept_cloud = extract_concept_word_cloud(hub_items)
+    thermometer = calculate_opinion_thermometer(hub_items)
     categorized = categorize_hub_items(hub_items)
     top_quotes = extract_top_quotes(hub_items)
     polls = get_active_polls()
 
-    # Cargar votos por cada encuesta desde SQLite
+    # Cargar votos reales por cada encuesta desde SQLite
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     
@@ -89,9 +92,10 @@ def get_live_data():
     return {
         "timestamp": raw_data.get("timestamp"),
         "hub_items": hub_items,
+        "concept_cloud": concept_cloud,
+        "thermometer": thermometer,
         "categorized": categorized,
         "top_quotes": top_quotes,
-        "conceptos": conceptos,
         "polls": polls,
         "short_url": short_url
     }
@@ -99,21 +103,21 @@ def get_live_data():
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
-    """Página de Inicio del Hub Batalla Cultural."""
+    """Página de Inicio del Termómetro Social 360."""
     data = get_live_data()
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "data": data,
-            "title": "BATALLA CULTURAL | Hub de Ideas Liberales & Streamers"
+            "title": "TERMÓMETRO SOCIAL 360 | Medición de Opinión Pública & Ideas"
         }
     )
 
 
 @app.get("/api/public/data")
 async def get_public_data():
-    """Endpoint JSON del Hub de Batalla Cultural."""
+    """Endpoint JSON de datos completos del termómetro."""
     return get_live_data()
 
 
@@ -164,7 +168,7 @@ class LeadPayload(BaseModel):
 
 @app.post("/api/public/subscribe_lead")
 async def subscribe_lead(payload: LeadPayload):
-    """Registra el email del usuario para el newsletter de Batalla Cultural."""
+    """Registra el email del usuario para el boletín diario del termómetro."""
     if not payload.email or "@" not in payload.email:
         raise HTTPException(status_code=400, detail="Email inválido")
         
@@ -174,26 +178,26 @@ async def subscribe_lead(payload: LeadPayload):
         cur.execute("INSERT OR IGNORE INTO leads (email) VALUES (?)", (payload.email.strip(),))
         conn.commit()
         conn.close()
-        return {"status": "success", "message": "¡Suscripción exitosa al Boletín de Batalla Cultural!"}
+        return {"status": "success", "message": "¡Suscripción exitosa al Termómetro Social!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error al registrar suscripción")
 
 
 @app.get("/api/public/generate_short")
 async def api_generate_short():
-    """Genera el Short MP4 con voz neural del día basado en discursos y conceptos clave."""
+    """Genera el Short MP4 promocional para redes con voz neural y gráfica de encuesta."""
     data = get_live_data()
-    top_word = "BATALLA CULTURAL"
-    question = "La batalla por las ideas de la libertad se gana día a día."
+    top_word = data["concept_cloud"][0]["text"] if data["concept_cloud"] else "SUPERAVIT Y TARIFAS"
+    question = data["polls"][0]["question"] if data["polls"] else "¿Estás de acuerdo con el rumbo económico y las reformas?"
     
     short_path = generate_short_video(top_word, question)
     if short_path and os.path.exists(short_path):
         return {
             "status": "success",
             "download_url": "/static/shorts/short_del_dia.mp4?v=" + str(os.path.getmtime(short_path)),
-            "message": "Short de video vertical 1080x1920 con voz en off generado exitosamente."
+            "message": "Short de video vertical 1080x1920 promocional generado exitosamente."
         }
-    raise HTTPException(status_code=500, detail="No se pudo generar el video Short con voz")
+    raise HTTPException(status_code=500, detail="No se pudo generar el video Short promocional")
 
 
 if __name__ == "__main__":

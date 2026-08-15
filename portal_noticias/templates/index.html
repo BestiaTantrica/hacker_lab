@@ -3,141 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PULSO LIBERAL 360 — Aglutinador del Ecosistema de YouTubers, Streamers, Batalla Cultural y Geopolítica.">
+    <meta name="description" content="TERMÓMETRO SOCIAL 360 — Medición de Opinión Pública, Ideas y Contraste de Encuestas.">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=8.0">
+    <link rel="stylesheet" href="/static/css/style.css?v=9.0">
 </head>
 <body>
 
-    <!-- HEADER Y NAVEGACIÓN DE ALTO IMPACTO -->
+    <!-- HEADER DE MEDICIÓN Y NAVEGACIÓN -->
     <header>
         <div class="nav-container">
             <a href="/" class="brand">
-                <div class="brand-logo">🦁</div>
-                <div class="brand-title">PULSO<span>LIBERAL 360</span></div>
+                <div class="brand-logo">📊</div>
+                <div class="brand-title">TERMÓMETRO<span>360</span></div>
             </a>
 
-            <!-- PESTAÑAS DE NAVEGACIÓN POR CREADORES Y TEMÁTICAS -->
+            <!-- Pestañas de Ejes Temáticos -->
             <div class="ejes-selector">
-                <button class="eje-btn active" data-eje="todos">🔥 Todos (14+ Creadores)</button>
-                <button class="eje-btn" data-eje="streamers_youtubers">📺 YouTubers & Streamers</button>
-                <button class="eje-btn" data-eje="batalla_cultural">🎓 Agustín Laje & Filosofía</button>
-                <button class="eje-btn" data-eje="geopolitica">🌍 Geopolítica Rucauf</button>
-                <button class="eje-btn" data-eje="economia_gobierno">📈 Economía & Reformas</button>
-                <button class="eje-btn" data-eje="medios_digitales">📰 Medios Digitales</button>
+                <button class="eje-btn active" data-eje="todos">🔥 Todos los Ejes</button>
+                <button class="eje-btn" data-eje="batalla_ideas">🏛️ Batalla de Ideas</button>
+                <button class="eje-btn" data-eje="geopolitica">🌍 Geopolítica & Exterior</button>
+                <button class="eje-btn" data-eje="economia_reformas">📈 Economía & Reformas</button>
+                <button class="eje-btn" data-eje="streamers_redes">🎙️ Streamers & Redes</button>
             </div>
 
             <div class="badge-live">
-                <div class="dot-live"></div> ECOSISTEMA EN VIVO
+                <div class="dot-live"></div> MEDICIÓN EN VIVO
             </div>
         </div>
     </header>
 
     <main>
 
-        <!-- HERO BANNER COMERCIAL -->
+        <!-- HERO BANNER PRINCIPAL -->
         <section class="hero-commercial">
-            <h1>El Aglutinador del Ecosistema Liberal & Batalla Cultural</h1>
-            <p>Todos los YouTubers, streamers, analistas geopolíticos, intelectuales y medios digitales de la libertad reunidos en un solo lugar sin la distorsión de la prensa tradicional.</p>
+            <h1>Medición Directa de Opinión Pública & Ideas en Tiempo Real</h1>
+            <p>Monitoreá los conceptos más discutidos en redes sociales y medí el termómetro social directo para contrastar con las encuestadoras tradicionales.</p>
         </section>
 
-        <!-- DIRECTORIO DE CREADORES INCLUIDOS EN EL HUB -->
-        <section class="card-widget creators-bar-widget">
+
+        <!-- MÓDULO 1: NUBE DE IDEAS Y CONCEPTOS REALES (SIN NOMBRES PROPIOS) -->
+        <section class="card-widget">
             <div class="cloud-header-box">
-                <h2 class="section-title">⭐ Creadores & Referentes Aglutinados</h2>
+                <h2 class="section-title">☁️ Nube de Ideas & Conceptos Candentes</h2>
                 <p style="font-size: 0.88rem; color: var(--text-muted);">
-                    💡 Haz clic en cualquier referente para aislar sus análisis, videos y frases destacadas:
+                    💡 Haz clic en cualquier concepto para filtrar análisis, noticias y debates asociados:
                 </p>
             </div>
             
             <div class="word-cloud-literal" id="word-cloud-container">
-                {% for tag in data.conceptos %}
+                {% for tag in data.concept_cloud %}
                 <span class="word-literal-tag" 
                       data-word="{{ tag.text|lower }}"
                       style="font-size: {{ tag.weight }}rem !important; color: {{ tag.color }};" 
-                      title="Ver análisis de '{{ tag.text }}'">
+                      title="Filtrar temas sobre '{{ tag.text }}'">
                     {{ tag.text }}
                 </span>
                 {% endfor %}
             </div>
         </section>
 
+
         <!-- BANNER DE FILTRADO ACTIVO -->
         <div id="word-filter-banner" class="word-filter-banner" style="display: none;">
-            <span>🔍 Creador / Concepto activo: <strong id="active-word-text" style="color: var(--accent-amber);">MATE CON MOTE</strong></span>
-            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo el Ecosistema</button>
+            <span>🔍 Concepto activo: <strong id="active-word-text" style="color: var(--accent-amber);">SUPERÁVIT</strong></span>
+            <button class="btn-reset-word-filter" id="btn-reset-word-filter">✖️ Mostrar Todo</button>
         </div>
 
 
-        <!-- MÓDULO: FRASES BOMBA DEL DÍA -->
-        <section id="frases-bomba" class="card-widget" style="background: linear-gradient(135deg, rgba(31,41,55,0.95), rgba(17,24,39,0.98)); border-color: var(--accent-amber);">
-            <div class="quotes-header-box">
-                <h2 class="section-title" style="color: var(--accent-amber);">💥 Frases Bomba & Citas del Día</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Las declaraciones más virales e impactantes preparadas para difundir en redes:</p>
+        <!-- MÓDULO 2: MEDIDOR DEL TERMÓMETRO SOCIAL (ACUERDO VS CAUTELA VS DESACUERDO) -->
+        <section class="card-widget" style="background: linear-gradient(135deg, rgba(26,34,52,0.9), rgba(14,19,31,0.95)); border-color: var(--accent-blue);">
+            <div class="section-header-box" style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.6rem;">
+                <span class="poll-topic-badge">📊 TERMÓMETRO SOCIAL DIRECTO</span>
+                <h2 class="section-title" style="margin-top: 0.3rem;">Medición de Clima Social & Respaldo al Rumbo</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">
+                    {{ data.thermometer.vs_encuestadoras }}
+                </p>
             </div>
 
-            <div class="quotes-grid">
-                {% for q in data.top_quotes %}
-                <div class="quote-card">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="quote-author">{{ q.author }}</span>
-                            <span style="font-size: 0.75rem; color: var(--accent-blue);">{{ q.handle }}</span>
-                        </div>
-                        <p class="quote-text">{{ q.quote }}</p>
-                    </div>
-                    <div class="quote-footer">
-                        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ q.source }}</span>
-                        <button class="btn-copy-quote" data-quote="{{ q.author }} ({{ q.handle }}): {{ q.quote }}">📋 Copiar Frase</button>
-                    </div>
+            <div class="thermometer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
+                <div class="thermometer-card" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <span style="font-size: 0.8rem; color: var(--accent-emerald); font-weight: 700; text-transform: uppercase;">🟢 Respaldo al Rumbo Económico</span>
+                    <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--accent-emerald); margin: 0.2rem 0;">{{ data.thermometer.acuerdo_rumbo }}%</h3>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Prioridad en superávit y fin de la inflación</p>
                 </div>
-                {% endfor %}
+
+                <div class="thermometer-card" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <span style="font-size: 0.8rem; color: var(--accent-amber); font-weight: 700; text-transform: uppercase;">🟡 Cautela / Atento a Tarifas</span>
+                    <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--accent-amber); margin: 0.2rem 0;">{{ data.thermometer.cautela }}%</h3>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Evaluación del impacto en gastos fijos</p>
+                </div>
+
+                <div class="thermometer-card" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <span style="font-size: 0.8rem; color: var(--accent-rose); font-weight: 700; text-transform: uppercase;">🔴 Gradualismo / Desacuerdo</span>
+                    <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--accent-rose); margin: 0.2rem 0;">{{ data.thermometer.desacuerdo }}%</h3>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Preferencia por corrección progresiva</p>
+                </div>
             </div>
         </section>
 
 
-        <!-- MÓDULO: CATÁLOGO DE VIDEOS, STREAMS Y ANÁLISIS DE CREADORES -->
-        <section id="catalogo-contenidos">
-            <div class="section-header-box">
-                <h2 class="section-title">📺 Transmisiones, Videos & Anotaciones Sintetizadas</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Los 3 puntos ejecutivos de cada video o transmisión de tus creadores favoritos:</p>
-            </div>
-
-            <div class="hub-items-grid" id="hub-items-container">
-                {% for item in data.hub_items %}
-                <div class="card-hub-item" data-category="{{ item.category }}" data-author="{{ item.author|lower }}" data-handle="{{ item.handle|lower }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
-                    <div class="item-header">
-                        <span class="badge-tag {{ item.category }}">{{ item.tag }}</span>
-                        <span class="item-pubdate">{{ item.pub_date }}</span>
-                    </div>
-
-                    <div style="margin-bottom: 0.4rem;">
-                        <h3 class="item-author">{{ item.author }}</h3>
-                        <span style="font-size: 0.8rem; color: var(--accent-blue); font-weight: 600;">{{ item.handle }}</span>
-                    </div>
-
-                    <a href="{{ item.link }}" target="_blank" class="item-title" rel="noopener">{{ item.title }}</a>
-                    
-                    <div class="sintesis-box">
-                        <p class="sintesis-label">📌 Puntos Clave Extraídos:</p>
-                        <p class="sintesis-text">{{ item.snippet }}</p>
-                    </div>
-
-                    <div class="item-footer">
-                        <span>Canal: <strong>{{ item.source }}</strong></span>
-                        <a href="{{ item.link }}" target="_blank" rel="noopener" class="btn-link-video">Ver en YouTube ↗</a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
-
-        <!-- MÓDULO: DEBATES & ENCUESTAS DE LA COMUNIDAD -->
+        <!-- MÓDULO 3: ENCUESTAS INTERACTIVAS (CONTRASTE EN VIVO) -->
         <section id="seccion-encuestas">
             <div class="section-header-box">
-                <h2 class="section-title">🗳️ Debates de la Comunidad & Batalla de Ideas</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted);">Votá y participá en los debates centrales del ecosistema liberal:</p>
+                <h2 class="section-title">🗳️ Encuestas de Medición Directa (Contraste Real)</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Votá anónimamente y sumá tu medición al mapa interactivo:</p>
             </div>
 
             <div class="multi-polls-grid">
@@ -171,16 +140,53 @@
         </section>
 
 
-        <!-- MÓDULO: FÁBRICA DE SHORTS AUTOMÁTICOS -->
+        <!-- MÓDULO 4: ANÁLISIS & TRANSCRIPCIONES DESTACADAS -->
+        <section id="catalogo-contenidos">
+            <div class="section-header-box">
+                <h2 class="section-title">🎙️ Análisis, Conferencias & Fuentes Destacadas</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Síntesis en 3 puntos ejecutivos de las fuentes de análisis y creadores:</p>
+            </div>
+
+            <div class="hub-items-grid" id="hub-items-container">
+                {% for item in data.hub_items %}
+                <div class="card-hub-item" data-category="{{ item.category }}" data-author="{{ item.author|lower }}" data-handle="{{ item.handle|lower }}" data-title="{{ item.title|lower }}" data-snippet="{{ item.snippet|lower }}">
+                    <div class="item-header">
+                        <span class="badge-tag {{ item.category }}">{{ item.tag }}</span>
+                        <span class="item-pubdate">{{ item.pub_date }}</span>
+                    </div>
+
+                    <div style="margin-bottom: 0.4rem;">
+                        <h3 class="item-author">{{ item.author }}</h3>
+                        <span style="font-size: 0.8rem; color: var(--accent-blue); font-weight: 600;">{{ item.handle }}</span>
+                    </div>
+
+                    <a href="{{ item.link }}" target="_blank" class="item-title" rel="noopener">{{ item.title }}</a>
+                    
+                    <div class="sintesis-box">
+                        <p class="sintesis-label">📌 Puntos Clave Extraídos:</p>
+                        <p class="sintesis-text">{{ item.snippet }}</p>
+                    </div>
+
+                    <div class="item-footer">
+                        <span>Fuente: <strong>{{ item.source }}</strong></span>
+                        <a href="{{ item.link }}" target="_blank" rel="noopener" class="btn-link-video">Ver Fuente ↗</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+
+        <!-- MÓDULO 5: HERRAMIENTA INTERNA DE GENERACIÓN DE SHORTS PARA VIRALIZAR -->
         <section id="seccion-video" class="card-widget">
             <div class="two-column-grid">
                 
                 <div class="player-card-box">
                     <h3 style="font-family: var(--font-heading); color: var(--text-bright); margin-bottom: 0.4rem;">
-                        🎬 Video Short del Ecosistema (1080x1920)
+                        🎬 Generador Interno de Video Promo (1080x1920)
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        Resumen automático generado con locución en español listo para compartir en TikTok y Shorts.
+                        Uso interno: crea el video gráfico con locución en off para subir a TikTok/Shorts y dirigir tráfico a la web.
                     </p>
 
                     <div class="video-player-container">
@@ -191,26 +197,25 @@
                         {% else %}
                         <div class="video-placeholder">
                             <div style="font-size: 2.8rem;">📹</div>
-                            <p style="margin-top: 0.5rem; font-weight: 600;">Short de Video listo para generar</p>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para crear el video MP4 con voz hablada.</p>
+                            <p style="margin-top: 0.5rem; font-weight: 600;">Video Promo listo para generar</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Haz clic abajo para crear el MP4 con gráfica de encuesta y locución.</p>
                         </div>
                         {% endif %}
                     </div>
 
                     <button class="btn-action" id="btn-generate-short" style="margin-top: 1rem; background: var(--accent-amber); color: #000; font-weight: 800; border: none; width: 100%; justify-content: center;">
-                        🎥 Generar / Actualizar Video Short con Voz Neural
+                        🎥 Generar Video Promo Short para Viralizar en Redes
                     </button>
                 </div>
 
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
                     <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <h4 style="font-family: var(--font-heading); color: var(--accent-amber); margin-bottom: 0.4rem;">⚡ El Ecosistema Digital Más Activo</h4>
-                        <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 0.75rem;">
-                            Reunimos a más de 14 referentes clave: desde el análisis didáctico de Mate con Mote y Tipito Enojado, la trinchera del Gordo Dan en Carajo, las recorridas de Fran Fijap, hasta las conferencias de Laje, Rucauf y la gestión gubernamental.
-                        </p>
-                        <p style="font-size: 0.82rem; color: var(--text-muted);">
-                            Todo organizado sin censura, sin intermediarios y con sintetizador automático de discursos.
-                        </p>
+                        <h4 style="font-family: var(--font-heading); color: var(--accent-amber); margin-bottom: 0.4rem;">⚡ Estrategia de Difusión & Tráfico</h4>
+                        <ul style="font-size: 0.88rem; color: var(--text-main); display: flex; flex-direction: column; gap: 0.6rem; padding-left: 1.2rem;">
+                            <li><strong>Encuestas Reales:</strong> Medición directa sin sesgo de encuestadoras de televisión.</li>
+                            <li><strong>Promoción Viral:</strong> Generá el video promo y compartilo en los comentarios de X/TikTok.</li>
+                            <li><strong>Atracción de Audiencia:</strong> Tráfico guiado directamente a participar en el termómetro social.</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -218,15 +223,15 @@
         </section>
 
 
-        <!-- MÓDULO: SUSCRIPCIÓN BOLETÍN -->
+        <!-- MÓDULO 6: SUSCRIPCIÓN BOLETÍN -->
         <section id="captura-leads">
             <div class="lead-box">
                 <div>
                     <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-bright);">
-                        📬 Suscribite al Boletín de Pulso Liberal
+                        📬 Suscribite al Boletín de Medición de Opinión
                     </h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">
-                        Recibí las transcripciones de discursos, análisis geopolíticos y mejores momentos del streaming en tu correo.
+                        Recibí los resultados del termómetro social y síntesis de análisis directamente en tu correo.
                     </p>
                 </div>
                 <form class="lead-form" id="lead-form">
@@ -256,9 +261,9 @@
     </div>
 
     <footer>
-        <p>PULSO LIBERAL 360 © 2026 — Aglutinador del Ecosistema de YouTubers, Streamers & Batalla Cultural</p>
+        <p>TERMÓMETRO SOCIAL 360 © 2026 — Medición Directa de Opinión Pública & Ideas</p>
     </footer>
 
-    <script src="/static/js/app.js?v=8.0"></script>
+    <script src="/static/js/app.js?v=9.0"></script>
 </body>
 </html>
