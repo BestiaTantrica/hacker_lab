@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-trend_engine.py — Motor de Procesamiento LITERAL de Palabras con Alto Contraste Visual
-Extracción matemática exacta de los términos reales usados por la prensa y las redes.
+trend_engine.py — Motor de Procesamiento LITERAL de Palabras con Extremo Contraste de Tamaños (4.5rem a 1.0rem)
 """
 
 import re
@@ -18,7 +17,7 @@ STOPWORDS = set([
 ])
 
 def extract_literal_word_cloud(prensa: List[Dict[str, Any]], google_trends: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extracción LITERAL con contraste visual extremo de tamaños (3.8rem a 1.1rem)."""
+    """Extracción LITERAL con contraste visual extremo de tamaños (4.5rem a 1.0rem)."""
     words = []
     
     for item in prensa:
@@ -30,7 +29,7 @@ def extract_literal_word_cloud(prensa: List[Dict[str, Any]], google_trends: List
     for trend in google_trends:
         kw = trend.get("keyword", "")
         tokens = [w for w in kw.split() if len(w) > 3 and w.lower() not in STOPWORDS]
-        words.extend(tokens * 3)
+        words.extend(tokens * 4)
 
     counter = Counter([w.capitalize() for w in words])
     top_words = counter.most_common(12)
@@ -38,21 +37,22 @@ def extract_literal_word_cloud(prensa: List[Dict[str, Any]], google_trends: List
     if not top_words:
         return []
         
-    max_count = top_words[0][1]
     colors = ["#3b82f6", "#ec4899", "#10b981", "#8b5cf6", "#f59e0b", "#06b6d4"]
     
-    cloud = []
-    # Escala de tamaños contrastante extrema
-    size_scale = [3.8, 2.8, 2.4, 2.0, 1.7, 1.5, 1.3, 1.2, 1.1, 1.1, 1.0, 1.0]
+    # Escala de contraste extremo: #1 es 4.5rem (gigante), #2 es 3.2rem, #3 es 2.4rem, etc.
+    size_scale = [4.5, 3.2, 2.4, 2.0, 1.6, 1.4, 1.2, 1.1, 1.0, 1.0, 0.95, 0.95]
     
+    cloud = []
     for idx, (word, count) in enumerate(top_words):
         weight = size_scale[idx] if idx < len(size_scale) else 1.0
         color = colors[idx % len(colors)]
+        is_top = (idx == 0)
         cloud.append({
             "text": word,
             "count": count,
             "weight": weight,
-            "color": color
+            "color": color,
+            "is_top": is_top
         })
         
     return cloud
@@ -91,11 +91,11 @@ def calculate_social_climate(prensa: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def get_active_poll() -> Dict[str, Any]:
-    """Retorna la encuesta activa del día empezando desde 0 votos reales."""
+    """Retorna la encuesta activa del día con contador reseteado a 0 votos reales."""
     return {
         "id": 102,
         "question": "Ante los recientes debates sobre tarifas, salarios y presupuesto: ¿Cuál es tu prioridad y expectativa principal?",
-        "context": "Encuesta anónima en tiempo real — Da tu voto para ver los resultados globales:",
+        "context": "Encuesta anónima en tiempo real — Tu voto se sumará al termómetro global:",
         "options": [
             {
                 "id": 1,

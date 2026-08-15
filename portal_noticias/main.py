@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-portal_noticias/main.py — Servidor Web Público (Ground News Hispano + Termómetro Social + Fábrica de Shorts)
+portal_noticias/main.py — Servidor Web Público (Ground News Hispano + Termómetro Social + Shorts con Voz Narrada)
 Servidor dedicado para el portal público en el puerto 8001.
 """
 
@@ -11,7 +11,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from portal_noticias.rss_collector import collect_all_data
 from portal_noticias.trend_engine import extract_literal_word_cloud, calculate_social_climate, get_active_poll
@@ -23,13 +23,13 @@ DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 app = FastAPI(
     title="Radar Prensa & Termómetro Social",
     description="Portal Público de Monitoreo de Sesgo Mediático, Tendencias y Fábrica de Shorts",
-    version="2.0.0"
+    version="2.1.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
-# Inicializar tabla de Leads / Emails
+# Inicializar tablas de Leads y Votos
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -40,43 +40,60 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS poll_votes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            poll_id INTEGER NOT NULL,
+            option_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
 init_db()
 
-CACHE_DATA = None
 
-def get_or_update_data():
-    global CACHE_DATA
-    if CACHE_DATA is None:
-        raw_data = collect_all_data()
-        prensa = raw_data.get("prensa", [])
-        trends = raw_data.get("google_trends", [])
-        reddit = raw_data.get("reddit", [])
-        youtube = raw_data.get("youtube", [])
+def get_live_data():
+    """Genera los datos en tiempo real directo desde los colectores y la DB sin caché estática congelada."""
+    raw_data = collect_all_data()
+    prensa = raw_data.get("prensa", [])
+    trends = raw_data.get("google_trends", [])
+    reddit = raw_data.get("reddit", [])
+    youtube = raw_data.get("youtube", [])
 
-        word_cloud = extract_literal_word_cloud(prensa, trends)
-        climate = calculate_social_climate(prensa)
-        poll = get_active_poll()
+    word_cloud = extract_literal_word_cloud(prensa, trends)
+    climate = calculate_social_climate(prensa)
+    poll = get_active_poll()
 
-        CACHE_DATA = {
-            "timestamp": raw_data.get("timestamp"),
-            "prensa": prensa,
-            "google_trends": trends,
-            "reddit": reddit,
-            "youtube": youtube,
-            "word_cloud": word_cloud,
-            "climate": climate,
-            "poll": poll
-        }
-    return CACHE_DATA
+    # Cargar votos reales registrados en SQLite
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("SELECT option_id, COUNT(*) FROM poll_votes WHERE poll_id = ? GROUP BY option_id", (poll["id"],))
+    vote_counts = dict(cur.fetchall())
+    conn.close()
+
+    total = sum(vote_counts.values())
+    poll["total_votes"] = total
+    for opt in poll["options"]:
+        opt["votes"] = vote_counts.get(opt["id"], 0)
+
+    return {
+        "timestamp": raw_data.get("timestamp"),
+        "prensa": prensa,
+        "google_trends": trends,
+        "reddit": reddit,
+        "youtube": youtube,
+        "word_cloud": word_cloud,
+        "climate": climate,
+        "poll": poll
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
     """Página de Inicio Pública."""
-    data = get_or_update_data()
+    data = get_live_data()
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -90,7 +107,7 @@ async def home_page(request: Request):
 @app.get("/api/public/data")
 async def get_public_data():
     """Endpoint JSON de datos crudos de tendencias y clima social."""
-    return get_or_update_data()
+    return get_live_data()
 
 
 class PublicVotePayload(BaseModel):
@@ -99,40 +116,39 @@ class PublicVotePayload(BaseModel):
 
 @app.post("/api/public/vote")
 async def submit_vote(payload: PublicVotePayload):
-    """Procesa el voto del usuario y devuelve porcentajes en tiempo real."""
-    data = get_or_update_data()
-    poll = data["poll"]
-    
-    if poll["id"] != payload.poll_id:
-        raise HTTPException(status_code=404, detail="Encuesta no encontrada")
+    """Procesa el voto del usuario, lo guarda en SQLite y devuelve los porcentajes acumulados."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("INSERT INTO poll_votes (poll_id, option_id) VALUES (?, ?)", (payload.poll_id, payload.option_id))
+        conn.commit()
 
-    updated = False
-    for opt in poll["options"]:
-        if opt["id"] == payload.option_id:
-            opt["votes"] += 1
-            poll["total_votes"] += 1
-            updated = True
-            break
-            
-    if not updated:
-        raise HTTPException(status_code=400, detail="Opción inválida")
+        # Recalcular conteo exacto de la DB
+        cur.execute("SELECT option_id, COUNT(*) FROM poll_votes WHERE poll_id = ? GROUP BY option_id", (payload.poll_id,))
+        vote_counts = dict(cur.fetchall())
+        conn.close()
 
-    results = []
-    total = max(poll["total_votes"], 1)
-    for opt in poll["options"]:
-        pct = round((opt["votes"] / total) * 100, 1)
-        results.append({
-            "id": opt["id"],
-            "text": opt["text"],
-            "votes": opt["votes"],
-            "percentage": pct
-        })
+        total = sum(vote_counts.values())
+        poll = get_active_poll()
 
-    return {
-        "status": "success",
-        "total_votes": poll["total_votes"],
-        "results": results
-    }
+        results = []
+        for opt in poll["options"]:
+            v_cnt = vote_counts.get(opt["id"], 0)
+            pct = round((v_cnt / total) * 100, 1) if total > 0 else 0.0
+            results.append({
+                "id": opt["id"],
+                "text": opt["text"],
+                "votes": v_cnt,
+                "percentage": pct
+            })
+
+        return {
+            "status": "success",
+            "total_votes": total,
+            "results": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error guardando voto: {str(e)}")
 
 
 class LeadPayload(BaseModel):
@@ -140,7 +156,7 @@ class LeadPayload(BaseModel):
 
 @app.post("/api/public/subscribe_lead")
 async def subscribe_lead(payload: LeadPayload):
-    """Registra el email de un usuario interesado en informes semanales de tendencias."""
+    """Registra el email de un usuario interesado en el newsletter diario."""
     if not payload.email or "@" not in payload.email:
         raise HTTPException(status_code=400, detail="Email inválido")
         
@@ -150,26 +166,26 @@ async def subscribe_lead(payload: LeadPayload):
         cur.execute("INSERT OR IGNORE INTO leads (email) VALUES (?)", (payload.email.strip(),))
         conn.commit()
         conn.close()
-        return {"status": "success", "message": "¡Suscripción exitosa al Informe Sociológico Semanal!"}
+        return {"status": "success", "message": "¡Suscripción exitosa al Newsletter Diario!"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error interno al registrar suscripción")
+        raise HTTPException(status_code=500, detail="Error al registrar suscripción")
 
 
 @app.get("/api/public/generate_short")
 async def api_generate_short():
-    """Genera el Short MP4 del día y devuelve la ruta de descarga."""
-    data = get_or_update_data()
-    top_word = data["word_cloud"][0]["text"] if data["word_cloud"] else "TARIFAS"
+    """Genera el Short MP4 con voz hablada en español del día y devuelve la ruta de descarga."""
+    data = get_live_data()
+    top_word = data["word_cloud"][0]["text"] if data["word_cloud"] else "PRESUPUESTO"
     question = data["poll"]["question"]
     
     short_path = generate_short_video(top_word, question)
     if short_path and os.path.exists(short_path):
         return {
             "status": "success",
-            "download_url": "/static/shorts/short_del_dia.mp4",
-            "message": "Short de video vertical 1080x1920 generado exitosamente."
+            "download_url": "/static/shorts/short_del_dia.mp4?v=" + str(os.path.getmtime(short_path)),
+            "message": "Short de video vertical 1080x1920 con voz en off generado exitosamente."
         }
-    raise HTTPException(status_code=500, detail="No se pudo generar el video Short")
+    raise HTTPException(status_code=500, detail="No se pudo generar el video Short con voz")
 
 
 if __name__ == "__main__":

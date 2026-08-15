@@ -1,5 +1,5 @@
 /**
- * app.js — Lógica Interactiva (Termómetro, Newsletter, Shorts & Filtro Regional Real)
+ * app.js — Lógica Interactiva (Termómetro, Newsletter, Shorts & Filtro Regional Exacto)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,7 +98,7 @@ function initShortGenerator() {
     if (!btnGen) return;
 
     btnGen.addEventListener('click', async () => {
-        btnGen.innerText = '🎬 Generando Video Short...';
+        btnGen.innerText = '🎬 Generando Video Short con Voz...';
         btnGen.disabled = true;
 
         try {
@@ -106,7 +106,7 @@ function initShortGenerator() {
             const data = await res.json();
 
             if (data.status === 'success') {
-                alert(`✅ Short generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
+                alert(`✅ Short con Voz generado exitosamente.\nPuedes descargarlo listo para YouTube Shorts desde:\n${data.download_url}`);
                 window.open(data.download_url, '_blank');
             } else {
                 alert('No se pudo generar el video short.');
@@ -114,7 +114,7 @@ function initShortGenerator() {
         } catch (err) {
             alert('Error al conectar con la fábrica de shorts.');
         } finally {
-            btnGen.innerText = '🎥 Descargar Short en Video (1080x1920)';
+            btnGen.innerText = '🎥 Descargar Short en Video con Voz (1080x1920)';
             btnGen.disabled = false;
         }
     });
@@ -133,7 +133,9 @@ function initRegionSelector() {
 
             newsCards.forEach(card => {
                 const cardRegion = card.getAttribute('data-region');
-                if (selectedRegion === 'nacional' || cardRegion === selectedRegion || cardRegion === 'nacional') {
+                if (selectedRegion === 'nacional') {
+                    card.classList.remove('hidden');
+                } else if (cardRegion === selectedRegion) {
                     card.classList.remove('hidden');
                 } else {
                     card.classList.add('hidden');

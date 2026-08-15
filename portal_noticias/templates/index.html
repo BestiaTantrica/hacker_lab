@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Radar Prensa & Termómetro Social. Escuchatorio mediático y tendencias en Argentina sin sesgos.">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3.0">
 </head>
 <body>
 
@@ -73,10 +73,10 @@
 
                 <div class="poll-actions-bar">
                     <span id="poll-total-votes" style="font-size: 0.9rem; color: var(--text-muted);">
-                        {{ data.poll.total_votes }} votos registrados (100% Real)
+                        {{ data.poll.total_votes }} votos registrados acumulados en tiempo real
                     </span>
                     <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-                        <button class="btn-action" id="btn-generate-short">🎥 Descargar Short en Video (1080x1920)</button>
+                        <button class="btn-action" id="btn-generate-short">🎥 Descargar Short en Video con Voz (1080x1920)</button>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
         <!-- SECCIÓN 3: NUBE LITERAL DE PALABRAS & CLIMA EMOCIONAL -->
         <section id="analisis-visual" class="two-column-grid">
             
-            <!-- Nube Literal Organica y Dispersa -->
+            <!-- Nube Literal con Alto Contraste de Tamaños (4.5rem vs 1.0rem) -->
             <div class="card-widget">
                 <h3 class="section-title">☁️ Nube LITERAL de Conceptos del Día</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
@@ -93,7 +93,7 @@
                 </p>
                 <div class="word-cloud-literal">
                     {% for word in data.word_cloud %}
-                    <span class="word-literal-tag" style="font-size: {{ word.weight }}rem; color: {{ word.color }};" title="{{ word.count }} menciones directas">
+                    <span class="word-literal-tag {% if word.is_top %}top-word{% endif %}" style="font-size: {{ word.weight }}rem !important; color: {{ word.color }};" title="{{ word.count }} menciones directas">
                         {{ word.text }}
                     </span>
                     {% endfor %}
@@ -203,11 +203,10 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
         <p>Radar Prensa & Termómetro Social © 2026 — Plataforma Abierta de Inteligencia Mediática</p>
     </footer>
 
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/app.js?v=3.0"></script>
 </body>
 </html>
