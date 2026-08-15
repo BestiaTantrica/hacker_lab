@@ -1,5 +1,5 @@
 /**
- * app.js — Lógica Interactiva (Termómetro, Captura de Mails, Shorts & Filtro Regional)
+ * app.js — Lógica Interactiva (Termómetro, Newsletter, Shorts & Filtro Regional Real)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,7 +47,7 @@ function initPollSystem() {
 function updatePollUI(results, totalVotes) {
     const totalElem = document.getElementById('poll-total-votes');
     if (totalElem) {
-        totalElem.innerText = `${totalVotes.toLocaleString()} votos registrados (100% Real)`;
+        totalElem.innerText = `${totalVotes.toLocaleString()} votos acumulados en tiempo real`;
     }
 
     results.forEach(res => {
@@ -82,7 +82,7 @@ function initLeadForm() {
 
             const data = await res.json();
             if (data.status === 'success') {
-                alert('🎉 ¡Gracias! Te has suscrito exitosamente al Informe Sociológico Semanal.');
+                alert('🎉 ¡Gracias! Te has suscrito exitosamente al Newsletter Diario.');
                 input.value = '';
             } else {
                 alert(data.detail || 'No se pudo guardar la suscripción.');
@@ -122,10 +122,23 @@ function initShortGenerator() {
 
 function initRegionSelector() {
     const btns = document.querySelectorAll('.region-btn');
+    const newsCards = document.querySelectorAll('.card-news');
+
     btns.forEach(btn => {
         btn.addEventListener('click', () => {
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            const selectedRegion = btn.getAttribute('data-region');
+
+            newsCards.forEach(card => {
+                const cardRegion = card.getAttribute('data-region');
+                if (selectedRegion === 'nacional' || cardRegion === selectedRegion || cardRegion === 'nacional') {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         });
     });
 }

@@ -17,13 +17,13 @@
                 <div class="brand-title">RADAR<span>PRENSA</span></div>
             </a>
 
-            <!-- Selector Regional / Federal -->
+            <!-- Selector Regional / Federal con Filtro Real -->
             <div class="region-selector">
-                <button class="region-btn active">🇦🇷 Nacional</button>
-                <button class="region-btn">🏢 CABA / GBA</button>
-                <button class="region-btn">🌾 Región Centro</button>
-                <button class="region-btn">🏔️ NOA / Cuyo</button>
-                <button class="region-btn">❄️ Patagonia</button>
+                <button class="region-btn active" data-region="nacional">🇦🇷 Nacional</button>
+                <button class="region-btn" data-region="caba_gba">🏢 CABA / GBA</button>
+                <button class="region-btn" data-region="centro">🌾 Región Centro</button>
+                <button class="region-btn" data-region="noa_cuyo">🏔️ NOA / Cuyo</button>
+                <button class="region-btn" data-region="patagonia">❄️ Patagonia</button>
             </div>
 
             <div class="badge-live">
@@ -37,10 +37,10 @@
 
         <!-- SECCIÓN 1: MATRIZ GROUND NEWS HISPANO -->
         <section id="matriz-prensa">
-            <h2 class="section-title">📰 Matriz de Cobertura y Sesgo Mediático Nacional</h2>
+            <h2 class="section-title">📰 Cobertura Mediática Nacional y Regional</h2>
             <div class="grid-matrix">
                 {% for item in data.prensa %}
-                <div class="card-news">
+                <div class="card-news" data-region="{{ item.region }}">
                     <div>
                         <div class="bias-tag {{ item.bias_code }}">{{ item.bias }}</div>
                         <a href="{{ item.link }}" target="_blank" class="news-title" rel="noopener">{{ item.title }}</a>
@@ -85,9 +85,9 @@
         <!-- SECCIÓN 3: NUBE LITERAL DE PALABRAS & CLIMA EMOCIONAL -->
         <section id="analisis-visual" class="two-column-grid">
             
-            <!-- Nube Literal -->
+            <!-- Nube Literal Organica y Dispersa -->
             <div class="card-widget">
-                <h3 class="section-title">☁️ Nube LITERAL de Conceptos Usados Hoy</h3>
+                <h3 class="section-title">☁️ Nube LITERAL de Conceptos del Día</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
                     Frecuencia matemática exacta de las palabras reales usadas por la prensa y las redes:
                 </p>
@@ -143,15 +143,15 @@
 
         </section>
 
-        <!-- SECCIÓN 4: CAPTURA DE LEADS (SUSCRIPCIÓN POR EMAIL) -->
+        <!-- SECCIÓN 4: CAPTURA DE LEADS (NEWSLETTER DIARIO SIMPLE) -->
         <section id="captura-leads">
             <div class="lead-box">
                 <div>
                     <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-bright);">
-                        📬 Recibí el Informe Sociológico Semanal
+                        📬 Suscribite a nuestro Newsletter Diario
                     </h3>
                     <p style="font-size: 0.88rem; color: var(--text-muted);">
-                        Resumen de tendencias reales, sesgos mediáticos y análisis psicográfico en tu correo.
+                        Recibí las noticias más leídas y las tendencias de las redes en 2 minutos en tu correo.
                     </p>
                 </div>
                 <form class="lead-form" id="lead-form">
