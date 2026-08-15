@@ -26,6 +26,9 @@ trigger: always_on
 - `c2_panel/backup_oci_storage.sh` → Backup automatizado SQLite a OCI Object Storage
 - `c2_panel/static/js/app.js` → Frontend JS
 - `c2_panel/c2_db.sqlite` → DB central (`deltas`, `findings`, `chat_history`)
+- `portal_noticias/main.py` → FastAPI Portal Público "Radar Prensa" (puerto `8001`, Uvicorn)
+- `portal_noticias/generar_short_diario.py` → Fábrica de Shorts MP4 (1080x1920) con locución en voz en español (`espeak-ng`)
+- `portal_noticias/portal_db.sqlite` → DB pública (`leads`, `poll_votes`)
 - `skills/` → Prompts IA (`report_h1`, `takeover_analysis`, `cors_analysis`, etc.)
 
 ---

@@ -30,6 +30,7 @@ El laboratorio se divide físicamente en dos entornos de ejecución:
   - `network-toolkit`: Herramienta modular en Bash para diagnóstico de red y Honeypot Local (trampas pasivas y alertas Telegram).
   - `asalto_local.sh` ("Modo Bestia Protegido"): Infraestructura de escaneo local en dos fases (recon y attack) con límites de concurrencia y filtros de CDN para no saturar la red doméstica.
   - `juego_piloto_cibersec`: Piloto educativo "MicroSecure" (Attention Mining, Feed de micro-insights ciberseguridad, Gamificación 1-clic).
+  - `portal_noticias`: Portal Público "Radar Prensa & Termómetro Social" (puerto `8001`, FastAPI + Uvicorn). Medición de sesgo mediático, encuestas reales en tiempo real (`portal_db.sqlite`), filtrado regional/provincial, captura de newsletter y Fábrica de Shorts MP4 con locución TTS en español (`espeak-ng` + FFmpeg).
   - `caso fuerza bruta btc`: Entorno de análisis forense y descifrado bayesiano para carteras Bitcoin (wallet.dat 2013).
   - `portafolio-ciberseguridad`: Estructura académica alineada con el Certificado de Ciberseguridad de Google.
 
