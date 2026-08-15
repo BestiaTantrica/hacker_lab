@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-generar_short_diario.py — Fábrica de Shorts Promocionales para Redes (1080x1920 con Voz Neural)
-Diseño gráfico de alto impacto para viralizar encuestas y atraer tráfico a la plataforma.
+generar_short_diario.py — Fábrica de Shorts Promocionales con NUBE DE PALABRAS ENTERA + MINI-ENCUESTA
+Genera un video vertical 1080x1920 con la nube completa de conceptos, la encuesta interactiva y voz neural.
 """
 
 import os
 import sys
 import json
 import subprocess
+from typing import List, Dict, Any
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FFMPEG_BIN = os.path.abspath(os.path.join(BASE_DIR, "..", "backup_2026_proyectos_viejos", "fabrica_magica", "ffmpeg"))
@@ -47,16 +48,30 @@ def generate_voice_narration(script_text: str, audio_path: str) -> bool:
         return False
 
 
-def generate_short_video(word_topic: str = "SUPERAVIT Y TARIFAS", poll_question: str = "¿Estás de acuerdo con el rumbo económico y las reformas de mercado?", base_url: str = "http://localhost:8001/") -> str:
-    """Genera un Short promocional vertical (1080x1920) de alto impacto con voz neural y gráfica de encuesta."""
+def generate_short_video(
+    concepts: List[str] = None,
+    poll_question: str = "¿Cuál es tu prioridad principal ante el nuevo rumbo económico?",
+    poll_options: List[str] = None,
+    base_url: str = "http://localhost:8001/"
+) -> str:
+    """Genera un Short promocional 1080x1920 con la NUBE DE PALABRAS ENTERA y MINI-ENCUESTA."""
+    if concepts is None or not concepts:
+        concepts = ["LIBERTAD", "SUPERÁVIT", "TARIFAS", "INFLACIÓN", "DÓLAR", "PROPIEDAD", "PARITARIAS", "DESREGULACIÓN"]
+    
+    if poll_options is None or not poll_options:
+        poll_options = [
+            "1. Apoyar el superávit y fin de la inflación",
+            "2. Controlar tarifas y costo de servicios",
+            "3. Reducir impuestos y promover empleo"
+        ]
+
     img_path = os.path.join(OUTPUT_DIR, "frame_short.png")
     audio_path = os.path.join(OUTPUT_DIR, "voz_narracion.mp3")
     output_path = os.path.join(OUTPUT_DIR, "short_del_dia.mp4")
 
-    clean_word = word_topic.upper()
-    
-    # Narración optimizada para llamada a la acción
-    script_voz = f"¡Medición en tiempo real! La conversación social en redes hoy gira en torno a {clean_word}. ¿Querés sumar tu voto al termómetro directo sin intermediarios? Entrá ya a {base_url} y votá en vivo."
+    # Script de locución relatando la nube de palabras y la encuesta
+    concepts_str = ", ".join(concepts[:5])
+    script_voz = f"¡Medición en tiempo real! Esta es la nube de palabras del día en redes: {concepts_str}. Entrá a votar en la encuesta interactiva en {base_url} y sumá tu voto al termómetro directo."
     has_audio = generate_voice_narration(script_voz, audio_path)
 
     # Formatear la consigna en líneas limpias
@@ -65,59 +80,78 @@ def generate_short_video(word_topic: str = "SUPERAVIT Y TARIFAS", poll_question:
     line2 = " ".join(words[5:10]) if len(words) >= 10 else (" ".join(words[5:]) if len(words) > 5 else "")
     line3 = " ".join(words[10:]) if len(words) > 10 else ""
 
-    # Crear imagen vertical 1080x1920 con ImageMagick
+    # Formatear la Nube de Palabras en 3 filas visuales con ImageMagick
+    c_row1 = "  ".join(concepts[:3]).upper()
+    c_row2 = "  ".join(concepts[3:6]).upper()
+    c_row3 = "  ".join(concepts[6:9]).upper() if len(concepts) > 6 else ""
+
+    opt1 = poll_options[0] if len(poll_options) > 0 else "1. Apoyo al rumbo económico"
+    opt2 = poll_options[1] if len(poll_options) > 1 else "2. Foco en tarifas y servicios"
+    opt3 = poll_options[2] if len(poll_options) > 2 else "3. Reducción impositiva"
+
     convert_cmd = [
         "convert",
         "-size", "1080x1920",
         "xc:#0a0d14",
         "-font", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         
-        # Borde / Marco Neón Dorado
+        # Borde Neón Dorado
         "-stroke", "#f59e0b", "-strokewidth", "8", "-fill", "none",
         "-draw", "rectangle 40,40 1040,1880",
         "-stroke", "none",
         
         # Encabezado Comercial
         "-fill", "#f59e0b", "-pointsize", "44",
-        "-gravity", "north", "-annotate", "+0+180", "🔥 TERMOMETRO SOCIAL & MEDIDA REAL",
+        "-gravity", "north", "-annotate", "+0+120", "🔥 TERMOMETRO SOCIAL & NUBE DEL DIA",
         
-        "-fill", "#9ca3af", "-pointsize", "32",
-        "-gravity", "north", "-annotate", "+0+240", "CONCEPTOS Y DEBATES CANDENTES EN REDES",
+        "-fill", "#9ca3af", "-pointsize", "30",
+        "-gravity", "north", "-annotate", "+0+175", "CONCEPTOS MAS REPETIDOS EN REDES HOY",
         
-        # Concepto Central Gigante
-        "-fill", "#ffffff", "-pointsize", "75",
-        "-gravity", "north", "-annotate", "+0+380", clean_word,
+        # NUBE DE PALABRAS ENTERA EN 3 FILAS MULTI-COLOR
+        "-fill", "#f59e0b", "-pointsize", "56",
+        "-gravity", "north", "-annotate", "+0+260", c_row1,
         
+        "-fill", "#3b82f6", "-pointsize", "52",
+        "-gravity", "north", "-annotate", "+0+330", c_row2,
+        
+        "-fill", "#10b981", "-pointsize", "48",
+        "-gravity", "north", "-annotate", "+0+400", c_row3,
+        
+        # Línea divisoria
+        "-stroke", "#ffffff", "-strokewidth", "2",
+        "-draw", "line 100,480 980,480",
+        "-stroke", "none",
+
         # Caja de la Pregunta / Encuesta
-        "-fill", "#3b82f6", "-pointsize", "36",
-        "-gravity", "north", "-annotate", "+0+620", "📊 ENCUESTA INTERACTIVA DEL DIA:",
+        "-fill", "#ec4899", "-pointsize", "38",
+        "-gravity", "north", "-annotate", "+0+530", "📊 MINI ENCUESTA INTERACTIVA:",
         
-        "-fill", "#f3f4f6", "-pointsize", "42",
-        "-gravity", "north", "-annotate", "+0+720", line1,
-        "-gravity", "north", "-annotate", "+0+790", line2,
-        "-gravity", "north", "-annotate", "+0+860", line3,
+        "-fill", "#ffffff", "-pointsize", "42",
+        "-gravity", "north", "-annotate", "+0+610", line1,
+        "-gravity", "north", "-annotate", "+0+670", line2,
+        "-gravity", "north", "-annotate", "+0+730", line3,
         
         # Opciones de Voto Visuales
-        "-fill", "#10b981", "-pointsize", "36",
-        "-gravity", "north", "-annotate", "+0+1050", "[ 1 ] Apoyo total al rumbo economico",
+        "-fill", "#10b981", "-pointsize", "34",
+        "-gravity", "north", "-annotate", "+0+880", opt1[:55],
         
-        "-fill", "#f59e0b", "-pointsize", "36",
-        "-gravity", "north", "-annotate", "+0+1130", "[ 2 ] Apoyo critico / Atento a tarifas",
+        "-fill", "#f59e0b", "-pointsize", "34",
+        "-gravity", "north", "-annotate", "+0+960", opt2[:55],
         
-        "-fill", "#f43f5e", "-pointsize", "36",
-        "-gravity", "north", "-annotate", "+0+1210", "[ 3 ] Desacuerdo / Mayor gradualidad",
+        "-fill", "#f43f5e", "-pointsize", "34",
+        "-gravity", "north", "-annotate", "+0+1040", opt3[:55],
         
-        # Llamado a la Acción (CTA)
-        "-fill", "#ffffff", "-pointsize", "44",
-        "-gravity", "north", "-annotate", "+0+1480", "👇 SUMA TU VOTO ANÓNIMO EN VIVO:",
+        # Llamado a la Acción (CTA y Redirección a la Web)
+        "-fill", "#ffffff", "-pointsize", "42",
+        "-gravity", "north", "-annotate", "+0+1420", "👇 SUMA TU VOTO Y VISTA RESULTADOS:",
         
-        "-fill", "#fbbf24", "-pointsize", "46",
-        "-gravity", "north", "-annotate", "+0+1580", base_url,
+        "-fill", "#fbbf24", "-pointsize", "48",
+        "-gravity", "north", "-annotate", "+0+1520", base_url,
         
         img_path
     ]
 
-    print(f"🎬 Generando Frame Promocional (1080x1920)...", file=sys.stderr)
+    print(f"🎬 Generando Frame con Nube de Palabras Completa (1080x1920)...", file=sys.stderr)
     res_img = subprocess.run(convert_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if res_img.returncode != 0 or not os.path.exists(img_path):
         print(f"❌ Error ImageMagick: {res_img.stderr}", file=sys.stderr)
@@ -156,7 +190,7 @@ def generate_short_video(word_topic: str = "SUPERAVIT Y TARIFAS", poll_question:
     try:
         res_vid = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if res_vid.returncode == 0 and os.path.exists(output_path):
-            print(f"✅ Short de Video Promocional generado exitosamente: {output_path}", file=sys.stderr)
+            print(f"✅ Short de Video con Nube Completa generado: {output_path}", file=sys.stderr)
             return output_path
         else:
             print(f"⚠️ Error FFmpeg: {res_vid.stderr[:300]}", file=sys.stderr)

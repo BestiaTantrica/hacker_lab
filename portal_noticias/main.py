@@ -29,7 +29,7 @@ DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 app = FastAPI(
     title="Termómetro Social 360 | Medición de Opinión Pública",
     description="Plataforma de Medición de Ideas, Opinión en Redes y Contraste de Encuestas",
-    version="5.0.0"
+    version="6.0.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
@@ -185,17 +185,25 @@ async def subscribe_lead(payload: LeadPayload):
 
 @app.get("/api/public/generate_short")
 async def api_generate_short():
-    """Genera el Short MP4 promocional para redes con voz neural y gráfica de encuesta."""
+    """Genera el Short MP4 promocional con NUBE DE PALABRAS ENTERA, MINI-ENCUESTA y REDIRECCIÓN A LA WEB."""
     data = get_live_data()
-    top_word = data["concept_cloud"][0]["text"] if data["concept_cloud"] else "SUPERAVIT Y TARIFAS"
-    question = data["polls"][0]["question"] if data["polls"] else "¿Estás de acuerdo con el rumbo económico y las reformas?"
+    concepts = [c["text"] for c in data.get("concept_cloud", [])]
+    target_poll = data["polls"][0] if data.get("polls") else {}
+    question = target_poll.get("question", "¿Estás de acuerdo con el rumbo económico?")
+    options = [opt["text"] for opt in target_poll.get("options", [])]
     
-    short_path = generate_short_video(top_word, question)
+    short_path = generate_short_video(
+        concepts=concepts,
+        poll_question=question,
+        poll_options=options,
+        base_url="http://localhost:8001/"
+    )
+    
     if short_path and os.path.exists(short_path):
         return {
             "status": "success",
             "download_url": "/static/shorts/short_del_dia.mp4?v=" + str(os.path.getmtime(short_path)),
-            "message": "Short de video vertical 1080x1920 promocional generado exitosamente."
+            "message": "Short de video vertical 1080x1920 con Nube Completa y Mini-Encuesta generado exitosamente."
         }
     raise HTTPException(status_code=500, detail="No se pudo generar el video Short promocional")
 
