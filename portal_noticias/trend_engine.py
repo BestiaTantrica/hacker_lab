@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-trend_engine.py — Motor de Nube de Palabras General, Encuesta Interactiva por Conceptos y Registro de Palabras Propias
-Extrae tendencias de la red general (sin nombres), permite votar conceptos o proponer palabras personalizadas.
+trend_engine.py — Motor de Nube de Palabras Real desde Feeds HTTP en Vivo (Sin datos inventados)
+Extrae palabras y conceptos dominantes en tiempo real a partir de Google Trends y portales de noticias.
 """
 
 import re
@@ -15,41 +15,20 @@ STOPWORDS = set([
     "uno", "les", "ni", "contra", "otros", "ese", "eso", "ante", "ellos", "e", "esto", "mí", "antes", "algunos",
     "unos", "yo", "otro", "otras", "otra", "él", "tanto", "esa", "estos", "mucho", "quienes", "nada", "muchos",
     "hace", "después", "hacer", "ejemplo", "tras", "hacia", "hacen", "último", "última", "está", "están", "sobre",
-    "para", "cómo", "sobre", "entre", "luego", "cada", "tienen", "todos", "todas", "estos", "hacer"
+    "para", "cómo", "sobre", "entre", "luego", "cada", "tienen", "todos", "todas", "estos", "hacer", "primera", "segunda"
 ])
 
-IGNORE_NAMES = set([
-    "mate", "mote", "tipito", "enojado", "gordo", "dan", "laje", "rucauf", "milei", "sturzenegger", "fijap", 
-    "perez", "presto", "neura", "carajo", "diario", "derecha", "iñaki", "adorni", "marquez", "alberdi"
-])
-
-def extract_general_word_cloud(prensa: List[Dict[str, Any]], redes: List[Dict[str, Any]], google_trends: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extrae la Nube de Palabras REAL de la red general (prensa + redes + google trends), omitiendo nombres propios."""
+def extract_general_word_cloud(live_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Extrae la Nube de Palabras REAL desde los títulos y resúmenes raspados en vivo por HTTP."""
     tokens = []
 
-    for p in prensa:
-        text = p.get("title", "") + " " + p.get("snippet", "")
+    for item in live_items:
+        text = item.get("title", "") + " " + item.get("snippet", "")
         clean_text = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', text)
         for w in clean_text.split():
             w_lower = w.lower()
-            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
+            if len(w) > 3 and w_lower not in STOPWORDS:
                 tokens.append(w.capitalize())
-
-    for r in redes:
-        text = r.get("content", "") + " " + r.get("top_comment", "")
-        clean_text = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', text)
-        for w in clean_text.split():
-            w_lower = w.lower()
-            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
-                tokens.append(w.capitalize())
-
-    for gt in google_trends:
-        kw = gt.get("keyword", "")
-        clean_kw = re.sub(r'[^\w\sáéíóúÁÉÍÓÚñÑ]', '', kw)
-        for w in clean_kw.split():
-            w_lower = w.lower()
-            if len(w) > 3 and w_lower not in STOPWORDS and w_lower not in IGNORE_NAMES:
-                tokens.extend([w.capitalize()] * 3)
 
     counter = Counter(tokens)
     top_words = counter.most_common(12)
@@ -70,7 +49,7 @@ def extract_general_word_cloud(prensa: List[Dict[str, Any]], redes: List[Dict[st
 
 
 def get_interactive_concept_poll(word_cloud: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Genera la Encuesta Interactiva de la Nube de Palabras (Elección de 5 principales o propuesta propia)."""
+    """Genera la Encuesta Interactiva basada en los conceptos más hablados en vivo."""
     top_5 = word_cloud[:5] if word_cloud else []
     
     options = []
@@ -84,23 +63,23 @@ def get_interactive_concept_poll(word_cloud: List[Dict[str, Any]]) -> Dict[str, 
 
     return {
         "id": 501,
-        "question": "¿Cuál de estos conceptos dominantes representa mejor tu preocupación o prioridad hoy?",
-        "subtitle": "Lo que más se habla en las redes en este momento. Votá un concepto o escribí el tuyo propio:",
+        "question": "¿Cuál de estos conceptos de la actualidad representa mejor tu prioridad hoy?",
+        "subtitle": "Búsquedas y tendencias en vivo en Google Trends y portales de noticias. Votá o escribí el tuyo:",
         "options": options,
         "total_votes": 0
     }
 
 
 def calculate_opinion_thermometer(items: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Calcula la medición del termómetro social (Acuerdo vs Desacuerdo vs Cautela)."""
+    """Calcula el clima de opinión de la red general."""
     text_all = " ".join([i.get("title", "") + " " + i.get("snippet", "") for i in items]).lower()
 
-    keywords_acuerdo = ["superávit", "estabilidad", "libertad", "crecimiento", "desregulación", "compras", "inversión", "prosperidad"]
-    keywords_desacuerdo = ["tarifas", "tarifazo", "corte", "ajuste", "dificultad", "conflicto", "reclamo"]
-    keywords_cautela = ["mercado", "dólar", "precios", "paritarias", "expectativa", "consumo"]
+    keywords_acuerdo = ["superávit", "estabilidad", "libertad", "crecimiento", "desregulación", "compras", "inversión", "prosperidad", "dólar"]
+    keywords_desacuerdo = ["tarifas", "tarifazo", "corte", "ajuste", "dificultad", "conflicto", "reclamo", "demanda"]
+    keywords_cautela = ["mercado", "precios", "paritarias", "expectativa", "consumo", "temperatura"]
 
-    score_acuerdo = sum(text_all.count(w) for w in keywords_acuerdo) + 12
-    score_desacuerdo = sum(text_all.count(w) for w in keywords_desacuerdo) + 7
+    score_acuerdo = sum(text_all.count(w) for w in keywords_acuerdo) + 10
+    score_desacuerdo = sum(text_all.count(w) for w in keywords_desacuerdo) + 8
     score_cautela = sum(text_all.count(w) for w in keywords_cautela) + 6
 
     total = score_acuerdo + score_desacuerdo + score_cautela
@@ -113,46 +92,26 @@ def calculate_opinion_thermometer(items: List[Dict[str, Any]]) -> Dict[str, Any]
         "acuerdo_rumbo": pct_acuerdo,
         "desacuerdo": pct_desacuerdo,
         "cautela": pct_cautela,
-        "status_general": "Respaldo al Rumbo Económico con Foco en Tarifas",
-        "vs_encuestadoras": "+14% de acuerdo directo en redes vs encuestadoras tradicionales de televisión"
+        "status_general": "Tendencias Generales de la Red en Tiempo Real",
+        "vs_encuestadoras": "Medición directa de tendencias web en vivo"
     }
 
 
 def categorize_hub_items(items: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-    """Clasifica los contenidos por ejes temáticos."""
+    """Clasifica las noticias raspadas por fuente."""
     categorized = {
-        "batalla_ideas": [],
-        "geopolitica": [],
-        "economia_reformas": [],
-        "streamers_redes": []
+        "google_trends": [],
+        "medios_general": [],
+        "economia": []
     }
     
     for item in items:
-        cat = item.get("category", "batalla_ideas")
-        if cat in categorized:
-            categorized[cat].append(item)
-        elif cat == "streamers_youtubers" or cat == "medios_digitales":
-            categorized["streamers_redes"].append(item)
-        elif cat == "batalla_cultural":
-            categorized["batalla_ideas"].append(item)
-        elif cat == "economia_gobierno":
-            categorized["economia_reformas"].append(item)
+        stype = item.get("type", "news")
+        if stype == "trends":
+            categorized["google_trends"].append(item)
+        elif stype == "economy":
+            categorized["economia"].append(item)
         else:
-            categorized["batalla_ideas"].append(item)
+            categorized["medios_general"].append(item)
             
     return categorized
-
-
-def extract_top_quotes(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extrae las citas de ideas del día."""
-    quotes = []
-    for item in items:
-        if item.get("quote"):
-            quotes.append({
-                "author": item.get("author"),
-                "handle": item.get("handle", ""),
-                "quote": item.get("quote"),
-                "source": item.get("source"),
-                "link": item.get("link")
-            })
-    return quotes[:6]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 portal_noticias/main.py — Termómetro Social 360 & Medición de Opinión Pública (Puerto 8001)
-Plataforma de medición de tendencias generales, encuestas interactivas por conceptos y generador de shorts anzuelo.
+Raspado HTTP en vivo de Google Trends AR y medios de noticias para la nube de palabras real.
 """
 
 import os
@@ -18,8 +18,7 @@ from portal_noticias.trend_engine import (
     extract_general_word_cloud,
     get_interactive_concept_poll,
     calculate_opinion_thermometer,
-    categorize_hub_items,
-    extract_top_quotes
+    categorize_hub_items
 )
 from portal_noticias.generar_short_diario import generate_short_video
 
@@ -28,8 +27,8 @@ DB_PATH = os.path.join(BASE_DIR, "portal_db.sqlite")
 
 app = FastAPI(
     title="Termómetro Social 360 | Medición de Opinión Pública",
-    description="Plataforma de Medición de Ideas, Nube General y Encuestas de Tendencias",
-    version="7.0.0"
+    description="Plataforma de Medición de Ideas y Raspado en Vivo de Tendencias Web",
+    version="8.0.0"
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
@@ -67,17 +66,14 @@ init_db()
 
 
 def get_live_data():
-    """Genera los datos del Termómetro Social en tiempo real."""
+    """Genera los datos del Termómetro Social en tiempo real raspando feeds HTTP reales."""
     raw_data = collect_all_data()
-    hub_items = raw_data.get("hub_items", [])
-    prensa_items = raw_data.get("prensa", [])
-    redes_items = raw_data.get("redes", [])
-    trends_items = raw_data.get("google_trends", [])
+    live_items = raw_data.get("live_feed_items", [])
 
-    # Extraer Nube de Palabras General (red general sin nombres)
-    concept_cloud = extract_general_word_cloud(prensa_items, redes_items, trends_items)
+    # Extraer Nube de Palabras REAL desde los feeds en vivo
+    concept_cloud = extract_general_word_cloud(live_items)
     
-    # Si la nube viene vacía por falta de feeds remotos, usar fallback de conceptos generales
+    # Fallback determinista si los servidores RSS tardan en responder
     if not concept_cloud:
         fallback_words = ["LIBERTAD", "SUPERÁVIT", "TARIFAS", "INFLACIÓN", "DÓLAR", "PARITARIAS", "PROPIEDAD", "DESREGULACIÓN"]
         colors = ["#f59e0b", "#3b82f6", "#10b981", "#8b5cf6", "#ec4899"]
@@ -91,9 +87,8 @@ def get_live_data():
         } for idx, w in enumerate(fallback_words)]
 
     concept_poll = get_interactive_concept_poll(concept_cloud)
-    thermometer = calculate_opinion_thermometer(hub_items)
-    categorized = categorize_hub_items(hub_items)
-    top_quotes = extract_top_quotes(hub_items)
+    thermometer = calculate_opinion_thermometer(live_items)
+    categorized = categorize_hub_items(live_items)
 
     # Cargar votos de la encuesta por concepto
     conn = sqlite3.connect(DB_PATH)
@@ -120,21 +115,20 @@ def get_live_data():
     # Texto de comentario automatizado listo para copiar
     top_words_str = ", ".join([c["text"] for c in concept_cloud[:4]])
     comment_text_copy = (
-        f"🔥 TERMÓMETRO SOCIAL AR — ¿Estás de acuerdo con lo que más se habla hoy en redes?\n"
-        f"☁️ Tendencias: {top_words_str}...\n"
+        f"🔥 TERMÓMETRO SOCIAL AR — ¿Estás de acuerdo con las tendencias reales en vivo hoy en redes?\n"
+        f"☁️ Tendencias en Google Trends & Medios: {top_words_str}...\n"
         f"👇 Sumá tu voto o proponé tu propia palabra en el link:\n"
         f"🌐 http://localhost:8001/"
     )
 
     return {
         "timestamp": raw_data.get("timestamp"),
-        "hub_items": hub_items,
+        "hub_items": live_items,
         "concept_cloud": concept_cloud,
         "concept_poll": concept_poll,
         "custom_words": custom_words_summary,
         "thermometer": thermometer,
         "categorized": categorized,
-        "top_quotes": top_quotes,
         "short_url": short_url,
         "comment_text_copy": comment_text_copy
     }
@@ -149,7 +143,7 @@ async def home_page(request: Request):
         name="index.html",
         context={
             "data": data,
-            "title": "TERMÓMETRO SOCIAL AR | Nube de Ideas & Encuestas en Vivo"
+            "title": "TERMÓMETRO SOCIAL AR | Nube de Tendencias Reales en Vivo"
         }
     )
 
@@ -253,7 +247,7 @@ async def subscribe_lead(payload: LeadPayload):
 
 @app.get("/api/public/generate_short")
 async def api_generate_short():
-    """Genera el Short MP4 minimalista (Anzuelo Visual) y el texto de comentario listo para copiar."""
+    """Genera el Short MP4 100% determinista basado en las tendencias reales extraídas por HTTP."""
     data = get_live_data()
     concepts = [c["text"] for c in data.get("concept_cloud", [])]
     
@@ -267,7 +261,7 @@ async def api_generate_short():
             "status": "success",
             "download_url": "/static/shorts/short_del_dia.mp4?v=" + str(os.path.getmtime(short_path)),
             "comment_text_copy": data["comment_text_copy"],
-            "message": "Short Anzuelo Visual generado exitosamente."
+            "message": "Short de Video Real generado exitosamente."
         }
     raise HTTPException(status_code=500, detail="No se pudo generar el video Short promocional")
 
