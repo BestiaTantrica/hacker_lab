@@ -30,6 +30,7 @@
             <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
                 <button class="nav-item active" onclick="switchView('dashboard', this)" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold; padding: 5px 10px;">📊 Panel Principal</button>
                 <button class="nav-item" onclick="switchView('links', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">🎛️ Botonera de Enlaces</button>
+                <button class="nav-item" onclick="switchView('b2b', this)" style="background: none; border: none; color: #888; cursor: pointer; font-size: 14px; padding: 5px 10px;">📰 B2B Intel & Targets</button>
             </div>
             
             <!-- VISTA DASHBOARD -->
@@ -48,23 +49,15 @@
                     </div>
                 </div>
 
-                <!-- BARRA DE ESTADO DE ZONAS (6 RONDAS) -->
+                <!-- BARRA DE ESTADO DE MONITOREO UNIFICADO -->
                 <div class="card" style="padding: 12px; margin-bottom: 20px; background: #0f172a; border: 1px solid #334155;">
                     <h4 style="font-size: 11px; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px;">
-                        <span>🌐</span> Monitoreo por Zonas Horarias (6 Rondas/Día)
+                        <span>🌐</span> Monitoreo Activo (Mercado Regional)
                     </h4>
-                    <div id="zones-health-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
-                            <span style="font-weight: bold; font-size: 11px; color: #60a5fa;">🌎 Americas</span>
-                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-americas-info">Deltas hoy: -</div>
-                        </div>
-                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
-                            <span style="font-weight: bold; font-size: 11px; color: #a78bfa;">🌍 EMEA</span>
-                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-emea-info">Deltas hoy: -</div>
-                        </div>
-                        <div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: center;">
-                            <span style="font-weight: bold; font-size: 11px; color: #f59e0b;">🌏 Asia</span>
-                            <div style="font-size: 10px; color: #cbd5e1; margin-top: 2px;" id="zone-asia-info">Deltas hoy: -</div>
+                    <div id="zones-health-container" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                        <div style="background: #1e293b; padding: 12px; border-radius: 6px; text-align: center;">
+                            <span style="font-weight: bold; font-size: 14px; color: #60a5fa;">🇦🇷 Argentina / LATAM (B2B Intel)</span>
+                            <div style="font-size: 11px; color: #cbd5e1; margin-top: 4px;" id="zone-americas-info">Operando 24/7 sobre objetivos inyectados</div>
                         </div>
                     </div>
                 </div>
@@ -90,6 +83,39 @@
                     
                     <div id="findings-list" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
                         <div style="padding: 10px; background: #1e1e2e; border-radius: 5px; color: #888; font-size: 11px;">Cargando hallazgos desde OCI-2 DB...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA B2B INTEL -->
+            <section id="view-b2b" class="view">
+                <div class="card action-card" style="border-top: 3px solid #10b981;">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="icon">📰</span>
+                            <h3>Inteligencia B2B & Prospectos</h3>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" id="b2b-search-query" placeholder="Ej: fintech startups argentina" style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 11px; min-width: 200px;">
+                            <button class="btn btn-primary" onclick="buscarEmpresasB2B()" style="font-size: 11px; padding: 6px 12px; margin: 0; background: #3b82f6; color: #fff;">🔍 Buscar Empresas</button>
+                            <button class="btn btn-primary" onclick="generarReporteB2B()" style="font-size: 11px; padding: 6px 12px; margin: 0; background: #10b981; color: #fff;">🔄 Autodescubrimiento IA</button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 11px; color: #94a3b8;">🎯 <strong>Inyección Directa:</strong> ¿Encontraste un objetivo? Ingresá el dominio para mandarlo a OCI-1:</span>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="new-target-domain" placeholder="ej. mercadolibre.com.ar" style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 11px;">
+                            <button class="btn btn-secondary" onclick="inyectarTargetB2B()" style="font-size: 11px; padding: 6px 12px; background: #ef4444; color: #fff; font-weight: bold;">⚡ Inyectar a OCI-1</button>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" onclick="copiarReporteB2B()" style="font-size: 11px; padding: 6px 12px; background: #374151; color: #fff;">📋 Copiar Texto</button>
+                            <button class="btn btn-secondary" onclick="auditarTarget()" style="font-size: 11px; padding: 6px 12px; background: #8b5cf6; color: #fff; font-weight: bold;">🤖 Auditar Targets</button>
+                        </div>
+                    </div>
+                    
+                    <div id="b2b-content" style="margin-top: 15px; padding: 15px; background: #1e1e2e; border-radius: 5px; color: #cbd5e1; font-size: 12px; white-space: pre-wrap; font-family: monospace;">
+                        Haz clic en "Autodescubrimiento IA" o busca una industria para encontrar objetivos vulnerables.
                     </div>
                 </div>
             </section>
@@ -128,9 +154,9 @@
                             <button id="btn-mark-fp" class="btn btn-danger" onclick="cambiarEstadoInterno('FalsoPositivo')" style="flex: 1; font-size: 12px; background-color: #EF4444; font-weight: bold;">🔴 Marcar Falso Positivo</button>
                         </div>
                         <div style="display: flex; gap: 10px;">
-                            <button id="btn-launch-h1" class="btn btn-success" onclick="abrirHackerOneDirecto()" style="flex: 1; font-size: 12px; background-color: #8b5cf6; font-weight: bold;">🚀 Abrir e Inyectar en HackerOne</button>
+                            <button id="btn-launch-h1" class="btn btn-success" onclick="generarEmailComercial()" style="flex: 1; font-size: 12px; background-color: #8b5cf6; font-weight: bold;">✉️ Generar Email Comercial</button>
                         </div>
-                        <button id="btn-archive-h1" class="btn btn-secondary" onclick="archivarHallazgoActual()" style="font-size: 12px; background-color: #6B7280; color: #fff; font-weight: bold; padding: 10px;">📦 Mover a Enviados (Registrar ID HackerOne)</button>
+                        <button id="btn-archive-h1" class="btn btn-secondary" onclick="archivarHallazgoActual()" style="font-size: 12px; background-color: #6B7280; color: #fff; font-weight: bold; padding: 10px;">📦 Marcar como Prospecto Contactado</button>
                     </div>
                 </div>
             </section>
@@ -141,16 +167,7 @@
                 <p class="view-desc" style="font-size: 11px; color: #94a3b8; margin-bottom: 15px;">Gestiona y promociona tus recursos públicos sin exponer la consola C2 privada.</p>
 
                 <!-- RECURSOS DESTACADOS -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                    <div class="card" style="padding: 14px; background: #0f172a; border: 1px solid #3b82f6;">
-                        <h4 style="color: #60a5fa; margin: 0 0 6px 0; font-size: 13px;">🎮 Juego Educativo MicroSecure</h4>
-                        <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 10px;">Simulador educativo en HTML/JS servido directamente desde OCI-2.</p>
-                        <div style="display: flex; gap: 6px;">
-                            <a id="link-microsecure-open" href="/microsecure/" target="_blank" class="btn btn-primary" style="font-size: 10px; padding: 6px; flex: 1; text-align: center; text-decoration: none;">🚀 Abrir Juego</a>
-                            <button onclick="copiarTexto(window.location.origin + '/microsecure/')" class="btn btn-secondary" style="font-size: 10px; padding: 6px; flex: 1;">📋 Copiar Link</button>
-                        </div>
-                    </div>
-
+                <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px;">
                     <div class="card" style="padding: 14px; background: #0f172a; border: 1px solid #10b981;">
                         <h4 style="color: #34d399; margin: 0 0 6px 0; font-size: 13px;">🛡️ Portafolio / Estado en Vivo</h4>
                         <p style="font-size: 10px; color: #cbd5e1; margin-bottom: 10px;">Estadísticas públicas de monitoreo 24/7 y transparencia técnica.</p>
@@ -244,7 +261,7 @@
 
     <!-- BOTTOM NAVIGATION BAR (Mobile First) -->
 
-    <script src="/static/js/app.js?v=11"></script>
+    <script src="/static/js/app.js?v=15"></script>
     <script src="/static/js/m3_panel.js?v=1"></script>
     <script>
     // Contadores animados para la sección Propuesta de Valor
@@ -319,7 +336,7 @@
     // Función para copiar enlaces públicos
     function copiarEnlacesPublicos() {
         const origin = window.location.origin;
-        const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/portfolio\n\n🎮 Piloto Educativo MicroSecure:\n${origin}/microsecure/`;
+        const texto = `🛡️ Mi Portafolio Ciberseguridad (Estadísticas en vivo):\n${origin}/portfolio`;
         copiarTexto(texto);
     }
     </script>

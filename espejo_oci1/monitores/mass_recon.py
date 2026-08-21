@@ -151,6 +151,41 @@ def run_crtsh(dominio: str) -> set:
     return subdominios
 
 
+import time
+
+def run_ctlogs(dominio: str) -> set:
+    """Obtiene subdominios de CT Logs mediante la API pública de CertSpotter."""
+    subdominios = set()
+    url = f"https://api.certspotter.com/v1/issuances?domain={dominio}&include_subdomains=true&expand=dns_names"
+    
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        # Timeout corto, si falla hacemos fallback rápido a crt.sh
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode("utf-8"))
+            for entry in data:
+                dns_names = entry.get("dns_names", [])
+                for name in dns_names:
+                    val = name.lower().strip().lstrip("*.")
+                    if val.endswith(dominio):
+                        subdominios.add(val)
+        log.info(f"[{dominio}] CertSpotter (CT Logs): {len(subdominios)} encontrados.")
+        time.sleep(1) # Rate limit gentil para la API pública (Free Tier)
+        
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            log.warning(f"[{dominio}] CertSpotter Rate Limit Alcanzado (429). Fallback a crt.sh...")
+        else:
+            log.warning(f"[{dominio}] CertSpotter Error HTTP {e.code}. Fallback a crt.sh...")
+        # Fallback a crt.sh si falla certspotter
+        subdominios.update(run_crtsh(dominio))
+    except Exception as e:
+        log.warning(f"[{dominio}] CertSpotter Error General: {e}. Fallback a crt.sh...")
+        subdominios.update(run_crtsh(dominio))
+
+    return subdominios
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # ORQUESTADOR SECUENCIAL (BATCHING CON SQLITE)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -218,9 +253,8 @@ def descubrir_dominio(dominio: str) -> list[str]:
     # 2. Wayback Machine (Legacy endpoints)
     resultados_totales.update(run_wayback(dominio))
 
-    # 3. crt.sh (Fallback si hay pocos)
-    if len(resultados_totales) < 10:
-        resultados_totales.update(run_crtsh(dominio))
+    # 3. CT Logs (First-Seen) via CertSpotter + Fallback crt.sh
+    resultados_totales.update(run_ctlogs(dominio))
 
     log.info(f"✅ [{dominio}] Total unificado único: {len(resultados_totales)}")
     return sorted(list(resultados_totales))
@@ -245,10 +279,26 @@ def main():
         sys.exit(1)
 
     with open(objetivos_file, "r") as f:
-        dominios = [l.strip() for l in f if l.strip() and not l.startswith("#")]
+        dominios_locales = [l.strip() for l in f if l.strip() and not l.startswith("#")]
+
+    # Fetch dinamico de B2B Targets desde C2
+    c2_url = os.getenv("C2_PANEL_URL", "http://143.47.115.34:8000")
+    try:
+        req = urllib.request.Request(f"{c2_url}/api/targets")
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode("utf-8"))
+            if data.get("status") == "success":
+                targets_b2b = data.get("targets", [])
+                log.info(f"📡 Descargados {len(targets_b2b)} targets dinámicos desde C2 B2B.")
+                dominios_locales.extend(targets_b2b)
+    except Exception as e:
+        log.warning(f"⚠️ No se pudieron obtener targets B2B desde el C2: {e}")
+
+    # Deduplicar
+    dominios = list(set(dominios_locales))
 
     if not dominios:
-        log.error("Archivo de objetivos vacío.")
+        log.error("Archivo de objetivos vacío y C2 sin targets.")
         sys.exit(1)
 
     log.info(f"🎯 Total de targets a pescar: {len(dominios)}")

@@ -106,22 +106,24 @@ header {
 }
 
 .eje-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--text-bright);
+    font-size: 0.82rem;
     font-weight: 600;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 0.85rem;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
+    letter-spacing: 0.3px;
 }
 
 .eje-btn.active, .eje-btn:hover {
     background: var(--accent-amber);
     color: #000;
+    border-color: var(--accent-amber);
     font-weight: 700;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
 }
 
 .badge-live {

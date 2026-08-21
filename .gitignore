@@ -52,3 +52,12 @@ backup_2026_proyectos_viejos/**/assets_generados/
 backup_2026_proyectos_viejos/**/venv/
 *.mp4
 *.srt
+
+# Targets y datos sensibles (OPSEC)
+auth_*.txt
+targets_*.txt
+targets_*.csv
+empresas_*.txt
+portal_noticias/ultimo_reporte_b2b.txt
+espejo_oci1/config/objetivos_prueba.txt
+contingencia/

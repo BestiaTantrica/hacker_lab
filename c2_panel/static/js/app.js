@@ -173,7 +173,102 @@ async function cargarSaludZonas() {
     } catch (e) {}
 }
 
+// INTEGRACIÓN B2B INTEL
+async function generarReporteB2B() {
+    const box = document.getElementById('b2b-content');
+    box.innerHTML = '<span style="color: #60a5fa;">[INFO]</span> Iniciando Agente Analista (Groq/Llama3). Esto puede tomar unos segundos...';
+    
+    try {
+        const res = await fetch('/api/b2b_report', { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'success') {
+            box.innerHTML = data.reporte;
+        } else {
+            box.innerHTML = '<span style="color: #ef4444;">[ERROR]</span> ' + data.message;
+        }
+    } catch (e) {
+        box.innerHTML = '<span style="color: #ef4444;">[ERROR]</span> Falla de red: ' + e.toString();
+    }
+}
 
+async function buscarEmpresasB2B() {
+    const query = document.getElementById('b2b-search-query').value.trim();
+    if (!query) return;
+
+    const box = document.getElementById('b2b-content');
+    box.innerHTML = '<span style="color: #60a5fa;">[INFO]</span> Buscando prospectos para: "' + query + '"...';
+    
+    try {
+        const res = await fetch('/api/b2b_search', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({query: query})
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            box.innerHTML = data.reporte;
+        } else {
+            box.innerHTML = '<span style="color: #ef4444;">[ERROR]</span> ' + data.message;
+        }
+    } catch (e) {
+        box.innerHTML = '<span style="color: #ef4444;">[ERROR]</span> Falla de red: ' + e.toString();
+    }
+}
+
+async function inyectarTargetB2B() {
+    const input = document.getElementById('new-target-domain');
+    const domain = input.value.trim();
+    if (!domain) return;
+    
+    try {
+        const res = await fetch('/api/targets/inject', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({domain: domain})
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            mostrarToast('🎯 ' + data.message, 'success');
+            input.value = '';
+        } else {
+            mostrarToast('Error: ' + data.message, 'error');
+        }
+    } catch (e) {
+        mostrarToast('Error de red al inyectar dominio.', 'error');
+    }
+}
+
+function copiarReporteB2B() {
+    const content = document.getElementById('b2b-content').innerText;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(content).then(() => {
+            mostrarToast('📋 Contenido B2B copiado al portapapeles', 'success');
+        });
+    } else {
+        fallbackCopiar(content);
+        mostrarToast('📋 Contenido B2B copiado al portapapeles', 'success');
+    }
+}
+
+async function auditarTarget() {
+    const box = document.getElementById('b2b-content');
+    const currentContent = box.innerText;
+    if (!currentContent || currentContent.trim() === '' || currentContent.includes('Autodescubrimiento IA')) {
+        mostrarToast('⚠️ Realizá una búsqueda primero para tener targets que auditar', 'error');
+        return;
+    }
+    
+    const chatInput = document.getElementById('chat-input');
+    chatInput.value = 'Tengo esta lista de prospectos B2B para nuestro enfoque de ALTO VOLUMEN (Takeovers, CORS, S3 leaks). Excluye gigantes si se colaron. Ordena los targets válidos de mejor a peor para OCI-1 (perfil teórico) y entrégame SÓLO EL RANKING EN FORMA DE LISTA CORTA Y AL GRANO. Omite las explicaciones largas de "por qué" para ahorrar tiempo y tokens.\n' + currentContent;
+    
+    // Enviar el mensaje automáticamente
+    enviarMensajeChat();
+    
+    // Scroll hacia el chat para que el usuario vea la respuesta en pantallas pequeñas
+    setTimeout(() => {
+        document.getElementById('chat-messages').scrollIntoView({behavior: 'smooth', block: 'end'});
+    }, 100);
+}
 
 function cambiarTabFindings(tab, btnElement) {
     current_tab = tab;

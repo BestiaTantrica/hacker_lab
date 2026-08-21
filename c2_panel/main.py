@@ -61,6 +61,13 @@ try:
 except ImportError:
     _EPHEM_AVAILABLE = False
 
+# Módulo B2B Intel
+try:
+    from b2b.reportero_ejecutivo import generar_reporte_ejecutivo, llamar_ia
+    _B2B_AVAILABLE = True
+except ImportError:
+    _B2B_AVAILABLE = False
+
 app = FastAPI(title="C2 Panel & Copilot Hub — HackerLab", version="2.0")
 
 app.add_middleware(
@@ -75,7 +82,7 @@ app.add_middleware(
 DB_PATH = os.path.join(os.path.dirname(__file__), "c2_db.sqlite")
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     # Tabla de Deltas Ingeridas por Zona
     cursor.execute("""
@@ -174,6 +181,16 @@ def init_db():
                          ("perfil_top_categoria", "''"), ("reflexion_final", "''")]:
         if col not in cols_leads:
             cursor.execute(f"ALTER TABLE leads ADD COLUMN {col} TEXT DEFAULT {default}")
+
+    # Nueva tabla: Targets B2B (Argentina / Regionales)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS targets (
+            domain TEXT PRIMARY KEY,
+            source TEXT DEFAULT 'b2b',
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN DEFAULT 1
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -206,7 +223,7 @@ async def dead_mans_switch():
     while True:
         await asyncio.sleep(3600)  # Cada 60 minutos
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(DB_PATH, timeout=15.0)
             cursor = conn.cursor()
             # Diferencia en horas entre last_seen y ahora (UTC)
             cursor.execute("SELECT zone, last_seen FROM heartbeats WHERE (julianday(CURRENT_TIMESTAMP) - julianday(last_seen)) * 24 > 12")
@@ -567,7 +584,7 @@ def get_status():
     ssh_online = client is not None
     
     # Consultar DB local para conteos
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM deltas")
     total_deltas = cursor.fetchone()[0]
@@ -594,7 +611,7 @@ def get_status():
 
 @app.get("/poll/{poll_id}", response_class=HTMLResponse)
 async def get_poll_html(request: Request, poll_id: int):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM polls WHERE id = ?", (poll_id,))
     if not cursor.fetchone():
@@ -605,7 +622,7 @@ async def get_poll_html(request: Request, poll_id: int):
 
 @app.get("/portfolio", response_class=HTMLResponse)
 async def get_portfolio_html(request: Request):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM deltas")
     total_deltas = cursor.fetchone()[0]
@@ -618,7 +635,7 @@ async def get_portfolio_html(request: Request):
 @app.get("/api/zones_health")
 def get_zones_health():
     """Retorna el contador de deltas hoy por zona y el último descubrimiento."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -650,7 +667,7 @@ class IngestPayload(BaseModel):
 @app.post("/api/ingest_delta")
 def ingest_delta(payload: IngestPayload):
     """Endpoint receptor de telemetría proveniente de OCI-1."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     
     inserted_deltas = 0
@@ -690,7 +707,7 @@ class HeartbeatPayload(BaseModel):
 @app.post("/api/heartbeat")
 def heartbeat_endpoint(payload: HeartbeatPayload):
     """Recibe latidos de OCI-1 al finalizar cada pipeline para el Dead Man's Switch."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     # Usamos REPLACE o ON CONFLICT (requiere tabla creada de esa forma, INSERT OR REPLACE es más universal en SQLite)
     cursor.execute("""
@@ -713,7 +730,7 @@ class UpdateStatusRequest(BaseModel):
 
 @app.get("/api/findings")
 def get_findings(status: Optional[str] = "Pendiente"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -730,7 +747,7 @@ def get_findings(status: Optional[str] = "Pendiente"):
 
 @app.post("/api/findings/{finding_id}/archive")
 def archive_finding(finding_id: int, req: ArchiveRequest):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE findings 
@@ -746,7 +763,7 @@ def archive_finding(finding_id: int, req: ArchiveRequest):
 
 @app.post("/api/findings/{finding_id}/update_status")
 def update_finding_status(finding_id: int, req: UpdateStatusRequest):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE findings 
@@ -764,7 +781,7 @@ class InternalStatusRequest(BaseModel):
 
 @app.post("/api/findings/{finding_id}/internal_status")
 def update_internal_status(finding_id: int, req: InternalStatusRequest):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("UPDATE findings SET status_interno = ? WHERE id = ?", (req.status_interno, finding_id))
     
@@ -774,11 +791,84 @@ def update_internal_status(finding_id: int, req: InternalStatusRequest):
     
     conn.commit()
     conn.close()
-    return {"status": "success", "message": f"Estado interno actualizado a {req.status_interno}"}
+    return {"status": "success", "message": "Estado H1 actualizado localmente."}
+
+@app.post("/api/b2b_report")
+async def api_b2b_report():
+    if not _B2B_AVAILABLE:
+        return {"status": "error", "message": "B2B Intel modulo no disponible en OCI-2."}
+    try:
+        resultado = generar_reporte_ejecutivo()
+        return {"status": "success", "reporte": resultado}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+class B2BSearchRequest(BaseModel):
+    query: str
+
+@app.post("/api/b2b_search")
+async def api_b2b_search(req: B2BSearchRequest):
+    if not _B2B_AVAILABLE:
+        return {"status": "error", "message": "B2B Intel modulo no disponible en OCI-2."}
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=15.0)
+        cursor = conn.cursor()
+        cursor.execute("SELECT domain FROM targets")
+        rows = cursor.fetchall()
+        conn.close()
+        existing_targets = [r[0] for r in rows]
+        exclude_str = ""
+        if existing_targets:
+            exclude_str = f" EXCLUYE también los siguientes dominios ya procesados: {', '.join(existing_targets[:50])}."
+
+        instruccion = f"El usuario está buscando prospectos corporativos en Argentina relacionados con la siguiente query: '{req.query}'. Genera una lista de 5 empresas reales que coincidan. REGLA ESTRICTA: EXCLUYE TOTALMENTE bancos tradicionales grandes (Galicia, Santander, etc) y empresas gigantes/unicornios (MercadoPago, Ualá).{exclude_str} Enfócate SÓLO en startups medianas o empresas menos conocidas con infraestructura web. Por cada una, provee su dominio web (FORMATO LIMPIO: empresa.com.ar, sin http ni www) y una breve descripción."
+        respuesta_ia = llamar_ia(instruccion)
+        
+        import re
+        found_domains = re.findall(r'(?i)\b(?:[a-z0-9-]+\.)+(?:com\.ar|com|ar|net|org|io)\b', respuesta_ia)
+        if found_domains:
+            conn = sqlite3.connect(DB_PATH, timeout=15.0)
+            cursor = conn.cursor()
+            for fd in found_domains:
+                cursor.execute("INSERT OR IGNORE INTO targets (domain, source, is_active) VALUES (?, 'b2b_seen', 0)", (fd.lower(),))
+            conn.commit()
+            conn.close()
+
+        resultado = f"<h3>Resultados prospectos B2B para: {req.query}</h3>\n\n{respuesta_ia}\n\n<hr><small>Nota: Copiá el dominio y usá el botón Inyectar a OCI-1</small>"
+        return {"status": "success", "reporte": resultado}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+class InjectTargetRequest(BaseModel):
+    domain: str
+
+@app.post("/api/targets/inject")
+def inject_target(req: InjectTargetRequest):
+    domain = req.domain.strip().lower()
+    if not domain:
+        raise HTTPException(status_code=400, detail="Dominio inválido")
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=15.0)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO targets (domain, source, is_active) VALUES (?, 'b2b', 1) ON CONFLICT(domain) DO UPDATE SET is_active=1", (domain,))
+        conn.commit()
+        conn.close()
+        return {"status": "success", "message": f"Dominio {domain} inyectado al pipeline."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.get("/api/targets")
+def get_targets():
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
+    cursor = conn.cursor()
+    cursor.execute("SELECT domain FROM targets WHERE is_active = 1")
+    rows = cursor.fetchall()
+    conn.close()
+    return {"status": "success", "targets": [r[0] for r in rows]}
 
 @app.get("/api/deltas/{zone}")
 def get_deltas_by_zone(zone: str):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     if zone == "all":
@@ -824,8 +914,9 @@ def generate_copilot_prompt(req: GenerateReportRequest):
 
     system_prefix = ""
     if req.skill_key != "traductor_espanol":
-        system_prefix += "SYSTEM DIRECTIVE: OUTPUT ONLY IN ENGLISH. ZERO SPANISH WORDS.\n"
-        system_prefix += "SYSTEM DIRECTIVE 3: DO NOT HALLUCINATE. DO NOT ADD CONTEXT. DO NOT EXPLAIN CONCEPTS. ONLY EXTRACT AND FORMAT.\n"
+        system_prefix += "SYSTEM DIRECTIVE: Eres Pegaso, un Asesor Comercial de Ciberseguridad. Escribe ÚNICAMENTE el cuerpo de un email dirigido al CTO/Dueño de la empresa.\n"
+        system_prefix += "SYSTEM DIRECTIVE 2: Escribe en un tono consultivo, respetuoso, profesional y a título personal. Usa las metáforas del Gurú de forma sutil si ayuda a entender la vulnerabilidad. NO des los detalles técnicos precisos ni el payload.\n"
+        system_prefix += "SYSTEM DIRECTIVE 3: DO NOT HALLUCINATE. DO NOT ADD CONTEXT. SOLO OFRECE ASESORÍA PARA REMEDIARLO. Firma el correo con tu nombre a título personal.\n"
 
 # --- MOTOR ASTROLÓGICO (ASTRO-CURRÍCULUM) ---
 
@@ -950,7 +1041,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/chat/history")
 def get_chat_history():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT source, role, message, created_at FROM chat_history ORDER BY id ASC LIMIT 50")
@@ -961,7 +1052,7 @@ def get_chat_history():
 @app.get("/api/chat/context")
 def get_session_context():
     """Genera un briefing inteligente de la sesion actual para inyectar como contexto inicial en Pegaso."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -1011,7 +1102,7 @@ def chat_endpoint(req: ChatRequest):
     if completar is None:
         return {"status": "error", "data": "Módulo llm_client no encontrado."}
     
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -1038,7 +1129,12 @@ def chat_endpoint(req: ChatRequest):
 
     system_prompt = f"""Eres Pegaso, el copiloto IA del C2 Panel de Bug Bounty.
 Tu prioridad es ayudar a capitalizar vulnerabilidades rápidamente con un enfoque de volumen (Redes de Pesca).
-Valoras reportes claros, PoCs reproducibles y maximizar bounties (incluso de $50-$100 USD).
+
+REGLAS ABSOLUTAS Y GARANTÍAS DE PRECISIÓN:
+1. CERO ALUCINACIONES: Prohibido inventar vulnerabilidades, dominios, IPs o comandos que no estén explícitamente en el contexto. Si no sabes algo, responde "NO HAY DATOS".
+2. RESPUESTAS DETERMINISTAS: Sé directo, clínico y preciso. No divagues ni des introducciones largas.
+3. GUÍA ACTIVA: No hagas preguntas abiertas. Da instrucciones claras, precisas y paso a paso de lo que el usuario debe ejecutar. Asume el liderazgo.
+4. AHORRO DE TOKENS: Sé extremadamente conciso. Ve al grano.
 
 HALLAZGOS VERIFICADOS RECIENTES:
 {context_str}
@@ -1047,10 +1143,10 @@ HALLAZGOS VERIFICADOS RECIENTES:
 Pregunta/Orden del usuario: {req.message}"""
     
     try:
-        respuesta = completar(system_prompt, max_tokens=1024)
+        respuesta = completar(system_prompt, max_tokens=2048, temperature=0.0)
         
         # Guardar en la base de datos unificada SQLite
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(DB_PATH, timeout=15.0)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO chat_history (source, role, message, finding_id) VALUES ('web', 'user', ?, ?)", (req.message, req.finding_id))
         cursor.execute("INSERT INTO chat_history (source, role, message, finding_id) VALUES ('web', 'assistant', ?, ?)", (respuesta, req.finding_id))
@@ -1161,7 +1257,7 @@ def verify_bug(req: VerifyRequest):
 # ============================================================
 @app.post("/api/findings/{finding_id}/validate_scope")
 def validate_scope_endpoint(finding_id: int):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT target, severity, vuln_type FROM findings WHERE id = ?", (finding_id,))
@@ -1201,7 +1297,7 @@ def validate_scope_endpoint(finding_id: int):
 # ============================================================
 @app.post("/api/findings/{finding_id}/generate_poc")
 def generate_poc_endpoint(finding_id: int):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT evidence, target, vuln_type FROM findings WHERE id = ?", (finding_id,))
@@ -1241,7 +1337,7 @@ class WafProbeRequest(BaseModel):
 
 @app.post("/api/findings/{finding_id}/waf_probe")
 def waf_probe_endpoint(finding_id: int):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT target, evidence, vuln_type FROM findings WHERE id = ?", (finding_id,))
@@ -1450,7 +1546,7 @@ def get_public_stats():
     Modulo D: Estadisticas publicas anonimizadas para portafolio.
     Cero targets, cero IPs, cero paths. Solo conteos.
     """
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
 
     cursor.execute("SELECT COUNT(*) FROM findings WHERE verified = 1 AND status_interno NOT IN ('FalsoPositivo', 'Falso Positivo')")
@@ -1622,7 +1718,7 @@ async def capturar_lead(payload: LeadPayload):
     if not payload.email or "@" not in payload.email:
         raise HTTPException(status_code=400, detail="Email invalido")
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO leads (email, historial_json, merito_score, jackpot_desbloqueado,
@@ -1652,7 +1748,7 @@ async def capturar_lead(payload: LeadPayload):
 @app.get("/api/leads")
 async def listar_leads(limit: int = 50):
     """Lista los ultimos leads capturados desde MicroSecure (solo para el operador C2)."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("""
@@ -1674,7 +1770,7 @@ class PollCreatePayload(BaseModel):
 
 @app.post("/api/polls")
 async def create_poll(payload: PollCreatePayload):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO polls (question, theme) VALUES (?, ?)", (payload.question, payload.theme))
     poll_id = cursor.lastrowid
@@ -1687,7 +1783,7 @@ async def create_poll(payload: PollCreatePayload):
 
 @app.get("/api/polls/{poll_id}")
 async def get_poll(poll_id: int):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM polls WHERE id = ?", (poll_id,))
@@ -1708,7 +1804,7 @@ class PollVotePayload(BaseModel):
 
 @app.post("/api/polls/{poll_id}/vote")
 async def vote_poll(poll_id: int, payload: PollVotePayload, request: Request):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -1737,7 +1833,7 @@ async def vote_poll(poll_id: int, payload: PollVotePayload, request: Request):
 
 @app.get("/api/polls")
 async def list_polls(limit: int = 50):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM polls ORDER BY created_at DESC LIMIT ?", (limit,))

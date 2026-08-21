@@ -29,8 +29,7 @@ El laboratorio se divide físicamente en dos entornos de ejecución:
 - **Proyectos Clave:**
   - `network-toolkit`: Herramienta modular en Bash para diagnóstico de red y Honeypot Local (trampas pasivas y alertas Telegram).
   - `asalto_local.sh` ("Modo Bestia Protegido"): Infraestructura de escaneo local en dos fases (recon y attack) con límites de concurrencia y filtros de CDN para no saturar la red doméstica.
-  - `juego_piloto_cibersec`: Piloto educativo "MicroSecure" (Attention Mining, Feed de micro-insights ciberseguridad, Gamificación 1-clic).
-  - `portal_noticias`: Portal Público "Radar Prensa & Termómetro Social" (puerto `8001`, FastAPI + Uvicorn). Medición de sesgo mediático, encuestas reales en tiempo real (`portal_db.sqlite`), filtrado regional/provincial, captura de newsletter y Fábrica de Shorts MP4 con locución TTS en español (`espeak-ng` + FFmpeg).
+  - `portal_noticias`: Portal Interno de "Inteligencia B2B y Termómetro Social" (puerto `8001`, FastAPI + Uvicorn). Extrae titulares RSS en tiempo real y utiliza un Agente Analista Ejecutivo (`reportero_ejecutivo.py`) impulsado por LLM (Gemini/Groq) para generar informes estratégicos automatizados y sin alucinaciones.
   - `caso fuerza bruta btc`: Entorno de análisis forense y descifrado bayesiano para carteras Bitcoin (wallet.dat 2013).
   - `portafolio-ciberseguridad`: Estructura académica alineada con el Certificado de Ciberseguridad de Google.
 
@@ -69,15 +68,4 @@ El pipeline de recolección masiva en **OCI-1** está formalmente conectado con 
 - **M4 - C2 Lifecycle & Exportación:** `sync_to_c2_panel()` inyecta vulnerabilidades en `c2_db.sqlite`. La UI permite gestionar la máquina de estados (`Pendiente` -> `Validado` -> `Archivado`) y exportar reportes Markdown/PDF con cero overhead.
 - **Notificaciones por Filtrado de Valor:** Telegram alerta de latidos perdidos y hallazgos verificados de alta calidad.
 
----
-
-## 🏛️ 6. El Proyecto de Vida: Plataforma Educativa Integral (MicroSecure)
-El desarrollo denominado internamente como "juego_piloto_cibersec" no es un simple juego, sino el embrión del trabajo de vida del autor. 
-Es un proyecto a gran escala concebido como una red social y plataforma de aprendizaje diseñada para integrar, defender y expandir los valores de la cultura occidental.
-
-**Pilares Ideológicos y Fundamentos:**
-1. **Educación Invertida (Pagar por Aprender):** Romper el paradigma del sistema educativo tradicional (ineficiente, burocrático y politizado). Si la educación es la barrera entre la civilización y la barbarie, y los gobiernos malgastan los recursos, el sistema debe rediseñarse para recompensar económicamente al que estudia (Attention Mining). Panza llena y mente libre para coordinar.
-2. **Eficiencia y Tecnología (IA vs. Burocracia):** Eliminar tiempos muertos y currículas obsoletas impartidas por sistemas anacrónicos. El tiempo corre rápido y la IA debe ser el motor que personalice, acelere y haga dinámico el aprendizaje. No hay necesidad de que el estudio sea aburrido o bloqueante.
-3. **Rescate del Capital Humano:** Contraponerse a la voracidad económica que deshumaniza (modelo basado puramente en la extracción y la propaganda masiva). La plataforma busca devolver la libertad y el valor a las personas mediante el conocimiento práctico, la lógica y los principios occidentales.
-4. **Alcance Global:** Orientado a profesores, alumnos, padres y cualquier persona del mundo (especialmente de otras culturas) que desee integrarse al estilo de vida occidental basado en la libertad individual y el desarrollo.
 

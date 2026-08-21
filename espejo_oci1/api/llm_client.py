@@ -18,6 +18,19 @@ import urllib.request
 import urllib.error
 from abc import ABC, abstractmethod
 
+def _load_env_file(filepath):
+    """Carga variables desde un archivo .env si existe, usando bibliotecas estándar."""
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    parts = line.split('=', 1)
+                    if len(parts) == 2:
+                        key, val = parts[0].strip(), parts[1].strip()
+                        val = val.strip('"\'')
+                        os.environ[key] = val
+
 # Configuración del logger
 logger = logging.getLogger(__name__)
 
@@ -64,13 +77,15 @@ class GroqProvider(LLMProvider):
     name = "groq"
 
     def __init__(self):
+        env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "entorno.env")
+        _load_env_file(env_path)
         self.api_key = os.getenv("GROQ_API_KEY", "").strip()
         self.model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant").strip()
 
     def is_available(self) -> bool:
         return bool(self.api_key)
 
-    def completar(self, prompt: str, max_tokens: int = 512) -> str:
+    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.0) -> str:
         url = "https://api.groq.com/openai/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -79,7 +94,8 @@ class GroqProvider(LLMProvider):
         payload = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens
+            "max_tokens": max_tokens,
+            "temperature": temperature
         }
         
         data = _post_json(url, headers, payload, timeout=20)
@@ -99,7 +115,7 @@ class GeminiProvider(LLMProvider):
     def is_available(self) -> bool:
         return bool(self.api_key)
 
-    def completar(self, prompt: str, max_tokens: int = 512) -> str:
+    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.0) -> str:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
         headers = {
             "Content-Type": "application/json"
@@ -109,7 +125,8 @@ class GeminiProvider(LLMProvider):
                 "parts": [{"text": prompt}]
             }],
             "generationConfig": {
-                "maxOutputTokens": max_tokens
+                "maxOutputTokens": max_tokens,
+                "temperature": temperature
             }
         }
 
@@ -121,19 +138,53 @@ class GeminiProvider(LLMProvider):
 
 
 # ---------------------------------------------------------------------------
+# 3. OpenRouter (Fallback 2)
+# ---------------------------------------------------------------------------
+class OpenRouterProvider(LLMProvider):
+    name = "openrouter"
+
+    def __init__(self):
+        self.api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+        self.model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3-8b-instruct:free").strip()
+
+    def is_available(self) -> bool:
+        return bool(self.api_key)
+
+    def completar(self, prompt: str, max_tokens: int = 512, temperature: float = 0.0) -> str:
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "http://localhost:8000", # Necesario para OpenRouter
+            "X-Title": "C2 Copilot"
+        }
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
+            "temperature": temperature
+        }
+
+        data = _post_json(url, headers, payload, timeout=25)
+        return data["choices"][0]["message"]["content"].strip()
+
+
+# ---------------------------------------------------------------------------
 # Cadena de ejecución y mapeo
 # ---------------------------------------------------------------------------
 PROVIDERS = {
     "groq": GroqProvider(),
-    "gemini": GeminiProvider()
+    "gemini": GeminiProvider(),
+    "openrouter": OpenRouterProvider()
 }
 
 PROVIDER_CHAIN: list[LLMProvider] = [
     PROVIDERS["groq"],
-    PROVIDERS["gemini"]
+    PROVIDERS["gemini"],
+    PROVIDERS["openrouter"]
 ]
 
-def completar(prompt: str, max_tokens: int = 512, provider_name: str = None) -> str:
+def completar(prompt: str, max_tokens: int = 512, provider_name: str = None, temperature: float = 0.0) -> str:
     """
     Intenta resolver la petición.
     - Si se especifica provider_name, llama directamente a ese proveedor sin fallback.
@@ -149,7 +200,7 @@ def completar(prompt: str, max_tokens: int = 512, provider_name: str = None) -> 
             raise LLMError(f"El proveedor '{provider_name}' fue invocado directamente pero no tiene API Key configurada.")
         
         logger.info("[%s] Invocación directa...", provider.name)
-        return provider.completar(prompt, max_tokens=max_tokens)
+        return provider.completar(prompt, max_tokens=max_tokens, temperature=temperature)
 
     # Comportamiento por defecto: cascada/fallback
     errors = []
@@ -160,7 +211,7 @@ def completar(prompt: str, max_tokens: int = 512, provider_name: str = None) -> 
 
         try:
             logger.info("[%s] intentando completado...", provider.name)
-            respuesta = provider.completar(prompt, max_tokens=max_tokens)
+            respuesta = provider.completar(prompt, max_tokens=max_tokens, temperature=temperature)
             logger.info("[%s] completado con éxito (%d caracteres)", provider.name, len(respuesta))
             return respuesta
         except Exception as exc:
