@@ -1,0 +1,19 @@
+# Entornos Virtuales
+venv/
+env/
+.venv/
+
+# Variables de Entorno (Claves secretas)
+.env
+*.env
+
+# Archivos pesados y generados localmente
+produccion/
+ready_for_capcut/
+*.mp3
+*.wav
+
+# Archivos de caché y python
+__pycache__/
+*.pyc
+.pytest_cache/

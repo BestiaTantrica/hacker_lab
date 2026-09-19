@@ -61,3 +61,14 @@ empresas_*.txt
 portal_noticias/ultimo_reporte_b2b.txt
 espejo_oci1/config/objetivos_prueba.txt
 contingencia/
+
+# Ignorar Media y temporales de Astrology Factory
+*.mp4
+*.srt
+*.mp3
+*.ass
+*.ts
+astrology_factory/**/temp_clips/
+
+# Ignorar proyectos congelados por limpieza
+proyectos_congelados/

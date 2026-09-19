@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Mapa Astral | Astrología de Precisión</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+    <div class="ambient-background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Descubre el mapa de<br>tu universo interior</h1>
+            <p>Descubre el guion oculto de tu vida. Astrología profunda, sin filtros y brutalmente honesta. Recibe tu mapa astral hiper-personalizado directo en tu correo.</p>
+        </section>
+
+        <section class="subscription-panel glassmorphism">
+            <h2>Únete a la Constelación</h2>
+            <form id="subscribeForm" class="elegant-form">
+                <div class="input-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="name" required placeholder="Ej. Camila">
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                </div>
+
+                <div class="row">
+                    <div class="input-group half">
+                        <label for="birth_date">Fecha de Nacimiento</label>
+                        <input type="date" id="birth_date" name="birth_date" required>
+                    </div>
+                    <div class="input-group half">
+                        <label for="birth_time">Hora (Aprox)</label>
+                        <input type="time" id="birth_time" name="birth_time" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="birth_city">Ciudad de Nacimiento</label>
+                    <input type="text" id="birth_city" name="birth_city" required placeholder="Ej. Buenos Aires, Argentina">
+                </div>
+
+                <button type="submit" class="primary-btn">
+                    <span class="btn-text">Generar mi Carta</span>
+                    <div class="loader hidden"></div>
+                </button>
+            </form>
+            <div id="formMessage" class="message hidden"></div>
+            
+            <div id="personalResponse" class="hidden" style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; text-align: left; line-height: 1.6; border: 1px solid rgba(255,255,255,0.1);">
+                <!-- Aquí se inyectará el HTML generado por la IA -->
+            </div>
+            
+            <div class="donation-section" style="margin-top: 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem;">¿Querés apoyar el proyecto?</p>
+                <p style="font-size: 1.1rem; font-weight: 600;">Mercado Pago (Alias): <span style="color: #4CAF50; user-select: all; cursor: pointer; letter-spacing: 1px;">vida.rucula</span></p>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 0.3rem;">Aporte libre. Gracias por sumar a la constelación ✨</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
