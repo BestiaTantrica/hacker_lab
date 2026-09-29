@@ -144,12 +144,14 @@ def _buscar_pixabay_ilustracion(query: str, output_dir: str, idx: int,
     if not api_key:
         return []
 
-    # Quitar etiquetas del query
+    # Quitar etiquetas del query y agregar filtros estrictos de abstracción
     q_limpio = query.replace("[illustration]", "").replace("[video]", "").strip()
-    encoded = urllib.parse.quote(q_limpio)
+    # Forzar negativos para evitar clipart infantil y enfocar en fondos abstractos
+    q_filtrado = f"{q_limpio} -animal -cartoon -cute -vector -character -kids"
+    encoded = urllib.parse.quote(q_filtrado)
     
     url = (f"https://pixabay.com/api/?key={api_key}&q={encoded}"
-           f"&image_type=illustration&orientation=vertical&per_page={n*2}")
+           f"&image_type=illustration&category=backgrounds,science&orientation=vertical&per_page={n*2}")
     
     try:
         req = urllib.request.Request(url, headers=HEADERS)

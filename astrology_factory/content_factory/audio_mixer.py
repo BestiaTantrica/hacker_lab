@@ -125,25 +125,9 @@ def mix_frequency_layer(
                 )
                 n_accents += 1
 
-    # SFX de Glitches (Sintéticos)
-    glitch_parts = []
-    glitch_sfx = conf.get("glitch_sfx", "anoisesrc=c=white:d=0.08")
-    
+    # SFX de Glitches eliminados para mantener un flujo 100% orgánico
     n_glitches = 0
-    for g_time in glitch_timestamps:
-        delay_ms = int(g_time * 1000)
-        lbl = f"g{n_glitches}"
-        idx = 4 + n_accents + n_glitches
-        
-        inputs += [
-            "-f", "lavfi", "-i", glitch_sfx
-        ]
-        glitch_parts.append(
-            f"[{idx}:a]volume={ACCENT_DB}dB,adelay={delay_ms}|{delay_ms}[{lbl}];"
-        )
-        n_glitches += 1
-
-    fg_glitches = "".join(glitch_parts)
+    fg_glitches = ""
     
     total_mix_inputs = 2 # narr + pad
     mix_lbls = "[narr][pad]"
@@ -156,12 +140,6 @@ def mix_frequency_layer(
         total_mix_inputs += 1
     else:
         fg_accents = ""
-        
-    if n_glitches > 0:
-        glitch_lbls = "".join(f"[g{i}]" for i in range(n_glitches))
-        fg_glitches += f"{glitch_lbls}amix=inputs={n_glitches}:normalize=0[glitches];"
-        mix_lbls += "[glitches]"
-        total_mix_inputs += 1
 
     fg_final = (
         f"[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[narr];"
@@ -169,7 +147,6 @@ def mix_frequency_layer(
     )
     
     if n_accents > 0: print(f"   ✨ {n_accents} Acentos Empáticos generados a lo largo del guion")
-    if n_glitches > 0: print(f"   ⚡ {n_glitches} SFX de Glitches inyectados en la mezcla")
 
     filter_graph = fg_pad + fg_accents + fg_glitches + fg_final
 

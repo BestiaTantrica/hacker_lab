@@ -55,4 +55,30 @@ document.addEventListener('DOMContentLoaded', () => {
             loader.classList.add('hidden');
         }
     });
+
+    const rectifyForm = document.getElementById('rectifyForm');
+    if (rectifyForm) {
+        rectifyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(rectifyForm);
+            const rMsg = document.getElementById('rectifyMessage');
+            rMsg.classList.remove('hidden');
+            rMsg.textContent = 'Actualizando hora en Nodriza...';
+            rMsg.className = 'message show';
+
+            try {
+                const res = await fetch('/api/update-time', { method: 'POST', body: formData });
+                const result = await res.json();
+                rMsg.textContent = result.message;
+                rMsg.className = 'message show ' + (result.status === 'success' ? 'success' : 'error');
+                if (result.status === 'success') {
+                    rectifyForm.reset();
+                    setTimeout(() => rectifyForm.classList.add('hidden'), 3000);
+                }
+            } catch (error) {
+                rMsg.textContent = 'Error de conexión.';
+                rMsg.className = 'message show error';
+            }
+        });
+    }
 });

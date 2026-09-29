@@ -1,0 +1,790 @@
+{
+  "transits": [
+    {
+      "name": "moon_in_aries",
+      "display_name": "Luna en Aries",
+      "emotional_concepts": [
+        "warrior spirit",
+        "passionate fire",
+        "sudden anger",
+        "impulsive courage",
+        "breaking limits"
+      ],
+      "palette": {
+        "primary": "Rojo Sangre",
+        "secondary": "Naranja Óxido",
+        "accent": "Negro Carbón"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "sweating athlete", 
+          "sparks and fire", 
+          "fast blur motion"
+        ],
+        "esoteric_art": [
+          "mars planetary symbol", 
+          "drawn swords", 
+          "ancient runes of battle"
+        ],
+        "abstract_glitch": [
+          "red static interference", 
+          "fast geometric cuts", 
+          "aggressive vhs distortion"
+        ]
+      }
+    },
+    {
+      "name": "moon_in_scorpio",
+      "display_name": "Luna en Escorpio",
+      "emotional_concepts": [
+        "deep secrets",
+        "psychological purge",
+        "intense obsession",
+        "dark waters",
+        "emotional transformation"
+      ],
+      "palette": {
+        "primary": "Carmesí Profundo",
+        "secondary": "Negro Abismo",
+        "accent": "Violeta Oscuro"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "dark stormy ocean", 
+          "shadowy figure", 
+          "intense eye contact"
+        ],
+        "esoteric_art": [
+          "pluto planetary symbol", 
+          "serpent or scorpion occult art", 
+          "alchemical transmutation"
+        ],
+        "abstract_glitch": [
+          "slow liquid distortion", 
+          "dark vignette pulse", 
+          "black frame flashes"
+        ]
+      }
+    },
+    {
+      "name": "sun_in_capricorn",
+      "display_name": "Sol en Capricornio",
+      "emotional_concepts": [
+        "heavy burden",
+        "strict discipline",
+        "cold reality",
+        "stoic silence",
+        "climbing the mountain"
+      ],
+      "palette": {
+        "primary": "Gris Piedra",
+        "secondary": "Marrón Tierra Seca",
+        "accent": "Blanco Hielo"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "frozen mountain peak", 
+          "concrete architecture", 
+          "exhausted worker"
+        ],
+        "esoteric_art": [
+          "saturn planetary symbol", 
+          "the hermit tarot card", 
+          "ancient stone carvings"
+        ],
+        "abstract_glitch": [
+          "static cold noise", 
+          "harsh grid lines", 
+          "desaturated freeze frames"
+        ]
+      }
+    },
+    {
+      "name": "mercury_in_aquarius",
+      "display_name": "Mercurio en Acuario",
+      "emotional_concepts": [
+        "sudden realization",
+        "breaking patterns",
+        "electric shock",
+        "rebellious thought",
+        "detached observation"
+      ],
+      "palette": {
+        "primary": "Azul Eléctrico",
+        "secondary": "Plata Metálica",
+        "accent": "Cian Neón"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "lightning strike", 
+          "urban night lights", 
+          "server room wires"
+        ],
+        "esoteric_art": [
+          "uranus planetary symbol", 
+          "sacred geometry", 
+          "star map constellations"
+        ],
+        "abstract_glitch": [
+          "digital datamoshing", 
+          "cyan binary code", 
+          "fast screen tearing"
+        ]
+      }
+    },
+    {
+      "name": "mars_sextile_uranus",
+      "display_name": "Marte Sextil Urano",
+      "emotional_concepts": [
+        "electric action",
+        "sudden liberation",
+        "breaking chains",
+        "innovative strike",
+        "rebellious energy"
+      ],
+      "palette": {
+        "primary": "Rojo Neón",
+        "secondary": "Plata Metálica",
+        "accent": "Azul Eléctrico"
+      }
+    },
+    {
+      "name": "venus_square_mars",
+      "display_name": "Venus Cuadratura Marte",
+      "emotional_concepts": [
+        "passionate friction",
+        "lover's quarrel",
+        "intense desire",
+        "creative tension",
+        "magnetic push and pull"
+      ],
+      "palette": {
+        "primary": "Carmesí Profundo",
+        "secondary": "Rosa Intenso",
+        "accent": "Negro Carbón"
+      }
+    },
+    {
+      "name": "moon_opposite_neptune",
+      "display_name": "Luna Oposición Neptuno",
+      "emotional_concepts": [
+        "dissolving boundaries",
+        "oceanic feeling",
+        "confused emotions",
+        "dreamy illusion",
+        "deep sensitivity"
+      ],
+      "palette": {
+        "primary": "Azul Océano",
+        "secondary": "Lila Pálido",
+        "accent": "Plata Niebla"
+      }
+    },
+    {
+      "name": "stellium_escorpio",
+      "display_name": "Stellium en Escorpio (Luna + Venus + Mercurio)",
+      "emotional_concepts": [
+        "psychological purge",
+        "obsessive revelation",
+        "dark transmutation",
+        "hidden truth emerges",
+        "magnetic vulnerability"
+      ],
+      "palette": {
+        "primary": "Carmesí Profundo",
+        "secondary": "Violeta Abismo",
+        "accent": "Oro Antiguo Oxidado"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "dark stormy ocean waves",
+          "intense shadowy eye contact",
+          "hands letting go sand slow motion"
+        ],
+        "esoteric_art": [
+          "scorpion occult symbol baroque",
+          "alchemical transmutation vessel",
+          "serpent shedding skin mystical"
+        ],
+        "abstract_glitch": [
+          "slow liquid dark distortion",
+          "crimson black vignette pulse",
+          "violet neon glitch texture"
+        ]
+      }
+    },
+    {
+      "name": "sol_en_libra",
+      "display_name": "Sol en Libra",
+      "emotional_concepts": [
+        "delicate balance",
+        "diplomatic tension",
+        "aesthetic longing",
+        "relationship mirror",
+        "justice scales"
+      ],
+      "palette": {
+        "primary": "Dorado Pálido",
+        "secondary": "Verde Oliva",
+        "accent": "Beige Marfil"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "golden scales balanced light",
+          "couple facing each other silhouette",
+          "autumn leaves drifting wind"
+        ],
+        "esoteric_art": [
+          "libra scales cosmic symbol",
+          "venus sigil golden art nouveau",
+          "harmony yin yang ornate"
+        ],
+        "abstract_glitch": [
+          "warm gold dissolve soft",
+          "symmetrical fractal pattern",
+          "gentle light leak analog"
+        ]
+      }
+    },
+    {
+      "name": "luna_conjuncion_pluton",
+      "display_name": "Luna conjunción Plutón",
+      "emotional_concepts": [
+        "emotional demolition",
+        "unconscious eruption",
+        "collective shadow",
+        "old identity collapsing",
+        "regenerative darkness"
+      ],
+      "palette": {
+        "primary": "Negro Abismo",
+        "secondary": "Cian Eléctrico",
+        "accent": "Plata Oscura"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "glass shattering slow motion",
+          "lightning strike urban night",
+          "person facing vast dark universe"
+        ],
+        "esoteric_art": [
+          "pluto symbol dark gothic abstract",
+          "moon eclipse shadow art",
+          "death rebirth mythological figure"
+        ],
+        "abstract_glitch": [
+          "dark electric aura fractal",
+          "black hole gravitational lensing art",
+          "cyan glitch noise digital tear"
+        ]
+      }
+    },
+    {
+      "name": "sol_ingreso_escorpio",
+      "display_name": "Sol ingresa a Escorpio",
+      "emotional_concepts": [
+        "threshold crossing",
+        "solar power meets depth",
+        "stripping superficiality",
+        "confronting mortality",
+        "radical authenticity"
+      ],
+      "palette": {
+        "primary": "Granate Oscuro",
+        "secondary": "Cobre Antiguo",
+        "accent": "Negro Profundo"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "sun setting dark horizon dramatic",
+          "shadow consuming warm light",
+          "fire ember dying slow"
+        ],
+        "esoteric_art": [
+          "scorpio sun wheel occult",
+          "phoenix rising flames baroque",
+          "ouroboros serpent gold dark"
+        ],
+        "abstract_glitch": [
+          "red to black color burn gradient",
+          "solar flare dark vignette",
+          "copper rust texture abstract"
+        ]
+      }
+    },
+    {
+      "name": "mercurio_en_escorpio",
+      "display_name": "Mercurio en Escorpio",
+      "emotional_concepts": [
+        "penetrating words",
+        "psychological investigation",
+        "truth as weapon",
+        "obsessive thinking",
+        "secret communication"
+      ],
+      "palette": {
+        "primary": "Índigo Profundo",
+        "secondary": "Rojo Sangre",
+        "accent": "Plata Fría"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "eye scanning in darkness close up",
+          "whisper shadow profile portrait",
+          "ink expanding in water dark"
+        ],
+        "esoteric_art": [
+          "mercury glyph scorpio occult",
+          "hermetic caduceus dark version",
+          "ancient scroll secret cypher"
+        ],
+        "abstract_glitch": [
+          "indigo red data corruption",
+          "binary code dark background",
+          "slow motion ink dark water"
+        ]
+      }
+    },
+    {
+      "name": "luna_en_acuario",
+      "display_name": "Luna en Acuario",
+      "emotional_concepts": [
+        "emotional detachment",
+        "collective awakening",
+        "electric sensitivity",
+        "futuristic longing",
+        "breaking emotional patterns"
+      ],
+      "palette": {
+        "primary": "Azul Eléctrico",
+        "secondary": "Plata Metálica",
+        "accent": "Blanco Frío"
+      },
+      "artistic_triads": {
+        "raw_realism": [
+          "crowd seen from above night lights",
+          "person alone watching stars field",
+          "lightning reflected in water"
+        ],
+        "esoteric_art": [
+          "aquarius glyph water bearer cosmic",
+          "uranus symbol electric blue",
+          "star map constellation abstract"
+        ],
+        "abstract_glitch": [
+          "electric blue fractal wave",
+          "silver metallic liquid abstract",
+          "cyan neon grid dark background"
+        ]
+      }
+    },
+    {
+      "name": "natal_chart_core",
+      "display_name": "Carta Astral (Fundamentos)",
+      "emotional_concepts": [
+        "zodiac wheel",
+        "astrology birth chart",
+        "golden constellations",
+        "mystic planets orbit",
+        "inner child archetype",
+        "sun and moon duality"
+      ]
+    },
+    {
+      "name": "lunar_eclipse_nodes",
+      "display_name": "Eclipses y Nodos Lunares",
+      "emotional_concepts": [
+        "blood moon eclipse",
+        "destiny path cosmic",
+        "shadow integration",
+        "karmic cycle wheel",
+        "solar eclipse ring of fire"
+      ]
+    },
+    {
+      "name": "retrograde_motion",
+      "display_name": "Retrogradaciones (Caos y Revisión)",
+      "emotional_concepts": [
+        "time reversing clock",
+        "glitch art broken mirror",
+        "retrograde planets",
+        "introspective deep dive",
+        "foggy mind abstract"
+      ]
+    },
+    {
+      "name": "storytelling_metaphors",
+      "display_name": "Metáforas Visuales (B-Roll)",
+      "emotional_concepts": [
+        "breaking heavy chains",
+        "human eye of truth",
+        "deep dark ocean water",
+        "cosmic glowing portal",
+        "ancient tarot cards spreading",
+        "burning fire in darkness"
+      ]
+    },
+    {
+      "name": "mercury_retrograde_sagittarius",
+      "display_name": "Mercurio Retrógrado en Sagitario",
+      "emotional_concepts": [
+        "broken compass",
+        "lost in the woods",
+        "rewriting old books",
+        "foggy path",
+        "miscommunication glitch"
+      ]
+    },
+    {
+      "name": "mars_retrograde_leo",
+      "display_name": "Marte Retrógrado en Leo",
+      "emotional_concepts": [
+        "suppressed inner fire",
+        "fading crown",
+        "tired warrior resting",
+        "extinguished torch",
+        "slow motion battle"
+      ]
+    },
+    {
+      "name": "venus_pluto_conjunction",
+      "display_name": "Conjunción Venus-Plutón",
+      "emotional_concepts": [
+        "intense dark romance",
+        "burning rose",
+        "toxic love alchemy",
+        "obsessive deep connection",
+        "beautiful decay"
+      ]
+    },
+    {
+      "name": "sagittarius_season",
+      "display_name": "Temporada Sagitario",
+      "emotional_concepts": [
+        "golden arrow flying",
+        "horse running free",
+        "ancient philosophy books",
+        "endless horizon travel",
+        "burning fire camp"
+      ]
+    },
+    {
+      "name": "capricorn_season",
+      "display_name": "Temporada Capricornio",
+      "emotional_concepts": [
+        "cold snowy mountain peak",
+        "old clock ticking",
+        "solid stone architecture",
+        "heavy responsibility",
+        "ancient goat horns"
+      ]
+    },
+    {
+      "name": "shadow_work",
+      "display_name": "Trabajo de Sombras (Metáforas)",
+      "emotional_concepts": [
+        "dark mirror reflection",
+        "facing inner demon",
+        "healing broken glass",
+        "unmasking true self",
+        "light entering dark cave"
+      ]
+    },
+    {
+      "name": "ancestral_karma",
+      "display_name": "Karma Ancestral",
+      "emotional_concepts": [
+        "old family tree roots",
+        "dna glowing helix",
+        "ancient bloodline string",
+        "ghosts of ancestors",
+        "inherited heavy chest"
+      ]
+    },
+    {
+      "name": "moon_phases_magic",
+      "display_name": "Fases Lunares y Magia",
+      "emotional_concepts": [
+        "glowing full moon",
+        "crescent moon floating",
+        "silver moonlight water",
+        "mystic night sky",
+        "witchcraft crystals"
+      ]
+    },
+    {
+      "name": "four_elements_alchemy",
+      "display_name": "Alquimia de 4 Elementos",
+      "emotional_concepts": [
+        "burning fire slow motion",
+        "deep underwater bubbles",
+        "wind blowing sand",
+        "green earth roots growing",
+        "alchemical symbols glowing"
+      ]
+    },
+    {
+      "name": "spiritual_awakening",
+      "display_name": "Despertar Espiritual",
+      "emotional_concepts": [
+        "third eye glowing",
+        "golden aura energy",
+        "meditation deep trance",
+        "ascending light beam",
+        "lotus flower blooming"
+      ]
+    },
+    {
+      "name": "tarot_and_divination",
+      "display_name": "Tarot y Adivinación",
+      "emotional_concepts": [
+        "ancient tarot cards",
+        "crystal ball glowing",
+        "reading tea leaves",
+        "mystic hands runes",
+        "destiny threads weaving"
+      ]
+    },
+    {
+      "name": "deep_space_galaxies",
+      "display_name": "Galaxias y Espacio Profundo",
+      "emotional_concepts": [
+        "colorful nebula clouds",
+        "black hole absorbing light",
+        "shooting stars rain",
+        "floating in deep space",
+        "planet rings moving"
+      ]
+    },
+    {
+      "name": "karmic_nodes_eclipse",
+      "display_name": "Nodos Kármicos y Eclipses",
+      "emotional_concepts": [
+        "solar eclipse",
+        "cosmic shadow",
+        "glowing rings",
+        "moon blocking sun",
+        "ancient cosmic portal"
+      ]
+    },
+    {
+      "name": "saturnian_structures",
+      "display_name": "Estructuras Saturninas",
+      "emotional_concepts": [
+        "old ticking clock",
+        "heavy stones",
+        "lead texture",
+        "ancient ruins crumbling",
+        "hourglass sand falling"
+      ]
+    },
+    {
+      "name": "neptunian_illusions",
+      "display_name": "Ilusiones Neptunianas",
+      "emotional_concepts": [
+        "thick fog",
+        "broken mirrors",
+        "deep dark ocean underwater",
+        "blurred abstract lights",
+        "dreamlike water"
+      ]
+    },
+    {
+      "name": "plutonian_underworld",
+      "display_name": "Inframundo Plutoniano",
+      "emotional_concepts": [
+        "glowing magma",
+        "dark caves",
+        "rebirth from ashes",
+        "underground shadows",
+        "intense red abstract"
+      ]
+    },
+    {
+      "name": "uranian_lightning",
+      "display_name": "Rayos Uranianos",
+      "emotional_concepts": [
+        "sudden lightning strike",
+        "electric neon grid",
+        "breaking chains sparks",
+        "glitching static noise"
+      ]
+    },
+    {
+      "name": "chiron_wounded_healer",
+      "display_name": "Quirón y Sanación Sagrada",
+      "emotional_concepts": [
+        "golden scar kintsugi",
+        "wounded healer archetype",
+        "glowing bandage",
+        "sacred pain gold",
+        "ancient acupuncture hands"
+      ]
+    },
+    {
+      "name": "lunar_nodes_destiny",
+      "display_name": "Nodos Lunares y Misión de Vida",
+      "emotional_concepts": [
+        "golden thread of fate",
+        "cosmic crossroads",
+        "labyrinth top view",
+        "open door in sky",
+        "ancient compass rose"
+      ]
+    },
+    {
+      "name": "solstice_equinox_gateways",
+      "display_name": "Solsticios y Puertas Estacionales",
+      "emotional_concepts": [
+        "stonehenge sunrise rays",
+        "winter solstice frost snow",
+        "autumn leaves golden light",
+        "summer solstice sun fire",
+        "balance of day and night"
+      ]
+    },
+    {
+      "name": "mercurial_hermeticism",
+      "display_name": "Hermetismo y Geometría Sagrada",
+      "emotional_concepts": [
+        "metatron cube glowing",
+        "flower of life sacred",
+        "hermetic tablet emerald",
+        "golden ratio spiral",
+        "vintage parchment geometry"
+      ]
+    },
+    {
+      "name": "venusian_sacred_beauty",
+      "display_name": "Belleza Sagrada y Deseo Venusino",
+      "emotional_concepts": [
+        "vintage golden mirror",
+        "marble venus statue",
+        "blooming red velvet rose",
+        "golden honey dripping",
+        "silk flowing in dark"
+      ]
+    },
+    {
+      "name": "jupiterian_expansion",
+      "display_name": "Expansión y Fe Jupiteriana",
+      "emotional_concepts": [
+        "giant golden eagle soaring",
+        "vast starry night sky",
+        "opening treasure chest light",
+        "temple of wisdom columns",
+        "glowing beacon light"
+      ]
+    },
+    {
+      "name": "twelfth_house_subconscious",
+      "display_name": "Casa XII: Subconsciente y Solitud",
+      "emotional_concepts": [
+        "floating in endless void",
+        "deep sleep dreamscape",
+        "isolation sanctuary",
+        "invisible barrier glass",
+        "subconscious ocean depth"
+      ]
+    },
+    {
+      "name": "eighth_house_taboo",
+      "display_name": "Casa VIII: Secretos y Tabúes",
+      "emotional_concepts": [
+        "locked iron chest",
+        "hidden keyhole light",
+        "deep shadow secrets",
+        "mysterious velvet curtain",
+        "unmasking hidden face"
+      ]
+    },
+    {
+      "name": "neptune_pluto_transmutation",
+      "display_name": "Transmutación y Catarsis Alquímica",
+      "emotional_concepts": [
+        "phoenix rising from ashes",
+        "crystal dissolving in water",
+        "burning paper contract",
+        "spirit aura glowing",
+        "golden dust floating"
+      ]
+    },
+    {
+      "name": "saturn_karmic_lessons",
+      "display_name": "Saturno: Tiempo y Lecciones Kármicas",
+      "emotional_concepts": [
+        "giant hourglass sand",
+        "heavy iron chains",
+        "ancient labyrinth wall",
+        "old stone balance scales",
+        "clockwork gears turning"
+      ]
+    },
+    {
+      "name": "uranus_sudden_epiphany",
+      "display_name": "Urano: Despertar y Epifanía",
+      "emotional_concepts": [
+        "lightning bolt striking",
+        "lightbulb shattering sparks",
+        "cosmic awakening eye",
+        "breaking glass wave",
+        "electric prism light"
+      ]
+    },
+    {
+      "name": "venus_chiron_relationship_wounds",
+      "display_name": "Sanación Vincular y Espejos",
+      "emotional_concepts": [
+        "two silhouettes touching hands",
+        "broken ceramic cup gold",
+        "mirror reflection two faces",
+        "gentle embrace silhouette",
+        "rose with thorns blood drop"
+      ]
+    },
+    {
+      "name": "first_house_identity",
+      "display_name": "Casa I: Identidad y Ascendente",
+      "emotional_concepts": [
+        "person looking in mirror",
+        "silhouette standing tall",
+        "glowing human aura",
+        "unmasking portrait",
+        "first steps forward"
+      ]
+    },
+    {
+      "name": "fourth_house_roots",
+      "display_name": "Casa IV: Fondo de Cielo y Raíces",
+      "emotional_concepts": [
+        "ancient tree deep roots",
+        "old fireplace hearth",
+        "childhood memory photo",
+        "underground water spring",
+        "ancient house foundation"
+      ]
+    },
+    {
+      "name": "seventh_house_partnerships",
+      "display_name": "Casa VII: Descendente y Vínculos",
+      "emotional_concepts": [
+        "two people facing each other",
+        "signing ancient contract",
+        "golden wedding ring",
+        "mirror reflection twin",
+        "hands holding tightly"
+      ]
+    },
+    {
+      "name": "tenth_house_legacy",
+      "display_name": "Casa X: Medio Cielo y Legado",
+      "emotional_concepts": [
+        "climbing steep mountain peak",
+        "crowning golden throne",
+        "marble temple columns",
+        "eagle flying high sky",
+        "ancient stone monument"
+      ]
+    }
+  ]
+}

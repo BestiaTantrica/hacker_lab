@@ -62,9 +62,33 @@
             </div>
             
             <div class="donation-section" style="margin-top: 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
-                <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem;">¿Querés apoyar el proyecto?</p>
+                <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #f0c987;">Productos Premium (Formatos en Video)</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <button class="primary-btn" style="background: linear-gradient(135deg, #1e3c72, #2a5298); border: 1px solid #4a90e2; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🎬 Video Carta Natal ($10 USD)</button>
+                    <button class="primary-btn" style="background: linear-gradient(135deg, #870000, #190a05); border: 1px solid #d4145a; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🔥 Video Revolución Solar ($10 USD)</button>
+                </div>
+
+                <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem;">¿Querés apoyar el oráculo libre?</p>
                 <p style="font-size: 1.1rem; font-weight: 600;">Mercado Pago (Alias): <span style="color: #4CAF50; user-select: all; cursor: pointer; letter-spacing: 1px;">vida.rucula</span></p>
+                <p style="font-size: 1.1rem; font-weight: 600;">PayPal: <span style="color: #0079C1; cursor: pointer;">donar@nodriza.com</span></p>
                 <p style="font-size: 0.8rem; color: #888; margin-top: 0.3rem;">Aporte libre. Gracias por sumar a la constelación ✨</p>
+                
+                <hr style="border:none; border-top: 1px dashed rgba(255,255,255,0.1); margin: 20px 0;">
+                <p style="font-size: 0.8rem; color: #aaa;">¿Te equivocaste de hora al registrarte?</p>
+                <button onclick="document.getElementById('rectifyForm').classList.toggle('hidden')" style="background: none; border: 1px solid #555; color: #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px;">Rectificar Horario (Gratis)</button>
+                
+                <form id="rectifyForm" class="elegant-form hidden" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <div class="input-group">
+                        <label for="rectify_email">Email registrado</label>
+                        <input type="email" id="rectify_email" name="email" required placeholder="tu@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="rectify_time">Hora Correcta</label>
+                        <input type="time" id="rectify_time" name="new_time" required>
+                    </div>
+                    <button type="submit" class="primary-btn" style="padding: 8px; font-size: 0.9rem;">Actualizar Hora</button>
+                    <div id="rectifyMessage" class="message hidden" style="margin-top: 10px;"></div>
+                </form>
             </div>
         </section>
     </main>

@@ -16,6 +16,24 @@ GLITCH_DIR = os.path.join(VAULT_DIR, "Glitches_Source")
 REGISTRY_PATH = os.path.join(VAULT_DIR, "registry.json")
 PALETTES_PATH = os.path.join(os.path.dirname(__file__), "transit_palettes.json")
 
+# ── Filtro de Calidad: Términos PROHIBIDOS en la bóveda ────────────────────────
+# Si alguno de estos términos aparece en los tags de Pixabay/Pexels, el asset se descarta.
+EXCLUSION_TERMS = {
+    # Arte infantil y mascotas no astrológicas
+    "bear", "oso", "child", "baby", "cute", "kids", "cartoon", "toy",
+    "doll", "puppet", "bunny", "rabbit", "unicorn", "fairy", "princess",
+    "kawaii", "chibi", "anime", "clipart", "vector", "sticker",
+    # Entorno doméstico / familiar (Bug 2: clips de bebés y familias en casa)
+    "family", "home", "mother", "father", "parent", "domestic",
+    "kitchen", "living", "bedroom", "house", "garden", "backyard",
+    "smile", "happy", "cheerful", "lifestyle"
+}
+# Términos que se agregan como exclusión a TODAS las queries de Pixabay/Pexels
+EXCLUSION_QUERY_SUFFIX = (
+    " -cartoon -cute -kids -bear -baby -child -vector -clipart"
+    " -family -home -domestic -lifestyle -happy"
+)
+
 os.makedirs(VAULT_DIR, exist_ok=True)
 os.makedirs(GLITCH_DIR, exist_ok=True)
 
@@ -30,7 +48,9 @@ def save_registry(registry):
         json.dump(list(registry), f)
 
 def search_pexels_videos(query, per_page=15):
-    url = f"https://api.pexels.com/videos/search?query={query}&per_page={per_page}&orientation=landscape"
+    # Agregar exclusiones para evitar contenido infantil/cartoon
+    safe_query = (query + EXCLUSION_QUERY_SUFFIX).strip()
+    url = f"https://api.pexels.com/videos/search?query={requests.utils.quote(safe_query)}&per_page={per_page}&orientation=landscape"
     headers = {"Authorization": PEXELS_API_KEY}
     try:
         r = requests.get(url, headers=headers, timeout=10)
@@ -41,11 +61,31 @@ def search_pexels_videos(query, per_page=15):
     return []
 
 def search_pixabay_images(query, per_page=15):
-    url = f"https://pixabay.com/api/?key={PIXABAY_API_KEY}&q={query}&image_type=illustration&orientation=horizontal&per_page={per_page}"
+    # Agregar exclusiones a la query para bloquear arte infantil/cartoon
+    safe_query = (query + EXCLUSION_QUERY_SUFFIX).strip()
+    url = f"https://pixabay.com/api/?key={PIXABAY_API_KEY}&q={requests.utils.quote(safe_query)}&image_type=photo&orientation=horizontal&per_page={per_page}&safesearch=true"
     try:
         r = requests.get(url, timeout=10)
         if r.status_code == 200:
             return r.json().get("hits", [])
+    except Exception as e:
+        print(f"⚠️ Pixabay error: {e}")
+    return []
+
+def search_pixabay_illustrations(query, per_page=15):
+    """Solo para escenas esotéricas/abstractas donde se necesita arte digital.
+    Usa image_type=illustration pero con filtros más duros."""
+    safe_query = (query + EXCLUSION_QUERY_SUFFIX).strip()
+    url = f"https://pixabay.com/api/?key={PIXABAY_API_KEY}&q={requests.utils.quote(safe_query)}&image_type=illustration&orientation=horizontal&per_page={per_page}&safesearch=true"
+    try:
+        r = requests.get(url, timeout=10)
+        if r.status_code == 200:
+            hits = r.json().get("hits", [])
+            # Filtro post-API: descartar por tags si el resultado es claramente infantil
+            return [h for h in hits if not any(
+                bad in h.get("tags", "").lower() 
+                for bad in ["cartoon", "cute", "kids", "child", "baby", "bear", "bunny"]
+            )]
     except Exception as e:
         print(f"⚠️ Pixabay error: {e}")
     return []
@@ -108,6 +148,12 @@ def scraper_loop(transit_name, max_batch_per_concept=3):
             if downloads_done >= target_images: break
             i_id = f"pix_i_{img['id']}"
             if i_id in registry: continue
+            
+            # Filtro de calidad: verificar que los tags de Pixabay no contengan basura
+            img_tags = img.get("tags", "").lower()
+            if any(bad in img_tags for bad in ["cartoon", "cute", "kids", "child", "baby", "bear", "bunny", "kawaii"]):
+                print(f"   ⏩ Descartado por tags infantiles: {img_tags[:60]}")
+                continue
             
             url = img.get("largeImageURL")
             if url:

@@ -72,3 +72,5 @@ astrology_factory/**/temp_clips/
 
 # Ignorar proyectos congelados por limpieza
 proyectos_congelados/
+historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
+*.onnx

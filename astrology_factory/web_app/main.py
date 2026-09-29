@@ -35,6 +35,16 @@ async def subscribe(
             INSERT INTO subscribers (name, email, birth_date, birth_time, birth_city)
             VALUES (?, ?, ?, ?, ?)
         ''', (name, email, birth_date, birth_time, birth_city))
+        
+        # Caching Predictivo: Agendar descarga de assets pre-compra
+        try:
+            cursor.execute('''
+                INSERT INTO pending_video_tasks (user_email, video_type, status)
+                VALUES (?, ?, ?)
+            ''', (email, 'predictive_cache', 'downloading_assets'))
+        except sqlite3.OperationalError:
+            pass # Si la tabla no existe aún por alguna razón
+
         conn.commit()
         conn.close()
         return JSONResponse(content={"status": "success", "message": "¡Suscripción exitosa! Prepárate para descubrir tu universo interior."})
@@ -58,6 +68,24 @@ async def transito_vivo(
         # Llamada bloqueante a la IA (en prod debería ser asíncrono o worker, pero para probar sirve)
         res = ph.generate_for_user(name, birth_date, birth_time)
         return JSONResponse(content={"status": "success", "html": res.get("mensaje_personalizado", "")})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.post("/api/update-time")
+async def update_time(
+    email: str = Form(...),
+    new_time: str = Form(...)
+):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE subscribers SET birth_time = ? WHERE email = ?", (new_time, email))
+        if cursor.rowcount == 0:
+            conn.close()
+            return JSONResponse(status_code=404, content={"status": "error", "message": "Correo no encontrado en la base de datos."})
+        conn.commit()
+        conn.close()
+        return JSONResponse(content={"status": "success", "message": "Hora natal rectificada. Los próximos cálculos usarán este dato exacto."})
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 

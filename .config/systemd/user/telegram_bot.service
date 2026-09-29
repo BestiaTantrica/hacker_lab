@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram Bot Daemon para Astrology Factory
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/LAB/astrology_factory
+ExecStart=/home/LAB/astrology_factory/venv/bin/python /home/LAB/astrology_factory/telegram_bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -62,13 +62,11 @@ def main():
         except Exception as e:
             print(f"⚠️ Error al copiar a la bóveda: {e}")
             
-    from telegram_bot import send_assets_to_telegram
-    import asyncio
-    
-    # Check if there is already a running event loop, if so use run_coroutine_threadsafe or create a new task.
-    # Actually, asyncio.run works fine here because we are in main() and generator.generate_audio uses its own run internally, 
-    # but generator.generate_audio has already finished its asyncio.run.
-    asyncio.run(send_assets_to_telegram(evento))
+    # Enviar al celular vía Telegram (DESACTIVADO POR OBSOLETO)
+    # print("📲 Enviando archivos al celular (Telegram)...")
+    # from telegram_bot import send_assets_to_telegram
+    # import asyncio
+    # asyncio.run(send_assets_to_telegram(evento))
 
 if __name__ == "__main__":
     main()
