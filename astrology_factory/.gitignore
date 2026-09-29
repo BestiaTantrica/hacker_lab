@@ -17,3 +17,5 @@ ready_for_capcut/
 __pycache__/
 *.pyc
 .pytest_cache/
+historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
+*.onnx

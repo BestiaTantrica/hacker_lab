@@ -98,15 +98,62 @@ def inicializar_gemini():
         err("google-genai no instalado. Ejecuta: pip install google-genai")
         sys.exit(1)
 
-def calcular_posiciones_actuales() -> dict:
-    """Calcula las posiciones planetarias actuales con el EphemerisCalculator."""
+def obtener_panorama_astral_completo() -> dict:
+    """
+    Calcula posiciones actuales y las cruza para encontrar aspectos,
+    luego los traduce usando el Oráculo (lexico_astrologico.json).
+    """
     try:
         from astrology_engine.ephemeris_calculator import EphemerisCalculator
+        from astrology_engine.aspects_matcher import AspectsMatcher
+        
         calc = EphemerisCalculator()
+        matcher = AspectsMatcher()
         ahora = datetime.datetime.utcnow()
-        return calc.calculate_planets(ahora)
+        posiciones = calc.calculate_planets(ahora)
+        
+        if not posiciones: return {}
+        
+        aspectos_crudos = matcher.find_aspects(posiciones)
+        
+        # Cargar Lexico
+        lexico_path = FACTORY_ROOT / "astrology_engine" / "lexico_astrologico.json"
+        lexico = {}
+        if lexico_path.exists():
+            with open(lexico_path, encoding="utf-8") as f:
+                lexico = json.load(f)
+                
+        # Construir string descriptivo
+        resultado = {
+            "posiciones": posiciones,
+            "aspectos_detectados": aspectos_crudos,
+            "texto_traducido": ""
+        }
+        
+        if aspectos_crudos:
+            texto = "\n=== RED DE ASPECTOS ACTIVOS EN EL CIELO HOY ===\n"
+            for a in aspectos_crudos:
+                p1 = a['p1']
+                p2 = a['p2']
+                asp = a['aspect']
+                
+                significado_p1 = lexico.get("planetas", {}).get(p1, "")
+                significado_p2 = lexico.get("planetas", {}).get(p2, "")
+                significado_asp = lexico.get("aspectos", {}).get(asp, "")
+                
+                texto += f"- {p1} y {p2} interactúan (Geometría: {asp})\n"
+                if significado_asp:
+                    texto += f"  Tensión de la interacción: {significado_asp}\n"
+                if significado_p1:
+                    texto += f"  Fuerza 1 ({p1}): {significado_p1}\n"
+                if significado_p2:
+                    texto += f"  Fuerza 2 ({p2}): {significado_p2}\n"
+                texto += "\n"
+            resultado["texto_traducido"] = texto
+        
+        return resultado
     except Exception as e:
-        warn(f"No se pudo calcular efemérides en tiempo real: {e}")
+        warn(f"No se pudo calcular panorama astral completo: {e}")
         return {}
 
 def limpiar_json_gemini(texto: str) -> str:
@@ -172,13 +219,15 @@ def opcion_1_guion_diario():
     produccion  = ADN["produccion"]
     num_tomas   = len(estructura)
 
-    # Calcular efemérides reales
-    posiciones_actuales = calcular_posiciones_actuales()
+    # Calcular efemérides reales y cruzar aspectos
+    panorama = obtener_panorama_astral_completo()
     efemerides_str = ""
-    if posiciones_actuales:
+    if panorama:
         efemerides_str = "\n\nPOSICIONES PLANETARIAS REALES (calculadas ahora):\n"
-        for planeta, grado in posiciones_actuales.items():
+        for planeta, grado in panorama["posiciones"].items():
             efemerides_str += f"  {planeta}: {grado:.1f}°\n"
+        if panorama.get("texto_traducido"):
+            efemerides_str += panorama["texto_traducido"]
 
     # Construir la descripción de cada toma para el prompt
     tomas_descripcion = ""
@@ -226,6 +275,12 @@ Elemento: {arquetipos['elemento']} — Modalidad: {arquetipos['modalidad']}
 
 Tono del guion: {ADN['guion']['tono']}
 {efemerides_str}
+
+=== INSTRUCCIÓN DE TRADUCCIÓN (CRÍTICA) ===
+Eres un puente empático. Se te ha entregado arriba la red completa de aspectos matemáticos activos en el cielo hoy ("RED DE ASPECTOS ACTIVOS..."). 
+Tu trabajo es TRADUCIR esta complejidad astronómica al idioma de la masa (gente que no sabe de astrología técnica). 
+NO uses jerga (ej. prohibido decir "cuadratura", "sextil", "trígono", "orbe", "conjunción"). 
+Debes tomar la esencia de esos choques y tensiones planetarias (leyendo sus significados provistos) y explicar cómo se siente esa mezcla de energías en la calle, en el cuerpo y en los vínculos diarios. Mete a la audiencia en ese clima complejo pero de forma simple.
 
 === ESTRUCTURA EXIGIDA ({num_tomas} TOMAS) ==={tomas_descripcion}
 
