@@ -25,7 +25,12 @@ SLEEP_BETWEEN_CALLS = 6  # ~10 por minuto max.
 
 # 3. Inicializar entorno
 load_dotenv(ENV_PATH)
-KEYS = [os.getenv("GEMINI_API_KEY"), os.getenv("GEMINI_API_KEY_TEXT")]
+KEYS = [
+    os.getenv("GEMINI_API_KEY"),
+    os.getenv("GEMINI_API_KEY_TEXT"),
+    os.getenv("GEMINI_API_KEY_WEB"),
+    os.getenv("GEMINI_API_KEY_WEB_TEXT")
+]
 KEYS = [k for k in KEYS if k]
 current_key_idx = 0
 
@@ -117,9 +122,7 @@ def catalogador_loop():
         semana = 'General'
         
     current_inbox = os.path.join(INBOX_DIR, semana)
-    current_assets = os.path.join(ASSETS_DIR, semana)
     os.makedirs(current_inbox, exist_ok=True)
-    os.makedirs(current_assets, exist_ok=True)
     
     if os.path.exists(CATALOG_PATH):
         try:
@@ -140,11 +143,25 @@ def catalogador_loop():
     
     for filename in inbox_files:
         inbox_path = os.path.join(current_inbox, filename)
-        dest_path = os.path.join(current_assets, filename)
+        
+        is_video = filename.lower().endswith('.mp4')
+        subfolder = "Videos" if is_video else "Imagenes"
+        final_dest_dir = os.path.join(ASSETS_DIR, subfolder, semana)
+        os.makedirs(final_dest_dir, exist_ok=True)
+        dest_path = os.path.join(final_dest_dir, filename)
         
         print(f"  Analizando: {filename}...")
         
-        metadata = analyze_image_with_gemini(inbox_path)
+        if filename.lower().endswith('.mp4'):
+            metadata = {
+                "etiquetas_visuales": ["video", "animacion", "fondo espacial"],
+                "emociones": ["fluidez", "movimiento", "misterio"],
+                "colores_predominantes": ["oscuros"],
+                "es_apropiado_para_astrologia": True,
+                "formato": "mp4"
+            }
+        else:
+            metadata = analyze_image_with_gemini(inbox_path)
         
         if metadata == 'QUOTA_EXCEEDED':
             if rotate_api_key():

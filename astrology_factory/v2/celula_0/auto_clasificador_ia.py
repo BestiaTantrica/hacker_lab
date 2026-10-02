@@ -38,12 +38,17 @@ except ImportError:
 load_dotenv(FACTORY_ROOT / ".env")
 
 # ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
-API_KEY_1 = os.getenv("GEMINI_API_KEY")
-API_KEY_2 = os.getenv("GEMINI_API_KEY_TEXT")
-API_KEY_3 = os.getenv("GROQ_API_KEY")
+API_KEYS = [
+    os.getenv("GEMINI_API_KEY"),
+    os.getenv("GEMINI_API_KEY_TEXT"),
+    os.getenv("GEMINI_API_KEY_WEB"),
+    os.getenv("GEMINI_API_KEY_WEB_TEXT")
+]
+API_KEYS = [k for k in API_KEYS if k] # Filtrar nulos
 
-gemini_client_1 = genai.Client(api_key=API_KEY_1) if API_KEY_1 else None
-gemini_client_2 = genai.Client(api_key=API_KEY_2) if API_KEY_2 else None
+# Clientes dinámicos
+gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=API_KEY_3) if API_KEY_3 else None
 
 if not any([gemini_client_1, gemini_client_2, groq_client]):
@@ -119,30 +124,19 @@ def clasificar_imagen(img_path: Path) -> str:
     img = Image.open(img_path)
     img.thumbnail((1024, 1024)) # Reducir resolución para ahorrar tokens/transferencia
 
-    # 1. Intentar con Gemini (Llave Principal)
-    if gemini_client_1:
+    # Intentar con todos los clientes de Gemini (Llave 1, 2, 3, 4...)
+    for idx, client in enumerate(gemini_clients):
         try:
-            res = _llamar_gemini(gemini_client_1, img)
+            res = _llamar_gemini(client, img).zfill(2)
             if res in CATEGORIAS: return res
         except Exception as e:
             if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                print("  ⚠️ Cuota de Gemini Llave 1 agotada. Hot-swapping a Llave 2...")
+                print(f"  ⚠️ Cuota de Gemini Llave {idx+1} agotada. Hot-swapping a la siguiente llave...")
             else:
-                print(f"  ⚠️ Error en Gemini 1: {e}. Pasando a fallback...")
-
-    # 2. Intentar con Gemini (Llave Secundaria)
-    if gemini_client_2:
-        try:
-            res = _llamar_gemini(gemini_client_2, img)
-            if res in CATEGORIAS: return res
-        except Exception as e:
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                print("  ⚠️ Cuota de Gemini Llave 2 agotada.")
-            else:
-                print(f"  ⚠️ Error en Gemini 2: {e}.")
+                print(f"  ⚠️ Error en Gemini Llave {idx+1}: {e}. Pasando a fallback...")
 
     # Si todo falla
-    return "9" # Default a general
+    return None # Retorna None para no procesar el archivo y dejarlo en la bandeja de entrada
 
 def main():
     parser = argparse.ArgumentParser(description="Clasificador visual IA con Gemini Flash")
@@ -161,7 +155,9 @@ def main():
     print(f"   Destino: {dir_salida}")
     print(f"   Pausa entre imágenes: 8.0 segundos (~7.5 RPM para cuota gratuita sin bloqueos)\n")
     
-    registro_path = dir_salida / "ia_curated_registry.json"
+    # Registro global en la raíz de Assets_Auditados para que no se borre nunca
+    vault_root = dir_salida.parent if dir_salida.name == "Imagenes" else dir_salida
+    registro_path = vault_root / "ia_curated_registry.json"
     
     # Cargar registro
     if registro_path.exists():
@@ -214,8 +210,8 @@ def main():
         if cat_num:
             cat_nombre = CATEGORIAS[cat_num]
             
-            # Crear la carpeta de destino: /Imagenes/1_Astrologia/
-            dir_destino = dir_salida / "Imagenes" / cat_nombre
+            # Crear la carpeta de destino
+            dir_destino = dir_salida / cat_nombre
             asegurar_dir(dir_destino)
             
             destino = dir_destino / archivo.name
@@ -231,6 +227,8 @@ def main():
             procesados.add(archivo.name)
             with open(registro_path, "w", encoding="utf-8") as f:
                 json.dump(list(procesados), f)
+        else:
+            print("  ⚠️ API falló. Archivo salteado, se reintentará en el próximo ciclo.")
                 
         # PAUSA ESTRATÉGICA PARA EVITAR BANEOS DE LA CAPA GRATUITA
         print("  ⏳ Esperando 8 segundos (Rate limit protection)...")

@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import hashlib
 from pathlib import Path
 from PIL import Image
 
@@ -29,10 +30,16 @@ except ImportError:
     sys.exit(1)
 
 load_dotenv(FACTORY_ROOT / ".env")
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEYS = [
+    os.getenv("GEMINI_API_KEY"),
+    os.getenv("GEMINI_API_KEY_TEXT"),
+    os.getenv("GEMINI_API_KEY_WEB"),
+    os.getenv("GEMINI_API_KEY_WEB_TEXT")
+]
+API_KEYS = [k for k in API_KEYS if k]
 
-# Cliente de la nueva SDK oficial
-client = genai.Client(api_key=API_KEY)
+# Clientes de la nueva SDK oficial
+gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]
 
 # ── Categorías ─────────────────────────────────────────────────────────────
 ADN_PATH = FACTORY_ROOT / "contexto_astrologico.json"
@@ -97,20 +104,22 @@ def clasificar_imagen(img_path: Path, max_retries: int = 3) -> str:
     img = Image.open(img_path)
     img.thumbnail((1024, 1024)) # Reducir resolución para gastar menos tokens
 
-    for model_name in CANDIDATE_MODELS:
-        for intento in range(1, max_retries + 1):
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=[SYSTEM_PROMPT, img]
-                )
-                resultado = response.text.strip()
-                
-                # Validar que sea un número del 1 al 9
-                if resultado in CATEGORIAS:
-                    return resultado
-                else:
-                    return "9" # Default a general si falla el formato
+    for client in gemini_clients:
+        for model_name in CANDIDATE_MODELS:
+            for intento in range(1, max_retries + 1):
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=[SYSTEM_PROMPT, img]
+                    )
+                    resultado = response.text.strip().zfill(2)
+                    
+                    # Validar que sea un número del 01 al 18
+                    if resultado in CATEGORIAS:
+                        return resultado
+                    else:
+                        return "18" # Default a general si falla el formato
+                        
                     
             except Exception as e:
                 err_str = str(e)
@@ -131,6 +140,7 @@ def clasificar_imagen(img_path: Path, max_retries: int = 3) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Clasificador visual IA de VIDEOS con Gemini Flash")
     parser.add_argument("--directorio", type=str, required=True, help="Ruta a la carpeta de assets (ej: Assets_Reusables_Auditados)")
+    parser.add_argument("--salida", type=str, required=False, help="Carpeta de destino final (ej: Assets_Auditados/Videos)")
     args = parser.parse_args()
     
     dir_base = Path(args.directorio)
@@ -167,11 +177,35 @@ def main():
         print("✅ No hay videos nuevos para procesar.")
         sys.exit(0)
         
+    print("🔍 Construyendo base de datos de hashes (MD5) de la bóveda para evitar duplicados...")
+    hashes_existentes = set()
+    dir_salida = Path(args.salida) if hasattr(args, "salida") and args.salida else dir_base
+    for ext in formatos_video:
+        for vid in dir_salida.rglob(f"*{ext}"):
+            try:
+                with open(vid, "rb") as f:
+                    hashes_existentes.add(hashlib.md5(f.read()).hexdigest())
+            except Exception:
+                pass
+    print(f"  ✅ {len(hashes_existentes)} hashes únicos registrados en la bóveda de salida.")
+        
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_frame_path = Path(temp_dir) / "frame_temp.jpg"
         
         for i, archivo in enumerate(archivos, 1):
             print(f"\n[{i}/{len(archivos)}] Analizando video: {archivo.name} ...")
+            
+            # 1. Anti-Duplicado (Hash)
+            try:
+                with open(archivo, "rb") as f:
+                    archivo_hash = hashlib.md5(f.read()).hexdigest()
+                    
+                if archivo_hash in hashes_existentes:
+                    print(f"  🗑️ Clon exacto detectado en bóveda final. Eliminando clon de Reusables...")
+                    archivo.unlink()
+                    continue
+            except Exception as e:
+                print(f"  ⚠️ Error leyendo hash: {e}")
             
             # Extraer frame
             if not extraer_fotograma(archivo, temp_frame_path):
@@ -184,8 +218,8 @@ def main():
             if cat_num:
                 cat_nombre = CATEGORIAS[cat_num]
                 
-                # Crear la carpeta de destino: /Videos/1_Astrologia/
-                dir_destino = dir_base / "Videos" / cat_nombre
+                # Crear la carpeta de destino: /18_General/
+                dir_destino = dir_salida / cat_nombre
                 asegurar_dir(dir_destino)
                 
                 destino = dir_destino / archivo.name

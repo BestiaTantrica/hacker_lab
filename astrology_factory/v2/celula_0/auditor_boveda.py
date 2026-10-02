@@ -39,13 +39,24 @@ MIN_BYTES        = ADN["validaciones"]["min_size_bytes"]
 EMOCION_DOMINANTE = ADN["arquetipos"]["emocion_dominante"]
 COLORES_ADN      = ADN["estetica_visual"]["paleta_colores"]
 CATEGORIAS_AUDITORIA = ADN.get("assets", {}).get("categorias_auditoria", {
-    "1": "1_Espacio",
-    "2": "2_Fuego",
-    "3": "3_Fluidos",
-    "4": "4_Simbolos",
-    "5": "5_Glitch",
-    "6": "6_Naturaleza",
-    "7": "7_General"
+    "01": "01_Signos_Zodiacales",
+    "02": "02_Planetas",
+    "03": "03_Elementos_Fuego",
+    "04": "04_Elementos_Agua",
+    "05": "05_Elementos_Tierra",
+    "06": "06_Elementos_Aire",
+    "07": "07_Espacio_Galaxias",
+    "08": "08_Tarot_Misticismo",
+    "09": "09_Geometria_Sagrada",
+    "10": "10_Naturaleza_Paisajes",
+    "11": "11_Humanos_Emociones",
+    "12": "12_Rituales_Magia",
+    "13": "13_Abstracto_Fluidos",
+    "14": "14_Glitch_VFX",
+    "15": "15_Astrologia_Cartas",
+    "16": "16_Mitologia_Dioses",
+    "17": "17_Objetos_Esotericos",
+    "18": "18_General_B_Roll"
 })
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -156,7 +167,9 @@ def opcion_1_filtro_interactivo(dir_origen: Path = None, dir_destino: Path = Non
             info("(Visualizador nativo no disponible — decide por nombre y tamaño)")
 
         while True:
-            accion = input("  → Acción [1-9/N/R/S/Q]: ").strip().upper()
+            accion = input("  → Acción [01-18/N/R/S/Q]: ").strip().upper()
+            if accion.isdigit() and len(accion) == 1:
+                accion = accion.zfill(2)
 
             if accion in CATEGORIAS_AUDITORIA:
                 es_video = archivo.suffix.lower() in ['.mp4', '.mov', '.avi', '.mkv', '.webm']
@@ -177,8 +190,10 @@ def opcion_1_filtro_interactivo(dir_origen: Path = None, dir_destino: Path = Non
                 break
             elif accion == 'R':
                 nuevo = input("  Nuevo nombre (sin extensión): ").strip()
-                cat = input("  Categoría [1-9] o Enter para General: ").strip()
-                cat_folder = CATEGORIAS_AUDITORIA.get(cat, CATEGORIAS_AUDITORIA.get("9", "9_General"))
+                cat = input("  Categoría [01-18] o Enter para General: ").strip()
+                if cat.isdigit() and len(cat) == 1:
+                    cat = cat.zfill(2)
+                cat_folder = CATEGORIAS_AUDITORIA.get(cat, CATEGORIAS_AUDITORIA.get("18", "18_General_B_Roll"))
                 
                 if nuevo:
                     nuevo_path = archivo.parent / f"{nuevo}{archivo.suffix.lower()}"
@@ -484,6 +499,8 @@ Opciones disponibles:
                         help="[Solo opcion 4] Intervalo en segundos entre frames (default: 1.0)")
     parser.add_argument("--directorio", type=str, default=None,
                         help="Ruta absoluta a un directorio personalizado para hacer curaduría generalizada")
+    parser.add_argument("--salida", type=str, default=None,
+                        help="Ruta absoluta a un directorio de destino personalizado")
 
     args = parser.parse_args()
 
@@ -493,8 +510,9 @@ Opciones disponibles:
     log(f"{'═'*55}", MAGENTA)
 
     dir_custom = Path(args.directorio) if args.directorio else None
-    dir_dest_custom = None
-    if dir_custom:
+    dir_dest_custom = Path(args.salida) if args.salida else None
+    
+    if dir_custom and not dir_dest_custom:
         dir_dest_custom = dir_custom.parent / f"{dir_custom.name}_Auditados"
 
     if args.opcion == 1:
