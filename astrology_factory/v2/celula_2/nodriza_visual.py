@@ -12,6 +12,9 @@ import os
 import subprocess
 import sys
 import time
+import random
+
+QUOTA_EXCEEDED = False
 from pathlib import Path
 
 FACTORY_ROOT = Path(__file__).resolve().parents[2]
@@ -60,12 +63,41 @@ def asegurar_dir(path: Path):
 asegurar_dir(TEMP_DIR)
 asegurar_dir(TRANSMUTADOS_DIR)
 
-# ── Gemini Client ────────────────────────────────────────────────────────────
+# ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
+API_KEY_1 = os.getenv("GEMINI_API_KEY")
+API_KEY_2 = os.getenv("GEMINI_API_KEY_TEXT")
+API_KEY_3 = os.getenv("GROQ_API_KEY")
+
 try:
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    gemini_client_1 = genai.Client(api_key=API_KEY_1) if API_KEY_1 else None
+    gemini_client_2 = genai.Client(api_key=API_KEY_2) if API_KEY_2 else None
 except Exception as e:
     err("No se pudo iniciar Google GenAI.")
+    gemini_client_1 = None
+    gemini_client_2 = None
+
+try:
+    from groq import Groq
+    groq_client = Groq(api_key=API_KEY_3) if API_KEY_3 else None
+except ImportError:
+    groq_client = None
+
+if not any([gemini_client_1, gemini_client_2, groq_client]):
+    err("No se encontraron llaves de API válidas en .env (Gemini o Groq)")
     sys.exit(1)
+
+import base64
+from io import BytesIO
+from PIL import Image
+
+def _image_to_base64(img_path: Path) -> str:
+    img = Image.open(img_path)
+    img.thumbnail((1024, 1024))
+    buffered = BytesIO()
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+    img.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 # ── Lectura del timeline ─────────────────────────────────────────────────────
 
@@ -136,150 +168,72 @@ def guardar_catalogo(catalogo: dict):
     with open(CATALOG_PATH, "w", encoding="utf-8") as f:
         json.dump(catalogo, f, ensure_ascii=False, indent=2)
 
-def deducir_metadata_con_gemini(asset_path: Path) -> dict:
-    """Usa Gemini para extraer 8 dimensiones emocionales a partir del nombre (y opcionalmente la imagen)."""
-    info(f"Analizando semánticamente con Gemini: {asset_path.name}")
-    
-    prompt = f"""
-Analiza este archivo de asset visual llamado '{asset_path.name}'.
-Evalúa de 0.0 a 1.0 qué tanto transmite estas 8 dimensiones emocionales:
-deseo_profundo, misterio, renacimiento, poder, intensidad, serenidad, caos, transformacion.
-
-También predice la afinidad (0.0 a 1.0) con los siguientes roles narrativos de un video corto:
-gancho, cta, efecto_cuerpo_emocion, mecanica_astrologica, afrontarlo_constructivamente
-
-Clasifica el elemento visual principal ("elemento_visual") en UNO de estos: Fuego, Agua, Tierra, Aire, Espacio, Abstracto, Geometria.
-
-Responde ESTRICTAMENTE con este formato JSON:
-{{
-  "elemento_visual": "Espacio",
-  "mood_scores": {{
-    "deseo_profundo": 0.0,
-    "misterio": 0.0,
-    "renacimiento": 0.0,
-    "poder": 0.0,
-    "intensidad": 0.0,
-    "serenidad": 0.0,
-    "caos": 0.0,
-    "transformacion": 0.0
-  }},
-  "roles_narrativos": {{
-    "gancho": 0.0,
-    "cta": 0.0,
-    "efecto_cuerpo_emocion": 0.0,
-    "mecanica_astrologica": 0.0,
-    "afrontarlo_constructivamente": 0.0
-  }},
-  "tags": ["tag1", "tag2"]
-}}
-Solo el JSON. Nada de bloques de markdown.
-"""
-    
-    import time
-    model_list = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']
-    
-    for model_name in model_list:
-        for i in range(3):
-            try:
-                if asset_path.suffix.lower() in FORMATOS_IMG:
-                    # Subir archivo
-                    uploaded = client.files.upload(file=str(asset_path))
-                    response = client.models.generate_content(
-                        model=model_name,
-                        contents=[uploaded, prompt]
-                    )
-                    client.files.delete(name=uploaded.name)
-                else:
-                    response = client.models.generate_content(
-                        model=model_name,
-                        contents=prompt
-                    )
-                    
-                raw = response.text.strip()
-                if raw.startswith("```json"): raw = raw[7:-3].strip()
-                elif raw.startswith("```"): raw = raw[3:-3].strip()
-                return json.loads(raw)
-            except Exception as e:
-                err_str = str(e)
-                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    warn(f"Cuota agotada en {model_name}. Intentando alternativa... {e}")
-                    time.sleep(5)
-                    break # Probar con el siguiente modelo de la lista
-                elif "503" in err_str:
-                    warn(f"Alta demanda en {model_name}. Pausa de 10s... {e}")
-                    time.sleep(10)
-                else:
-                    warn(f"Reintentando {model_name} ({i+1}/3)... {e}")
-                    time.sleep(5)
-                    
-    err("Gemini falló al catalogar tras probar múltiples modelos. Retornando default.")
-    return {"mood_scores": {"intensidad": 0.5}, "roles_narrativos": {}, "tags": []}
-
-def actualizar_catalogo(assets: list[Path]) -> dict:
+def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
+    # Ahora la Nodriza Visual ya no cataloga en vivo usando Visión.
+    # Simplemente lee el catálogo asíncrono y devuelve lo que ya existe.
     cat = cargar_catalogo()
-    modificado = False
     
+    # Solo inyectamos el path_video_final y path_original temporalmente para el render
+    # pero NO guardamos esto en disco si el asset no estaba catalogado.
     for a in assets:
         key = a.name
-        if key not in cat:
-            meta = deducir_metadata_con_gemini(a)
-            # Marcar historial
-            meta["stats_uso"] = []
-            meta["path_original"] = str(a.resolve())
-            
-            # Ya no transmutamos preventivamente, se hará On-Demand por el Montajista
-            meta["path_video_final"] = str(a.resolve())
-                
-            cat[key] = meta
-            modificado = True
-            time.sleep(5)  # Respetar 12 RPM de la API de Gemini (60s / 5s = 12)
-            
-    if modificado:
-        guardar_catalogo(cat)
+        if key in cat:
+            cat[key]["path_original"] = str(a.resolve())
+            cat[key]["path_video_final"] = str(a.resolve())
+    
     return cat
 
 # ── D. Scorer Emocional ──────────────────────────────────────────────────────
 
-def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[str], ultimo_elemento: str) -> float:
-    score = 0.0
-    
-    # 1. Match con la emoción dominante del evento (ej: 'deseo_profundo')
-    emocion_evento = ADN.get("arquetipos", {}).get("emocion_dominante", "")
-    if emocion_evento and emocion_evento in meta.get("mood_scores", {}):
-        score += 0.40 * meta["mood_scores"][emocion_evento]
-        
-    # 2. Match con el rol narrativo (ej: 'gancho')
-    rol = toma.get("rol", "")
-    if rol and rol in meta.get("roles_narrativos", {}):
-        score += 0.30 * meta["roles_narrativos"][rol]
-        
-    # 3. Penalidad de uso histórico
-    veces_usado = len(meta.get("stats_uso", []))
-    score -= 0.15 * veces_usado
-    
-    # 4. Penalidad extrema si es idéntico al anterior
-    if ultimos_usados and asset_key in ultimos_usados[-3:]:
-        score -= 2.0
-        
-    # 5. Penalidad Temática / Variedad Visual
-    elemento = meta.get("elemento_visual", "")
-    if ultimo_elemento and elemento == ultimo_elemento:
-        score -= 1.5 # Fuerza cambio de elemento (no más "solo fuego")
-        
-    # 6. Match con Elemento Astrológico (Ancla base - Tiebreaker)
+def elegir_mejor_asset_con_gemini(toma_texto: str, rol: str, cat: dict, ultimos_usados: list) -> str:
+    emocion_dominante = ADN.get("arquetipos", {}).get("emocion_dominante", "")
     elemento_astro = ADN.get("arquetipos", {}).get("elemento", "")
-    if elemento_astro and elemento == elemento_astro:
-        score += 0.5 # Recompensa moderada para mantener la atmósfera, pero sin opacar el texto
+    
+    prompt = f"""
+Eres el Director de Arte de un video astrológico poético.
+Elige el MEJOR asset visual de nuestra bóveda para acompañar el siguiente texto (Toma: {rol}):
+TEXTO: "{toma_texto}"
+
+Emoción dominante del evento: {emocion_dominante}
+Elemento astrológico: {elemento_astro}
+
+CATÁLOGO:
+"""
+    for key, meta in cat.items():
+        if not meta.get("path_video_final"): continue
+        tags = ", ".join(meta.get("tags", []))
+        elemento = meta.get("elemento_visual", "Abstracto")
+        prompt += f"- ID: {key} | Elemento: {elemento} | Tags: {tags}\n"
+
+    prompt += f"""
+Assets usados recientemente (EVITAR REPETIR, es muy importante la variedad): {", ".join(ultimos_usados)}
+
+Reglas:
+1. Elige el asset que resuene de forma SUTIL Y SUGESTIVA con el texto. No literal.
+2. Responde ÚNICAMENTE con el ID del asset elegido.
+"""
+    global QUOTA_EXCEEDED
+    if QUOTA_EXCEEDED:
+        return random.choice(list(cat.keys())) if cat else None
         
-    # 7. Match Semántico Directo con Tags (Prioridad Máxima)
-    texto = toma.get("texto", "").lower()
-    if texto and meta.get("tags"):
-        for tag in meta["tags"]:
-            # Usar regex o in para match simple
-            if tag.lower() in texto:
-                score += 3.0 # Bonus absoluto si el guion menciona explícitamente el asset
-                break
-                
+    for i in range(3):
+        try:
+            active_client = gemini_client_1 if gemini_client_1 else gemini_client_2
+            if not active_client: raise Exception("No valid Gemini client available.")
+            res = active_client.models.generate_content(model='gemini-3.8-flash', contents=prompt)
+            ans = res.text.strip().replace('"', '').replace("'", "")
+            for k in cat.keys():
+                if k in ans: return k
+        except Exception as e:
+            if "429" in str(e):
+                QUOTA_EXCEEDED = True
+                return random.choice(list(cat.keys())) if cat else None
+            time.sleep(2)
+    return None
+
+def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[str], ultimo_elemento: str) -> float:
+    score = 0.5
+    if ultimos_usados and asset_key in ultimos_usados[-3:]: score -= 2.0
     return score
 
 # ── Slicing Semántico y Montaje ──────────────────────────────────────────────
@@ -419,8 +373,11 @@ def run_nodriza():
         
     info(f"Encontrados {len(assets)} assets físicos en bóveda.")
     
-    # 2. Transmutador y Catalogador
-    cat = actualizar_catalogo(assets)
+    # 2. Cargar Catálogo estático (solo lo ya auditado asíncronamente)
+    cat = actualizar_catalogo_dummy(assets)
+    if not cat:
+        err("El catálogo está vacío. Debes dejar que Nodriza Autónoma procese los assets primero.")
+        sys.exit(1)
     
     # 3. Asignación Scorer
     lista_de_corte = {
@@ -449,27 +406,25 @@ def run_nodriza():
             
             mejor_asset_key = None
             score_para_alpha = 0.5  # fallback neutral
-
             if es_ultimo_corte_absoluto and asset_gancho_path:
                 # El gancho vuelve al final → máxima presencia visual
                 ganador_meta    = {"path_video_final": str(asset_gancho_path)}
                 mejor_asset_key = asset_gancho_path.name
                 score_para_alpha = 1.0
+                score_para_alpha = 1.0
             else:
-                mejor_score = -999.0
-                for key, meta in cat.items():
-                    if not meta.get("path_video_final"): continue
-                    score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
-
-                    # Si es el primer corte, darle bonificación ENORME a videos B-Roll (explosiones)
-                    # para que el gancho sea poderoso
-                    if es_primer_corte_absoluto:
-                        is_vid = Path(meta["path_video_final"]).suffix.lower() in FORMATOS_VIDEO
-                        if is_vid: score += 100.0
-
-                    if score > mejor_score:
-                        mejor_score = score
-                        mejor_asset_key = key
+                mejor_asset_key = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados)
+                mejor_score = 1.0  # Asumimos score perfecto si Gemini lo eligió
+                
+                # Fallback si Gemini falla o el catálogo es chico
+                if not mejor_asset_key:
+                    mejor_score = -999.0
+                    for key, meta in cat.items():
+                        if not meta.get("path_video_final"): continue
+                        score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
+                        if score > mejor_score:
+                            mejor_score = score
+                            mejor_asset_key = key
 
                 if mejor_asset_key:
                     ganador_meta = cat[mejor_asset_key]
