@@ -26,13 +26,12 @@ except ImportError:
     sys.exit(1)
 
 load_dotenv(FACTORY_ROOT / ".env")
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEYS = [os.getenv("GEMINI_API_KEY"), os.getenv("GEMINI_API_KEY_TEXT")]
+API_KEYS = [k for k in API_KEYS if k]
 
-if not API_KEY:
+if not API_KEYS:
     print("❌ Falta GEMINI_API_KEY en .env")
     sys.exit(1)
-
-client = genai.Client(api_key=API_KEY)
 
 ADN_PATH = FACTORY_ROOT / "contexto_astrologico.json"
 try:
@@ -69,21 +68,29 @@ Example:
   "..."
 ]
 """
-    try:
-        response = client.models.generate_content(
-            model='gemini-3.8-flash',
-            contents=prompt,
-        )
-        text = response.text
-        if "```json" in text:
-            text = text.split("```json")[1].split("```")[0]
-        elif "```" in text:
-            text = text.split("```")[1].split("```")[0]
-        prompts = json.loads(text.strip())
-        return prompts
-    except Exception as e:
-        print(f"Error parsing Gemini response: {e}")
-        return []
+    for attempt, key in enumerate(API_KEYS):
+        try:
+            client = genai.Client(api_key=key)
+            response = client.models.generate_content(
+                model='gemini-3.8-flash',
+                contents=prompt,
+            )
+            text = response.text
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0]
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0]
+            prompts = json.loads(text.strip())
+            return prompts
+        except Exception as e:
+            print(f"Error parsing Gemini response con llave {attempt+1}: {e}")
+            
+    print("⚠️ Usando prompts de contingencia (todas las APIs fallaron).")
+    return [
+        f"Abstract visualization of {ADN['produccion']['evento_titulo']}, dark esoteric art, {', '.join(ADN['estetica_visual']['paleta_colores'].values())}, sacred geometry, cymatic resonance, highly detailed 8k, masterpiece",
+        f"Surreal cosmic depth showing {ADN['arquetipos']['primario']} and {ADN['arquetipos']['secundario']}, {ADN['transito']['palabras_clave'][0]} and {ADN['transito']['palabras_clave'][1]}, cinematic lighting, dark background",
+        f"Astrological cosmic tension, {ADN['transito']['simbolo_planetario']} entering {ADN['transito']['simbolo_signo']}, {ADN['estetica_visual']['textura_fondo_fallback']}, fractal energy waves, vertical 9:16 aspect ratio"
+    ]
 
 def download_image(prompt, index):
     print(f"🎨 Generando imagen {index+1} en Pollinations...")
