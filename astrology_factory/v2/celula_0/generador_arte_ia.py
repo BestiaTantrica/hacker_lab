@@ -122,7 +122,7 @@ def main():
     for i, p in enumerate(prompts):
         print(f"\n=> Prompt {i+1}: {p}")
         download_image(p, i)
-        time.sleep(2) # Respetar rate limits de pollinations
+        time.sleep(15) # Respetar rate limits de pollinations (15s para evitar 402)
 
     prompts_file = DESC_CRUDAS / "PROMPTS_ARTE.md"
     try:

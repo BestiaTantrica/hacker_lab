@@ -75,7 +75,7 @@ def analyze_image_with_gemini(filepath):
         return None
 
     # Usar el modelo standard para visión (en código antiguo usamos gemini-1.5-flash)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-3.6-flash')
     
     prompt = """Analiza esta imagen para uso en un video astrológico esotérico/psicológico.
 Responde ÚNICAMENTE en JSON válido con este formato exacto:
@@ -108,16 +108,30 @@ Responde ÚNICAMENTE en JSON válido con este formato exacto:
 def catalogador_loop():
     print("🛸 Iniciando Fase B: Catalogador de Inbox...")
     
+    # Leer contexto para saber la semana actual
+    try:
+        with open(os.path.join(PROJECT_ROOT, 'contexto_astrologico.json'), 'r') as f:
+            adn = json.load(f)
+            semana = adn['produccion']['semana_prefijo']
+    except:
+        semana = 'General'
+        
+    current_inbox = os.path.join(INBOX_DIR, semana)
+    current_assets = os.path.join(ASSETS_DIR, semana)
+    os.makedirs(current_inbox, exist_ok=True)
+    os.makedirs(current_assets, exist_ok=True)
+    
     if os.path.exists(CATALOG_PATH):
         try:
-            with open(CATALOG_PATH, "r") as f:
+            with open(CATALOG_PATH, 'r') as f:
                 catalogo = json.load(f)
         except:
             catalogo = {}
     else:
         catalogo = {}
 
-    inbox_files = [f for f in os.listdir(INBOX_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+    inbox_files = [f for f in os.listdir(current_inbox) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.mp4'))]
+    inbox_files = inbox_files[:5] # MAX 5 por ciclo (60 por hora) para no quemar la cuota diaria
     if not inbox_files:
         print("📭 Inbox vacío. Nada que catalogar.")
         return
@@ -125,30 +139,34 @@ def catalogador_loop():
     print(f"📦 Encontrados {len(inbox_files)} archivos en Inbox. Procesando...")
     
     for filename in inbox_files:
-        inbox_path = os.path.join(INBOX_DIR, filename)
-        dest_path = os.path.join(ASSETS_DIR, filename)
+        inbox_path = os.path.join(current_inbox, filename)
+        dest_path = os.path.join(current_assets, filename)
         
         print(f"  Analizando: {filename}...")
         
         metadata = analyze_image_with_gemini(inbox_path)
         
-        if metadata == "QUOTA_EXCEEDED":
+        if metadata == 'QUOTA_EXCEEDED':
             if rotate_api_key():
-                print("Reintentando con nueva llave...")
+                print('Reintentando con nueva llave...')
                 metadata = analyze_image_with_gemini(inbox_path)
-                if metadata == "QUOTA_EXCEEDED":
-                    send_telegram_alert("Todas las cuotas de Gemini están agotadas. El catalogador se pondrá a dormir hasta mañana.")
-                    return # Cortamos la ejecución por hoy
+                if metadata == 'QUOTA_EXCEEDED':
+                    if not os.path.exists('/tmp/.nodriza_quota_exhausted'):
+                        send_telegram_alert('Todas las cuotas de Gemini están agotadas. El catalogador se pondrá a dormir por hoy.')
+                        open('/tmp/.nodriza_quota_exhausted', 'w').close()
+                    return
             else:
-                send_telegram_alert("Cuota de Gemini agotada y no hay más llaves de repuesto. Durmiendo...")
+                if not os.path.exists('/tmp/.nodriza_quota_exhausted'):
+                    send_telegram_alert('Cuota de Gemini agotada y no hay más llaves de repuesto.')
+                    open('/tmp/.nodriza_quota_exhausted', 'w').close()
                 return
 
         if metadata and isinstance(metadata, dict):
-            # Guardamos la metadata
+            if os.path.exists('/tmp/.nodriza_quota_exhausted'):
+                os.remove('/tmp/.nodriza_quota_exhausted') # Limpiar mute si funciona
             catalogo[filename] = metadata
-            with open(CATALOG_PATH, "w") as f:
+            with open(CATALOG_PATH, 'w') as f:
                 json.dump(catalogo, f, indent=4)
-            # Movemos físicamente
             shutil.move(inbox_path, dest_path)
             print(f"  ✅ Catalogado y movido.")
         else:
