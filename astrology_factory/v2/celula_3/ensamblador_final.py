@@ -111,13 +111,13 @@ def buscar_audio_final() -> Path | None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Transiciones SUAVES — clips de la misma toma (espejismos que fluyen)
-TRANSICIONES_INTRA = ["fade", "dissolve"]
+TRANSICIONES_INTRA = ["fade"]
 
 # Transiciones VÓRTICE — saltos entre tomas distintas (agujeros de gusano cósmicos)
-TRANSICIONES_VORTICE = ["zoomin", "radial", "circleclose", "circlecrop"]
+TRANSICIONES_VORTICE = ["fade"]
 
-XFADE_DUR_INTRA   = 0.40   # segundos — suave, casi imperceptible
-XFADE_DUR_VORTICE = 0.55   # segundos — contundente, se siente el salto
+XFADE_DUR_INTRA   = 1.5    # segundos — suave, cruzado largo onírico
+XFADE_DUR_VORTICE = 2.5    # segundos — contundente, fundido onírico largo
 
 
 def leer_mapa_tomas() -> dict[str, int]:
@@ -503,66 +503,84 @@ def opcion_4_despliegue():
     log(f"{'═'*55}", VERDE)
     return str(destino)
 
+
 def _notificar_telegram(video_path: Path):
-    """Envía una notificación (y el video si es pequeño) por Telegram."""
+    """Envía el video por Telegram, comprimiendo un proxy si excede 50MB. Usa caption en lugar de mensaje separado."""
     evento_titulo = ADN["produccion"]["evento_titulo"]
     planeta       = ADN["transito"]["planeta"]
     signo         = ADN["transito"]["signo_destino"]
     dur           = get_duracion_s(video_path)
     size_mb       = video_path.stat().st_size / (1024 * 1024)
 
+    video_a_enviar = video_path
     mensaje = (
         f"🎬 *Video listo*: _{evento_titulo}_\n"
         f"🌌 {planeta} → {signo}\n"
-        f"⏱️ Duración: {dur:.1f}s · 📦 Tamaño: {size_mb:.1f}MB\n"
+        f"⏱️ Duración: {dur:.1f}s · 📦 Tamaño original: {size_mb:.1f}MB\n"
         f"📁 `{video_path.name}`"
     )
 
-    # Enviar texto
-    import urllib.request
-    import urllib.parse
-    url_msg = (
-        f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-        f"?chat_id={TELEGRAM_CHAT}"
-        f"&text={urllib.parse.quote(mensaje)}"
-        f"&parse_mode=Markdown"
-    )
-    try:
-        urllib.request.urlopen(url_msg, timeout=10)
-        ok("Notificación Telegram enviada.")
-    except Exception as e:
-        warn(f"Telegram mensaje falló: {e}")
+    if size_mb >= 50:
+        warn(f"Video original ({size_mb:.1f}MB) excede límite de Telegram. Creando proxy 720p ligero...")
+        proxy_path = video_path.with_name("proxy_" + video_path.name)
+        cmd = [
+            "ffmpeg", "-y", "-i", str(video_path),
+            "-vf", "scale=-2:720",
+            "-c:v", "libx264", "-crf", "28", "-preset", "veryfast",
+            "-c:a", "aac", "-b:a", "128k", str(proxy_path)
+        ]
+        import subprocess
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        if proxy_path.exists() and proxy_path.stat().st_size / (1024*1024) < 50:
+            video_a_enviar = proxy_path
+            mensaje += "\n⚠️ _Versión proxy comprimida_ (Master HD en bóveda local)"
+            info(f"Proxy creado exitosamente: {proxy_path.stat().st_size / (1024*1024):.1f}MB")
+        else:
+            warn("El proxy sigue superando 50MB o falló. Se aborta notificación Telegram para no enviar mensajes vacíos.")
+            if proxy_path.exists(): proxy_path.unlink()
+            return
 
-    # Enviar video si < 50MB (límite de Telegram Bot API)
-    if size_mb < 50:
-        url_video = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendVideo"
-        try:
-            import urllib.request
-            with open(video_path, 'rb') as video_file:
-                from urllib.request import Request
-                import email.mime.multipart
-                boundary = b"----FormBoundary"
-                body = (
-                    boundary + b'\r\n'
-                    b'Content-Disposition: form-data; name="chat_id"\r\n\r\n' +
-                    TELEGRAM_CHAT.encode() + b'\r\n' +
-                    boundary + b'\r\n'
-                    b'Content-Disposition: form-data; name="video"; filename="' +
-                    video_path.name.encode() + b'"\r\n'
-                    b'Content-Type: video/mp4\r\n\r\n' +
-                    video_file.read() + b'\r\n' +
-                    boundary + b'--\r\n'
-                )
-                req = Request(url_video, data=body,
-                              headers={"Content-Type": f"multipart/form-data; boundary={boundary.decode()[2:]}"},
-                              method="POST")
-                urllib.request.urlopen(req, timeout=120)
-            ok("Video enviado por Telegram.")
-        except Exception as e:
-            warn(f"Envío de video por Telegram falló: {e}")
-            warn("El video está disponible localmente.")
-    else:
-        warn(f"Video muy grande para Telegram ({size_mb:.1f}MB > 50MB). Solo se envió el texto.")
+    url_video = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendVideo"
+    try:
+        import urllib.request
+        with open(video_a_enviar, 'rb') as video_file:
+            from urllib.request import Request
+            boundary = b"----FormBoundaryTelegram"
+            
+            body = bytearray()
+            # Chat ID
+            body.extend(b'--' + boundary + b'\r\n')
+            body.extend(b'Content-Disposition: form-data; name="chat_id"\r\n\r\n')
+            body.extend(TELEGRAM_CHAT.encode() + b'\r\n')
+            
+            # Caption
+            body.extend(b'--' + boundary + b'\r\n')
+            body.extend(b'Content-Disposition: form-data; name="caption"\r\n\r\n')
+            body.extend(mensaje.encode() + b'\r\n')
+            
+            # Parse Mode
+            body.extend(b'--' + boundary + b'\r\n')
+            body.extend(b'Content-Disposition: form-data; name="parse_mode"\r\n\r\n')
+            body.extend(b'Markdown\r\n')
+            
+            # Video
+            body.extend(b'--' + boundary + b'\r\n')
+            body.extend(b'Content-Disposition: form-data; name="video"; filename="' + video_a_enviar.name.encode() + b'"\r\n')
+            body.extend(b'Content-Type: video/mp4\r\n\r\n')
+            body.extend(video_file.read() + b'\r\n')
+            body.extend(b'--' + boundary + b'--\r\n')
+            
+            req = Request(url_video, data=bytes(body),
+                          headers={"Content-Type": f"multipart/form-data; boundary={boundary.decode()}"},
+                          method="POST")
+            urllib.request.urlopen(req, timeout=300)
+            ok("🎬 ¡Video enviado exitosamente por Telegram!")
+    except Exception as e:
+        warn(f"Envío de video por Telegram falló: {e}")
+    finally:
+        if video_a_enviar != video_path and video_a_enviar.exists():
+            video_a_enviar.unlink()
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN

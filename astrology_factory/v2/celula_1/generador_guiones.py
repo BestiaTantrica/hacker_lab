@@ -278,9 +278,9 @@ Tono del guion: {ADN['guion']['tono']}
 
 === INSTRUCCIÓN DE TRADUCCIÓN (CRÍTICA) ===
 Eres un puente empático. Se te ha entregado arriba la red completa de aspectos matemáticos activos en el cielo hoy ("RED DE ASPECTOS ACTIVOS..."). 
-Tu trabajo es TRADUCIR esta complejidad astronómica al idioma de la masa (gente que no sabe de astrología técnica). 
-NO uses jerga (ej. prohibido decir "cuadratura", "sextil", "trígono", "orbe", "conjunción"). 
-Debes tomar la esencia de esos choques y tensiones planetarias (leyendo sus significados provistos) y explicar cómo se siente esa mezcla de energías en la calle, en el cuerpo y en los vínculos diarios. Mete a la audiencia en ese clima complejo pero de forma simple.
+Tu trabajo es TRADUCIR esta complejidad astronómica al idioma de la masa.
+ATENCIÓN: SÍ DEBES nombrar a los planetas involucrados y el aspecto técnico (ej. "Esta Cuadratura entre la Luna y Plutón..."), no los ocultes. Pero no te quedes solo en lo teórico. 
+Debes tomar la esencia de esos choques (leyendo sus significados provistos) y explicar cómo se siente esa mezcla de energías en la calle, en el cuerpo y en los vínculos diarios. Fusiona la referencia astrológica real con una empatía palpable y comprensible.
 
 === ESTRUCTURA EXIGIDA ({num_tomas} TOMAS) ==={tomas_descripcion}
 

@@ -15,3 +15,10 @@ El texto debe fluir y estar estructurado estrictamente en 5 partes, para encajar
 3. **Mecánica Astrológica:** Por qué ocurre (la razón técnica, pero explicada con poética pragmática).
 4. **Cómo Afrontarlo Constructivamente:** Sugestión sutil, no mandato. (Ej: "Es un tránsito que invita a observar...", en lugar de "Deben hacer...").
 5. **CTA:** Llamado a la acción ultra rápido (max 10 palabras) sobre revisar la carta natal.
+
+## [CRÍTICO] PUNTUACIÓN EMOCIONAL PARA IA DE VOZ (PROSODIA Y RITMO)
+El guion será leído por un motor TTS (Text-to-Speech) que interpreta la puntuación para regular la velocidad y la emoción. Es VITAL que rompas la monotonía robótica estructurando el texto con desniveles rítmicos.
+- **Flujo Irregular:** No escribas frases de largo aliento con el mismo ritmo. Agrupa 3 o 4 palabras de corrido (sin comas) para acelerar, y luego aísla una palabra clave rodeándola de pausas suspensivas (`...`) para darle énfasis y ralentizar la voz. Ejemplo: "La densidad estalla... y de pronto... respiras."
+- **Puntuación Expresiva:** Usa elipses (`...`) para pausas dramáticas y sugerentes. Usa el guion largo (`—`) para quiebres abruptos. 
+- **Reflejo del Arquetipo:** Adapta esta cadencia a la Emoción Dominante y el Elemento del tránsito. Si es melancólico/agua, usa muchas elipses y ritmo lento. Si es explosivo/fuego, usa oraciones directas, agrupadas y algún signo de exclamación.
+- **El Final Siempre Cambia:** La frase final de cada toma (o del guion) nunca debe terminar en un tono plano. Ciérrala siempre con una reflexión suspendida (`...`) o un remate contundente (`.`) muy corto.

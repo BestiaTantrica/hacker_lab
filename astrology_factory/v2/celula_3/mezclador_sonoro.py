@@ -156,72 +156,61 @@ def opcion_2_binaural():
     """
     Añade un tono binaural de la frecuencia definida en el ADN (ej: 528Hz).
     El pad se genera matemáticamente con FFmpeg (sin archivo externo).
-    Se mezcla muy por debajo de la voz (-30dB) para efecto subliminal.
+    Incluye síntesis de cuencos tibetanos (armónicos), oleaje natural (ruido rosa) y modulaciones para emular cimática.
     """
-    log("\n🔮 OPCIÓN 2 — Pad Binaural Astrológico", MAGENTA)
+    log("\n🔮 OPCIÓN 2 — Diseño Sonoro Sanador (Cimática, Cuencos, Naturaleza)", MAGENTA)
 
-    # Buscar el mix base (preferir _mix, fallback a .mp3 original)
     mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}_mix.mp3"
     if not mix_mp3.exists():
-        mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}.mp3"
+         mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}.mp3"
     if not mix_mp3.exists():
-        err(f"Audio no encontrado: {AUDIO_DIR}/{EVENTO_ID}_mix.mp3")
-        sys.exit(1)
+         err(f"Audio no encontrado: {AUDIO_DIR}/{EVENTO_ID}_mix.mp3")
+         sys.exit(1)
 
-    dur_s      = get_duracion_s(mix_mp3)
-    hz         = FRECUENCIA
-    hz_beat    = hz + 10  # Diferencia binaural de 10Hz (onda alpha/theta)
-    salida     = AUDIO_DIR / f"{EVENTO_ID}_binaural.mp3"
+    dur_s = get_duracion_s(mix_mp3)
+    hz = FRECUENCIA
+    salida = AUDIO_DIR / f"{EVENTO_ID}_binaural.mp3"
 
-    info(f"Frecuencia base: {hz}Hz · Frecuencia beat: {hz_beat}Hz")
-    info(f"Duración: {dur_s:.2f}s · Volumen binaural: -30dB (subliminal)")
+    info(f"Frecuencia base: {hz}Hz")
+    info(f"Duración: {dur_s:.2f}s · Modulación de ondas delta (3Hz) para relajación profunda")
 
-    # Generar pad estéreo binaural con FFmpeg:
-    # - Canal izquierdo: tono puro a hz Hz
-    # - Canal derecho: tono puro a hz_beat Hz
-    # - Diferencia = 10Hz → el cerebro percibe la onda de diferencia
-    filtro = (
-        f"sine=frequency={hz}:duration={dur_s:.3f}[left];"
-        f"sine=frequency={hz_beat}:duration={dur_s:.3f}[right];"
-        f"[left][right]amerge=inputs=2[binaural];"
-        f"[binaural]volume=-30dB[pad];"
-        f"[0:a][pad]amix=inputs=2:duration=first:dropout_transition=1:normalize=0[out]"
-    )
-    cmd = [
-        "ffmpeg", "-y",
-        "-i", str(mix_mp3),
-        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",  # Placeholder, lo reemplaza filter_complex
-        "-filter_complex", filtro,
-        "-map", "[out]",
-        "-c:a", "libmp3lame", "-q:a", "2",
-        str(salida)
-    ]
-
-    # Comando simplificado con armónicos tipo cuenco (fundamental, 2da y 3ra armónica) y reverberación/eco
-    filtro_v2 = (
+    # DISEÑO SONORO EVOLUTIVO SINTÉTICO:
+    # 1. Cuenco Tibetano Izquierdo (Fundamental + 2 armónicos)
+    # 2. Cuenco Tibetano Derecho (Frecuencia + 3Hz para beat binaural delta)
+    # 3. Oleaje Marino (Ruido rosa con filtro paso bajo y trémolo muy lento simulando olas)
+    # 4. Modulación (aphaser, aecho) y fade in/out
+    
+    filtro_sanacion = (
         f"[0:a]volume=1.0[voz];"
-        f"aevalsrc='0.5*sin(2*PI*{hz}*t) + 0.2*sin(2*PI*{hz*2}*t) + 0.1*sin(2*PI*{hz*3}*t)':d={dur_s:.3f}[rawpad];"
-        f"[rawpad]aecho=0.8:0.9:500:0.5,volume=-25dB[pad];"
-        f"[voz][pad]amix=inputs=2:duration=first:normalize=0[out]"
+        f"aevalsrc='0.3*sin(2*PI*{hz}*t) + 0.15*sin(2*PI*{hz*2}*t) + 0.05*sin(2*PI*{hz*3}*t)':d={dur_s:.3f}[cuenco_l];"
+        f"aevalsrc='0.3*sin(2*PI*{hz+3}*t) + 0.15*sin(2*PI*{(hz+3)*2}*t) + 0.05*sin(2*PI*{(hz+3)*3}*t)':d={dur_s:.3f}[cuenco_r];"
+        f"[cuenco_l][cuenco_r]join=inputs=2:channel_layout=stereo[cuenco_stereo];"
+        f"anoisesrc=c=pink:r=44100:a=0.08:d={dur_s:.3f},lowpass=f=300,tremolo=f=0.1:d=0.8[mar];"
+        f"[cuenco_stereo][mar]amix=inputs=2:duration=first[sanacion_raw];"
+        f"[sanacion_raw]aecho=0.8:0.9:1000|1500:0.3|0.2,aphaser=in_gain=0.4:out_gain=0.5:delay=3:decay=0.4:speed=0.2,tremolo=f=0.05:d=0.3,volume=-8dB[pad];"
+        f"[pad]afade=t=in:st=0:d=4,afade=t=out:st={dur_s - 4:.3f}:d=4[pad_faded];"
+        f"[voz][pad_faded]amix=inputs=2:duration=first:normalize=0[out]"
     )
+    
     cmd_v2 = [
         "ffmpeg", "-y",
         "-i", str(mix_mp3),
-        "-filter_complex", filtro_v2,
+        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", # Placeholder
+        "-filter_complex", filtro_sanacion,
         "-map", "[out]",
         "-c:a", "libmp3lame", "-q:a", "2",
         str(salida)
     ]
 
-    exito = correr_ffmpeg(cmd_v2, f"binaural {hz}Hz", timeout=120)
+    exito = correr_ffmpeg(cmd_v2, f"Diseño Sonoro Sanador ({hz}Hz)", timeout=180)
     if exito and salida.exists():
-        ok(f"Audio binaural: {salida}")
+        ok(f"Audio envolvente: {salida}")
         return str(salida)
     else:
-        err("Binaural falló. Copiando mix base como salida.")
+        err("Falla en la síntesis. Copiando mix base como salida.")
         import shutil
         shutil.copy2(mix_mp3, salida)
-        warn(f"Usando mix sin binaural: {salida}")
+        warn(f"Usando mix sin sanación: {salida}")
         return str(salida)
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -294,23 +283,45 @@ def opcion_3_sfx_transiciones():
             "-c:a", "libmp3lame", "-q:a", "2", str(salida_sfx)
         ]
     else:
-        warn("SFX externo no configurado. Generando tono sintético de 880Hz / 40ms.")
-        # Generar tono sintético por cada transición usando lavfi
+        elemento = ADN.get("arquetipos", {}).get("elemento", "Agua").lower()
+        info(f"Generando SFX sintético orgánico basado en elemento: {elemento.upper()}")
+        
         partes_filtro = []
         for idx, t_s in enumerate(transiciones_s):
             delay_ms = int(t_s * 1000)
             dur_sfx_s = dur_sfx_ms / 1000.0
+            
+            # Síntesis matemática según elemento para salir de lo artificial
+            if "agua" in elemento:
+                # Pad ambiental etéreo
+                expr = f"sin(2*PI*432*t) + 0.3*sin(2*PI*864*t)"
+                vol_db = vol_sfx_db - 2
+            elif "tierra" in elemento:
+                # Drone profundo y orgánico
+                expr = f"sin(2*PI*108*t) + 0.5*sin(2*PI*54*t)"
+                vol_db = vol_sfx_db + 1
+            elif "fuego" in elemento:
+                # Resonancia cálida
+                expr = f"sin(2*PI*256*t) + 0.5*sin(2*PI*128*t)"
+                vol_db = vol_sfx_db
+            else: # Aire
+                # Viento/frecuencia sutil
+                expr = f"sin(2*PI*528*t) + 0.2*sin(2*PI*1056*t)"
+                vol_db = vol_sfx_db - 4
+
+            # Usamos aevalsrc acotado con d=3 y le aplicamos fades (fade in de 1s, fade out de 1.5s)
+            dur_sintesis = 3.0
             partes_filtro.append(
-                f"sine=frequency=880:duration={dur_sfx_s:.3f},volume={vol_sfx_db}dB,"
+                f"aevalsrc=exprs='{expr}':d={dur_sintesis},volume={vol_db}dB,"
+                f"afade=t=in:st=0:d=1.0,afade=t=out:st=1.5:d=1.5,"
                 f"adelay={delay_ms}|{delay_ms}[sfx{idx}]"
             )
+            
         amix_labels = "".join(f"[sfx{i}]" for i in range(len(transiciones_s)))
         num_inputs  = len(transiciones_s) + 1
 
-        # Construir los inputs de lavfi
+        # No necesitamos lavfi inputs vacíos porque aevalsrc genera su propia fuente
         lavfi_inputs = []
-        for _ in transiciones_s:
-            lavfi_inputs += ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
 
         filtro_full = (
             ";".join(partes_filtro) + ";"

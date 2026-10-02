@@ -284,12 +284,16 @@ def opcion_1_tts_y_mapeo(guion_path: str = None):
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         
-        # 1. Preparar texto maestro
+        # 1. Preparar texto maestro (Inyectando vida y pausas esotéricas)
         textos = []
         for t in tomas:
             txt = t.get("texto", "").strip()
-            if not txt.endswith('.'):
-                txt += '.'
+            # Truco de cadencia: Cambiamos el punto final por puntos suspensivos
+            # para que Edge-TTS baje el tono lentamente, sonando reflexivo/humano.
+            if txt.endswith('.') or txt.endswith(','):
+                txt = txt[:-1] + '...'
+            else:
+                txt += '...'
             textos.append(txt)
             
         master_text = " ".join(textos)

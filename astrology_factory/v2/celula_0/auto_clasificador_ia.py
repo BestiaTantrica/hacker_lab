@@ -6,6 +6,7 @@ Diseñado para la capa gratuita (Rate Limit de 10 peticiones por minuto).
 """
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -13,6 +14,9 @@ import sys
 import time
 from pathlib import Path
 from PIL import Image
+
+# Permitir abrir imágenes masivas de la NASA (evita DecompressionBombError)
+Image.MAX_IMAGE_PIXELS = None
 
 # ── Entorno ────────────────────────────────────────────────────────────────
 FACTORY_ROOT = Path(__file__).resolve().parents[2]
@@ -22,18 +26,29 @@ try:
     from dotenv import load_dotenv
     from google import genai
 except ImportError:
-    print("❌ Faltan dependencias. Ejecuta: pip3 install --break-system-packages google-genai pillow python-dotenv")
+    print("❌ Faltan dependencias. Ejecuta: pip3 install --break-system-packages google-genai pillow python-dotenv groq")
+    sys.exit(1)
+
+try:
+    from groq import Groq
+except ImportError:
+    print("❌ Faltan dependencias. Ejecuta: pip3 install --break-system-packages groq")
     sys.exit(1)
 
 load_dotenv(FACTORY_ROOT / ".env")
-API_KEY = os.getenv("GEMINI_API_KEY")
 
-if not API_KEY:
-    print("❌ No se encontró GEMINI_API_KEY en el archivo .env")
+# ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
+API_KEY_1 = os.getenv("GEMINI_API_KEY")
+API_KEY_2 = os.getenv("GEMINI_API_KEY_TEXT")
+API_KEY_3 = os.getenv("GROQ_API_KEY")
+
+gemini_client_1 = genai.Client(api_key=API_KEY_1) if API_KEY_1 else None
+gemini_client_2 = genai.Client(api_key=API_KEY_2) if API_KEY_2 else None
+groq_client = Groq(api_key=API_KEY_3) if API_KEY_3 else None
+
+if not any([gemini_client_1, gemini_client_2, groq_client]):
+    print("❌ No se encontraron llaves de API válidas en .env (Gemini o Groq)")
     sys.exit(1)
-
-# Cliente de la nueva SDK oficial
-client = genai.Client(api_key=API_KEY)
 
 # ── Categorías ─────────────────────────────────────────────────────────────
 ADN_PATH = FACTORY_ROOT / "contexto_astrologico.json"
@@ -61,60 +76,92 @@ REGLAS ESTRICTAS:
 def asegurar_dir(path: Path):
     path.mkdir(parents=True, exist_ok=True)
 
-# Lista de modelos a intentar en orden de preferencia
-CANDIDATE_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest']
+import base64
+from io import BytesIO
 
-def clasificar_imagen(img_path: Path, max_retries: int = 3) -> str:
-    """Envía la imagen a Gemini intentando con modelos en rotación si hay 429/404."""
+def _image_to_base64(img: Image.Image) -> str:
+    buffered = BytesIO()
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+    img.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+def _llamar_gemini(client, img):
+    response = client.models.generate_content(
+        model='gemini-3.8-flash', # Estable y con 1500 req/día
+        contents=[SYSTEM_PROMPT, img]
+    )
+    return response.text.strip()
+
+def _llamar_groq(img):
+    b64_img = _image_to_base64(img)
+    response = groq_client.chat.completions.create(
+        model="llama-3.2-90b-vision-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": SYSTEM_PROMPT},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"},
+                    },
+                ],
+            }
+        ],
+        temperature=0.0,
+        max_tokens=10
+    )
+    return response.choices[0].message.content.strip()
+
+def clasificar_imagen(img_path: Path) -> str:
+    """Envía la imagen a las APIs usando arquitectura Hydra (Rotación y Fallback)."""
     img = Image.open(img_path)
-    img.thumbnail((1024, 1024)) # Reducir resolución para gastar menos tokens
+    img.thumbnail((1024, 1024)) # Reducir resolución para ahorrar tokens/transferencia
 
-    for model_name in CANDIDATE_MODELS:
-        for intento in range(1, max_retries + 1):
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=[SYSTEM_PROMPT, img]
-                )
-                resultado = response.text.strip()
-                
-                # Validar que sea un número del 1 al 9
-                if resultado in CATEGORIAS:
-                    return resultado
-                else:
-                    return "9" # Default a general si falla el formato
-                    
-            except Exception as e:
-                err_str = str(e)
-                if "404" in err_str:
-                    break # Probar siguiente modelo si este no existe/está descontinuado
-                elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    print(f"  ⚠️ Cuota agotada en {model_name} (intento {intento}/{max_retries}). Probando alternativa...")
-                    time.sleep(5)
-                    break # Saltar de inmediato al siguiente modelo disponible para no perder tiempo
-                elif "503" in err_str:
-                    print(f"  ⚠️ Alta demanda en {model_name}. Pausa de 10s...")
-                    time.sleep(10)
-                else:
-                    print(f"  ⚠️ Error inesperado con {img_path.name}: {e}")
-                    return None
-    return None
+    # 1. Intentar con Gemini (Llave Principal)
+    if gemini_client_1:
+        try:
+            res = _llamar_gemini(gemini_client_1, img)
+            if res in CATEGORIAS: return res
+        except Exception as e:
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                print("  ⚠️ Cuota de Gemini Llave 1 agotada. Hot-swapping a Llave 2...")
+            else:
+                print(f"  ⚠️ Error en Gemini 1: {e}. Pasando a fallback...")
+
+    # 2. Intentar con Gemini (Llave Secundaria)
+    if gemini_client_2:
+        try:
+            res = _llamar_gemini(gemini_client_2, img)
+            if res in CATEGORIAS: return res
+        except Exception as e:
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                print("  ⚠️ Cuota de Gemini Llave 2 agotada.")
+            else:
+                print(f"  ⚠️ Error en Gemini 2: {e}.")
+
+    # Si todo falla
+    return "9" # Default a general
 
 def main():
     parser = argparse.ArgumentParser(description="Clasificador visual IA con Gemini Flash")
-    parser.add_argument("--directorio", type=str, required=True, help="Ruta a la carpeta de assets (ej: Assets_Reusables_Auditados)")
+    parser.add_argument("--directorio", type=str, required=True, help="Carpeta de origen (ej: Descargas_Crudas/Oct_W1)")
+    parser.add_argument("--salida", type=str, required=True, help="Carpeta de destino final (ej: Assets_Auditados/Oct_W1)")
     args = parser.parse_args()
     
     dir_base = Path(args.directorio)
+    dir_salida = Path(args.salida)
     if not dir_base.exists():
-        print(f"❌ El directorio no existe: {dir_base}")
+        print(f"❌ El directorio de origen no existe: {dir_base}")
         sys.exit(1)
         
     print(f"\n🔮 AUTO-CLASIFICADOR IA INICIADO")
-    print(f"   Directorio: {dir_base}")
+    print(f"   Origen: {dir_base}")
+    print(f"   Destino: {dir_salida}")
     print(f"   Pausa entre imágenes: 8.0 segundos (~7.5 RPM para cuota gratuita sin bloqueos)\n")
     
-    registro_path = dir_base / "ia_curated_registry.json"
+    registro_path = dir_salida / "ia_curated_registry.json"
     
     # Cargar registro
     if registro_path.exists():
@@ -138,16 +185,37 @@ def main():
         print("✅ No hay imágenes nuevas para procesar.")
         sys.exit(0)
         
+    print("🔍 Construyendo base de datos de hashes (MD5) de la bóveda para evitar duplicados...")
+    hashes_existentes = set()
+    for ext in ['.jpg', '.jpeg', '.png']:
+        for img in dir_salida.rglob(f"*{ext}"):
+            with open(img, "rb") as f:
+                hashes_existentes.add(hashlib.md5(f.read()).hexdigest())
+    print(f"  ✅ {len(hashes_existentes)} hashes únicos registrados en la bóveda de salida.")
+        
     for i, archivo in enumerate(archivos, 1):
         print(f"\n[{i}/{len(archivos)}] Analizando: {archivo.name} ...")
         
+        # 1. Anti-Duplicado (Hash)
+        with open(archivo, "rb") as f:
+            h = hashlib.md5(f.read()).hexdigest()
+        if h in hashes_existentes:
+            print("  🗑️  ¡DUPLICADO EXACTO! Eliminando archivo para no contaminar la bóveda.")
+            archivo.unlink()
+            # Registrar como procesado para no volver a intentar
+            procesados.add(archivo.name)
+            continue
+            
+        hashes_existentes.add(h)
+        
+        # 2. Clasificación IA
         cat_num = clasificar_imagen(archivo)
         
         if cat_num:
             cat_nombre = CATEGORIAS[cat_num]
             
             # Crear la carpeta de destino: /Imagenes/1_Astrologia/
-            dir_destino = dir_base / "Imagenes" / cat_nombre
+            dir_destino = dir_salida / "Imagenes" / cat_nombre
             asegurar_dir(dir_destino)
             
             destino = dir_destino / archivo.name

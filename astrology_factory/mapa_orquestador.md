@@ -41,7 +41,8 @@
     │   ├── generador_guiones.py
     │   └── cronometrador_y_tts.py
     ├── celula_2/
-    │   ├── asignador_semantico.py
+    │   ├── nodriza_autonoma.py        ← [Daemon] Scraper, arte IA y catalogador
+    │   ├── nodriza_visual.py          ← [2.1] Ensamblador semántico y fractal
     │   └── validador_de_ensamble.py
     ├── celula_3/
     │   ├── fabrica_microclips.py
@@ -64,7 +65,8 @@
 | `fusionador_visual.py` | 🌑 0 | Transforma y crea nuevos assets visuales |
 | `generador_guiones.py` | 🌒 1 | Escribe el guion a partir del ADN JSON |
 | `cronometrador_y_tts.py` | 🌒 1 | Genera TTS, subtítulos y el JSON de tiempos |
-| `asignador_semantico.py` | 🌓 2 | Hace el matching entre assets y huecos de tiempo |
+| `nodriza_autonoma.py` | 🌓 2 | [Daemon] Control de bóveda, recolección periódica y catalogación asíncrona |
+| `nodriza_visual.py` | 🌓 2 | Matching semántico fractal, opacidad y preparación de chunks |
 | `validador_de_ensamble.py` | 🌓 2 | Audita y bloquea errores matemáticos pre-render |
 | `fabrica_microclips.py` | 🌔 3 | Renderiza clips individuales con color grading |
 | `mezclador_sonoro.py` | 🌔 3 | Mezcla audio (voz + música + SFX) |
@@ -193,15 +195,16 @@ python v2/celula_1/cronometrador_y_tts.py --opcion 4   # MAPEO GAPLESS → timel
 
 ## 🌓 CÉLULA MADRE 2: Inteligencia de Asignación (El Matching)
 
-### Script `v2/celula_2/asignador_semantico.py`
-*Lee /Assets_Auditados/<semana>/ y asigna el mejor video a cada hueco del timeline.*
-*NUNCA ejecuta FFmpeg. NUNCA lee /Descargas_Crudas/.*
+### Script `v2/celula_2/nodriza_autonoma.py` (Daemon)
+*Se ejecuta en segundo plano (Fase A: Recolecta cada 1h / Fase B: Cataloga cada 5m).*
+*Usa Hydra keys. Controla límite de 50GB.*
 
-```
-python v2/celula_2/asignador_semantico.py --opcion 1   # Gemini asigna semánticamente
-python v2/celula_2/asignador_semantico.py --opcion 2   # Match por etiqueta_visual exacta
-python v2/celula_2/asignador_semantico.py --opcion 3   # Caos artístico (aleatorio controlado)
-python v2/celula_2/asignador_semantico.py --opcion 4   # Búsqueda extendida en semanas pasadas
+### Script `v2/celula_2/nodriza_visual.py`
+*Lee el catálogo asíncrono y hace matching semántico. Crea los chunks fractales.*
+
+```bash
+python v2/celula_2/nodriza_autonoma.py                 # Ejecuta el Daemon en background
+python v2/celula_2/nodriza_visual.py --opcion 1        # Match y renderiza lista de corte
 ```
 
 | Opción | Entrada | Salida | Descripción |
@@ -335,7 +338,7 @@ Esta infraestructura descentralizada delega la validación de la red a terceros 
 ╠══════════════════════════════════════════════════════════╣
 ║  FASE MATCHING: Assets ↔ Tiempos                         ║
 ╠══════════════════════════════════════════════════════════╣
-[8]  asignador_semantico.py --opcion 1          ← Match assets auditados ↔ huecos
+[8]  nodriza_visual.py --opcion 1               ← Match assets auditados ↔ huecos (Opacidad fractal)
 [9]  validador_de_ensamble.py --opcion 1        ← Check matemático (suma = duración audio)
 [10] validador_de_ensamble.py --opcion 2        ← Check anti-spam (bloqueo >7 clips)
 ╠══════════════════════════════════════════════════════════╣
@@ -358,7 +361,7 @@ Esta infraestructura descentralizada delega la validación de la red a terceros 
 | :--- | :--- |
 | Descargar assets directo a /Assets_Reusables/ | Usar recolector_visual.py → /Descargas_Crudas/ → auditor |
 | Improvisar un ffmpeg directo | Llamar al script con --opcion N |
-| Rellenar huecos con videos aleatorios | Usar asignador_semantico.py --opcion 2 o --opcion 3 |
+| Rellenar huecos con videos aleatorios | Se encarga nodriza_visual.py por defecto si Gemini se queda sin cuota |
 | Cambiar duraciones en Célula 3 | El timing lo decide SOLO cronometrador_y_tts.py --opcion 4 |
 | Usar queries genéricas sin keywords del ADN | recolector_visual.py --opcion 1 lee el ADN automáticamente |
 | Usar un registry global compartido entre semanas | Cada semana tiene su propio registry_{evento_id}.json |

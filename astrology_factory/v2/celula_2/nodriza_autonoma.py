@@ -3,6 +3,7 @@ import time
 import json
 import requests
 import shutil
+import subprocess
 from dotenv import load_dotenv
 
 import google.generativeai as genai
@@ -155,6 +156,46 @@ def catalogador_loop():
             
         time.sleep(SLEEP_BETWEEN_CALLS)
 
+def purge_if_needed():
+    current_size = get_vault_size()
+    print(f"\n📊 Estado de Bóveda: {current_size / (1024**3):.2f} GB / {MAX_VAULT_SIZE_GB} GB")
+    
+    if current_size > MAX_GB_BYTES:
+        print("⚠️ LÍMITE DE 50GB SUPERADO. Moviendo archivos antiguos a /Revision_Manual...")
+        REVISION_DIR = os.path.join(VAULT_DIR, "Revision_Manual")
+        os.makedirs(REVISION_DIR, exist_ok=True)
+        TARGET_FREE_BYTES = 2 * 1024 * 1024 * 1024 # Liberar 2GB
+        
+        all_files = []
+        for dirpath, _, filenames in os.walk(ASSETS_DIR):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                if not os.path.islink(fp):
+                    all_files.append((fp, os.path.getmtime(fp), os.path.getsize(fp)))
+        
+        all_files.sort(key=lambda x: x[1]) # Más viejos primero
+        
+        freed_bytes = 0
+        for fp, mtime, size in all_files:
+            if freed_bytes >= TARGET_FREE_BYTES:
+                break
+                
+            dest = os.path.join(REVISION_DIR, os.path.basename(fp))
+            if os.path.exists(dest):
+                dest = os.path.join(REVISION_DIR, f"{int(time.time())}_{os.path.basename(fp)}")
+            
+            try:
+                shutil.move(fp, dest)
+                freed_bytes += size
+                print(f"  -> Movido: {os.path.basename(fp)} ({(size/1024/1024):.2f} MB)")
+            except Exception as e:
+                print(f"  ❌ Error moviendo {os.path.basename(fp)}: {e}")
+                
+        print(f"✅ Purga completada. Se movieron {(freed_bytes / 1024 / 1024):.2f} MB a Revision_Manual.")
+        send_telegram_alert(f"Purga de bóveda completada. Se liberaron {(freed_bytes/1024/1024/1024):.2f} GB.")
+    else:
+        print("✅ Espacio dentro de los límites saludables.")
+
 def master_loop():
     print("🌌 NODRIZA AUTÓNOMA INICIADA 🌌")
     if not KEYS:
@@ -162,28 +203,39 @@ def master_loop():
         return
     init_gemini()
     
+    last_scrape_time = 0
+    scrape_interval = 3600  # 1 hora en segundos
+    
     while True:
-        # 1. Comprobación de salud (Espacio en disco)
-        current_size = get_vault_size()
-        print(f"\n📊 Estado de Bóveda: {current_size / (1024**3):.2f} GB / {MAX_VAULT_SIZE_GB} GB")
-        
-        if current_size >= MAX_GB_BYTES:
-            print("🛑 LÍMITE DE 50GB ALCANZADO. Scraper deshabilitado.")
-            send_telegram_alert(f"Límite de bóveda de {MAX_VAULT_SIZE_GB}GB alcanzado. Deteniendo recolección.")
-            # Aunque no pueda scrapear, puede que haya cosas en el Inbox, intentamos catalogar
-            catalogador_loop()
-            print("💤 Durmiendo 1 hora...")
-            time.sleep(3600)
-            continue
+        # 1. Comprobación de salud (Espacio en disco y purga de assets viejos)
+        purge_if_needed()
             
-        # 2. Fase A: Recolección (Scraper)
-        # TODO: Implementar lógica de lectura de transit_palettes.json e invocación segura
-        # del scraper aquí para descargar lentamente hacia INBOX_DIR.
+        # 2. Fase A: Recolección (Scraper y Arte Sintético)
+        now = time.time()
+        if now - last_scrape_time >= scrape_interval:
+            print("🚀 Iniciando Fase A: Recolección y Generación de Arte (cada 1 hora)...")
+            script_dir = os.path.join(PROJECT_ROOT, "v2", "celula_0")
+            
+            try:
+                # 2.1 Descarga desde Internet (Pexels) - Muy conservador (max 5 y 3) para no quemar API
+                subprocess.run(["python3", os.path.join(script_dir, "recolector_visual.py"), "--opcion", "1", "--max", "5"])
+                subprocess.run(["python3", os.path.join(script_dir, "recolector_visual.py"), "--opcion", "2", "--max", "3"])
+                
+                # 2.2 Creación de Arte IA (Pollinations)
+                subprocess.run(["python3", os.path.join(script_dir, "generador_arte_ia.py")])
+                
+                last_scrape_time = time.time()
+                print("✅ Fase A completada.")
+            except Exception as e:
+                print(f"❌ Error ejecutando subprocesos en Fase A: {e}")
+        else:
+            wait_min = (scrape_interval - (now - last_scrape_time)) / 60
+            print(f"⏳ Fase A en reposo. Próxima recolección en {wait_min:.1f} minutos.")
         
         # 3. Fase B: Catalogación de Inbox
         catalogador_loop()
         
-        print("💤 Ciclo completado. Durmiendo 5 minutos...")
+        print("💤 Ciclo de Nodriza completado. Durmiendo 5 minutos...")
         time.sleep(300)
 
 if __name__ == "__main__":

@@ -52,15 +52,15 @@ def generate_prompts():
     prompt = f"""
 You are an expert surrealist AI artist and esoteric astrologer.
 Based on the following astrological context, create 3 ultra-detailed, evocative, and highly complex image generation prompts in English.
-Do NOT just say "{ADN['evento']['nombre']}". Describe the energetic tension, sacred geometry, colors, and cymatic resonance of multiple planets involved.
+Do NOT just say "{ADN['produccion']['evento_titulo']}". Describe the energetic tension, sacred geometry, colors, and cymatic resonance of multiple planets involved.
 The images will be vertical (9:16 aspect ratio). Make them profound, dark, and beautiful.
 
 ASTROLOGICAL CONTEXT:
-Event: {ADN['evento']['nombre']}
-Description: {ADN['evento']['descripcion']}
-Visual Elements: {', '.join(ADN['arquetipos']['elementos_visuales'])}
-Colors: {', '.join(ADN['arquetipos']['paleta_colores'])}
-Keywords: {', '.join(ADN['arquetipos']['palabras_clave'])}
+Event: {ADN['produccion']['evento_titulo']}
+Description: {ADN['transito']['descripcion_breve']}
+Primary Archetype: {ADN['arquetipos']['primario']}
+Colors: {', '.join(ADN['estetica_visual']['paleta_colores'].values())}
+Keywords: {', '.join(ADN['transito']['palabras_clave'])}
 
 Output ONLY a valid JSON array of 3 strings (the prompts), and nothing else.
 Example:
@@ -71,7 +71,7 @@ Example:
 """
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.8-flash',
             contents=prompt,
         )
         text = response.text
@@ -116,6 +116,16 @@ def main():
         print(f"\n=> Prompt {i+1}: {p}")
         download_image(p, i)
         time.sleep(2) # Respetar rate limits de pollinations
+
+    prompts_file = DESC_CRUDAS / "PROMPTS_ARTE.md"
+    try:
+        with open(prompts_file, 'w', encoding='utf-8') as f:
+            f.write("# Prompts de Arte Generados\n\n")
+            for i, p in enumerate(prompts):
+                f.write(f"## Imagen {i+1}\n```\n{p}\n```\n\n")
+        print(f"✅ Prompts guardados en {prompts_file.name} para revisión manual.")
+    except Exception as e:
+        print(f"⚠️ No se pudo guardar el archivo de prompts: {e}")
 
 if __name__ == "__main__":
     main()

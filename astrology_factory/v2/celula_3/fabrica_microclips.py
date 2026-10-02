@@ -250,6 +250,12 @@ def opcion_1_render_color_grading(solo_toma: int = None):
     info(f"Resolución: {RESOLUCION} · FPS: {FPS} · CRF: {CRF} · Preset: {PRESET}")
     info(f"Tomas a renderizar: {len(tomas)}")
 
+    # Purgar carpeta de render para evitar sumar videos de intentos anteriores
+    if not solo_toma and MICRO_DIR.exists():
+        import shutil
+        shutil.rmtree(MICRO_DIR)
+    asegurar_dir(MICRO_DIR)
+
     clips_ok    = []
     clips_fail  = []
     t_inicio    = time.time()

@@ -202,14 +202,14 @@ def tiene_tags_prohibidos(tags_str: str) -> bool:
 
 def descargar_archivo(url: str, destino: Path, descripcion: str = "") -> bool:
     try:
-        headers = {"User-Agent": "AstrologyEngine/2.0 (educational)"}
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"}
         r = requests.get(url, headers=headers, timeout=30, stream=True)
         if r.status_code == 200:
             with open(destino, "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
             size_kb = destino.stat().st_size / 1024
-            if size_kb < 50:  # Descartar si muy pequeño (basura)
+            if size_kb < 10:  # Descartar si es menor a 10KB
                 destino.unlink()
                 dim(f"Descartado por tamaño ({size_kb:.1f}KB): {descripcion}")
                 return False
