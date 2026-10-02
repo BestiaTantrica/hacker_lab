@@ -30,13 +30,7 @@ except ImportError:
     sys.exit(1)
 
 load_dotenv(FACTORY_ROOT / ".env")
-API_KEYS = [
-    os.getenv("GEMINI_API_KEY"),
-    os.getenv("GEMINI_API_KEY_TEXT"),
-    os.getenv("GEMINI_API_KEY_WEB"),
-    os.getenv("GEMINI_API_KEY_WEB_TEXT")
-]
-API_KEYS = [k for k in API_KEYS if k]
+API_KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and v]
 
 # Clientes de la nueva SDK oficial
 gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]

@@ -38,13 +38,7 @@ except ImportError:
 load_dotenv(FACTORY_ROOT / ".env")
 
 # ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
-API_KEYS = [
-    os.getenv("GEMINI_API_KEY"),
-    os.getenv("GEMINI_API_KEY_TEXT"),
-    os.getenv("GEMINI_API_KEY_WEB"),
-    os.getenv("GEMINI_API_KEY_WEB_TEXT")
-]
-API_KEYS = [k for k in API_KEYS if k] # Filtrar nulos
+API_KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and v]
 
 # Clientes dinámicos
 gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]

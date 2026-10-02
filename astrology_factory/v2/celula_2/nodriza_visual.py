@@ -64,26 +64,23 @@ asegurar_dir(TEMP_DIR)
 asegurar_dir(TRANSMUTADOS_DIR)
 
 # ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
-API_KEY_1 = os.getenv("GEMINI_API_KEY")
-API_KEY_2 = os.getenv("GEMINI_API_KEY_TEXT")
-API_KEY_3 = os.getenv("GROQ_API_KEY")
+API_KEYS = [
+    os.getenv("GEMINI_API_KEY"),
+    os.getenv("GEMINI_API_KEY_TEXT"),
+    os.getenv("GEMINI_API_KEY_WEB"),
+    os.getenv("GEMINI_API_KEY_WEB_TEXT")
+]
+API_KEYS = [k for k in API_KEYS if k]
 
-try:
-    gemini_client_1 = genai.Client(api_key=API_KEY_1) if API_KEY_1 else None
-    gemini_client_2 = genai.Client(api_key=API_KEY_2) if API_KEY_2 else None
-except Exception as e:
-    err("No se pudo iniciar Google GenAI.")
-    gemini_client_1 = None
-    gemini_client_2 = None
+gemini_clients = []
+for key in API_KEYS:
+    try:
+        gemini_clients.append(genai.Client(api_key=key))
+    except Exception:
+        pass
 
-try:
-    from groq import Groq
-    groq_client = Groq(api_key=API_KEY_3) if API_KEY_3 else None
-except ImportError:
-    groq_client = None
-
-if not any([gemini_client_1, gemini_client_2, groq_client]):
-    err("No se encontraron llaves de API válidas en .env (Gemini o Groq)")
+if not gemini_clients:
+    err("No se encontraron llaves de API de Gemini válidas en .env")
     sys.exit(1)
 
 import base64
@@ -212,24 +209,20 @@ Reglas:
 1. Elige el asset que resuene de forma SUTIL Y SUGESTIVA con el texto. No literal.
 2. Responde ÚNICAMENTE con el ID del asset elegido.
 """
-    global QUOTA_EXCEEDED
-    if QUOTA_EXCEEDED:
-        return random.choice(list(cat.keys())) if cat else None
-        
-    for i in range(3):
-        try:
-            active_client = gemini_client_1 if gemini_client_1 else gemini_client_2
-            if not active_client: raise Exception("No valid Gemini client available.")
-            res = active_client.models.generate_content(model='gemini-3.8-flash', contents=prompt)
-            ans = res.text.strip().replace('"', '').replace("'", "")
-            for k in cat.keys():
-                if k in ans: return k
-        except Exception as e:
-            if "429" in str(e):
-                QUOTA_EXCEEDED = True
-                return random.choice(list(cat.keys())) if cat else None
-            time.sleep(2)
-    return None
+    for client in gemini_clients:
+        for i in range(2): # 2 attempts per client
+            try:
+                res = client.models.generate_content(model='gemini-3.8-flash', contents=prompt)
+                ans = res.text.strip().replace('"', '').replace("'", "")
+                for k in cat.keys():
+                    if k in ans: return k
+                break # if no error but also no key matched, break out of attempts for this client
+            except Exception as e:
+                if "429" in str(e) or "quota" in str(e).lower() or "exhausted" in str(e).lower():
+                    break # quota exceeded for this client, break attempts and move to next client
+                time.sleep(2)
+                
+    return random.choice(list(cat.keys())) if cat else None
 
 def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[str], ultimo_elemento: str) -> float:
     score = 0.5

@@ -25,13 +25,7 @@ SLEEP_BETWEEN_CALLS = 6  # ~10 por minuto max.
 
 # 3. Inicializar entorno
 load_dotenv(ENV_PATH)
-KEYS = [
-    os.getenv("GEMINI_API_KEY"),
-    os.getenv("GEMINI_API_KEY_TEXT"),
-    os.getenv("GEMINI_API_KEY_WEB"),
-    os.getenv("GEMINI_API_KEY_WEB_TEXT")
-]
-KEYS = [k for k in KEYS if k]
+KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and v]
 current_key_idx = 0
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
