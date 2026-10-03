@@ -213,6 +213,11 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[
     tags = " ".join(meta.get("etiquetas_visuales", [])).lower()
     tags += " " + " ".join(meta.get("tags", [])).lower()
     
+    # Penalizar duramente imágenes que rompen la estética ("hay imagenes de familia quie no van ni de joda en el estilo")
+    for palabra_prohibida in ["familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños"]:
+        if palabra_prohibida in tags:
+            score -= 20.0
+    
     # Asignaciones forzadas / Bonos altos
     if "cta" in rol:
         # Preferir animaciones de fondo neutras, "fractal", o cosas que sirvan de fondo para texto
@@ -406,11 +411,15 @@ def run_nodriza():
             mejor_asset_key = None
             score_para_alpha = 0.5  # fallback neutral
             
-            assets_espacio = [k for k, m in cat.items() if "07_Espacio_Galaxias" in m.get("path_video_final", "")]
+            # Buscamos de manera más general cualquier video que tenga 'espacio', 'cosmos' o '07_Espacio_Galaxias'
+            assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
             
-            if (es_primer_corte_absoluto or es_ultimo_corte_absoluto) and assets_espacio:
-                # Forza el prólogo y epílogo cósmico
-                mejor_asset_key = random.choice(assets_espacio)
+            if not asset_gancho_path and assets_espacio_video:
+                asset_gancho_path = random.choice(assets_espacio_video)
+            
+            if (es_primer_corte_absoluto or es_ultimo_corte_absoluto) and asset_gancho_path:
+                # Forza el prólogo y epílogo cósmico con EL MISMO video para lograr un loop
+                mejor_asset_key = asset_gancho_path
                 ganador_meta = cat[mejor_asset_key]
                 score_para_alpha = 1.0
             else:
