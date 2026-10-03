@@ -68,7 +68,9 @@ API_KEYS = [
     os.getenv("GEMINI_API_KEY"),
     os.getenv("GEMINI_API_KEY_TEXT"),
     os.getenv("GEMINI_API_KEY_WEB"),
-    os.getenv("GEMINI_API_KEY_WEB_TEXT")
+    os.getenv("GEMINI_API_KEY_WEB_TEXT"),
+    "REMOVED_SECRET",
+    "REMOVED_SECRET"
 ]
 API_KEYS = [k for k in API_KEYS if k]
 
@@ -170,63 +172,67 @@ def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
     # Simplemente lee el catálogo asíncrono y devuelve lo que ya existe.
     cat = cargar_catalogo()
     
-    # Solo inyectamos el path_video_final y path_original temporalmente para el render
-    # pero NO guardamos esto en disco si el asset no estaba catalogado.
+    # Inyectamos TODOS los assets físicos al catálogo en memoria
+    # Extraemos etiquetas del nombre del archivo (generado por Célula 0)
     for a in assets:
         key = a.name
-        if key in cat:
-            cat[key]["path_original"] = str(a.resolve())
-            cat[key]["path_video_final"] = str(a.resolve())
+        if key not in cat:
+            # Parse tags from filename e.g. oct_w1_fuego_accion_name.jpg
+            tags = key.replace(".mp4", "").replace(".jpg", "").replace(".png", "").split("_")
+            cat[key] = {
+                "etiquetas_visuales": tags,
+                "tags": tags
+            }
+        
+        cat[key]["path_original"] = str(a.resolve())
+        cat[key]["path_video_final"] = str(a.resolve())
     
     return cat
 
-# ── D. Scorer Emocional ──────────────────────────────────────────────────────
+# ── D. Scorer Emocional y Semántico ──────────────────────────────────────────
 
 def elegir_mejor_asset_con_gemini(toma_texto: str, rol: str, cat: dict, ultimos_usados: list) -> str:
-    emocion_dominante = ADN.get("arquetipos", {}).get("emocion_dominante", "")
-    elemento_astro = ADN.get("arquetipos", {}).get("elemento", "")
-    
-    prompt = f"""
-Eres el Director de Arte de un video astrológico poético.
-Elige el MEJOR asset visual de nuestra bóveda para acompañar el siguiente texto (Toma: {rol}):
-TEXTO: "{toma_texto}"
-
-Emoción dominante del evento: {emocion_dominante}
-Elemento astrológico: {elemento_astro}
-
-CATÁLOGO:
-"""
-    for key, meta in cat.items():
-        if not meta.get("path_video_final"): continue
-        tags = ", ".join(meta.get("tags", []))
-        elemento = meta.get("elemento_visual", "Abstracto")
-        prompt += f"- ID: {key} | Elemento: {elemento} | Tags: {tags}\n"
-
-    prompt += f"""
-Assets usados recientemente (EVITAR REPETIR, es muy importante la variedad): {", ".join(ultimos_usados)}
-
-Reglas:
-1. Elige el asset que resuene de forma SUTIL Y SUGESTIVA con el texto. No literal.
-2. Responde ÚNICAMENTE con el ID del asset elegido.
-"""
-    for client in gemini_clients:
-        for i in range(2): # 2 attempts per client
-            try:
-                res = client.models.generate_content(model='gemini-3.8-flash', contents=prompt)
-                ans = res.text.strip().replace('"', '').replace("'", "")
-                for k in cat.keys():
-                    if k in ans: return k
-                break # if no error but also no key matched, break out of attempts for this client
-            except Exception as e:
-                if "429" in str(e) or "quota" in str(e).lower() or "exhausted" in str(e).lower():
-                    break # quota exceeded for this client, break attempts and move to next client
-                time.sleep(2)
-                
-    return random.choice(list(cat.keys())) if cat else None
+    # Desactivamos llamadas de Gemini por cada chunk para no quemar las cuotas ("quemar apis").
+    # Usaremos el motor semántico local basado en metadatos generados asíncronamente por Célula 0.
+    return None
 
 def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[str], ultimo_elemento: str) -> float:
+    # 1. Base score
     score = 0.5
-    if ultimos_usados and asset_key in ultimos_usados[-3:]: score -= 2.0
+    
+    # 2. Penalizaciones fuertes
+    # Penalizar repeticiones recientes para asegurar variedad ("usa las mismas imagenes una y otra vez")
+    if ultimos_usados:
+        if asset_key in ultimos_usados[-5:]: 
+            score -= 5.0
+        elif asset_key in ultimos_usados:
+            score -= 1.0
+            
+    # 3. Emparejamiento por ROL
+    rol = toma.get("rol", "").lower()
+    tags = " ".join(meta.get("etiquetas_visuales", [])).lower()
+    tags += " " + " ".join(meta.get("tags", [])).lower()
+    
+    # Asignaciones forzadas / Bonos altos
+    if "cta" in rol:
+        # Preferir animaciones de fondo neutras, "fractal", o cosas que sirvan de fondo para texto
+        if "fractal" in tags or "abstract" in tags or "fondo" in tags:
+            score += 2.0
+    
+    if "gancho" in rol:
+        if "fuego" in tags or "espacio" in tags:
+            score += 1.0
+            
+    # 4. Emparejamiento por Texto
+    texto_toma = toma.get("texto", "").lower()
+    for palabra in ["fuego", "espacio", "cosmos", "estrella", "luna", "sagitario", "quemar", "emocion", "pecho"]:
+        if palabra in texto_toma and palabra in tags:
+            score += 1.5
+            
+    # Preferencia ligera por videos sobre imagenes para mayor dinamismo
+    if asset_key.endswith(".mp4"):
+        score += 0.2
+            
     return score
 
 # ── Slicing Semántico y Montaje ──────────────────────────────────────────────
@@ -235,11 +241,11 @@ import re
 import uuid
 
 def calcular_cortes_ritmicos(texto: str, duracion_total: float) -> list[float]:
-    # Adiós a los micro-cortes esquizofrénicos. 
-    # Mantenemos la imagen para que respire. Máximo 2 clips si la toma es muy larga (>5s).
-    if duracion_total > 5.0:
-        return [duracion_total * 0.5, duracion_total * 0.5]
-    return [duracion_total]
+    # Retornamos cortes de aproximadamente 2 a 2.5 segundos cada uno
+    # para crear un viaje sensorial más dinámico
+    num_cortes = max(1, int(duracion_total / 2.0))
+    corte_dur = duracion_total / num_cortes
+    return [corte_dur] * num_cortes
 
 def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: str, es_primer_chunk: bool = False, es_ultimo_chunk: bool = False, score: float = 0.5) -> Path:
     import random
@@ -399,11 +405,13 @@ def run_nodriza():
             
             mejor_asset_key = None
             score_para_alpha = 0.5  # fallback neutral
-            if es_ultimo_corte_absoluto and asset_gancho_path:
-                # El gancho vuelve al final → máxima presencia visual
-                ganador_meta    = {"path_video_final": str(asset_gancho_path)}
-                mejor_asset_key = asset_gancho_path.name
-                score_para_alpha = 1.0
+            
+            assets_espacio = [k for k, m in cat.items() if "07_Espacio_Galaxias" in m.get("path_video_final", "")]
+            
+            if (es_primer_corte_absoluto or es_ultimo_corte_absoluto) and assets_espacio:
+                # Forza el prólogo y epílogo cósmico
+                mejor_asset_key = random.choice(assets_espacio)
+                ganador_meta = cat[mejor_asset_key]
                 score_para_alpha = 1.0
             else:
                 mejor_asset_key = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados)
@@ -425,9 +433,6 @@ def run_nodriza():
                     score_para_alpha = max(0.0, min(1.0, mejor_score))
 
             if mejor_asset_key:
-                if es_primer_corte_absoluto:
-                    asset_gancho_path = Path(ganador_meta["path_video_final"])
-
                 ultimos_usados.append(mejor_asset_key)
                 ultimo_elemento = ganador_meta.get("elemento_visual")
                 if "stats_uso" in ganador_meta:

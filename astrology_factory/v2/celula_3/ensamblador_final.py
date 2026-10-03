@@ -116,8 +116,8 @@ TRANSICIONES_INTRA = ["fade"]
 # Transiciones VÓRTICE — saltos entre tomas distintas (agujeros de gusano cósmicos)
 TRANSICIONES_VORTICE = ["fade"]
 
-XFADE_DUR_INTRA   = 1.5    # segundos — suave, cruzado largo onírico
-XFADE_DUR_VORTICE = 2.5    # segundos — contundente, fundido onírico largo
+XFADE_DUR_INTRA   = 0.2    # segundos — suave, rápido para acompañar el relato
+XFADE_DUR_VORTICE = 1.0    # segundos — fundido onírico pero dinámico
 
 
 def leer_mapa_tomas() -> dict[str, int]:

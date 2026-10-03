@@ -114,20 +114,19 @@ def clasificar_imagen(img_path: Path, max_retries: int = 3) -> str:
                     else:
                         return "18" # Default a general si falla el formato
                         
-                    
-            except Exception as e:
-                err_str = str(e)
-                if "404" in err_str:
-                    break
-                elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    print(f"  ⚠️ Cuota agotada en {model_name} (intento {intento}/{max_retries}). Probando alternativa...")
-                    time.sleep(5)
-                    break
-                elif "503" in err_str:
-                    print(f"  ⚠️ Alta demanda en {model_name}. Pausa de 10s...")
-                    time.sleep(10)
-                else:
-                    print(f"  ⚠️ Error de API con {img_path.name}: {e}")
+                except Exception as e:
+                    err_str = str(e)
+                    if "404" in err_str:
+                        break
+                    elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                        print(f"  ⚠️ Cuota agotada en {model_name} (intento {intento}/{max_retries}). Probando alternativa...")
+                        time.sleep(5)
+                        break
+                    elif "503" in err_str:
+                        print(f"  ⚠️ Alta demanda en {model_name}. Pausa de 10s...")
+                        time.sleep(10)
+                    else:
+                        print(f"  ⚠️ Error de API con {img_path.name}: {e}")
                     return None
     return None
 

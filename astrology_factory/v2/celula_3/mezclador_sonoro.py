@@ -174,35 +174,57 @@ def opcion_2_binaural():
     info(f"Frecuencia base: {hz}Hz")
     info(f"Duración: {dur_s:.2f}s · Modulación de ondas delta (3Hz) para relajación profunda")
 
-    # DISEÑO SONORO EVOLUTIVO SINTÉTICO:
-    # 1. Cuenco Tibetano Izquierdo (Fundamental + 2 armónicos)
-    # 2. Cuenco Tibetano Derecho (Frecuencia + 3Hz para beat binaural delta)
-    # 3. Oleaje Marino (Ruido rosa con filtro paso bajo y trémolo muy lento simulando olas)
-    # 4. Modulación (aphaser, aecho) y fade in/out
-    
-    filtro_sanacion = (
-        f"[0:a]volume=1.0[voz];"
-        f"aevalsrc='0.3*sin(2*PI*{hz}*t) + 0.15*sin(2*PI*{hz*2}*t) + 0.05*sin(2*PI*{hz*3}*t)':d={dur_s:.3f}[cuenco_l];"
-        f"aevalsrc='0.3*sin(2*PI*{hz+3}*t) + 0.15*sin(2*PI*{(hz+3)*2}*t) + 0.05*sin(2*PI*{(hz+3)*3}*t)':d={dur_s:.3f}[cuenco_r];"
-        f"[cuenco_l][cuenco_r]join=inputs=2:channel_layout=stereo[cuenco_stereo];"
-        f"anoisesrc=c=pink:r=44100:a=0.08:d={dur_s:.3f},lowpass=f=300,tremolo=f=0.1:d=0.8[mar];"
-        f"[cuenco_stereo][mar]amix=inputs=2:duration=first[sanacion_raw];"
-        f"[sanacion_raw]aecho=0.8:0.9:1000|1500:0.3|0.2,aphaser=in_gain=0.4:out_gain=0.5:delay=3:decay=0.4:speed=0.2,tremolo=f=0.05:d=0.3,volume=-8dB[pad];"
-        f"[pad]afade=t=in:st=0:d=4,afade=t=out:st={dur_s - 4:.3f}:d=4[pad_faded];"
-        f"[voz][pad_faded]amix=inputs=2:duration=first:normalize=0[out]"
-    )
-    
-    cmd_v2 = [
-        "ffmpeg", "-y",
-        "-i", str(mix_mp3),
-        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", # Placeholder
-        "-filter_complex", filtro_sanacion,
-        "-map", "[out]",
-        "-c:a", "libmp3lame", "-q:a", "2",
-        str(salida)
-    ]
+    # Buscar pistas de Stock_Sonoro (ya procesadas y filtradas)
+    stock_dir = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Stock_Sonoro")
+    paletas = []
+    if stock_dir.exists():
+        paletas = list(stock_dir.glob("*.mp3"))
+        
+    import random
+    if paletas:
+        paleta = random.choice(paletas)
+        info(f"Usando track de stock preparado: {paleta.name}")
+        
+        filtro_sanacion = (
+            f"[0:a]volume=1.0[voz];"
+            f"[1:a]aloop=loop=-1:size=2e9,atrim=0:{dur_s:.3f}[pad];"
+            f"[voz][pad]amix=inputs=2:duration=first:normalize=0[out]"
+        )
+        
+        cmd_v2 = [
+            "ffmpeg", "-y",
+            "-i", str(mix_mp3),
+            "-i", str(paleta),
+            "-filter_complex", filtro_sanacion,
+            "-map", "[out]",
+            "-c:a", "libmp3lame", "-q:a", "2",
+            str(salida)
+        ]
+    else:
+        info("No se encontraron tracks en Stock_Sonoro, usando síntesis matemática de emergencia.")
+        # DISEÑO SONORO EVOLUTIVO SINTÉTICO:
+        filtro_sanacion = (
+            f"[0:a]volume=1.0[voz];"
+            f"aevalsrc='0.3*sin(2*PI*{hz}*t) + 0.15*sin(2*PI*{hz*2}*t) + 0.05*sin(2*PI*{hz*3}*t)':d={dur_s:.3f}[cuenco_l];"
+            f"aevalsrc='0.3*sin(2*PI*{hz+3}*t) + 0.15*sin(2*PI*{(hz+3)*2}*t) + 0.05*sin(2*PI*{(hz+3)*3}*t)':d={dur_s:.3f}[cuenco_r];"
+            f"[cuenco_l][cuenco_r]join=inputs=2:channel_layout=stereo[cuenco_stereo];"
+            f"anoisesrc=c=pink:r=44100:a=0.08:d={dur_s:.3f},lowpass=f=300,tremolo=f=0.1:d=0.8[mar];"
+            f"[cuenco_stereo][mar]amix=inputs=2:duration=first[sanacion_raw];"
+            f"[sanacion_raw]aecho=0.8:0.9:1000|1500:0.3|0.2,aphaser=in_gain=0.4:out_gain=0.5:delay=3:decay=0.4:speed=0.2,tremolo=f=0.1:d=0.3,volume=-16dB[pad];"
+            f"[pad]afade=t=in:st=0:d=4,afade=t=out:st={dur_s - 4:.3f}:d=4[pad_faded];"
+            f"[voz][pad_faded]amix=inputs=2:duration=first:normalize=0[out]"
+        )
+        cmd_v2 = [
+            "ffmpeg", "-y",
+            "-i", str(mix_mp3),
+            "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", # Placeholder
+            "-filter_complex", filtro_sanacion,
+            "-map", "[out]",
+            "-c:a", "libmp3lame", "-q:a", "2",
+            str(salida)
+        ]
 
-    exito = correr_ffmpeg(cmd_v2, f"Diseño Sonoro Sanador ({hz}Hz)", timeout=180)
+    exito = correr_ffmpeg(cmd_v2, f"Diseño Sonoro ({'Real' if paletas else 'Sintético'})", timeout=180)
     if exito and salida.exists():
         ok(f"Audio envolvente: {salida}")
         return str(salida)

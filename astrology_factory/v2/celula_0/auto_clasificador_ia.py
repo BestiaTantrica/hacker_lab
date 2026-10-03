@@ -43,9 +43,9 @@ API_KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") a
 # Clientes dinámicos
 gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-groq_client = Groq(api_key=API_KEY_3) if API_KEY_3 else None
+groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-if not any([gemini_client_1, gemini_client_2, groq_client]):
+if not gemini_clients and not groq_client:
     print("❌ No se encontraron llaves de API válidas en .env (Gemini o Groq)")
     sys.exit(1)
 

@@ -79,6 +79,15 @@ def main_loop():
             except Exception as e:
                 log(f"Error ejecutando clasificador de videos: {e}")
                 
+        # 3. Generar Stock Sonoro (Offline)
+        SCRIPT_SONORO = FACTORY_ROOT / "v2" / "celula_0" / "generador_stock_sonoro.py"
+        if SCRIPT_SONORO.exists():
+            log(f"Ejecutando generador de stock sonoro...")
+            try:
+                subprocess.run([sys.executable, str(SCRIPT_SONORO)], check=False)
+            except Exception as e:
+                log(f"Error ejecutando generador de stock sonoro: {e}")
+
         # Dormir 15 minutos (900 segundos) para no saturar
         log("Ciclo completado. Durmiendo 15 minutos...")
         time.sleep(900)
