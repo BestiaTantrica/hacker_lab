@@ -24,9 +24,11 @@ MAX_GB_BYTES = MAX_VAULT_SIZE_GB * 1024 * 1024 * 1024
 SLEEP_BETWEEN_CALLS = 6  # ~10 por minuto max.
 
 # 3. Inicializar entorno
+import sys
+sys.path.insert(0, PROJECT_ROOT)
+from v2 import cuota
+
 load_dotenv(ENV_PATH)
-KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and v]
-current_key_idx = 0
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
@@ -43,17 +45,8 @@ def send_telegram_alert(message):
     except:
         pass
 
-def init_gemini():
-    genai.configure(api_key=KEYS[current_key_idx])
-
-def rotate_api_key():
-    global current_key_idx
-    if current_key_idx < len(KEYS) - 1:
-        current_key_idx += 1
-        print(f"🔄 Rotando a llave Gemini #{current_key_idx + 1}")
-        init_gemini()
-        return True
-    return False
+def init_gemini(key):
+    genai.configure(api_key=key)
 
 def get_vault_size():
     total_size = 0
@@ -72,6 +65,13 @@ def analyze_image_with_gemini(filepath):
     except Exception as e:
         print(f"❌ Error abriendo imagen {filepath}: {e}")
         return None
+
+    elegida = cuota.elegir_key()
+    if not elegida:
+        return "QUOTA_EXCEEDED"
+    nombre_key, key = elegida
+    init_gemini(key)
+    cuota.esperar_ritmo()
 
     # Usar el modelo standard para visión (en código antiguo usamos gemini-1.5-flash)
     model = genai.GenerativeModel('gemini-3.6-flash')
@@ -95,12 +95,13 @@ Responde ÚNICAMENTE en JSON válido con este formato exacto:
             },
             generation_config={"response_mime_type": "application/json"}
         )
+        cuota.registrar_uso(nombre_key)
         return json.loads(response.text)
     except Exception as e:
-        err_str = str(e).lower()
-        if "429" in err_str or "quota" in err_str or "exhausted" in err_str:
-            print("⚠️ Cuota de API agotada.")
-            return "QUOTA_EXCEEDED"
+        tipo = cuota.registrar_error(nombre_key, e)
+        if tipo != "otro":
+            print(f"⏸️ {nombre_key} en pausa ({tipo}).")
+            return "RETRY_OTHER_KEY"
         print(f"⚠️ Gemini Error: {e}")
         return None
 
@@ -147,34 +148,28 @@ def catalogador_loop():
         print(f"  Analizando: {filename}...")
         
         if filename.lower().endswith('.mp4'):
+            import re
+            palabras = [w.lower() for w in re.split(r'[/_.-]', filename) if len(w) > 3 and w.lower() not in ["abstract", "video", "mp4", "pexels", "pixabay", "assets"]]
             metadata = {
-                "etiquetas_visuales": ["video", "animacion", "fondo espacial"],
-                "emociones": ["fluidez", "movimiento", "misterio"],
-                "colores_predominantes": ["oscuros"],
+                "etiquetas_visuales": palabras + ["video", "animacion"],
+                "emociones": palabras + ["movimiento", "fluidez", "misterio"],
+                "colores_predominantes": ["variado"],
                 "es_apropiado_para_astrologia": True,
                 "formato": "mp4"
             }
         else:
             metadata = analyze_image_with_gemini(inbox_path)
         
+        if metadata == 'RETRY_OTHER_KEY':
+            metadata = analyze_image_with_gemini(inbox_path)  # 1 reintento con otra key
+            if metadata == 'RETRY_OTHER_KEY':
+                metadata = None
         if metadata == 'QUOTA_EXCEEDED':
-            if rotate_api_key():
-                print('Reintentando con nueva llave...')
-                metadata = analyze_image_with_gemini(inbox_path)
-                if metadata == 'QUOTA_EXCEEDED':
-                    if not os.path.exists('/tmp/.nodriza_quota_exhausted'):
-                        send_telegram_alert('Todas las cuotas de Gemini están agotadas. El catalogador se pondrá a dormir por hoy.')
-                        open('/tmp/.nodriza_quota_exhausted', 'w').close()
-                    return
-            else:
-                if not os.path.exists('/tmp/.nodriza_quota_exhausted'):
-                    send_telegram_alert('Cuota de Gemini agotada y no hay más llaves de repuesto.')
-                    open('/tmp/.nodriza_quota_exhausted', 'w').close()
-                return
+            if cuota.alerta_pendiente():
+                send_telegram_alert('Todas las cuotas de Gemini están agotadas. Duermo hasta que se renueven (≈4 a.m. Argentina). Aviso una sola vez por día.')
+            return
 
         if metadata and isinstance(metadata, dict):
-            if os.path.exists('/tmp/.nodriza_quota_exhausted'):
-                os.remove('/tmp/.nodriza_quota_exhausted') # Limpiar mute si funciona
             catalogo[filename] = metadata
             with open(CATALOG_PATH, 'w') as f:
                 json.dump(catalogo, f, indent=4)
@@ -227,10 +222,10 @@ def purge_if_needed():
 
 def master_loop():
     print("🌌 NODRIZA AUTÓNOMA INICIADA 🌌")
-    if not KEYS:
+    if not cuota.keys_produccion():
         print("❌ No se encontraron API keys en .env")
         return
-    init_gemini()
+    print(cuota.resumen())
     
     last_scrape_time = 0
     scrape_interval = 3600  # 1 hora en segundos
@@ -249,6 +244,7 @@ def master_loop():
                 # 2.1 Descarga desde Internet (Pexels) - Muy conservador (max 5 y 3) para no quemar API
                 subprocess.run(["python3", os.path.join(script_dir, "recolector_visual.py"), "--opcion", "1", "--max", "5"])
                 subprocess.run(["python3", os.path.join(script_dir, "recolector_visual.py"), "--opcion", "2", "--max", "3"])
+                subprocess.run(["python3", os.path.join(script_dir, "recolector_visual.py"), "--opcion", "5", "--max", "3"])
                 
                 # 2.2 Creación de Arte IA (Pollinations)
                 subprocess.run(["python3", os.path.join(script_dir, "generador_arte_ia.py")])
@@ -261,7 +257,13 @@ def master_loop():
             wait_min = (scrape_interval - (now - last_scrape_time)) / 60
             print(f"⏳ Fase A en reposo. Próxima recolección en {wait_min:.1f} minutos.")
         
-        # 3. Fase B: Catalogación de Inbox
+        # 3. Fase B: Catalogación de Inbox (solo si hay alguna key disponible)
+        if cuota.todas_agotadas():
+            espera = min(cuota.segundos_hasta_proxima_key(), 3600)
+            print(f"💤 Todas las keys en descanso. Duermo {espera // 60} min sin hacer ninguna llamada.")
+            print(cuota.resumen())
+            time.sleep(max(espera, 300))
+            continue
         catalogador_loop()
         
         print("💤 Ciclo de Nodriza completado. Durmiendo 5 minutos...")

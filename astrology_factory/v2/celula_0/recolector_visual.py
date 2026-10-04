@@ -598,6 +598,74 @@ def opcion_3_clonar_repositorios():
     info("Siguiente paso → auditor_boveda.py --opcion 1 (Curaduría Manual Interactiva)")
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# OPCIÓN 5 — Magia Abstracta y Texturas
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def opcion_5_magia_abstracta(max_por_query: int = 5):
+    """
+    Descarga assets abstractos: fractales, magia, fluidos, geometrías.
+    Ideal para engordar la bóveda con material no-literal.
+    """
+    log("\n✨ OPCIÓN 5 — Extracción Abstracta y Mística", MAGENTA)
+    log(f"   Destino: {DESCARGAS_DIR}", CYAN)
+
+    asegurar_dir(DESCARGAS_DIR)
+    registry = cargar_registry()
+    semana_clean = limpiar_nombre(SEMANA)
+    total_descargados = 0
+
+    queries = [
+        "abstract liquid macro", "fluid ink slow motion", "ethereal smoke dark",
+        "fractal loop geometry", "sacred geometry abstract", "dark cinematic fluid",
+        "light leaks overlays", "mystical aura aura", "energy waves abstract"
+    ]
+
+    for query in queries:
+        query_clean = limpiar_nombre(query)
+        log(f"\n🔍 Buscando Abstracto: \"{query}\"", AMARILLO)
+        
+        # Pexels videos
+        videos = buscar_pexels_videos(query, per_page=max_por_query * 2)
+        descargados_q = 0
+        for vid in videos:
+            if descargados_q >= max_por_query: break
+            v_id = f"pex_{vid['id']}"
+            if v_id in registry: continue
+            
+            hd_file = next((f for f in vid.get("video_files", []) if f.get("quality") == "hd"), None)
+            url = hd_file["link"] if hd_file else (vid.get("video_files", [{}])[0].get("link"))
+            if not url: continue
+            
+            destino = DESCARGAS_DIR / f"{semana_clean}_abstract_{query_clean}_{v_id}.mp4"
+            dim(f"↓ Pexels Video: {destino.name}")
+            if descargar_archivo(url, destino, str(destino.name)):
+                ok(f"Descargado: {destino.name}")
+                registry.add(v_id)
+                guardar_registry(registry)
+                descargados_q += 1
+                total_descargados += 1
+                time.sleep(1.5)
+
+        # Pixabay videos (opcional)
+        fotos = buscar_pixabay_fotos(query, per_page=max_por_query, tipo="illustration")
+        for foto in fotos[:max_por_query]:
+            f_id = f"pix_{foto['id']}"
+            if f_id in registry: continue
+            url = foto.get("largeImageURL") or foto.get("webformatURL")
+            if not url: continue
+            destino = DESCARGAS_DIR / f"{semana_clean}_abstract_{query_clean}_{f_id}.jpg"
+            dim(f"↓ Pixabay Foto: {destino.name}")
+            if descargar_archivo(url, destino, str(destino.name)):
+                ok(f"Descargado: {destino.name}")
+                registry.add(f_id)
+                guardar_registry(registry)
+                total_descargados += 1
+
+    log(f"\n{'─'*55}", CYAN)
+    log(f"📊 TOTAL DESCARGADO (Abstractos): {total_descargados} assets en {DESCARGAS_DIR}", VERDE)
+    info("Siguiente paso → auto_clasificador_ia.py para clasificar y generar JSONs.")
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # OPCIÓN 4 — Purga de Descargas Crudas
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -654,14 +722,15 @@ Opciones disponibles:
   2  Scraping arquetipos puros (planetas, cosmos, símbolos esotéricos)
   3  Clonado de repositorios de arte esotérico (NASA, Wikimedia, Archive.org)
   4  Purga de /Descargas_Crudas/ para reiniciar búsqueda
+  5  Extracción Abstracta/Mística (Texturas, Fluidos, Fractales)
 
 Todos los assets se descargan a:
   {VAULT_BASE}/Descargas_Crudas/{SEMANA}/
 NUNCA a /Assets_Reusables/ directamente.
         """
     )
-    parser.add_argument("--opcion", type=int, choices=[1, 2, 3, 4], required=True,
-                        help="Número de opción (1-4)")
+    parser.add_argument("--opcion", type=int, choices=[1, 2, 3, 4, 5], required=True,
+                        help="Número de opción (1-5)")
     parser.add_argument("--max", type=int, default=5,
                         help="[Opciones 1 y 2] Máximo de assets por query (default: 5)")
 
@@ -682,6 +751,8 @@ NUNCA a /Assets_Reusables/ directamente.
         opcion_3_clonar_repositorios()
     elif args.opcion == 4:
         opcion_4_purga()
+    elif args.opcion == 5:
+        opcion_5_magia_abstracta(args.max)
 
 if __name__ == "__main__":
     main()

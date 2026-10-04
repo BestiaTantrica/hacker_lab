@@ -15,6 +15,7 @@ import argparse
 import json
 import subprocess
 import sys
+import random
 from pathlib import Path
 
 FACTORY_ROOT = Path(__file__).resolve().parents[2]
@@ -180,20 +181,30 @@ def opcion_2_binaural():
     if stock_dir.exists():
         paletas = list(stock_dir.glob("*.mp3"))
         
-    import random
+    binaural_wav = TEMP_DIR / "synth_binaural.wav"
+    # Generar binaural matemático exacto
+    cmd_gen = [
+        "python3", str(FACTORY_ROOT / "v2" / "celula_3" / "generador_binaural.py"),
+        "--tipo", "binaural", "--salida", str(binaural_wav),
+        "--duracion", str(dur_s), "--freq", str(hz), "--volumen", "0.5"
+    ]
+    subprocess.run(cmd_gen, check=True)
+
     if paletas:
         paleta = random.choice(paletas)
-        info(f"Usando track de stock preparado: {paleta.name}")
+        info(f"Usando track de stock preparado: {paleta.name} + Binaural Puro")
         
         filtro_sanacion = (
             f"[0:a]volume=1.0[voz];"
-            f"[1:a]aloop=loop=-1:size=2e9,atrim=0:{dur_s:.3f}[pad];"
-            f"[voz][pad]amix=inputs=2:duration=first:normalize=0[out]"
+            f"[1:a]volume=0.6[binaural];"
+            f"[2:a]aloop=loop=-1:size=2e9,atrim=0:{dur_s:.3f},volume=0.4[pad];"
+            f"[voz][binaural][pad]amix=inputs=3:duration=first:normalize=0[out]"
         )
         
         cmd_v2 = [
             "ffmpeg", "-y",
             "-i", str(mix_mp3),
+            "-i", str(binaural_wav),
             "-i", str(paleta),
             "-filter_complex", filtro_sanacion,
             "-map", "[out]",
@@ -201,23 +212,16 @@ def opcion_2_binaural():
             str(salida)
         ]
     else:
-        info("No se encontraron tracks en Stock_Sonoro, usando síntesis matemática de emergencia.")
-        # DISEÑO SONORO EVOLUTIVO SINTÉTICO:
+        info("Usando síntesis matemática binaural pura (Python).")
         filtro_sanacion = (
             f"[0:a]volume=1.0[voz];"
-            f"aevalsrc='0.3*sin(2*PI*{hz}*t) + 0.15*sin(2*PI*{hz*2}*t) + 0.05*sin(2*PI*{hz*3}*t)':d={dur_s:.3f}[cuenco_l];"
-            f"aevalsrc='0.3*sin(2*PI*{hz+3}*t) + 0.15*sin(2*PI*{(hz+3)*2}*t) + 0.05*sin(2*PI*{(hz+3)*3}*t)':d={dur_s:.3f}[cuenco_r];"
-            f"[cuenco_l][cuenco_r]join=inputs=2:channel_layout=stereo[cuenco_stereo];"
-            f"anoisesrc=c=pink:r=44100:a=0.08:d={dur_s:.3f},lowpass=f=300,tremolo=f=0.1:d=0.8[mar];"
-            f"[cuenco_stereo][mar]amix=inputs=2:duration=first[sanacion_raw];"
-            f"[sanacion_raw]aecho=0.8:0.9:1000|1500:0.3|0.2,aphaser=in_gain=0.4:out_gain=0.5:delay=3:decay=0.4:speed=0.2,tremolo=f=0.1:d=0.3,volume=-16dB[pad];"
-            f"[pad]afade=t=in:st=0:d=4,afade=t=out:st={dur_s - 4:.3f}:d=4[pad_faded];"
-            f"[voz][pad_faded]amix=inputs=2:duration=first:normalize=0[out]"
+            f"[1:a]volume=1.0[binaural];"
+            f"[voz][binaural]amix=inputs=2:duration=first:normalize=0[out]"
         )
         cmd_v2 = [
             "ffmpeg", "-y",
             "-i", str(mix_mp3),
-            "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", # Placeholder
+            "-i", str(binaural_wav),
             "-filter_complex", filtro_sanacion,
             "-map", "[out]",
             "-c:a", "libmp3lame", "-q:a", "2",
@@ -308,53 +312,35 @@ def opcion_3_sfx_transiciones():
         elemento = ADN.get("arquetipos", {}).get("elemento", "Agua").lower()
         info(f"Generando SFX sintético orgánico basado en elemento: {elemento.upper()}")
         
+        sfx_wav = TEMP_DIR / "synth_sfx.wav"
+        cmd_gen = [
+            "python3", str(FACTORY_ROOT / "v2" / "celula_3" / "generador_binaural.py"),
+            "--tipo", "sfx", "--salida", str(sfx_wav),
+            "--duracion", "3.0", "--elemento", elemento, "--volumen", "0.6"
+        ]
+        subprocess.run(cmd_gen, check=True)
+        
         partes_filtro = []
         for idx, t_s in enumerate(transiciones_s):
+            inputs_cmd += ["-i", str(sfx_wav)]
             delay_ms = int(t_s * 1000)
-            dur_sfx_s = dur_sfx_ms / 1000.0
-            
-            # Síntesis matemática según elemento para salir de lo artificial
-            if "agua" in elemento:
-                # Pad ambiental etéreo
-                expr = f"sin(2*PI*432*t) + 0.3*sin(2*PI*864*t)"
-                vol_db = vol_sfx_db - 2
-            elif "tierra" in elemento:
-                # Drone profundo y orgánico
-                expr = f"sin(2*PI*108*t) + 0.5*sin(2*PI*54*t)"
-                vol_db = vol_sfx_db + 1
-            elif "fuego" in elemento:
-                # Resonancia cálida
-                expr = f"sin(2*PI*256*t) + 0.5*sin(2*PI*128*t)"
-                vol_db = vol_sfx_db
-            else: # Aire
-                # Viento/frecuencia sutil
-                expr = f"sin(2*PI*528*t) + 0.2*sin(2*PI*1056*t)"
-                vol_db = vol_sfx_db - 4
-
-            # Usamos aevalsrc acotado con d=3 y le aplicamos fades (fade in de 1s, fade out de 1.5s)
-            dur_sintesis = 3.0
             partes_filtro.append(
-                f"aevalsrc=exprs='{expr}':d={dur_sintesis},volume={vol_db}dB,"
-                f"afade=t=in:st=0:d=1.0,afade=t=out:st=1.5:d=1.5,"
-                f"adelay={delay_ms}|{delay_ms}[sfx{idx}]"
+                f"[{idx+1}:a]volume={vol_sfx_db}dB,adelay={delay_ms}|{delay_ms}[sfx{idx}]"
             )
             
+        amix_inputs = ";".join(partes_filtro)
         amix_labels = "".join(f"[sfx{i}]" for i in range(len(transiciones_s)))
         num_inputs  = len(transiciones_s) + 1
-
-        # No necesitamos lavfi inputs vacíos porque aevalsrc genera su propia fuente
-        lavfi_inputs = []
-
+        
         filtro_full = (
-            ";".join(partes_filtro) + ";"
+            f"{amix_inputs};"
             f"[0:a]{amix_labels}amix=inputs={num_inputs}:duration=first:normalize=0[out]"
         )
-        cmd = ["-i", str(mix_mp3)] + lavfi_inputs + [
+        cmd = ["ffmpeg", "-y"] + inputs_cmd + [
             "-filter_complex", filtro_full,
             "-map", "[out]",
             "-c:a", "libmp3lame", "-q:a", "2", str(salida_sfx)
         ]
-        cmd = ["ffmpeg", "-y"] + cmd
 
     if sfx_existe:
         cmd = ["ffmpeg", "-y"] + cmd

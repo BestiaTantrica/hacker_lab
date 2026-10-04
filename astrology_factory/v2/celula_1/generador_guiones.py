@@ -82,21 +82,50 @@ def cargar_role_scriptwriter() -> str:
     warn(f"ROLE_SCRIPTWRITER.md no encontrado en {ROLE_PATH}. Usando rol genérico.")
     return "Eres un astrólogo profesional y guionista experto en contenido para redes sociales."
 
-def inicializar_gemini():
-    """Inicializa el cliente de Gemini y retorna el modelo."""
-    api_key_text = os.getenv("GEMINI_API_KEY_TEXT")
-    if not api_key_text:
-        api_key_text = GEMINI_API_KEY
-    if not api_key_text:
-        err("GEMINI_API_KEY_TEXT (o GEMINI_API_KEY) no encontrada en .env")
-        sys.exit(1)
-    try:
-        import google.genai as genai
-        client = genai.Client(api_key=api_key_text)
-        return client
-    except ImportError:
-        err("google-genai no instalado. Ejecuta: pip install google-genai")
-        sys.exit(1)
+import time
+import google.genai as genai
+
+# Importar el gestor de cuotas
+sys.path.append(str(FACTORY_ROOT))
+from v2 import cuota
+
+def generar_con_gemini_cuota(prompt: str, modelos: list) -> str:
+    """Envía un prompt a Gemini usando el rotador de llaves de cuota.py."""
+    for intento in range(4): # Intentar con 4 llaves distintas si hace falta
+        elegida = cuota.elegir_key()
+        if not elegida:
+            err("Todas las cuotas de Gemini están agotadas. Abortando script.")
+            sys.exit(1)
+            
+        nombre, key = elegida
+        cuota.esperar_ritmo()
+        
+        try:
+            client = genai.Client(api_key=key)
+        except Exception as e:
+            warn(f"Error inicializando cliente con {nombre}: {e}")
+            continue
+            
+        for model_name in modelos:
+            try:
+                info(f"Intentando con modelo: {model_name} (Llave {nombre})")
+                respuesta = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
+                texto_raw = respuesta.text
+                cuota.registrar_uso(nombre)
+                return texto_raw
+            except Exception as e:
+                tipo = cuota.registrar_error(nombre, e)
+                if tipo == "otro":
+                    warn(f"Fallo no relacionado a cuota con {model_name} en {nombre}: {e}")
+                else:
+                    warn(f"Fallo de cuota en {nombre} ({tipo}). Saltando a otra llave...")
+                    break # Salimos del loop de modelos para pedir una llave nueva a cuota.py
+                    
+    err("Imposible generar guion tras multiples intentos y llaves por cuota de API. Abortando.")
+    sys.exit(1)
 
 def obtener_panorama_astral_completo() -> dict:
     """
@@ -309,33 +338,9 @@ Reglas absolutas:
 """
 
     info(f"Enviando prompt a Gemini...")
-    client = inicializar_gemini()
 
-    CANDIDATE_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest']
-    
-    texto_raw = None
-    import time
-    for attempt in range(5):
-        for model_name in CANDIDATE_MODELS:
-            try:
-                info(f"Intentando con modelo: {model_name} (Intento {attempt+1})")
-                respuesta = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt
-                )
-                texto_raw = respuesta.text
-                break
-            except Exception as e:
-                warn(f"Fallo con {model_name}: {e}")
-                time.sleep(2)
-        if texto_raw:
-            break
-        warn(f"Todos los modelos fallaron en el intento {attempt+1}. Esperando 10s...")
-        time.sleep(10)
-
-    if not texto_raw:
-        err("Imposible generar guion tras multiples intentos y modelos por cuota de API. Abortando.")
-        sys.exit(1)
+    CANDIDATE_MODELS = ['gemini-3.8-flash', 'gemini-3.8-pro', 'gemini-3.5-flash']
+    texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
 
     try:
         texto_limpio = limpiar_json_gemini(texto_raw)
@@ -423,14 +428,11 @@ Devuelve ÚNICAMENTE este JSON sin texto adicional ni markdown:
 """
 
     info(f"Enviando prompt semanal a Gemini...")
-    client = inicializar_gemini()
-
+    CANDIDATE_MODELS = ['gemini-3.8-pro', 'gemini-3.5-pro', 'gemini-3.8-flash']
+    
     try:
-        respuesta = client.models.generate_content(
-            model=ADN["gemini_vision"]["modelo"],
-            contents=prompt
-        )
-        texto_limpio = limpiar_json_gemini(respuesta.text)
+        texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
+        texto_limpio = limpiar_json_gemini(texto_raw)
         guion_data = json.loads(texto_limpio)
 
         if not validar_estructura_guion(guion_data, num_tomas):
@@ -541,14 +543,11 @@ Devuelve ÚNICAMENTE este JSON. Sin markdown, sin explicaciones:
 """
 
     info("Enviando análisis personalizado a Gemini...")
-    client = inicializar_gemini()
+    CANDIDATE_MODELS = ['gemini-3.8-pro', 'gemini-3.8-flash']
 
     try:
-        respuesta = client.models.generate_content(
-            model=ADN["gemini_vision"]["modelo"],
-            contents=prompt
-        )
-        texto_limpio = limpiar_json_gemini(respuesta.text)
+        texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
+        texto_limpio = limpiar_json_gemini(texto_raw)
         guion_data = json.loads(texto_limpio)
 
         if not validar_estructura_guion(guion_data, num_tomas):

@@ -106,24 +106,47 @@ def buscar_audio_final() -> Path | None:
             return ruta
     return None
 
+def verificar_final_no_negro(video: Path, umbral_luma: float = 20.0) -> bool:
+    """Mide el brillo medio (0-255) de los últimos 0.4 s. Avisa si el final es oscuro."""
+    cmd = ["ffmpeg", "-v", "error", "-sseof", "-0.4", "-i", str(video), "-an",
+           "-vf", "scale=64:-1,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-",
+           "-f", "null", "-"]
+    try:
+        r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60)
+        vals = [float(l.split("=")[1]) for l in r.stdout.decode().splitlines()
+                if "YAVG" in l and "=" in l]
+        if not vals:
+            return True
+        media = sum(vals) / len(vals)
+        if media < umbral_luma:
+            warn(f"⚫ El final del video es OSCURO (brillo medio {media:.1f}/255). Revisar.")
+            return False
+        ok(f"Final del video con imagen (brillo medio {media:.1f}/255)")
+        return True
+    except Exception:
+        return True
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # HELPERS DE TRANSICIÓN — Lógica intra-toma vs inter-toma
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Transiciones SUAVES — clips de la misma toma (espejismos que fluyen)
-TRANSICIONES_INTRA = ["fade"]
+TRANSICIONES_INTRA = ["fade", "dissolve"]
 
 # Transiciones VÓRTICE — saltos entre tomas distintas (agujeros de gusano cósmicos)
-TRANSICIONES_VORTICE = ["fade"]
+# El Director de Arte elige la correcta según la emoción del beat.
+# Si no hay datos, se usa una de estas al azar.
+TRANSICIONES_VORTICE = ["dissolve", "fade", "smoothleft", "circlecrop", "pixelize", "distance", "radial", "hlslice"]
 
 XFADE_DUR_INTRA   = 0.2    # segundos — suave, rápido para acompañar el relato
-XFADE_DUR_VORTICE = 1.0    # segundos — fundido onírico pero dinámico
+XFADE_DUR_VORTICE = 0.8    # segundos — fundido onírico pero dinámico
 
 
-def leer_mapa_tomas() -> dict[str, int]:
+def leer_mapa_tomas() -> dict[str, dict]:
     """
     Lee lista_de_corte_{EVENTO_ID}.json desde TEMP_DIR y construye
-    un mapa {nombre_video: num_toma}.
+    un mapa {nombre_video: {"num_toma": int, "transicion": str}}.
+    La transición viene del Director de Arte (campo 'transicion_entrada').
     Si el archivo no existe o falla, retorna {} para que el fallback
     por nombre de archivo tome el control.
     """
@@ -136,10 +159,11 @@ def leer_mapa_tomas() -> dict[str, int]:
             for asig in data.get("asignaciones", []):
                 nombre = asig.get("nombre_video", "")
                 num    = asig.get("num_toma", 0)
+                trans  = asig.get("transicion_entrada", "fade")
                 if nombre:
-                    mapa[nombre] = num
+                    mapa[nombre] = {"num_toma": num, "transicion": trans}
             if mapa:
-                info(f"Mapa de tomas cargado: {len(mapa)} entradas")
+                info(f"Mapa de tomas cargado: {len(mapa)} entradas (con transiciones del Director de Arte)")
                 return mapa
         except Exception as e:
             warn(f"No se pudo leer lista_de_corte: {e}. Usando fallback por filename.")
@@ -147,19 +171,24 @@ def leer_mapa_tomas() -> dict[str, int]:
     return {}
 
 
-def get_toma_de_clip(clip: Path, mapa: dict[str, int]) -> int:
-    """
-    Devuelve el número de toma de un clip.
-    Prioridad: mapa (lista_de_corte) → inferencia desde clip_N.mp4 → hash único.
-    """
-    if clip.name in mapa:
-        return mapa[clip.name]
+def get_toma_de_clip(clip: Path, mapa: dict) -> int:
+    """Devuelve el número de toma de un clip."""
+    entry = mapa.get(clip.name)
+    if isinstance(entry, dict):
+        return entry["num_toma"]
     # Fallback: "clip_3.mp4" → 3
     try:
         return int(clip.name.split("_")[1])
     except (IndexError, ValueError):
-        # Hash único → nunca intra-toma (comportamiento inter-toma seguro)
         return hash(clip.name)
+
+
+def get_transicion_de_clip(clip: Path, mapa: dict) -> str:
+    """Devuelve la transición xfade recomendada por el Director de Arte para un clip."""
+    entry = mapa.get(clip.name)
+    if isinstance(entry, dict):
+        return entry.get("transicion", "fade")
+    return random.choice(TRANSICIONES_VORTICE)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -199,63 +228,86 @@ def opcion_1_xfade_gapless():
         info("Solo un clip. Ensamblando sin xfade.")
         shutil.copy2(clips[0], master_video)
     else:
-        # Construir filter_complex xfade encadenado
-        # xfade requiere saber el offset exacto acumulado por duración de clips
-        xfade_dur = XFADE_DUR
+        # Construir filter_complex xfade encadenado.
+        #
+        # PROBLEMA ORIGINAL: cada xfade solapa dos clips y ACORTA el video total
+        # (Σ duraciones − Σ transiciones). El video terminaba antes que el audio,
+        # se rellenaba congelando el último fotograma y las imágenes iban llegando
+        # cada vez más temprano respecto al relato (desfase acumulado).
+        #
+        # SOLUCIÓN: cada transición se CENTRA en el límite narrativo (donde cambia
+        # la idea del relato) y cada clip recibe un pequeño relleno (clone del
+        # último fotograma, invisible porque está bajo el fundido) para cubrir
+        # su parte del solape. Resultado: video total == Σ duraciones == audio.
         duraciones = [get_duracion_s(c) for c in clips]
-
-        # Generar los inputs de FFmpeg
         inputs_cmd = []
         for c in clips:
             inputs_cmd += ["-i", str(c)]
 
-        # Construir la cadena de xfade con transiciones variables:
-        # · Intra-toma (mismo nodo narrativo) → dissolve suave
-        # · Inter-toma (cambio de tema)        → vórtice cósmico (zoomin/radial/...)
-        partes      = []
-        label_prev  = "0:v"
-        offset_acum = 0.0
-
-        # Cargar mapa de tomas para discriminar cada empalme
         mapa_tomas = leer_mapa_tomas()
+        n = len(clips)
 
-        for i in range(1, len(clips)):
+        # 1) Elegir tipo y duración de cada empalme i (entre clip i-1 y clip i)
+        tipos = [None] * n
+        trans = [0.0] * (n + 1)   # trans[i] = duración del empalme hacia el clip i; trans[0]=trans[n]=0
+        for i in range(1, n):
             toma_prev = get_toma_de_clip(clips[i - 1], mapa_tomas)
             toma_curr = get_toma_de_clip(clips[i],     mapa_tomas)
             es_intra  = (toma_prev == toma_curr)
-
             if es_intra:
-                tipo_transicion = random.choice(TRANSICIONES_INTRA)
-                dur_trans       = XFADE_DUR_INTRA
-                tipo_label      = "Intra✨ "
+                tipos[i] = random.choice(TRANSICIONES_INTRA)
+                dur_t    = XFADE_DUR_INTRA
+                tipo_label = "Intra✨ "
             else:
-                tipo_transicion = random.choice(TRANSICIONES_VORTICE)
-                dur_trans       = XFADE_DUR_VORTICE
-                tipo_label      = "Vórtice🌀"
-
+                # Usar la transición que el Director de Arte asignó al clip de destino
+                tipos[i] = get_transicion_de_clip(clips[i], mapa_tomas)
+                dur_t    = XFADE_DUR_VORTICE
+                tipo_label = "Vórtice🌀"
+            # Nunca más de la mitad del clip más corto de los dos
+            dur_t = min(dur_t, 0.5 * min(duraciones[i - 1], duraciones[i]))
+            trans[i] = round(dur_t, 3)
             log(
                 f"    [{tipo_label}] clip[{i-1}](toma {toma_prev}) "
-                f"→ clip[{i}](toma {toma_curr}): {tipo_transicion} ({dur_trans}s)",
+                f"→ clip[{i}](toma {toma_curr}): {tipos[i]} ({trans[i]}s)",
                 GRIS
             )
 
-            offset_acum += duraciones[i - 1] - dur_trans
-            label_out    = f"v{i:02d}"
+        # 2) Normalizar cada entrada (mismo fps/timebase/formato) y rellenar su cola
+        partes = []
+        for i in range(n):
+            pad = (trans[i] + trans[i + 1]) / 2.0
+            f = f"[{i}:v]fps=30,setsar=1,format=yuv420p,settb=AVTB"
+            if pad > 0:
+                f += f",tpad=stop_mode=clone:stop_duration={pad + 0.002:.6f}"
+            partes.append(f + f"[n{i}]")
 
+        # 3) Encadenar: el empalme i arranca en (límite narrativo − trans/2)
+        label_prev = "n0"
+        inicio_narrativo = 0.0
+        for i in range(1, n):
+            inicio_narrativo += duraciones[i - 1]          # S_i
+            offset = inicio_narrativo - trans[i] / 2.0
+            label_out = f"v{i:02d}"
             partes.append(
-                f"[{label_prev}][{i}:v]xfade=transition={tipo_transicion}:"
-                f"duration={dur_trans}:offset={offset_acum:.6f}[{label_out}]"
+                f"[{label_prev}][n{i}]xfade=transition={tipos[i]}:"
+                f"duration={trans[i]}:offset={offset:.6f}[{label_out}]"
             )
             label_prev = label_out
 
-        # Calcular compensación para el video final
-        dur_video_esperada = offset_acum + duraciones[-1]
+        # 4) Seguridad: el video debe cubrir exactamente el audio
+        dur_video_esperada = sum(duraciones)
         dur_audio_esperada = get_duracion_s(audio)
         dur_faltante = dur_audio_esperada - dur_video_esperada
+        info(f"Video esperado: {dur_video_esperada:.3f}s · Audio: {dur_audio_esperada:.3f}s · Diferencia: {dur_faltante:+.3f}s")
 
         if dur_faltante > 0.05:
-            # Agregamos tpad para congelar el último frame durante el tiempo faltante
-            partes.append(f"[{label_prev}]tpad=stop_mode=clone:stop_duration={dur_faltante:.3f}[final_v]")
+            partes.append(f"[{label_prev}]tpad=stop_mode=clone:stop_duration={dur_faltante:.3f}[padded_v]")
+            label_prev = "padded_v"
+            
+        # Añadir un leve fade out al final para "magia" en la transición final y evitar negro seco
+        fade_start = (dur_video_esperada + max(0, dur_faltante)) - 0.5
+        if fade_start > 0:
+            partes.append(f"[{label_prev}]fade=t=out:st={fade_start}:d=0.5[final_v]")
             label_prev = "final_v"
 
         filtro_complex = ";".join(partes)
@@ -293,6 +345,7 @@ def opcion_1_xfade_gapless():
     if correr_ffmpeg(cmd_mux, "mux video+audio", timeout=300):
         ok(f"Master generado: {master_final}")
         ok(f"Duración: {get_duracion_s(master_final):.3f}s")
+        verificar_final_no_negro(master_final)
         return str(master_final)
     else:
         err("Mux falló.")

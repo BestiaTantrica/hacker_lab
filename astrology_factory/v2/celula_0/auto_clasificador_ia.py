@@ -37,17 +37,23 @@ except ImportError:
 
 load_dotenv(FACTORY_ROOT / ".env")
 
-# ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
-API_KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and v]
+# ── Clientes con frenos (ver v2/cuota.py) ──────────────────────────────────
+from v2 import cuota
 
-# Clientes dinámicos
-gemini_clients = [genai.Client(api_key=key) for key in API_KEYS]
+_clientes_cache = {}
+def _cliente(nombre, key):
+    if nombre not in _clientes_cache:
+        _clientes_cache[nombre] = genai.Client(api_key=key)
+    return _clientes_cache[nombre]
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-if not gemini_clients and not groq_client:
+if not cuota.keys_produccion() and not groq_client:
     print("❌ No se encontraron llaves de API válidas en .env (Gemini o Groq)")
     sys.exit(1)
+
+AGOTADO = "AGOTADO"
 
 # ── Categorías ─────────────────────────────────────────────────────────────
 ADN_PATH = FACTORY_ROOT / "contexto_astrologico.json"
@@ -59,17 +65,41 @@ except Exception as e:
     print(f"❌ Error leyendo contexto_astrologico.json: {e}")
     sys.exit(1)
 
+CATEGORIAS["00"] = "Descarte"  # respuesta del modelo cuando la imagen no sirve
+
 # Construir el prompt del sistema
 lista_categorias = "\n".join([f"{k}: {v}" for k, v in CATEGORIAS.items()])
-SYSTEM_PROMPT = f"""
-Eres un curador de arte abstracto, esotérico y astrológico.
-Tu tarea es clasificar la imagen proporcionada en UNA de las siguientes categorías:
+SYSTEM_PROMPT = f"""Eres el curador de arte de un canal de astrología esotérica profunda.
+Tu tarea es clasificar la imagen en UNA de estas categorías y extraer sus metadatos.
 
 {lista_categorias}
 
+❌ DESCARTE OBLIGATORIO — Si la imagen contiene alguno de estos elementos, responde con "00" en la categoría:
+- Personas de cualquier tipo, rostros humanos, manos, cuerpos, figuras humanas reconocibles
+- Personas cotidianas: familias, parejas, bebés, niños, adolescentes, multitudes, sonrisas
+- Retratos de personas comunes (selfies, fotos de perfil, fotos de stock con personas)
+- Escenas domésticas: cocinas, casas, oficinas, parques con gente, ciudades modernas
+- Bodas, reuniones, fiestas, eventos sociales
+- Imágenes de noticias o documentales con personas identificables
+
+✅ ACEPTAR SIEMPRE — Estas imágenes SIEMPRE pertenecen a alguna categoría:
+- Cosmos, galaxias, nebulosas, planetas, lunas (aunque tengan nombres como "baby nebula")  
+- Geometría sagrada, mandalas, símbolos esotéricos, runas
+- Fuego, agua, tierra, aire como elementos puros o simbólicos
+- Naturaleza sin personas: bosques, montañas, océanos, cielos
+- Arte digital abstracto, fractales, texturas mágicas
+- Figuras arquetípicas (diosas, deidades, figuras mitológicas claramente no reales)
+- Sacerdotisas o figuras espirituales en contexto claramente simbólico/artístico
+
 REGLAS ESTRICTAS:
-1. Responde ÚNICA Y EXCLUSIVAMENTE con un solo número (del 1 al 9).
-2. No incluyas texto extra, ni explicaciones, ni símbolos.
+1. Responde ÚNICA Y EXCLUSIVAMENTE con un JSON válido. No incluyas backticks de markdown ni texto extra.
+2. El JSON debe tener esta estructura exacta:
+{{
+  "categoria": "03", // Número de categoría en string (o "00" si se descarta)
+  "elemento": "Agua", // "Fuego", "Tierra", "Aire", "Agua" o "Etereo"
+  "mood": "Misterio", // 1 o 2 palabras de emoción dominante (ej: "Caos", "Calma", "Tensión", "Renacer")
+  "metaforas": ["infinito", "inconsciente", "profundidad", "limpieza"] // 3 a 5 conceptos esotéricos/metafóricos que sugiere la imagen
+}}
 """
 
 def asegurar_dir(path: Path):
@@ -113,24 +143,38 @@ def _llamar_groq(img):
     )
     return response.choices[0].message.content.strip()
 
-def clasificar_imagen(img_path: Path) -> str:
-    """Envía la imagen a las APIs usando arquitectura Hydra (Rotación y Fallback)."""
+def clasificar_imagen(img_path: Path) -> dict:
+    """Clasifica con UNA llamada por intento, eligiendo la key menos usada.
+    Devuelve dict con metadata, None (falló, reintentar luego) o AGOTADO."""
     img = Image.open(img_path)
     img.thumbnail((1024, 1024)) # Reducir resolución para ahorrar tokens/transferencia
 
-    # Intentar con todos los clientes de Gemini (Llave 1, 2, 3, 4...)
-    for idx, client in enumerate(gemini_clients):
+    for _ in range(4):  # máximo 4 intentos por imagen, siempre con keys distintas/descansadas
+        elegida = cuota.elegir_key()
+        if not elegida:
+            return AGOTADO
+        nombre, key = elegida
+        cuota.esperar_ritmo()
         try:
-            res = _llamar_gemini(client, img).zfill(2)
-            if res in CATEGORIAS: return res
+            res_text = _llamar_gemini(_cliente(nombre, key), img)
+            cuota.registrar_uso(nombre)
+            
+            # Extract JSON from response
+            import re
+            json_match = re.search(r'\{.*\}', res_text.replace('\n', ' '), re.DOTALL)
+            if json_match:
+                res_dict = json.loads(json_match.group(0))
+                res_dict["categoria"] = str(res_dict.get("categoria", "00")).zfill(2)
+                if res_dict["categoria"] in CATEGORIAS or res_dict["categoria"] == "00":
+                    return res_dict
+            return None  # respuesta rara: no insistir con otra key
         except Exception as e:
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                print(f"  ⚠️ Cuota de Gemini Llave {idx+1} agotada. Hot-swapping a la siguiente llave...")
-            else:
-                print(f"  ⚠️ Error en Gemini Llave {idx+1}: {e}. Pasando a fallback...")
-
-    # Si todo falla
-    return None # Retorna None para no procesar el archivo y dejarlo en la bandeja de entrada
+            tipo = cuota.registrar_error(nombre, e)
+            if tipo == "otro":
+                print(f"  ⚠️ Error en {nombre}: {str(e)[:120]}")
+                return None
+            print(f"  ⏸️ {nombre} en pausa ({tipo}). Probando otra key...")
+    return None
 
 def main():
     parser = argparse.ArgumentParser(description="Clasificador visual IA con Gemini Flash")
@@ -199,9 +243,30 @@ def main():
         hashes_existentes.add(h)
         
         # 2. Clasificación IA
-        cat_num = clasificar_imagen(archivo)
-        
-        if cat_num:
+        meta = clasificar_imagen(archivo)
+        if meta == AGOTADO:
+            print("\n🛑 Todas las keys están agotadas por hoy. Corto aquí; lo pendiente se retoma mañana.")
+            print(cuota.resumen())
+            sys.exit(0)
+
+        if not meta:
+            print("  ⚠️ API falló. Archivo salteado, se reintentará en el próximo ciclo.")
+            continue
+            
+        cat_num = meta.get("categoria", "00")
+
+        if cat_num == "00":
+            # Descarte explícito por el modelo: mover a Cuarentena
+            cuarentena_dir = dir_salida.parent.parent / "Cuarentena_Visual"
+            cuarentena_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(archivo, cuarentena_dir / archivo.name)
+            procesados.add(archivo.name)
+            with open(registro_path, "w", encoding="utf-8") as f:
+                json.dump(list(procesados), f)
+            print(f"  🚫 Descartada y movida a Cuarentena: {archivo.name}")
+            continue
+
+        if cat_num in CATEGORIAS:
             cat_nombre = CATEGORIAS[cat_num]
             
             # Crear la carpeta de destino
@@ -209,6 +274,7 @@ def main():
             asegurar_dir(dir_destino)
             
             destino = dir_destino / archivo.name
+            json_destino = dir_destino / (archivo.stem + ".json")
             
             # Mover el archivo (si el destino es diferente al origen)
             if archivo.resolve() != destino.resolve():
@@ -217,16 +283,16 @@ def main():
             else:
                 print(f"  ✅ Ya estaba en la carpeta correcta ({cat_nombre})")
                 
+            # Guardar el JSON semántico
+            with open(json_destino, "w", encoding="utf-8") as f:
+                json.dump(meta, f, indent=2, ensure_ascii=False)
+                
             # Registrar como procesado
             procesados.add(archivo.name)
             with open(registro_path, "w", encoding="utf-8") as f:
                 json.dump(list(procesados), f)
-        else:
-            print("  ⚠️ API falló. Archivo salteado, se reintentará en el próximo ciclo.")
                 
-        # PAUSA ESTRATÉGICA PARA EVITAR BANEOS DE LA CAPA GRATUITA
-        print("  ⏳ Esperando 8 segundos (Rate limit protection)...")
-        time.sleep(8.0)
+        # La pausa entre llamadas la maneja cuota.esperar_ritmo()
 
     print("\n🎉 CLASIFICACIÓN COMPLETADA.")
 

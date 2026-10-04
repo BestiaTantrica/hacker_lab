@@ -26,6 +26,13 @@ load_dotenv(FACTORY_ROOT / ".env")
 import google.genai as genai
 from google.genai import types
 
+# ── Director de Arte (semántica local, sin API) ────────────────────────────
+from v2.celula_2.director_de_arte import (
+    enriquecer_tomas,
+    score_semantico,
+    opacidad_boost as emocion_opacidad_boost,
+)
+
 ADN_PATH = FACTORY_ROOT / "contexto_astrologico.json"
 with open(ADN_PATH, encoding="utf-8") as f:
     ADN = json.load(f)
@@ -64,15 +71,9 @@ asegurar_dir(TEMP_DIR)
 asegurar_dir(TRANSMUTADOS_DIR)
 
 # ── Clientes Multiplexados (Hydra) ─────────────────────────────────────────
-API_KEYS = [
-    os.getenv("GEMINI_API_KEY"),
-    os.getenv("GEMINI_API_KEY_TEXT"),
-    os.getenv("GEMINI_API_KEY_WEB"),
-    os.getenv("GEMINI_API_KEY_WEB_TEXT"),
-    "REMOVED_SECRET",
-    "REMOVED_SECRET"
-]
-API_KEYS = [k for k in API_KEYS if k]
+API_KEYS = [v for k, v in os.environ.items() if k.startswith("GEMINI_API_KEY") and "_WEB" not in k and v]
+API_KEYS = list(dict.fromkeys(API_KEYS))  # sin duplicados, conserva orden
+
 
 gemini_clients = []
 for key in API_KEYS:
@@ -173,15 +174,38 @@ def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
     cat = cargar_catalogo()
     
     # Inyectamos TODOS los assets físicos al catálogo en memoria
-    # Extraemos etiquetas del nombre del archivo (generado por Célula 0)
+    # Extraemos etiquetas del nombre del archivo y de la RUTA (para capturar carpetas como 07_Espacio_Galaxias)
     for a in assets:
         key = a.name
         if key not in cat:
-            # Parse tags from filename e.g. oct_w1_fuego_accion_name.jpg
-            tags = key.replace(".mp4", "").replace(".jpg", "").replace(".png", "").split("_")
+            path_str = str(a.resolve()).lower()
+            import re
+            path_words = re.split(r'[/_.-]', path_str)
+            # Filter words > 2 chars, exclude common structural words
+            valid_words = {w for w in path_words if len(w) > 2 and w not in ["home", "tomas2", "mediacontingencia", "privada", "astrology", "vault", "assets", "auditados", "imagenes", "videos", "mp4", "jpg", "png", "jpeg"]}
+            
+            # Check if semantic JSON exists
+            json_file = a.parent / (a.stem + ".json")
+            semantic_tags = []
+            if json_file.exists():
+                try:
+                    import json as j
+                    with open(json_file, "r") as f:
+                        s_meta = j.load(f)
+                        if "metaforas" in s_meta:
+                            semantic_tags.extend([m.lower() for m in s_meta["metaforas"]])
+                        if "mood" in s_meta:
+                            semantic_tags.append(s_meta["mood"].lower())
+                        if "elemento" in s_meta:
+                            semantic_tags.append(s_meta["elemento"].lower())
+                except Exception:
+                    pass
+
+            final_tags = list(valid_words.union(set(semantic_tags)))
+            
             cat[key] = {
-                "etiquetas_visuales": tags,
-                "tags": tags
+                "etiquetas_visuales": final_tags,
+                "tags": final_tags
             }
         
         cat[key]["path_original"] = str(a.resolve())
@@ -201,40 +225,35 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[
     score = 0.5
     
     # 2. Penalizaciones fuertes
-    # Penalizar repeticiones recientes para asegurar variedad ("usa las mismas imagenes una y otra vez")
     if ultimos_usados:
-        if asset_key in ultimos_usados[-5:]: 
-            score -= 5.0
-        elif asset_key in ultimos_usados:
-            score -= 1.0
+        if asset_key in ultimos_usados:
+            score -= 100.0  # NUNCA REPETIR IMÁGENES
             
     # 3. Emparejamiento por ROL
     rol = toma.get("rol", "").lower()
-    tags = " ".join(meta.get("etiquetas_visuales", [])).lower()
-    tags += " " + " ".join(meta.get("tags", [])).lower()
+    tags_list = meta.get("etiquetas_visuales", []) + meta.get("tags", [])
+    tags = (" ".join(tags_list) + " " + meta.get("path_original", "")).lower()
     
-    # Penalizar duramente imágenes que rompen la estética ("hay imagenes de familia quie no van ni de joda en el estilo")
-    for palabra_prohibida in ["familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños"]:
+    # Penalizar imágenes que rompen la estética (solo cotidianidad/familias, no humanos en general)
+    for palabra_prohibida in ["familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños", "pareja", "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child"]:
         if palabra_prohibida in tags:
             score -= 20.0
     
-    # Asignaciones forzadas / Bonos altos
+    # 4. Bonus semántico del Director de Arte
+    emocion_toma = toma.get("emocion", "aire")
+    texto_toma   = toma.get("texto", "")
+    score += score_semantico(texto_toma, emocion_toma, tags_list)
+    
+    # 5. Asignaciones forzadas / bonos altos (se mantienen)
     if "cta" in rol:
-        # Preferir animaciones de fondo neutras, "fractal", o cosas que sirvan de fondo para texto
         if "fractal" in tags or "abstract" in tags or "fondo" in tags:
             score += 2.0
     
     if "gancho" in rol:
-        if "fuego" in tags or "espacio" in tags:
+        if "fuego" in tags or "espacio" in tags or "luz" in tags:
             score += 1.0
-            
-    # 4. Emparejamiento por Texto
-    texto_toma = toma.get("texto", "").lower()
-    for palabra in ["fuego", "espacio", "cosmos", "estrella", "luna", "sagitario", "quemar", "emocion", "pecho"]:
-        if palabra in texto_toma and palabra in tags:
-            score += 1.5
-            
-    # Preferencia ligera por videos sobre imagenes para mayor dinamismo
+
+    # 6. Preferencia ligera por videos
     if asset_key.endswith(".mp4"):
         score += 0.2
             
@@ -293,6 +312,10 @@ def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: 
             fg_filter += f",trim=0:{duracion},reverse,setpts=PTS-STARTPTS"
             
         fg_alpha = "format=rgba"
+        if is_image:
+            fade_dur = min(0.5, duracion / 4)
+            fade_out_start = max(0.0, duracion - fade_dur)
+            fg_alpha += f",fade=t=in:st=0:d={fade_dur}:alpha=1,fade=t=out:st={fade_out_start}:d={fade_dur}:alpha=1"
 
         # Resonancia Cimática Real (Overlay Fractal)
         # Generar un fractal matemático vibrante de 1080x1920 y mezclarlo suavemente
@@ -356,6 +379,8 @@ def construir_entrada_corte(toma: dict, video_path: str, fuente: str = "nodriza_
         "duracion_s":        toma["duracion_s"],
         "texto":             toma.get("texto", ""),
         "etiqueta_visual":   toma.get("etiqueta_visual"),
+        "emocion":           toma.get("emocion", "aire"),
+        "transicion_entrada": toma.get("transicion_entrada", "fade"),
         "archivo_video":     str(p.resolve()) if p else None,
         "nombre_video":      p.name if p else None,
         "fuente_asignacion": fuente,
@@ -368,6 +393,12 @@ def run_nodriza():
     
     timeline = cargar_timeline()
     tomas = timeline.get("tomas", [])
+    
+    # ── Director de Arte: enriquecer cada toma con emoción y tags ideales ──
+    tomas = enriquecer_tomas(tomas)
+    log("🎬 Director de Arte activado: emociones y tags visuales asignados", MAGENTA)
+    for t in tomas:
+        log(f"   Toma {t['num']} | {t.get('rol','?')} → emoción: {t['emocion']} | transición: {t['transicion_entrada']}", GRIS)
     
     # 1. Inventariador Universal
     assets = listar_assets(ASSETS_AUDITADOS)
@@ -395,70 +426,88 @@ def run_nodriza():
     
     asset_gancho_path = None
     
-    for toma in tomas:
+    for toma_idx, toma in enumerate(tomas):
         duracion_toma = toma["duracion_s"]
         texto = toma.get("texto", "")
         
-        # 1. Slicing Semántico
-        cortes = calcular_cortes_ritmicos(texto, duracion_toma)
-        info(f"Toma {toma['num']} ({duracion_toma}s) dividida en {len(cortes)} cortes: {[round(c,2) for c in cortes]}")
+        es_primera_toma = (toma_idx == 0)
+        es_ultima_toma = (toma_idx == len(tomas) - 1)
         
+        # --- Elegir el asset principal para la toma completa primero ---
+        mejor_asset_key = None
+        score_para_alpha = 0.5
+
+        # 1. Fuerza el prólogo cósmico (loop)
+        assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
+        
+        if not asset_gancho_path and assets_espacio_video:
+            asset_gancho_path = random.choice(assets_espacio_video)
+
+        if (es_primera_toma or es_ultima_toma) and asset_gancho_path:
+            mejor_asset_key = asset_gancho_path
+            mejor_score = 1.0
+        else:
+            mejor_asset_key = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados)
+            mejor_score = 1.0
+            
+            if not mejor_asset_key:
+                mejor_score = -999.0
+                for key, meta in cat.items():
+                    if not meta.get("path_video_final"): continue
+                    score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
+                    if score > mejor_score:
+                        mejor_score = score
+                        mejor_asset_key = key
+
+        if mejor_asset_key:
+            score_para_alpha = max(0.0, min(1.0, mejor_score))
+
         chunks = []
-        for i, dur in enumerate(cortes):
-            es_primer_corte_absoluto = (toma == tomas[0] and i == 0)
-            es_ultimo_corte_absoluto = (toma == tomas[-1] and i == len(cortes) - 1)
+        if mejor_asset_key:
+            ganador_meta = cat[mejor_asset_key]
+            is_video = mejor_asset_key.endswith(".mp4")
             
-            mejor_asset_key = None
-            score_para_alpha = 0.5  # fallback neutral
-            
-            # Buscamos de manera más general cualquier video que tenga 'espacio', 'cosmos' o '07_Espacio_Galaxias'
-            assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
-            
-            if not asset_gancho_path and assets_espacio_video:
-                asset_gancho_path = random.choice(assets_espacio_video)
-            
-            if (es_primer_corte_absoluto or es_ultimo_corte_absoluto) and asset_gancho_path:
-                # Forza el prólogo y epílogo cósmico con EL MISMO video para lograr un loop
-                mejor_asset_key = asset_gancho_path
-                ganador_meta = cat[mejor_asset_key]
-                score_para_alpha = 1.0
+            if is_video:
+                cortes = calcular_cortes_ritmicos(texto, duracion_toma)
+                assets_para_cortes = [mejor_asset_key]
+                for _ in range(1, len(cortes)):
+                    assets_para_cortes.append(mejor_asset_key)
             else:
-                mejor_asset_key = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados)
-                mejor_score = 1.0  # Asumimos score perfecto si Gemini lo eligió
+                # Si es imagen, la picamos dinámicamente para mayor sugestión (y que aparezcan/desaparezcan)
+                cortes = calcular_cortes_ritmicos(texto, duracion_toma)
+                assets_para_cortes = [mejor_asset_key] # El primer chunk usa el elegido
                 
-                # Fallback si Gemini falla o el catálogo es chico
-                if not mejor_asset_key:
-                    mejor_score = -999.0
-                    for key, meta in cat.items():
-                        if not meta.get("path_video_final"): continue
-                        score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
-                        if score > mejor_score:
-                            mejor_score = score
-                            mejor_asset_key = key
+                # Elegir más imágenes para rellenar los otros chunks
+                for _ in range(1, len(cortes)):
+                    otro_asset = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados + assets_para_cortes)
+                    if not otro_asset:
+                        otro_asset = mejor_asset_key # fallback
+                    assets_para_cortes.append(otro_asset)
 
-                if mejor_asset_key:
-                    ganador_meta = cat[mejor_asset_key]
-                    # Mapear score semántico al rango de opacidad [0, 1]
-                    score_para_alpha = max(0.0, min(1.0, mejor_score))
+            info(f"Toma {toma['num']} ({duracion_toma}s) -> Video: {is_video}. Dividida en {len(cortes)} cortes.")
 
-            if mejor_asset_key:
-                ultimos_usados.append(mejor_asset_key)
-                ultimo_elemento = ganador_meta.get("elemento_visual")
-                if "stats_uso" in ganador_meta:
-                    ganador_meta["stats_uso"].append(EVENTO_ID)
+            for i, (dur, chunk_asset_key) in enumerate(zip(cortes, assets_para_cortes)):
+                chunk_meta = cat[chunk_asset_key]
+                ultimos_usados.append(chunk_asset_key)
+                ultimo_elemento = chunk_meta.get("elemento_visual")
+                if "stats_uso" in chunk_meta:
+                    chunk_meta["stats_uso"].append(EVENTO_ID)
 
-                # Preprocesar on-demand para este corte
+                es_primer_corte_absoluto = (es_primera_toma and i == 0)
+                es_ultimo_corte_absoluto = (es_ultima_toma and i == len(cortes) - 1)
+
                 chunk_id = f"{toma['num']}_{i}_{uuid.uuid4().hex[:4]}"
+                alpha_final = max(0.0, min(1.0, score_para_alpha + emocion_opacidad_boost(toma.get("emocion", "aire"))))
+                
                 p_chunk = preprocesar_asset_para_montaje(
-                    Path(ganador_meta["path_video_final"]), dur, chunk_id,
+                    Path(chunk_meta["path_video_final"]), dur, chunk_id,
                     es_primer_chunk=es_primer_corte_absoluto,
                     es_ultimo_chunk=es_ultimo_corte_absoluto,
-                    score=score_para_alpha
+                    score=alpha_final
                 )
                 chunks.append(p_chunk)
             
         if chunks:
-            # Ensamblar super-clip
             montaje_path = ensamblar_micro_tomas(chunks, f"montaje_toma_{toma['num']}_{EVENTO_ID}.mp4")
             ok(f"Toma {toma['num']} -> Montaje dinámico creado: {montaje_path.name}")
             lista_de_corte["asignaciones"].append(construir_entrada_corte(toma, str(montaje_path)))
