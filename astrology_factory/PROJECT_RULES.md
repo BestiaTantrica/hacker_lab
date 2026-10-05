@@ -46,7 +46,9 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 - **Regla:** Ningún agente debe improvisar tareas fuera de su nivel. Toda deuda técnica pesada debe registrarse en la Nodriza en lugar de intentar forzarse.
 
 ## 4. ESTÉTICA Y ARTE PÍCARO (FFMPEG)
-- **Arte Mixto y Emocional:** El contenido debe mezclar imágenes descargadas con generación de IA para lograr un nivel onírico, sugiriendo emociones basadas en los tránsitos astrológicos.
+- **Arte Mixto y Emocional (Generación Dual):** El contenido debe mezclar imágenes descargadas con generación de IA para lograr un nivel onírico. Toda generación de IA debe cubrir dos vertientes:
+   1. *Abismo Cósmico (Background)*: Representaciones fluidas para el fondo (`13_Abstracto_Fluidos`).
+   2. *Reacción Humana (Foreground)*: Sátiras o representaciones psicológicas para el primer plano (`11_Humanos_Emociones`), encadenadas con `xfade` cuando el guion refiera emociones.
 - **Prohibición de "Cuadrados":** Queda estrictamente prohibido usar filtros `overlay` planos que resulten en parches cuadrados duros. Todo collage debe tener fusión artística.
 - **Uso de Máscaras Alfa (Feathering):** Al superponer imágenes en FFmpeg, es obligatorio usar canales alfa (como el filtro `geq` con degradados esféricos) para difuminar los bordes y lograr una integración orgánica con el fondo.
 - **Comportamiento Asíncrono y Enlazado:** Las imágenes en collages deben turnarse asíncronamente (usando `enable='between(...)'`), entrelazarse creando puentes narrativos, con tamaños orgánicos y aplicando sutiles derivas cinéticas (`sin`/`cos`) y acercamientos (`zoompan`).
@@ -70,4 +72,4 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 1. **La Verdad Astrológica (Motor de Efemérides):** La IA (Célula 1) NUNCA debe inventar significados de tránsitos. Debe cruzar obligatoriamente los cálculos matemáticos de `pyswisseph` con el Oráculo centralizado (`astrology_engine/lexico_astrologico.json`). El Léxico manda sobre cualquier dato preconcebido de la IA.
 2. **Tono de Traducción (Masa + Técnica):** El guionista de la Célula 1 actúa como un puente empático. Debe explicar el clima astral de manera visceral (cómo se siente en el cuerpo y la calle), pero **DEBE incluir referencias técnicas sutiles** (Ej: Nombrar explícitamente "Esta Cuadratura entre la Luna y Plutón...") para no perder la profundidad astrológica.
 3. **El Pulmón Recolector (Daemon):** La recolección de videos (Pexels) y la generación de arte sintético (Gemini -> Pollinations.ai) corren en un daemon unificado (`pulmon_recolector.py`). Este proceso debe dormir 30 minutos por ciclo para no quemar las APIs ni colapsar la Bóveda.
-4. **Arte Sintético:** Todo arte generado por la IA debe llevar el prefijo `arte_propio_`.
+4. **Arte Sintético:** Todo arte generado por la IA debe llevar el prefijo `arte_propio_` y enviarse obligatoriamente a `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/` en sus respectivas categorías (`13_Abstracto_Fluidos` o `11_Humanos_Emociones`).
