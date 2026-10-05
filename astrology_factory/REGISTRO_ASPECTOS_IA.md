@@ -36,13 +36,21 @@
   - *Emocional/Sátira*: `arte_propio_emocion_pluton_acuario_...`
 
 ### Aspectos Tensos (Cuadraturas y Oposiciones)
-- [ ] **Marte Cuadratura Saturno** (Freno de mano, frustración y barreras físicas)
-- [ ] **Venus Cuadratura Urano** (Rupturas repentinas, desapego eléctrico)
-- [ ] **Sol Oposición Neptuno** (Confusión, niebla mental, idealización)
+- [x] **Marte Cuadratura Saturno** (Freno de mano, frustración y barreras físicas)
+  - *Abstracto*: `arte_propio_marte_saturno_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_marte_saturno_...`
+- [x] **Venus Cuadratura Urano** (Rupturas repentinas, desapego eléctrico)
+  - *Abstracto*: `arte_propio_venus_urano_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_venus_urano_...`
+- [x] **Sol Oposición Neptuno** (Confusión, niebla mental, idealización)
+  - *Abstracto*: `arte_propio_sol_neptuno_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_sol_neptuno_...`
 
 ### Eventos Mayores
-- [ ] **Eclipse Solar** (Reinicio kármico, sombras devorando la luz)
+- [x] **Eclipse Solar** (Reinicio kármico, sombras devorando la luz)
+  - *Abstracto*: `arte_propio_eclipse_solar_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_eclipse_solar_...`
 - [ ] **Eclipse Lunar** (Finales emocionales, purga)
 - [ ] **Luna Llena / Luna Nueva** (Clímax vs Siembra)
 
-*Nota: Todas las imágenes generadas se están enviando a `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/` en las categorías `11_Humanos_Emociones` y `13_Abstracto_Fluidos`.*
+*Nota: Todas las imágenes generadas se están enviando a `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/` en las categorías `11_Humanos_Emociones` y `13_Abstracto_Fluidos`.*
