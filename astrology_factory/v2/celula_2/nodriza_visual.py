@@ -215,10 +215,48 @@ def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
 
 # ── D. Scorer Emocional y Semántico ──────────────────────────────────────────
 
-def elegir_mejor_asset_con_gemini(toma_texto: str, rol: str, cat: dict, ultimos_usados: list) -> str:
-    # Desactivamos llamadas de Gemini por cada chunk para no quemar las cuotas ("quemar apis").
-    # Usaremos el motor semántico local basado en metadatos generados asíncronamente por Célula 0.
-    return None
+def elegir_mejor_asset_local(toma: dict, cat: dict, ultimos_usados: list[str], ultimo_elemento: str = None) -> str:
+    mejor_score = -9999.0
+    mejor_asset_key = None
+    for key, meta in cat.items():
+        if not meta.get("path_video_final"): continue
+        score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
+        if score > mejor_score:
+            mejor_score = score
+            mejor_asset_key = key
+    return mejor_asset_key
+
+from v2.celula_2.prompt_semantico import elegir_mejor_asset_con_gemini
+
+def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, ultimo_elemento: str, gemini_clients: list, evento_id: str) -> str:
+    # 1. Ranking local (top 40)
+    scores = []
+    for key, meta in cat.items():
+        if not meta.get("path_video_final"): continue
+        s = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
+        scores.append((s, key))
+    scores.sort(key=lambda x: x[0], reverse=True)
+    top_40_keys = [k for s, k in scores[:40]]
+    
+    if not top_40_keys: return None
+
+    # 2. Filtrar el catálogo para Gemini
+    cat_filtrado = {k: cat[k] for k in top_40_keys}
+    
+    # 3. Llamada a Gemini con cliente rotativo
+    if gemini_clients:
+        import random
+        client_elegido = random.choice(gemini_clients)
+        emocion = toma.get('emocion', 'indefinida')
+        texto = toma.get('texto_narrador', toma.get('texto', ''))
+        rol = toma.get('rol', '')
+        
+        mejor_key = elegir_mejor_asset_con_gemini(client_elegido, texto, rol, cat_filtrado, ultimos_usados, emocion, evento_id)
+        if mejor_key and mejor_key in cat:
+            return mejor_key
+            
+    # Fallback al mejor local
+    return top_40_keys[0]
 
 def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[str], ultimo_elemento: str) -> float:
     # 1. Base score
@@ -227,17 +265,23 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[
     # 2. Penalizaciones fuertes
     if ultimos_usados:
         if asset_key in ultimos_usados:
-            score -= 100.0  # NUNCA REPETIR IMÁGENES
+            score -= 100.0  # NUNCA REPETIR IMÁGENES O VIDEOS EN EL MISMO VIDEO
+            
+    # Penalizar si ya se usó en videos anteriores (para rotación de stock)
+    usos_historicos = len(meta.get("stats_uso", []))
+    if usos_historicos > 0:
+        score -= (usos_historicos * 10.0) # Penalización fuerte por uso histórico
             
     # 3. Emparejamiento por ROL
     rol = toma.get("rol", "").lower()
     tags_list = meta.get("etiquetas_visuales", []) + meta.get("tags", [])
     tags = (" ".join(tags_list) + " " + meta.get("path_original", "")).lower()
     
-    # Penalizar imágenes que rompen la estética (solo cotidianidad/familias, no humanos en general)
-    for palabra_prohibida in ["familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños", "pareja", "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child"]:
+    # Penalizar a muerte imágenes que rompen la estética
+    para_bloquear = ["familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños", "pareja", "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child", "persona", "hombre", "mujer", "gente", "people", "man", "woman", "person"]
+    for palabra_prohibida in para_bloquear:
         if palabra_prohibida in tags:
-            score -= 20.0
+            score -= 999.0
     
     # 4. Bonus semántico del Director de Arte
     emocion_toma = toma.get("emocion", "aire")
@@ -354,16 +398,47 @@ def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: 
     return out_path
 
 def ensamblar_micro_tomas(chunks: list[Path], out_name: str) -> Path:
-    list_path = TEMP_DIR / f"list_{uuid.uuid4().hex[:6]}.txt"
-    with open(list_path, "w") as f:
-        for c in chunks:
-            f.write(f"file '{c.resolve()}'\n")
-            
     out_path = TRANSMUTADOS_DIR / out_name
-    cmd = ["ffmpeg", "-y", "-threads", "1", "-f", "concat", "-safe", "0", "-i", str(list_path), "-c", "copy", str(out_path)]
-    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-    if res.returncode != 0:
-        print(f"FFmpeg ensamblar_micro_tomas: {res.stderr.decode('utf-8', errors='ignore')}")
+    if len(chunks) == 1:
+        import shutil
+        shutil.copy2(chunks[0], out_path)
+        return out_path
+        
+    def get_dur(p: Path) -> float:
+        res = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", str(p)], capture_output=True, text=True)
+        return float(res.stdout.strip())
+        
+    duraciones = [get_dur(c) for c in chunks]
+    xfade_dur = 1.5
+    
+    inputs = []
+    for c in chunks:
+        inputs.extend(["-i", str(c)])
+        
+    n = len(chunks)
+    partes = []
+    # Pad duration logic to preserve exact video length
+    for i in range(n):
+        pad_t = xfade_dur if i < n - 1 else 0
+        pad_prev = xfade_dur if i > 0 else 0
+        pad = (pad_t + pad_prev) / 2.0
+        f = f"[{i}:v]fps=30,setsar=1,format=yuv420p"
+        if pad > 0:
+            f += f",tpad=stop_mode=clone:stop_duration={pad + 0.002:.6f}"
+        partes.append(f + f"[n{i}]")
+        
+    label_prev = "n0"
+    inicio_narrativo = 0.0
+    for i in range(1, n):
+        inicio_narrativo += duraciones[i - 1]
+        offset = inicio_narrativo - xfade_dur / 2.0
+        label_out = f"v{i:02d}"
+        partes.append(f"[{label_prev}][n{i}]xfade=transition=fade:duration={xfade_dur}:offset={offset:.6f}[{label_out}]")
+        label_prev = label_out
+        
+    filtro_full = ";".join(partes)
+    cmd = ["ffmpeg", "-y"] + inputs + ["-filter_complex", filtro_full, "-map", f"[{label_prev}]", "-c:v", "libx264", "-preset", "fast", "-crf", "20", str(out_path)]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
     return out_path
 
 # ── Ejecución Principal ──────────────────────────────────────────────────────
@@ -438,8 +513,13 @@ def run_nodriza():
         score_para_alpha = 0.5
 
         # 1. Fuerza el prólogo cósmico (loop)
-        assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
+        terminos_gancho = ["vórtice", "tunel", "túnel", "viaje", "explosión", "agujero", "estallido"]
+        assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and any(term in " ".join(m.get("tags", []) + m.get("etiquetas_visuales", [])).lower() for term in terminos_gancho)]
         
+        if not assets_espacio_video:
+            # Fallback a espacio genérico si no hay coincidencias estrictas
+            assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
+
         if not asset_gancho_path and assets_espacio_video:
             asset_gancho_path = random.choice(assets_espacio_video)
 
@@ -447,17 +527,8 @@ def run_nodriza():
             mejor_asset_key = asset_gancho_path
             mejor_score = 1.0
         else:
-            mejor_asset_key = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados)
-            mejor_score = 1.0
-            
-            if not mejor_asset_key:
-                mejor_score = -999.0
-                for key, meta in cat.items():
-                    if not meta.get("path_video_final"): continue
-                    score = calcular_score(toma, key, meta, ultimos_usados, ultimo_elemento)
-                    if score > mejor_score:
-                        mejor_score = score
-                        mejor_asset_key = key
+            mejor_asset_key = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, ultimo_elemento, gemini_clients, EVENTO_ID)
+            mejor_score = 1.0 if mejor_asset_key else -999.0
 
         if mejor_asset_key:
             score_para_alpha = max(0.0, min(1.0, mejor_score))
@@ -467,24 +538,28 @@ def run_nodriza():
             ganador_meta = cat[mejor_asset_key]
             is_video = mejor_asset_key.endswith(".mp4")
             
-            if is_video:
-                cortes = calcular_cortes_ritmicos(texto, duracion_toma)
-                assets_para_cortes = [mejor_asset_key]
-                for _ in range(1, len(cortes)):
-                    assets_para_cortes.append(mejor_asset_key)
-            else:
-                # Si es imagen, la picamos dinámicamente para mayor sugestión (y que aparezcan/desaparezcan)
-                cortes = calcular_cortes_ritmicos(texto, duracion_toma)
-                assets_para_cortes = [mejor_asset_key] # El primer chunk usa el elegido
+            # Cortamos dinámicamente TODAS las tomas (incluyendo gancho y CTA) para que las 
+            # imágenes se fundan sobre el fondo espacial sin dejar un video monótono de 8s.
+            cortes = calcular_cortes_ritmicos(texto, duracion_toma)
                 
-                # Elegir más imágenes para rellenar los otros chunks
-                for _ in range(1, len(cortes)):
-                    otro_asset = elegir_mejor_asset_con_gemini(texto, toma.get("rol", ""), cat, ultimos_usados + assets_para_cortes)
-                    if not otro_asset:
-                        otro_asset = mejor_asset_key # fallback
-                    assets_para_cortes.append(otro_asset)
+            assets_para_cortes = []
+            
+            for i, c_dur in enumerate(cortes):
+                es_primer_corte_absoluto = (es_primera_toma and i == 0)
+                es_ultimo_corte_absoluto = (es_ultima_toma and i == len(cortes) - 1)
+                
+                if es_primer_corte_absoluto or es_ultimo_corte_absoluto:
+                    # Obligamos a que el video comience y termine con el mismo espacio (loop)
+                    elegido = asset_gancho_path
+                else:
+                    # En el medio, priorizamos evitar repetición y rotar stock
+                    elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + assets_para_cortes, ultimo_elemento)
+                    if not elegido:
+                        elegido = mejor_asset_key
+                
+                assets_para_cortes.append(elegido)
 
-            info(f"Toma {toma['num']} ({duracion_toma}s) -> Video: {is_video}. Dividida en {len(cortes)} cortes.")
+            info(f"Toma {toma['num']} ({duracion_toma}s) -> Dividida en {len(cortes)} cortes.")
 
             for i, (dur, chunk_asset_key) in enumerate(zip(cortes, assets_para_cortes)):
                 chunk_meta = cat[chunk_asset_key]
@@ -505,6 +580,8 @@ def run_nodriza():
                     es_ultimo_chunk=es_ultimo_corte_absoluto,
                     score=alpha_final
                 )
+                
+                ok(f"Toma {toma['num']} -> Corte {i}: {p_chunk.name}")
                 chunks.append(p_chunk)
             
         if chunks:

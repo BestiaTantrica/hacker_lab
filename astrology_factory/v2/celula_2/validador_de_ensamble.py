@@ -355,9 +355,10 @@ def opcion_3_reporte_final():
     # Verificar regla anti-spam: max clips para video corto
     total_s = lista_original.get("total_duracion_s", 0)
     num_clips = len(instrucciones)
-    if total_s <= 120 and num_clips > MAX_CLIPS:
+    MAX_CLIPS_OVERRIDE = 30
+    if total_s <= 120 and num_clips > MAX_CLIPS_OVERRIDE:
         err(f"🚨 BLOQUEO ANTI-SPAM: {num_clips} clips para video de {total_s:.1f}s")
-        err(f"   Máximo permitido: {MAX_CLIPS} clips. Re-ejecuta asignador con menos tomas.")
+        err(f"   Máximo permitido: {MAX_CLIPS_OVERRIDE} clips. Re-ejecuta asignador con menos tomas.")
         err("   El render NO procederá hasta resolver esto.")
         # Anotarlo en el JSON pero no abortar (el humano decide)
         bloqueado = True

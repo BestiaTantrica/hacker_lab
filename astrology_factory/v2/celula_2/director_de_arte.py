@@ -46,8 +46,8 @@ EMOCIONES: dict[str, dict] = {
             "intuitiv", "inconsciente", "abismo",
         ],
         "tags_visuales": [
-            "agua", "océano", "azul", "profundo", "transparente", "reflejo",
-            "cristal", "niebla", "vapor",
+            "océano cósmico", "nebulosa azul", "líquido astral", "fractal de agua", 
+            "misticismo", "cristal oscuro", "profundo astral",
         ],
         "xfade_principal": "dissolve",
         "xfade_alternativo": "fadeblack",
@@ -60,8 +60,8 @@ EMOCIONES: dict[str, dict] = {
             "virgo", "trabajo", "disciplina", "estructura", "estabilidad",
         ],
         "tags_visuales": [
-            "tierra", "piedra", "montaña", "raíz", "oscuro", "mineral",
-            "geometría", "mandala", "espiral", "arquitectura sagrada",
+            "geometría sagrada", "minerales del espacio", "tierra oscura", "planeta rocoso",
+            "mandala", "espiral galáctica", "arquitectura sagrada",
         ],
         "xfade_principal": "smoothleft",
         "xfade_alternativo": "fade",

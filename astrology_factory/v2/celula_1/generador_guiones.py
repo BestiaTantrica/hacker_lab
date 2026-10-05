@@ -330,7 +330,7 @@ sin bloques de código markdown, sin explicaciones. Solo el JSON:
 Reglas absolutas:
 - Exactamente {num_tomas} tomas en el array
 - Cada "texto" debe respetar el límite de palabras de su toma
-- La toma 7 (CTA) máximo 15 palabras, terminar con llamado a acción
+- La toma final (CTA) debe ser un llamado a la acción dirigido a la web. Usa EXACTAMENTE esta frase o una variante muy cercana: "Para descubrir cómo este tránsito impacta en tu propia carta natal, haz clic en el enlace de nuestra biografía."
 - Tono: {ADN['guion']['tono']}. Enfoque sociológico y de acompañamiento energético.
 - NO es predictivo ni un horóscopo mágico. Es un análisis de energías.
 - Si hablas de un signo, SIEMPRE únelo al clima general (ej: "si eres fuego, esto lo sientes más, pero a todos nos impacta...").
@@ -620,7 +620,7 @@ def opcion_4_inyectar_cta(guion_path: str = None):
     info(f"CTA actual (toma {toma_cta['num']}): {toma_cta['texto']}")
 
     # CTA directo aprobado por el usuario
-    nuevo_cta = "Si te gustó el contenido da like y deja tu comentario. Si quieres saber cómo estos tránsitos afectan a tu carta astral, ve al link del perfil."
+    nuevo_cta = "Para descubrir cómo este tránsito impacta en tu propia carta natal, haz clic en el enlace de nuestra biografía."
     
     palabras  = len(nuevo_cta.split())
     info(f"CTA seleccionado ({palabras} palabras): {nuevo_cta}")

@@ -181,63 +181,67 @@ def opcion_2_binaural():
     if stock_dir.exists():
         paletas = list(stock_dir.glob("*.mp3"))
         
-    binaural_wav = TEMP_DIR / "synth_binaural.wav"
-    # Generar binaural matemático exacto
-    cmd_gen = [
-        "python3", str(FACTORY_ROOT / "v2" / "celula_3" / "generador_binaural.py"),
-        "--tipo", "binaural", "--salida", str(binaural_wav),
-        "--duracion", str(dur_s), "--freq", str(hz), "--volumen", "0.5"
-    ]
-    subprocess.run(cmd_gen, check=True)
+    # Generar string de volumen dinámico (subibaja sutil según tensión de la toma)
+    vol_str = "0.4"
+    timeline_path = TIMELINE_DIR / f"{EVENTO_ID}.json"
+    if timeline_path.exists():
+        try:
+            with open(timeline_path, encoding="utf-8") as f:
+                tdata = json.load(f)
+            expr_parts = []
+            for t_idx, t_info in enumerate(tdata.get("tomas", [])):
+                r = t_info.get("rol", "")
+                s = t_info.get("inicio_ms", 0) / 1000.0
+                e = t_info.get("fin_ms", 0) / 1000.0
+                # Roles de tensión o clímax tendrán volumen sutilmente más alto
+                if r in ["gancho", "mecanica_astrologica", "tension_oportunidad", "climax", "transitos_principales"]:
+                    v = 1.40
+                else:
+                    v = 0.80
+                expr_parts.append(f"if(between(t,{s},{e}), {v}, 0)")
+            if expr_parts:
+                vol_str = " + ".join(expr_parts)
+            info("Volumen dinámico generado según el relato.")
+        except Exception as e:
+            warn(f"No se pudo crear volumen dinámico: {e}")
 
     if paletas:
         paleta = random.choice(paletas)
-        info(f"Usando track de stock preparado: {paleta.name} + Binaural Puro")
+        dur_paleta = get_duracion_s(paleta)
+        
+        # Elegir un punto de inicio aleatorio en la pista de stock
+        start_offset = 0.0
+        if dur_paleta > dur_s:
+            start_offset = random.uniform(0.0, dur_paleta - dur_s)
+            
+        info(f"Usando track de stock preparado: {paleta.name} (offset: {start_offset:.1f}s)")
         
         filtro_sanacion = (
             f"[0:a]volume=1.0[voz];"
-            f"[1:a]volume=0.6[binaural];"
-            f"[2:a]aloop=loop=-1:size=2e9,atrim=0:{dur_s:.3f},volume=0.4[pad];"
-            f"[voz][binaural][pad]amix=inputs=3:duration=first:normalize=0[out]"
+            f"[1:a]atrim=start={start_offset:.3f}:duration={dur_s:.3f},volume='{vol_str}':eval=frame[pad];"
+            f"[voz][pad]amix=inputs=2:duration=first:normalize=0[out]"
         )
         
         cmd_v2 = [
             "ffmpeg", "-y",
             "-i", str(mix_mp3),
-            "-i", str(binaural_wav),
             "-i", str(paleta),
             "-filter_complex", filtro_sanacion,
             "-map", "[out]",
             "-c:a", "libmp3lame", "-q:a", "2",
             str(salida)
         ]
-    else:
-        info("Usando síntesis matemática binaural pura (Python).")
-        filtro_sanacion = (
-            f"[0:a]volume=1.0[voz];"
-            f"[1:a]volume=1.0[binaural];"
-            f"[voz][binaural]amix=inputs=2:duration=first:normalize=0[out]"
-        )
-        cmd_v2 = [
-            "ffmpeg", "-y",
-            "-i", str(mix_mp3),
-            "-i", str(binaural_wav),
-            "-filter_complex", filtro_sanacion,
-            "-map", "[out]",
-            "-c:a", "libmp3lame", "-q:a", "2",
-            str(salida)
-        ]
-
-    exito = correr_ffmpeg(cmd_v2, f"Diseño Sonoro ({'Real' if paletas else 'Sintético'})", timeout=180)
-    if exito and salida.exists():
-        ok(f"Audio envolvente: {salida}")
-        return str(salida)
-    else:
-        err("Falla en la síntesis. Copiando mix base como salida.")
-        import shutil
-        shutil.copy2(mix_mp3, salida)
-        warn(f"Usando mix sin sanación: {salida}")
-        return str(salida)
+        
+        exito = correr_ffmpeg(cmd_v2, f"Diseño Sonoro ({paleta.name})", timeout=180)
+        if exito and salida.exists():
+            ok(f"Audio envolvente: {salida}")
+            return str(salida)
+        
+    err("Falla en la mezcla o no hay audios de stock. Copiando mix base como salida.")
+    import shutil
+    shutil.copy2(mix_mp3, salida)
+    warn(f"Usando mix sin sanación: {salida}")
+    return str(salida)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # OPCIÓN 3 — SFX en Puntos de Transición
@@ -245,118 +249,24 @@ def opcion_2_binaural():
 
 def opcion_3_sfx_transiciones():
     """
-    Inserta un SFX (campanilla/whoosh/ruido cósmico) exactamente en cada
-    punto de transición entre tomas, leyendo los tiempos del timeline_huecos.json.
-    Lee el archivo SFX del ADN o usa un tono sintético si no existe.
+    Desactivado a pedido del usuario: "jugar directamente con los volumenes segun el relato".
+    Simplemente copia la salida de la opción 2.
     """
-    log("\n🔔 OPCIÓN 3 — SFX en Transiciones", MAGENTA)
+    log("\n🔔 OPCIÓN 3 — SFX en Transiciones (Desactivado)", MAGENTA)
 
     # Audio base
     mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}_binaural.mp3"
     if not mix_mp3.exists():
         mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}_mix.mp3"
     if not mix_mp3.exists():
-        mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}.mp3"
-    if not mix_mp3.exists():
         err(f"Sin audio base disponible en {AUDIO_DIR}")
         sys.exit(1)
 
-    # Cargar timeline para tiempos exactos de transición
-    timeline_path = TIMELINE_DIR / f"{EVENTO_ID}.json"
-    if not timeline_path.exists():
-        err(f"Timeline no encontrado: {timeline_path}")
-        sys.exit(1)
-    with open(timeline_path, encoding="utf-8") as f:
-        timeline = json.load(f)
-
-    tomas = timeline.get("tomas", [])
-    # Los puntos de transición = fin_s de cada toma (menos la última)
-    transiciones_s = [t["fin_ms"] / 1000.0 for t in tomas[:-1]]
-
-    info(f"Transiciones: {[f'{t:.3f}s' for t in transiciones_s]}")
-
-    # SFX: usar el definido en ADN o generar tono sintético de 440Hz / 30ms
-    sfx_path = AUDIO_CFG.get("sfx_transicion_path", "")
-    sfx_existe = sfx_path and Path(sfx_path).exists()
-    dur_sfx_ms = AUDIO_CFG.get("sfx_duracion_ms", 80)
-    vol_sfx_db = AUDIO_CFG.get("sfx_volumen_db", -12)
-    dur_total  = get_duracion_s(mix_mp3)
-    salida_sfx = AUDIO_DIR / f"{EVENTO_ID}_sfx.mp3"
-
-    # Construir filter_complex con adelays para cada transición
-    # Estrategia: generar un SFX sintético y superponerlo en cada transición
-    partes_filtro = []
-    inputs_cmd    = ["-i", str(mix_mp3)]
-
-    if sfx_existe:
-        info(f"SFX externo: {Path(sfx_path).name} @ {vol_sfx_db}dB")
-        for idx, t_s in enumerate(transiciones_s):
-            inputs_cmd += ["-i", sfx_path]
-            delay_ms = int(t_s * 1000)
-            partes_filtro.append(
-                f"[{idx+1}:a]volume={vol_sfx_db}dB,adelay={delay_ms}|{delay_ms}[sfx{idx}]"
-            )
-        amix_inputs = ";".join(partes_filtro)
-        amix_labels = "".join(f"[sfx{i}]" for i in range(len(transiciones_s)))
-        num_inputs  = len(transiciones_s) + 1
-        filtro_full = (
-            f"{amix_inputs};"
-            f"[0:a]{amix_labels}amix=inputs={num_inputs}:duration=first:normalize=0[out]"
-        )
-        cmd = inputs_cmd + [
-            "-filter_complex", filtro_full,
-            "-map", "[out]",
-            "-c:a", "libmp3lame", "-q:a", "2", str(salida_sfx)
-        ]
-    else:
-        elemento = ADN.get("arquetipos", {}).get("elemento", "Agua").lower()
-        info(f"Generando SFX sintético orgánico basado en elemento: {elemento.upper()}")
-        
-        sfx_wav = TEMP_DIR / "synth_sfx.wav"
-        cmd_gen = [
-            "python3", str(FACTORY_ROOT / "v2" / "celula_3" / "generador_binaural.py"),
-            "--tipo", "sfx", "--salida", str(sfx_wav),
-            "--duracion", "3.0", "--elemento", elemento, "--volumen", "0.6"
-        ]
-        subprocess.run(cmd_gen, check=True)
-        
-        partes_filtro = []
-        for idx, t_s in enumerate(transiciones_s):
-            inputs_cmd += ["-i", str(sfx_wav)]
-            delay_ms = int(t_s * 1000)
-            partes_filtro.append(
-                f"[{idx+1}:a]volume={vol_sfx_db}dB,adelay={delay_ms}|{delay_ms}[sfx{idx}]"
-            )
-            
-        amix_inputs = ";".join(partes_filtro)
-        amix_labels = "".join(f"[sfx{i}]" for i in range(len(transiciones_s)))
-        num_inputs  = len(transiciones_s) + 1
-        
-        filtro_full = (
-            f"{amix_inputs};"
-            f"[0:a]{amix_labels}amix=inputs={num_inputs}:duration=first:normalize=0[out]"
-        )
-        cmd = ["ffmpeg", "-y"] + inputs_cmd + [
-            "-filter_complex", filtro_full,
-            "-map", "[out]",
-            "-c:a", "libmp3lame", "-q:a", "2", str(salida_sfx)
-        ]
-
-    if sfx_existe:
-        cmd = ["ffmpeg", "-y"] + cmd
-
-    exito = correr_ffmpeg(cmd, "SFX transiciones", timeout=120)
-
-    if exito and salida_sfx.exists():
-        ok(f"Audio con SFX: {salida_sfx}")
-        info(f"Transiciones marcadas: {len(transiciones_s)}")
-        return str(salida_sfx)
-    else:
-        warn("SFX falló. Usando audio base sin SFX.")
-        import shutil
-        shutil.copy2(mix_mp3, salida_sfx)
-        return str(salida_sfx)
-
+    salida = AUDIO_DIR / f"{EVENTO_ID}_sfx.mp3"
+    import shutil
+    shutil.copy2(mix_mp3, salida)
+    ok(f"Audio final (sin SFX sintéticos, solo orgánico): {salida}")
+    return str(salida)
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════

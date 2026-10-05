@@ -136,10 +136,10 @@ TRANSICIONES_INTRA = ["fade", "dissolve"]
 # Transiciones VÓRTICE — saltos entre tomas distintas (agujeros de gusano cósmicos)
 # El Director de Arte elige la correcta según la emoción del beat.
 # Si no hay datos, se usa una de estas al azar.
-TRANSICIONES_VORTICE = ["dissolve", "fade", "smoothleft", "circlecrop", "pixelize", "distance", "radial", "hlslice"]
+TRANSICIONES_VORTICE = ["fade", "dissolve"]
 
-XFADE_DUR_INTRA   = 0.2    # segundos — suave, rápido para acompañar el relato
-XFADE_DUR_VORTICE = 0.8    # segundos — fundido onírico pero dinámico
+XFADE_DUR_INTRA   = 1.5    # segundos — fundido suave para imágenes dentro de la misma toma
+XFADE_DUR_VORTICE = 2.0    # segundos — fundido onírico y largo entre tomas distintas
 
 
 def leer_mapa_tomas() -> dict[str, dict]:
