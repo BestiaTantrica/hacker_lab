@@ -248,11 +248,7 @@ def opcion_2_binaural():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def opcion_3_sfx_transiciones():
-    """
-    Desactivado a pedido del usuario: "jugar directamente con los volumenes segun el relato".
-    Simplemente copia la salida de la opción 2.
-    """
-    log("\n🔔 OPCIÓN 3 — SFX en Transiciones (Desactivado)", MAGENTA)
+    log("\n🔔 OPCIÓN 3 — SFX en Transiciones (Cuencos/Gongs)", MAGENTA)
 
     # Audio base
     mix_mp3 = AUDIO_DIR / f"{EVENTO_ID}_binaural.mp3"
@@ -264,8 +260,71 @@ def opcion_3_sfx_transiciones():
 
     salida = AUDIO_DIR / f"{EVENTO_ID}_sfx.mp3"
     import shutil
-    shutil.copy2(mix_mp3, salida)
-    ok(f"Audio final (sin SFX sintéticos, solo orgánico): {salida}")
+    
+    guion_path = Path(ADN["assets"]["paths"]["timeline_huecos"]) / f"{EVENTO_ID}.json"
+    if not guion_path.exists():
+        err(f"No se encontró el guion validado en {guion_path}. Copiando base sin SFX.")
+        shutil.copy2(mix_mp3, salida)
+        return str(salida)
+
+    with open(guion_path, "r", encoding="utf-8") as f:
+        guion = json.load(f)
+
+    tomas = guion.get("tomas", [])
+    tiempos = []
+    acum = 0.0
+    for t in tomas[:-1]:
+        # Consideramos solo tomas que sí generaron duración (segun guión validado)
+        dur = float(t.get("duracion_ms", 0)) / 1000.0
+        if dur > 0:
+            acum += dur
+            tiempos.append(acum)
+
+    if not tiempos:
+        shutil.copy2(mix_mp3, salida)
+        return str(salida)
+
+    # Generamos un sonido sanador rápido (Cuenco Sintético 432Hz)
+    sfx_wav = TEMP_DIR / f"cuenco_sfx_{EVENTO_ID}.wav"
+    subprocess.run([
+        "ffmpeg", "-y", "-f", "lavfi", "-i", "sine=frequency=432:duration=2",
+        "-af", "afade=t=in:ss=0:d=0.05,afade=t=out:st=0.1:d=1.9,volume=0.3",
+        str(sfx_wav)
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # Construimos el comando para retrasar (adelay) el sfx y mezclarlo (amix)
+    cmd = ["ffmpeg", "-y", "-threads", "2", "-i", str(mix_mp3)]
+    for _ in tiempos:
+        cmd += ["-i", str(sfx_wav)]
+
+    filter_complex = ""
+    for i, t_s in enumerate(tiempos):
+        ms = int(t_s * 1000)
+        # adelay recibe ms. |ms duplica en estereo
+        filter_complex += f"[{i+1}:a]adelay={ms}|{ms}[d{i}]; "
+
+    mix_inputs = "".join([f"[d{i}]" for i in range(len(tiempos))])
+    filter_complex += f"[0:a]{mix_inputs}amix=inputs={len(tiempos)+1}:dropout_transition=2:normalize=0[aout]"
+
+    cmd += [
+        "-filter_complex", filter_complex,
+        "-map", "[aout]",
+        "-c:a", "libmp3lame", "-b:a", "192k",
+        str(salida)
+    ]
+
+    import os
+    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    if res.returncode != 0:
+        err(f"Error inyectando SFX: {res.stderr.decode('utf-8', errors='ignore')}")
+        shutil.copy2(mix_mp3, salida)
+    else:
+        ok(f"Se inyectaron {len(tiempos)} impactos de cuenco (SFX) en los cortes.")
+        ok(f"Audio final con SFX: {salida}")
+    
+    if sfx_wav.exists():
+        os.remove(str(sfx_wav))
+
     return str(salida)
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN

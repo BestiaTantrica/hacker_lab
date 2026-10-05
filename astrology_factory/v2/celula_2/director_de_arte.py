@@ -63,7 +63,7 @@ EMOCIONES: dict[str, dict] = {
             "geometría sagrada", "minerales del espacio", "tierra oscura", "planeta rocoso",
             "mandala", "espiral galáctica", "arquitectura sagrada",
         ],
-        "xfade_principal": "smoothleft",
+        "xfade_principal": "dissolve",
         "xfade_alternativo": "fade",
         "opacidad_boost": 0.0,
     },
@@ -78,7 +78,7 @@ EMOCIONES: dict[str, dict] = {
             "cielo", "nubes", "viento", "fractal", "abstracto", 
             "geometría sagrada", "luz", "blanco", "celeste"
         ],
-        "xfade_principal": "fadewhite",
+        "xfade_principal": "fade",
         "xfade_alternativo": "fade",
         "opacidad_boost": -0.08,   # casi etéreo
     },
@@ -121,7 +121,7 @@ EMOCIONES: dict[str, dict] = {
             "luz", "dorado", "sol", "amanecer", "espiral", "fractal",
             "geometría sagrada", "mandala", "portal",
         ],
-        "xfade_principal": "fadewhite",
+        "xfade_principal": "fade",
         "xfade_alternativo": "fade",
         "opacidad_boost": 0.1,
     },
@@ -134,7 +134,7 @@ EMOCIONES: dict[str, dict] = {
         "tags_visuales": [
             "fractal", "abstracto", "espiral", "geometría"
         ],
-        "xfade_principal": "smoothleft",
+        "xfade_principal": "dissolve",
         "xfade_alternativo": "fade",
         "opacidad_boost": 0.05,
     },

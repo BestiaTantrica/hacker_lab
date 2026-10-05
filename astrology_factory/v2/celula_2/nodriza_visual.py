@@ -205,7 +205,8 @@ def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
             
             cat[key] = {
                 "etiquetas_visuales": final_tags,
-                "tags": final_tags
+                "tags": final_tags,
+                "stats_uso": []
             }
         
         cat[key]["path_original"] = str(a.resolve())
@@ -315,7 +316,7 @@ def calcular_cortes_ritmicos(texto: str, duracion_total: float) -> list[float]:
     corte_dur = duracion_total / num_cortes
     return [corte_dur] * num_cortes
 
-def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: str, es_primer_chunk: bool = False, es_ultimo_chunk: bool = False, score: float = 0.5) -> Path:
+def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: str, es_primer_chunk: bool = False, es_ultimo_chunk: bool = False, score: float = 0.5, es_iconica: bool = False) -> Path:
     import random
     out_path = TEMP_DIR / f"chunk_{chunk_id}.mp4"
 
@@ -344,6 +345,11 @@ def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: 
                 fg_filter = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920"
             else:  # pleno
                 fg_filter = "scale=1020:-1,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=black@0"
+                
+            if es_iconica:
+                # Añadimos un leve paneo/zoom (Ken Burns)
+                fg_filter += f",zoompan=z='zoom+0.001':d={int(duracion*30)}:s=1080x1920:fps=30"
+                
             blend = "overlay=format=auto:shortest=1"
         else:
             # B-Roll: también pasa por el espejismo (alpha dinámico)
@@ -385,6 +391,8 @@ def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: 
         # Fallback normal si no hay fondos animados
         if asset_path.suffix.lower() in FORMATOS_IMG:
             vf = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920"
+            if es_iconica:
+                vf += f",zoompan=z='zoom+0.001':d={int(duracion*30)}:s=1080x1920:fps=30"
             cmd = ["ffmpeg", "-y", "-threads", "1", "-loop", "1", "-i", str(asset_path), "-vf", vf, "-c:v", "libx264", "-preset", "ultrafast", "-t", str(duracion), "-pix_fmt", "yuv420p", "-r", "30", str(out_path)]
         else:
             vf = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920"
@@ -574,11 +582,18 @@ def run_nodriza():
                 chunk_id = f"{toma['num']}_{i}_{uuid.uuid4().hex[:4]}"
                 alpha_final = max(0.0, min(1.0, score_para_alpha + emocion_opacidad_boost(toma.get("emocion", "aire"))))
                 
+                es_iconica = False
+                palabras_iconicas = ["tarot", "carta", "simbolo", "dios", "persona", "planeta", "arquetipo", "astrologia", "signo", "constelacion"]
+                tags_str = " ".join(chunk_meta.get("etiquetas_visuales", []) + chunk_meta.get("tags", []) + [chunk_meta.get("path_original", "")]).lower()
+                if any(p in tags_str for p in palabras_iconicas):
+                    es_iconica = True
+                
                 p_chunk = preprocesar_asset_para_montaje(
                     Path(chunk_meta["path_video_final"]), dur, chunk_id,
                     es_primer_chunk=es_primer_corte_absoluto,
                     es_ultimo_chunk=es_ultimo_corte_absoluto,
-                    score=alpha_final
+                    score=alpha_final,
+                    es_iconica=es_iconica
                 )
                 
                 ok(f"Toma {toma['num']} -> Corte {i}: {p_chunk.name}")

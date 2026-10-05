@@ -25,9 +25,15 @@
 *(Marcar con `[x]` a medida que se generen y se envíen a la Bóveda)*
 
 ### Planetas en Signos (Atmósferas)
-- [ ] **Marte en Cáncer** (Acción pasivo-agresiva, agua hirviendo)
-- [ ] **Júpiter en Géminis** (Expansión mental, saturación de información)
+- [x] **Marte en Cáncer** (Acción pasivo-agresiva, agua hirviendo)
+  - *Abstracto*: `arte_propio_marte_cancer_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_marte_cancer_...`
+- [x] **Júpiter en Géminis** (Expansión mental, saturación de información)
+  - *Abstracto*: `arte_propio_jupiter_geminis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_geminis_...`
 - [ ] **Plutón en Acuario** (Transformación tecnológica, redes neuronales destructivas)
+  - *Abstracto*: `arte_propio_pluton_acuario_...`
+  - *Emocional/Sátira*: Pendiente (Límite de cuota IA alcanzado)
 
 ### Aspectos Tensos (Cuadraturas y Oposiciones)
 - [ ] **Marte Cuadratura Saturno** (Freno de mano, frustración y barreras físicas)
