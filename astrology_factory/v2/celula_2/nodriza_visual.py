@@ -298,9 +298,9 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list[
         if "fuego" in tags or "espacio" in tags or "luz" in tags:
             score += 1.0
 
-    # 6. Preferencia ligera por videos
-    if asset_key.endswith(".mp4"):
-        score += 0.2
+        # En el gancho preferimos los videos
+        if asset_key.endswith(".mp4"):
+            score += 0.5
             
     return score
 
@@ -529,7 +529,11 @@ def run_nodriza():
             assets_espacio_video = [k for k, m in cat.items() if k.endswith(".mp4") and ("07_Espacio_Galaxias" in m.get("path_video_final", "") or "espacio" in " ".join(m.get("tags", [])).lower() or "espacio" in " ".join(m.get("etiquetas_visuales", [])).lower() or "cosmos" in " ".join(m.get("etiquetas_visuales", [])).lower())]
 
         if not asset_gancho_path and assets_espacio_video:
-            asset_gancho_path = random.choice(assets_espacio_video)
+            # Ordenamos por cantidad de usos históricos (menor a mayor)
+            assets_espacio_video.sort(key=lambda k: len(cat[k].get("stats_uso", [])))
+            min_usos = len(cat[assets_espacio_video[0]].get("stats_uso", []))
+            candidatos_gancho = [k for k in assets_espacio_video if len(cat[k].get("stats_uso", [])) == min_usos]
+            asset_gancho_path = random.choice(candidatos_gancho)
 
         if (es_primera_toma or es_ultima_toma) and asset_gancho_path:
             mejor_asset_key = asset_gancho_path
@@ -552,6 +556,9 @@ def run_nodriza():
                 
             assets_para_cortes = []
             
+            # Decidimos en qué corte de esta toma meter la elección de Gemini (mejor_asset_key)
+            corte_principal_idx = len(cortes) // 2 if len(cortes) > 1 else 0
+
             for i, c_dur in enumerate(cortes):
                 es_primer_corte_absoluto = (es_primera_toma and i == 0)
                 es_ultimo_corte_absoluto = (es_ultima_toma and i == len(cortes) - 1)
@@ -559,6 +566,9 @@ def run_nodriza():
                 if es_primer_corte_absoluto or es_ultimo_corte_absoluto:
                     # Obligamos a que el video comience y termine con el mismo espacio (loop)
                     elegido = asset_gancho_path
+                elif i == corte_principal_idx and mejor_asset_key:
+                    # Honramos la elección de Gemini insertándola en el corte principal de la toma
+                    elegido = mejor_asset_key
                 else:
                     # En el medio, priorizamos evitar repetición y rotar stock
                     elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + assets_para_cortes, ultimo_elemento)

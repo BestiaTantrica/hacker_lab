@@ -288,7 +288,9 @@ def opcion_3_sfx_transiciones():
     sfx_wav = TEMP_DIR / f"cuenco_sfx_{EVENTO_ID}.wav"
     subprocess.run([
         "ffmpeg", "-y", "-f", "lavfi", "-i", "sine=frequency=432:duration=2",
-        "-af", "afade=t=in:ss=0:d=0.05,afade=t=out:st=0.1:d=1.9,volume=0.3",
+        "-f", "lavfi", "-i", "sine=frequency=864:duration=2",
+        "-filter_complex", "[0:a]volume=1.0[a0];[1:a]volume=0.2[a1];[a0][a1]amix=inputs=2:normalize=0,afade=t=in:ss=0:d=0.05,afade=t=out:st=0.1:d=1.9[out]",
+        "-map", "[out]",
         str(sfx_wav)
     ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
