@@ -50,7 +50,11 @@
 - [x] **Eclipse Solar** (Reinicio kármico, sombras devorando la luz)
   - *Abstracto*: `arte_propio_eclipse_solar_...`
   - *Emocional/Sátira*: `arte_propio_emocion_eclipse_solar_...`
-- [ ] **Eclipse Lunar** (Finales emocionales, purga)
-- [ ] **Luna Llena / Luna Nueva** (Clímax vs Siembra)
+- [x] **Eclipse Lunar** (Finales emocionales, purga)
+  - *Abstracto*: `arte_propio_eclipse_lunar_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_eclipse_lunar_...`
+- [x] **Luna Llena / Luna Nueva** (Clímax vs Siembra)
+  - *Abstracto*: `arte_propio_luna_fases_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_fases_...`
 
 *Nota: Todas las imágenes generadas se están enviando a `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/` en las categorías `11_Humanos_Emociones` y `13_Abstracto_Fluidos`.*
