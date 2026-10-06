@@ -57,4 +57,20 @@
   - *Abstracto*: `arte_propio_luna_fases_...`
   - *Emocional/Sátira*: `arte_propio_emocion_luna_fases_...`
 
+### Puntos Kármicos y Sombras
+- [ ] **Lilith en Escorpio** (Poder sexual reprimido, tabúes, magnetismo oscuro)
+- [ ] **Quirón en Casa 12** (Herida oculta, dolor inconsciente, sanación espiritual)
+- [ ] **Plutón Cuadratura Nodos Lunares** (Crisis kármica, encrucijada del destino)
+
+### Aspectos Armónicos (Luz y Expansión)
+- [ ] **Venus Trígono Júpiter** (Abundancia, suerte, amor expansivo)
+- [ ] **Sol Sextil Urano** (Genialidad repentina, chispazos de innovación)
+- [ ] **Luna Trígono Neptuno** (Intuición profunda, sueños lúcidos, empatía)
+
+### Tránsitos Rápidos (Estados de Ánimo)
+- [ ] **Luna en Aries** (Impulso emocional, fuego interno, reactividad)
+- [ ] **Mercurio en Piscis** (Mente soñadora, confusión romántica, telepatía)
+- [ ] **Venus en Acuario** (Amor libre, desapego, excentricidad)
+- [ ] **Marte en Libra** (Guerra pasivo-agresiva, búsqueda de justicia, estética)
+
 *Nota: Todas las imágenes generadas se están enviando a `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/` en las categorías `11_Humanos_Emociones` y `13_Abstracto_Fluidos`.*
