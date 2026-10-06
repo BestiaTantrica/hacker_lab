@@ -58,12 +58,20 @@
   - *Emocional/Sátira*: `arte_propio_emocion_luna_fases_...`
 
 ### Puntos Kármicos y Sombras
-- [ ] **Lilith en Escorpio** (Poder sexual reprimido, tabúes, magnetismo oscuro)
-- [ ] **Quirón en Casa 12** (Herida oculta, dolor inconsciente, sanación espiritual)
-- [ ] **Plutón Cuadratura Nodos Lunares** (Crisis kármica, encrucijada del destino)
+- [x] **Lilith en Escorpio** (Poder sexual reprimido, tabúes, magnetismo oscuro)
+  - *Abstracto*: `arte_propio_lilith_escorpio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_lilith_escorpio_...`
+- [x] **Quirón en Casa 12** (Herida oculta, dolor inconsciente, sanación espiritual)
+  - *Abstracto*: `arte_propio_quiron_casa12_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_casa12_...`
+- [x] **Plutón Cuadratura Nodos Lunares** (Crisis kármica, encrucijada del destino)
+  - *Abstracto*: `arte_propio_pluton_nodos_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_nodos_...`
 
 ### Aspectos Armónicos (Luz y Expansión)
-- [ ] **Venus Trígono Júpiter** (Abundancia, suerte, amor expansivo)
+- [x] **Venus Trígono Júpiter** (Abundancia, suerte, amor expansivo)
+  - *Abstracto*: `arte_propio_venus_jupiter_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_venus_jupiter_...`
 - [ ] **Sol Sextil Urano** (Genialidad repentina, chispazos de innovación)
 - [ ] **Luna Trígono Neptuno** (Intuición profunda, sueños lúcidos, empatía)
 
