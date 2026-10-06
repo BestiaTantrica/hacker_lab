@@ -103,7 +103,9 @@
 - [x] **Plutón en Sagitario** (Transformación y Sombras bajo Búsqueda de Verdad)
   - *Abstracto*: `arte_propio_pluton_sagitario_...`
   - *Emocional/Sátira*: `arte_propio_emocion_pluton_sagitario_...`
-- [ ] **Luna en Escorpio** (Emociones y Refugio bajo Intensidad Oscura)
+- [x] **Luna en Escorpio** (Emociones y Refugio bajo Intensidad Oscura)
+  - *Abstracto*: `arte_propio_luna_escorpio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_escorpio_...`
 - [ ] **Sol en Capricornio** (Identidad y Ego bajo Cima de la Montaña)
 - [ ] **Sol en Piscis** (Identidad y Ego bajo Océano Místico)
 - [ ] **Quirón Cuadratura Júpiter** (Fricción y Conflicto entre Herida Inconsciente y Expansión y Suerte)
