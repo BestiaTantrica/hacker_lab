@@ -100,7 +100,9 @@
 - [x] **Júpiter Sextil Quirón** (Oportunidad Creativa entre Expansión y Suerte y Herida Inconsciente)
   - *Abstracto*: `arte_propio_jupiter_quiron_...`
   - *Emocional/Sátira*: `arte_propio_emocion_jupiter_quiron_...`
-- [ ] **Plutón en Sagitario** (Transformación y Sombras bajo Búsqueda de Verdad)
+- [x] **Plutón en Sagitario** (Transformación y Sombras bajo Búsqueda de Verdad)
+  - *Abstracto*: `arte_propio_pluton_sagitario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_sagitario_...`
 - [ ] **Luna en Escorpio** (Emociones y Refugio bajo Intensidad Oscura)
 - [ ] **Sol en Capricornio** (Identidad y Ego bajo Cima de la Montaña)
 - [ ] **Sol en Piscis** (Identidad y Ego bajo Océano Místico)
