@@ -72,11 +72,16 @@
 - [x] **Venus Trígono Júpiter** (Abundancia, suerte, amor expansivo)
   - *Abstracto*: `arte_propio_venus_jupiter_...`
   - *Emocional/Sátira*: `arte_propio_emocion_venus_jupiter_...`
-- [ ] **Sol Sextil Urano** (Genialidad repentina, chispazos de innovación)
-- [ ] **Luna Trígono Neptuno** (Intuición profunda, sueños lúcidos, empatía)
+- [x] **Sol Sextil Urano** (Genialidad repentina, chispazos de innovación)
+  - *Abstracto*: `arte_propio_sol_urano_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_sol_urano_...`
+- [x] **Luna Trígono Neptuno** (Intuición profunda, sueños lúcidos, empatía)
+  - *Abstracto*: `arte_propio_luna_neptuno_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_neptuno_...`
 
 ### Tránsitos Rápidos (Estados de Ánimo)
 - [ ] **Luna en Aries** (Impulso emocional, fuego interno, reactividad)
+  - *Abstracto*: `arte_propio_luna_aries_...`
 - [ ] **Mercurio en Piscis** (Mente soñadora, confusión romántica, telepatía)
 - [ ] **Venus en Acuario** (Amor libre, desapego, excentricidad)
 - [ ] **Marte en Libra** (Guerra pasivo-agresiva, búsqueda de justicia, estética)
