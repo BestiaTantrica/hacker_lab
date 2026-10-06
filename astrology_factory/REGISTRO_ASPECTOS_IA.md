@@ -94,8 +94,12 @@
   - *Emocional/Sátira*: `arte_propio_emocion_marte_libra_...`
 
 ### ♾️ Bóveda Infinita (Generación Procedural)
-- [ ] **Mercurio en Acuario** (Mente y Velocidad bajo Visión Futurista)
-- [ ] **Júpiter Sextil Quirón** (Oportunidad Creativa entre Expansión y Suerte y Herida Inconsciente)
+- [x] **Mercurio en Acuario** (Mente y Velocidad bajo Visión Futurista)
+  - *Abstracto*: `arte_propio_mercurio_acuario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_mercurio_acuario_...`
+- [x] **Júpiter Sextil Quirón** (Oportunidad Creativa entre Expansión y Suerte y Herida Inconsciente)
+  - *Abstracto*: `arte_propio_jupiter_quiron_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_quiron_...`
 - [ ] **Plutón en Sagitario** (Transformación y Sombras bajo Búsqueda de Verdad)
 - [ ] **Luna en Escorpio** (Emociones y Refugio bajo Intensidad Oscura)
 - [ ] **Sol en Capricornio** (Identidad y Ego bajo Cima de la Montaña)
