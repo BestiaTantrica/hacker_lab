@@ -80,11 +80,18 @@
   - *Emocional/Sátira*: `arte_propio_emocion_luna_neptuno_...`
 
 ### Tránsitos Rápidos (Estados de Ánimo)
-- [ ] **Luna en Aries** (Impulso emocional, fuego interno, reactividad)
+- [x] **Luna en Aries** (Impulso emocional, fuego interno, reactividad)
   - *Abstracto*: `arte_propio_luna_aries_...`
-- [ ] **Mercurio en Piscis** (Mente soñadora, confusión romántica, telepatía)
-- [ ] **Venus en Acuario** (Amor libre, desapego, excentricidad)
-- [ ] **Marte en Libra** (Guerra pasivo-agresiva, búsqueda de justicia, estética)
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_aries_...`
+- [x] **Mercurio en Piscis** (Mente soñadora, confusión romántica, telepatía)
+  - *Abstracto*: `arte_propio_mercurio_piscis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_mercurio_piscis_...`
+- [x] **Venus en Acuario** (Amor libre, desapego, excentricidad)
+  - *Abstracto*: `arte_propio_venus_acuario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_venus_acuario_...`
+- [x] **Marte en Libra** (Guerra pasivo-agresiva, búsqueda de justicia, estética)
+  - *Abstracto*: `arte_propio_marte_libra_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_marte_libra_...`
 
 ### ♾️ Bóveda Infinita (Generación Procedural)
 - [ ] **Mercurio en Acuario** (Mente y Velocidad bajo Visión Futurista)
