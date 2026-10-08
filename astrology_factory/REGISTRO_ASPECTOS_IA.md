@@ -115,9 +115,15 @@
 - [x] **Quirón Cuadratura Júpiter** (Fricción y Conflicto entre Herida Inconsciente y Expansión y Suerte)
   - *Abstracto*: `arte_propio_quiron_jupiter_...`
   - *Emocional/Sátira*: `arte_propio_emocion_quiron_jupiter_...`
-- [ ] **Neptuno en Libra** (Sueños y Niebla bajo Armonía Estética)
-- [ ] **Júpiter en Libra** (Expansión y Suerte bajo Armonía Estética)
-- [ ] **Luna en Cáncer** (Emociones y Refugio bajo Aguas Maternas)
+- [x] **Neptuno en Libra** (Sueños y Niebla bajo Armonía Estética)
+  - *Abstracto*: `arte_propio_neptuno_libra_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_neptuno_libra_...`
+- [x] **Júpiter en Libra** (Expansión y Suerte bajo Armonía Estética)
+  - *Abstracto*: `arte_propio_jupiter_libra_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_libra_...`
+- [x] **Luna en Cáncer** (Emociones y Refugio bajo Aguas Maternas)
+  - *Abstracto*: `arte_propio_luna_cancer_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_cancer_...`
 - [ ] **Mercurio Trígono Venus** (Flujo Armónico entre Mente y Velocidad y Amor y Estética)
 - [ ] **Nodos Lunares en Capricornio** (Destino Kármico bajo Cima de la Montaña)
 - [ ] **Quirón Conjunción Saturno** (Fusión Intensa entre Herida Inconsciente y Límites y Karma)
