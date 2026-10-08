@@ -124,8 +124,12 @@
 - [x] **Luna en Cáncer** (Emociones y Refugio bajo Aguas Maternas)
   - *Abstracto*: `arte_propio_luna_cancer_...`
   - *Emocional/Sátira*: `arte_propio_emocion_luna_cancer_...`
-- [ ] **Mercurio Trígono Venus** (Flujo Armónico entre Mente y Velocidad y Amor y Estética)
-- [ ] **Nodos Lunares en Capricornio** (Destino Kármico bajo Cima de la Montaña)
+- [x] **Mercurio Trígono Venus** (Flujo Armónico entre Mente y Velocidad y Amor y Estética)
+  - *Abstracto*: `arte_propio_mercurio_trigono_venus_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_mercurio_trigono_venus_...`
+- [x] **Nodos Lunares en Capricornio** (Destino Kármico bajo Cima de la Montaña)
+  - *Abstracto*: `arte_propio_nodos_capricornio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_nodos_capricornio_...`
 - [ ] **Quirón Conjunción Saturno** (Fusión Intensa entre Herida Inconsciente y Límites y Karma)
 - [ ] **Venus en Aries** (Amor y Estética bajo Inicios Explosivos)
 - [ ] **Nodos Lunares Sextil Luna** (Oportunidad Creativa entre Destino Kármico y Emociones y Refugio)
