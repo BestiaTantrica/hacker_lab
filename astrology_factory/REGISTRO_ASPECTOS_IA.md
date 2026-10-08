@@ -139,12 +139,18 @@
 - [x] **Nodos Lunares Sextil Luna** (Oportunidad Creativa entre Destino Kármico y Emociones y Refugio)
   - *Abstracto*: `arte_propio_nodos_luna_...`
   - *Emocional/Sátira*: `arte_propio_emocion_nodos_luna_...`
-- [ ] **Quirón Oposición Neptuno** (Tensión y Espejo entre Herida Inconsciente y Sueños y Niebla)
+- [x] **Quirón Oposición Neptuno** (Tensión y Espejo entre Herida Inconsciente y Sueños y Niebla)
   - *Abstracto*: `arte_propio_quiron_neptuno_...`
-  - *Emocional/Sátira*: PENDIENTE
-- [ ] **Júpiter Oposición Lilith** (Tensión y Espejo entre Expansión y Suerte y Poder Oculto y Tabúes)
-- [ ] **Luna en Libra** (Emociones y Refugio bajo Armonía Estética)
-- [ ] **Urano en Acuario** (Rebeldía y Electricidad bajo Visión Futurista)
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_neptuno_...`
+- [x] **Júpiter Oposición Lilith** (Tensión y Espejo entre Expansión y Suerte y Poder Oculto y Tabúes)
+  - *Abstracto*: `arte_propio_jupiter_lilith_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_lilith_...`
+- [x] **Luna en Libra** (Emociones y Refugio bajo Armonía Estética)
+  - *Abstracto*: `arte_propio_luna_libra_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_libra_...`
+- [x] **Urano en Acuario** (Rebeldía y Electricidad bajo Visión Futurista)
+  - *Abstracto*: `arte_propio_urano_acuario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_acuario_...`
 - [ ] **Luna Oposición Lilith** (Tensión y Espejo entre Emociones y Refugio y Poder Oculto y Tabúes)
 - [ ] **Luna en Acuario** (Emociones y Refugio bajo Visión Futurista)
 - [ ] **Saturno en Virgo** (Límites y Karma bajo Orden y Detalle)
