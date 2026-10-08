@@ -20,6 +20,8 @@
    - *PROHIBIDO mover o renombrar esta bóveda.*
 3. **ADN DEL VIDEO (contexto_astrologico.json):**
    - Este JSON rige absolutamente todos los parámetros de los scripts V2 (queries, colores, textos, duraciones).
+4. **CUOTA DE API (FRENO OBLIGATORIO):**
+   - TODO script que interactúe con la API de Gemini DEBE importar y usar `v2/cuota.py`. Queda estrictamente prohibido usar clientes nativos de forma aislada o hacer peticiones en bucle sin control. `cuota.py` maneja las pausas (429 Too Many Requests), rota las llaves del `.env` y usa locks multiproceso. Usa siempre `cuota.elegir_key()` y `cuota.esperar_ritmo()`.
 
 ## Regla de Edición FFmpeg
 **Timeline Estricto de Clips (Gapless)**: Las células en `v2/celula_3` usan el archivo `timeline_huecos.json` generado por la Célula 1 como ÚNICA fuente de verdad para los tiempos matemáticos. No se puede alterar este tiempo en post-producción; todo clip encaja milimétricamente.

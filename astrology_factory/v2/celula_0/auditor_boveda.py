@@ -19,10 +19,18 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from PIL import Image
+
+try:
+    from google import genai
+except ImportError:
+    genai = None
 
 # ── Carga del entorno y ADN ──────────────────────────────────────────────────
 FACTORY_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(FACTORY_ROOT))
+
+from v2 import cuota, db_visual
 
 from dotenv import load_dotenv
 load_dotenv(FACTORY_ROOT / ".env")
@@ -476,6 +484,267 @@ def opcion_4_extractor_keyframes(video_path: str = None, intervalo: float = 1.0,
         err("Error al extraer keyframes.")
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# OPCIÓN 5 — Auditoría IA Masiva
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def extraer_fotograma(video_path: Path, output_image_path: Path) -> bool:
+    cmd = [
+        "ffmpeg", "-y", "-v", "quiet",
+        "-ss", "00:00:01",
+        "-i", str(video_path),
+        "-vframes", "1",
+        "-q:v", "3",
+        str(output_image_path)
+    ]
+    try:
+        subprocess.run(cmd, check=True, timeout=30)
+        return True
+    except Exception:
+        return False
+
+def opcion_5_auditoria_ia_masiva(dir_origen: Path = None, dir_destino: Path = None):
+    dir_origen = dir_origen or (VAULT_BASE / "Descargas_Crudas" / ADN["produccion"]["semana_prefijo"])
+    dir_destino = dir_destino or ASSETS_AUDITADOS
+    
+    log(f"\\n🧠  OPCIÓN 5 — Auditoría IA Masiva en {dir_origen.name}", MAGENTA)
+    
+    if not dir_origen.exists():
+        err(f"Directorio no existe: {dir_origen}")
+        return
+        
+    if not genai:
+        err("Falta librería google-genai. Ejecuta: pip3 install google-genai pillow")
+        return
+        
+    asegurar_dir(dir_destino)
+    db_visual.init_db()
+    
+    archivos = listar_assets(dir_origen)
+    if not archivos:
+        ok("No hay archivos para auditar.")
+        return
+        
+    info(f"Se auditarán {len(archivos)} archivos.")
+    
+    SYSTEM_PROMPT = \"\"\"
+Eres un auditor estricto de assets visuales esotéricos y astrológicos.
+Analiza esta imagen minuciosamente.
+REGLA DE RECHAZO INMEDIATO: Si la imagen contiene familias, niños, personas en entornos cotidianos modernos, oficinas, tecnología o es un collage barato, responde EXACTAMENTE Y SOLO la palabra: RECHAZADO.
+SI PASA EL FILTRO (es decir, muestra el espacio, planetas, misticismo, texturas fluidas abstractas, símbolos, naturaleza épica o astrología auténtica):
+Responde con una lista de etiquetas descriptivas separadas por comas. (Ejemplo: espacio, estrellas, oscuro, pluton, transformacion, misticismo).
+Responde SOLO con RECHAZADO o con la lista de etiquetas. NADA MÁS.
+    \"\"\"
+    
+    for idx, archivo in enumerate(archivos, 1):
+        log(f"\\n[{idx}/{len(archivos)}] Analizando {archivo.name}...", CYAN)
+        valido, razon = es_archivo_valido(archivo)
+        if not valido:
+            warn(f"Archivo inválido ({razon}), saltando.")
+            continue
+            
+        es_video = archivo.suffix.lower() in ['.mp4', '.mov', '.avi', '.webm']
+        
+        # Preparar imagen a analizar
+        if es_video:
+            img_path = dir_origen / f"temp_frame_{archivo.stem}.jpg"
+            if not extraer_fotograma(archivo, img_path):
+                warn("No se pudo extraer fotograma.")
+                continue
+        else:
+            img_path = archivo
+            
+        try:
+            img = Image.open(img_path)
+            img.thumbnail((1024, 1024))
+        except Exception as e:
+            warn(f"Error abriendo imagen {archivo.name}: {e}")
+            if es_video and img_path.exists(): img_path.unlink()
+            continue
+            
+        # Petición con manejo de CUOTA
+        etiquetas = None
+        rechazado = False
+        
+        while True:
+            llave_elegida = cuota.elegir_key()
+            if not llave_elegida:
+                err("Todas las cuotas de Gemini están agotadas. Abortando script.")
+                sys.exit(1)
+                
+            nombre_key, api_key = llave_elegida
+            cuota.esperar_ritmo()
+            
+            try:
+                client = genai.Client(api_key=api_key)
+                response = client.models.generate_content(
+                    model='gemini-3.5-flash',
+                    contents=[SYSTEM_PROMPT, img]
+                )
+                
+                cuota.registrar_uso(nombre_key)
+                resultado = response.text.strip().upper()
+                
+                if "RECHAZADO" in resultado:
+                    rechazado = True
+                else:
+                    etiquetas = [t.strip().lower() for t in response.text.strip().split(',') if t.strip()]
+                    
+                break # Salimos del loop de reintentos
+            except Exception as e:
+                tipo_err = cuota.registrar_error(nombre_key, e)
+                warn(f"Error API con {nombre_key} ({tipo_err}). Intentando otra llave...")
+                continue
+                
+        # Limpiar frame temporal
+        if es_video and img_path.exists():
+            img_path.unlink()
+            
+        if rechazado:
+            warn("La IA RECHAZÓ el asset (no cumple los estándares).")
+            db_visual.registrar_asset(archivo, 'video' if es_video else 'imagen', 'rechazado_por_ia')
+            # Podemos moverlo a una carpeta de basura o eliminarlo
+            archivo.unlink()
+            info("Asset eliminado del disco.")
+        elif etiquetas:
+            ok(f"Aprobado! Etiquetas: {', '.join(etiquetas)}")
+            
+            # Mover a Assets_Auditados (como lo hacía la manual)
+            tipo_folder = "Videos" if es_video else "Imagenes"
+            destino = dir_destino / tipo_folder / "18_General_B_Roll" / archivo.name
+            asegurar_dir(destino.parent)
+            shutil.move(archivo, destino)
+            
+            db_visual.registrar_asset(destino, 'video' if es_video else 'imagen', 'aprobado', etiquetas)
+            
+# ═══════════════════════════════════════════════════════════════════════════════
+# OPCIÓN 5 — Auditoría IA Masiva
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def extraer_fotograma(video_path: Path, output_image_path: Path) -> bool:
+    cmd = [
+        "ffmpeg", "-y", "-v", "quiet",
+        "-ss", "00:00:01",
+        "-i", str(video_path),
+        "-vframes", "1",
+        "-q:v", "3",
+        str(output_image_path)
+    ]
+    try:
+        subprocess.run(cmd, check=True, timeout=30)
+        return True
+    except Exception:
+        return False
+
+def opcion_5_auditoria_ia_masiva(dir_origen: Path = None, dir_destino: Path = None):
+    dir_origen = dir_origen or (VAULT_BASE / "Descargas_Crudas" / ADN["produccion"]["semana_prefijo"])
+    dir_destino = dir_destino or ASSETS_AUDITADOS
+    
+    log(f"\\n🧠  OPCIÓN 5 — Auditoría IA Masiva en {dir_origen.name}", MAGENTA)
+    
+    if not dir_origen.exists():
+        err(f"Directorio no existe: {dir_origen}")
+        return
+        
+    if not genai:
+        err("Falta librería google-genai. Ejecuta: pip3 install google-genai pillow")
+        return
+        
+    asegurar_dir(dir_destino)
+    db_visual.init_db()
+    
+    archivos = listar_assets(dir_origen)
+    if not archivos:
+        ok("No hay archivos para auditar.")
+        return
+        
+    info(f"Se auditarán {len(archivos)} archivos.")
+    
+    SYSTEM_PROMPT = \"\"\"
+Eres un auditor estricto de assets visuales esotéricos y astrológicos.
+Analiza esta imagen minuciosamente.
+REGLA DE RECHAZO INMEDIATO: Si la imagen contiene familias, niños, personas en entornos cotidianos modernos, oficinas, tecnología o es un collage barato, responde EXACTAMENTE Y SOLO la palabra: RECHAZADO.
+SI PASA EL FILTRO (es decir, muestra el espacio, planetas, misticismo, texturas fluidas abstractas, símbolos, naturaleza épica o astrología auténtica):
+Responde con una lista de etiquetas descriptivas separadas por comas. (Ejemplo: espacio, estrellas, oscuro, pluton, transformacion, misticismo).
+Responde SOLO con RECHAZADO o con la lista de etiquetas. NADA MÁS.
+    \"\"\"
+    
+    for idx, archivo in enumerate(archivos, 1):
+        log(f"\\n[{idx}/{len(archivos)}] Analizando {archivo.name}...", CYAN)
+        valido, razon = es_archivo_valido(archivo)
+        if not valido:
+            warn(f"Archivo inválido ({razon}), saltando.")
+            continue
+            
+        es_video = archivo.suffix.lower() in ['.mp4', '.mov', '.avi', '.webm']
+        
+        if es_video:
+            img_path = dir_origen / f"temp_frame_{archivo.stem}.jpg"
+            if not extraer_fotograma(archivo, img_path):
+                warn("No se pudo extraer fotograma.")
+                continue
+        else:
+            img_path = archivo
+            
+        try:
+            img = Image.open(img_path)
+            img.thumbnail((1024, 1024))
+        except Exception as e:
+            warn(f"Error abriendo imagen {archivo.name}: {e}")
+            if es_video and img_path.exists(): img_path.unlink()
+            continue
+            
+        etiquetas = None
+        rechazado = False
+        
+        while True:
+            llave_elegida = cuota.elegir_key()
+            if not llave_elegida:
+                err("Todas las cuotas de Gemini están agotadas. Abortando script.")
+                sys.exit(1)
+                
+            nombre_key, api_key = llave_elegida
+            cuota.esperar_ritmo()
+            
+            try:
+                client = genai.Client(api_key=api_key)
+                response = client.models.generate_content(
+                    model='gemini-3.5-flash',
+                    contents=[SYSTEM_PROMPT, img]
+                )
+                
+                cuota.registrar_uso(nombre_key)
+                resultado = response.text.strip().upper()
+                
+                if "RECHAZADO" in resultado:
+                    rechazado = True
+                else:
+                    etiquetas = [t.strip().lower() for t in response.text.strip().split(',') if t.strip()]
+                    
+                break # Salimos del loop de reintentos
+            except Exception as e:
+                tipo_err = cuota.registrar_error(nombre_key, e)
+                warn(f"Error API con {nombre_key} ({tipo_err}). Intentando otra llave...")
+                continue
+                
+        if es_video and img_path.exists():
+            img_path.unlink()
+            
+        if rechazado:
+            warn("La IA RECHAZÓ el asset (no cumple los estándares).")
+            db_visual.registrar_asset(archivo, 'video' if es_video else 'imagen', 'rechazado_por_ia')
+            archivo.unlink()
+            info("Asset eliminado del disco.")
+        elif etiquetas:
+            ok(f"Aprobado! Etiquetas: {', '.join(etiquetas)}")
+            
+            tipo_folder = "Videos" if es_video else "Imagenes"
+            destino = dir_destino / tipo_folder / "18_General_B_Roll" / archivo.name
+            asegurar_dir(destino.parent)
+            shutil.move(archivo, destino)
+            
+            db_visual.registrar_asset(destino, 'video' if es_video else 'imagen', 'aprobado', etiquetas)
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -523,6 +792,8 @@ Opciones disponibles:
         opcion_3_reciclador_artistico(dir_custom)
     elif args.opcion == 4:
         opcion_4_extractor_keyframes(args.video, args.intervalo, dir_custom)
+    elif args.opcion == 5:
+        opcion_5_auditoria_ia_masiva(dir_custom, dir_dest_custom)
 
 if __name__ == "__main__":
     main()

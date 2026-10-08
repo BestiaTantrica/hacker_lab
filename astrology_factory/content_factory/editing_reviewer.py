@@ -6,7 +6,7 @@ import random
 sys.path.append(os.path.dirname(__file__))
 from glitch_engine import GlitchEngine
 
-VAULT_ASSETS = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Reusables"
+VAULT_ASSETS = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados"
 
 def process_event(event_name):
     base_dir = os.path.dirname(os.path.dirname(__file__))

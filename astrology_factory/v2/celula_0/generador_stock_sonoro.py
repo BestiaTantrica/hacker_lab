@@ -53,8 +53,8 @@ def generar_stock():
     
     # Asegurar que tengamos al menos 5 pistas de stock en total
     stock_actual = list(STOCK_DIR.glob("*.mp3"))
-    if len(stock_actual) >= 30:
-        log("Stock de audio suficiente (30 pistas). No se requiere generación.")
+    if len(stock_actual) >= 50:
+        log("Stock de audio suficiente (50 pistas). No se requiere generación.")
         return
 
     log(f"Iniciando pre-generación de stock (Frecuencia base: {hz}Hz)...")

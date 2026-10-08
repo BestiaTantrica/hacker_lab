@@ -342,10 +342,12 @@ def create_video(evento_name: str) -> str | None:
 
     # ── 3.5. Buscar Assets en Bóveda Local ────────────────────────────────────
     import glob
-    VAULT_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Reusables"
-    GLITCH_DIR = os.path.join(VAULT_DIR, "Glitches_Source")
+    VAULT_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados"
+    GLITCH_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Descargas_Crudas/Glitches_Source"
 
-    vault_files = glob.glob(os.path.join(VAULT_DIR, "*.*"))
+    vault_images = glob.glob(os.path.join(VAULT_DIR, "Imagenes", "**", "*.*"), recursive=True)
+    vault_videos = glob.glob(os.path.join(VAULT_DIR, "Videos", "**", "*.*"), recursive=True)
+    vault_files = vault_images + vault_videos
     glitch_files = glob.glob(os.path.join(GLITCH_DIR, "*.*"))
 
     # Filtro robusto: os.path.isfile() sigue symlinks y verifica existencia real.

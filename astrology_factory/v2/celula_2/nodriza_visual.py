@@ -26,6 +26,8 @@ load_dotenv(FACTORY_ROOT / ".env")
 import google.genai as genai
 from google.genai import types
 
+from v2 import db_visual
+
 # ── Director de Arte (semántica local, sin API) ────────────────────────────
 from v2.celula_2.director_de_arte import (
     enriquecer_tomas,
@@ -169,39 +171,49 @@ def guardar_catalogo(catalogo: dict):
         json.dump(catalogo, f, ensure_ascii=False, indent=2)
 
 def actualizar_catalogo_dummy(assets: list[Path]) -> dict:
-    # Ahora la Nodriza Visual ya no cataloga en vivo usando Visión.
-    # Simplemente lee el catálogo asíncrono y devuelve lo que ya existe.
+    # La Nodriza Visual ahora lee el catálogo directamente desde SQLite
+    # usando las etiquetas extraídas por el auditor_boveda IA.
     cat = cargar_catalogo()
     
-    # Inyectamos TODOS los assets físicos al catálogo en memoria
-    # Extraemos etiquetas del nombre del archivo y de la RUTA (para capturar carpetas como 07_Espacio_Galaxias)
+    # Obtenemos todos los assets aprobados con sus etiquetas
+    assets_db = db_visual.obtener_todos_los_assets_aprobados()
+    
+    # Indexamos por path_str para búsquedas rápidas
+    mapa_db = {Path(r).resolve(): t for r, t in assets_db}
+    
     for a in assets:
         key = a.name
         if key not in cat:
-            path_str = str(a.resolve()).lower()
-            import re
-            path_words = re.split(r'[/_.-]', path_str)
-            # Filter words > 2 chars, exclude common structural words
-            valid_words = {w for w in path_words if len(w) > 2 and w not in ["home", "tomas2", "mediacontingencia", "privada", "astrology", "vault", "assets", "auditados", "imagenes", "videos", "mp4", "jpg", "png", "jpeg"]}
+            path_absoluto = a.resolve()
             
-            # Check if semantic JSON exists
-            json_file = a.parent / (a.stem + ".json")
-            semantic_tags = []
-            if json_file.exists():
-                try:
-                    import json as j
-                    with open(json_file, "r") as f:
-                        s_meta = j.load(f)
-                        if "metaforas" in s_meta:
-                            semantic_tags.extend([m.lower() for m in s_meta["metaforas"]])
-                        if "mood" in s_meta:
-                            semantic_tags.append(s_meta["mood"].lower())
-                        if "elemento" in s_meta:
-                            semantic_tags.append(s_meta["elemento"].lower())
-                except Exception:
-                    pass
-
-            final_tags = list(valid_words.union(set(semantic_tags)))
+            # Recuperar etiquetas de SQLite o usar heurística si no existe en DB
+            if path_absoluto in mapa_db:
+                tags_str = mapa_db[path_absoluto]
+                final_tags = [t.strip() for t in tags_str.split(',') if t.strip()]
+            else:
+                path_str = str(path_absoluto).lower()
+                import re
+                path_words = re.split(r'[/_.-]', path_str)
+                valid_words = {w for w in path_words if len(w) > 2 and w not in ["home", "tomas2", "mediacontingencia", "privada", "astrology", "vault", "assets", "auditados", "imagenes", "videos", "mp4", "jpg", "png", "jpeg"]}
+                
+                # Intentar leer el antiguo .json si existe (retrocompatibilidad)
+                json_file = a.parent / (a.stem + ".json")
+                semantic_tags = []
+                if json_file.exists():
+                    try:
+                        import json as j
+                        with open(json_file, "r") as f:
+                            s_meta = j.load(f)
+                            if "metaforas" in s_meta:
+                                semantic_tags.extend([m.lower() for m in s_meta["metaforas"]])
+                            if "mood" in s_meta:
+                                semantic_tags.append(s_meta["mood"].lower())
+                            if "elemento" in s_meta:
+                                semantic_tags.append(s_meta["elemento"].lower())
+                    except Exception:
+                        pass
+                
+                final_tags = list(valid_words.union(set(semantic_tags)))
             
             cat[key] = {
                 "etiquetas_visuales": final_tags,
@@ -324,10 +336,10 @@ def preprocesar_asset_para_montaje(asset_path: Path, duracion: float, chunk_id: 
     # A mayor afinidad semántica del asset con la toma, más sólido aparece.
     alpha = round(0.72 + 0.16 * max(0.0, min(1.0, score)), 4)
     
-    fondo_dir = VAULT_BASE / "Assets_Reusables" / "Fondos_Animados"
+    fondo_dir = VAULT_BASE / "Assets_Auditados" / "Videos"
     fondo_video = None
     if fondo_dir.exists():
-        fondos = list(fondo_dir.glob("*.mp4"))
+        fondos = list(fondo_dir.rglob("*.mp4"))
         if fondos:
             fondo_video = random.choice(fondos)
 

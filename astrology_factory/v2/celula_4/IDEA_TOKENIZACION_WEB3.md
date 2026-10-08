@@ -38,11 +38,12 @@ En simultáneo al render del video (Célula 3), el sistema extrae o genera la pi
 - **Nota de Infraestructura:** No es necesario correr un nodo propio. Se delega la validación en terceros especializados.
 
 ### 4. Venta y Subasta
-- **Mecanismo:** El token se pone a disposición en marketplaces como OpenSea o en una dApp/landing propia.
-- **Estrategias:**
-  - **Colección Diaria:** Un único NFT del "Tránsito Astrológico del Día".
-  - **Cross-selling en Redes:** El script que sube el video a YouTube incluye en la descripción el link directo a la subasta.
-  - **Pases de Utilidad (Access Tokens):** El comprador del NFT obtiene acceso a un reporte extendido, consulta privada o área en Discord/Telegram (validado con Guild.xyz o Collab.Land).
+- **Mecanismo:** El token se pone a disposición en marketplaces como OpenSea mediante **Lazy Minting**. Esto asegura un **costo $0 (cero gas)** para nosotros al momento de listar el video. El contrato inteligente recién gasta gas cuando el comprador decide adquirirlo.
+- **Estrategias de Contenido (Pirámide de Escalabilidad):**
+  1. **Contenido Masivo (Genérico):** Tránsitos diarios o pronósticos mensuales por signo. Atraen público masivo y mantienen el canal activo.
+  2. **Contenido Viral (Casos de Estudio):** Videos analizando las Cartas Astrales de figuras públicas o famosos (ej. Elon Musk, Taylor Swift). Son escalables porque los datos son públicos y no requieren hiper-personalización previa.
+  3. **Contenido Premium (Personalizado Web3):** Una vez consolidada la audiencia, se vende el servicio de **Video de Carta Natal Hiper-Personalizado**. Este es el activo de mayor valor y el que idealmente se acuña como un NFT que funciona como "Pase de Utilidad" para consultas privadas o accesos VIP (Discord/Telegram validados con Guild.xyz).
+- **Cross-selling en Redes:** El publicador inyectará automáticamente en la descripción del video de YouTube el link a la DApp o subasta en OpenSea.
 
 ---
 

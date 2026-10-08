@@ -1,0 +1,36 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+.tiktok.com	TRUE	/	TRUE	1794187775	cmpl_token	AgQYAPMd_hfkTtK4Rw7XMz0dAfDDnuwmGv-KlmClb20
+.tiktok.com	TRUE	/	TRUE	1794187775	multi_sids	7528295026905826360%3A12c5f94811af3d370379a095cd536ace
+.tiktok.com	TRUE	/	FALSE	1791595775	passport_auth_status	59a1f4ccacea2d44e12d2b4b716662b2%2C
+.tiktok.com	TRUE	/	TRUE	1791595775	passport_auth_status_ss	59a1f4ccacea2d44e12d2b4b716662b2%2C
+.tiktok.com	TRUE	/	TRUE	1804555775	sessionid	12c5f94811af3d370379a095cd536ace
+.tiktok.com	TRUE	/	TRUE	1804555775	sessionid_ss	12c5f94811af3d370379a095cd536ace
+.tiktok.com	TRUE	/	TRUE	1820107775	sid_guard	12c5f94811af3d370379a095cd536ace%7C1789003775%7C15552000%7CTue%2C+09-Mar-2027+01%3A29%3A35+GMT
+.tiktok.com	TRUE	/	TRUE	1804555775	sid_tt	12c5f94811af3d370379a095cd536ace
+.tiktok.com	TRUE	/	TRUE	1804555775	sid_ucp_v1	1.0.1-KGZjMzZlMjdlYWFhNjliN2YwYTRhMmI0NDk5ZThiYzUwNTAyYzlhNDgKIQi4iL_Yi474vGgQ_4-I1QYYswsgDDDOwefDBjgIQBJIBBADGgNteTIiIDEyYzVmOTQ4MTFhZjNkMzcwMzc5YTA5NWNkNTM2YWNlMk4KIF-38aHjxl4sKRZGkdwfSR_3_1RSAlMZCGuZsNOh--szEiCCiF3J9DzMNWhXzPYKShhLnqGivSUdZ66fPkXfcJZUYBgFIgZ0aWt0b2s
+.tiktok.com	TRUE	/	TRUE	1804555775	ssid_ucp_v1	1.0.1-KGZjMzZlMjdlYWFhNjliN2YwYTRhMmI0NDk5ZThiYzUwNTAyYzlhNDgKIQi4iL_Yi474vGgQ_4-I1QYYswsgDDDOwefDBjgIQBJIBBADGgNteTIiIDEyYzVmOTQ4MTFhZjNkMzcwMzc5YTA5NWNkNTM2YWNlMk4KIF-38aHjxl4sKRZGkdwfSR_3_1RSAlMZCGuZsNOh--szEiCCiF3J9DzMNWhXzPYKShhLnqGivSUdZ66fPkXfcJZUYBgFIgZ0aWt0b2s
+.tiktok.com	TRUE	/	TRUE	1804555775	tt_session_tlb_tag	sttt%7C2%7CEsX5SBGvPTcDeaCVzVNqzv________-dBKURF4UyVZgAGuo9KFwcfQPEhfBp0hgczzni3YxrZZk%3D
+.tiktok.com	TRUE	/	TRUE	1804555775	uid_tt	d4ed4fb3b3f0af9fd4bf2c814f0ad8ebfe77eb38eb1c63ffe6f656c2d52b7986
+.tiktok.com	TRUE	/	TRUE	1804555775	uid_tt_ss	d4ed4fb3b3f0af9fd4bf2c814f0ad8ebfe77eb38eb1c63ffe6f656c2d52b7986
+.tiktok.com	TRUE	/	FALSE	1820540610	odin_tt	4e8eaa8e9b175d43ca248124d5616b807b0de7ba8a857451bc73fcc0d5cb79efce120769d8bc6ccb9163903e4fa2b17615682ca73e2f0fc18e324b4ff15fd393
+.tiktok.com	TRUE	/	FALSE	1804555775	store-country-code	ar
+.tiktok.com	TRUE	/	FALSE	1804555775	store-country-code-src	uid
+.tiktok.com	TRUE	/	FALSE	1804555775	store-country-sign	MEIEDLQWTqGliGmAme3ikwQgrtuDr_xVO7xya6X-8iWctbe7Xlu29Du2urB3zL8yGUkEELKQJGmnaz64jg-sI0PdtWY
+.tiktok.com	TRUE	/	FALSE	1804555775	store-idc	alisg
+.tiktok.com	TRUE	/	FALSE	1804555775	tt-target-idc	alisg
+.tiktok.com	TRUE	/	FALSE	1820540609	tt-target-idc-sign	fOLwpitGKw_jagQarIYnnzU62KGh2dAIxbjCh8UKiv29qZslAgTCi6opUF_S3varjdX1h9vdej2sB7Myrya3r_9UnAQ0XkoIiqSyDgGMr9THhVmxAtHTiDrqrOL-twO0egJIkaHRNHguGWMFJgfZLcKneqXt6VE8sPj4vc3D7s09tjF8yzq7vs1OTKSMdAgjLI3slenkwzQX5jX_rANtjgRj_vAHLlLoquSKUCt2Sr2cAGw_QSSeLs_Z4nuVqLJh2p4bzdlYMT1he52GUr3-erQiqBI0544Y54iQCSE5zeH6AK9SNPt08pkcOl2xsdM6JfJxJAUUN9jvu8oGI64P_wbvD_WegCCEHp8yjXn4gVJuhmxC12HP-rjIYvY-t5O05LkDYx7KIJQATvKVQ35PRAmAHNDC8FHq8lMmLiaTV5_tEuIMvyUts2qmo4svsLfAEg0XtFGhxzsgusktsp32-9r9kuMiaQUZDlgmzIyKS26PIXLBwGYZfnaWv15JIJzz
+.tiktok.com	TRUE	/	TRUE	1804556600	tt_chain_token	0SMwQTL0O4Zg3YwovPD2CQ==
+.tiktok.com	TRUE	/	TRUE	1820540606	ttwid	1%7CbpumZzoT6P5HoIHkMERh1nR8-LaHNfBd4kBapUwTfKM%7C1789004605%7Cc7e0ce4455bf2dbd440cbf26903b1cb33dae51cf0d164fe322aa7139a731aab3
+.tiktok.com	TRUE	/	TRUE	1789869135	msToken	o198lnV9MxxyP1AXQTzBqMGcq1VOAXYjIbmITj2NuFr2mc1Kam4CrbJ7G9hkQ6AuimIcp02e8xLukDyEF2AejsfWm1pGUz4GMEvXYLJiVTrMFFMJ7_vs-JluSY95PQld-kkL9DsTuGxXYg==
+.tiktok.com	TRUE	/	TRUE	1823123246	_ttp	3EbSIpZr5hCpPmw7gYlVf6MVUUI
+www.tiktok.com	FALSE	/	FALSE	1796779775	last_login_method	google
+www.tiktok.com	FALSE	/	FALSE	1820540986	living_user_id	971410095234
+www.tiktok.com	FALSE	/	FALSE	1796781161	msToken	Qi6Bag5aem3GTo-IPmuxCNvmXfJgtnChhlth4fK6SsVwD_M0HjiWRlhRSGAAepJ03U1UkjlPNyWfXswJvYAxSaYsoVlbxpv1dDRErGEoTtno15H2ZNxQR5sgfkBDLbHuPuBKICPFzz7bWIbmt_bwzn5eMOv03NY=
+www.tiktok.com	FALSE	/business-suite	FALSE	1789609221	gd_random_1488543	eyJwZXJjZW50IjowLjI5OTAwMTA3NzQ1ODk4NTIsIm1hdGNoIjpmYWxzZX0=.n8me4QMu64wk1YVvfnskylZeJh+EsVdIMuX5FsPLO5E=
+.www.tiktok.com	TRUE	/	TRUE	1814923806	delay_guest_mode_vid	3
+.www.tiktok.com	TRUE	/	TRUE	1814924601	tiktok_webapp_theme	dark
+.www.tiktok.com	TRUE	/	TRUE	1814924601	tiktok_webapp_theme_source	auto
+.www.tiktok.com	TRUE	/	TRUE	1789609801	perf_feed_cache	{%22expireTimestamp%22:1789606800000%2C%22itemIds%22:[%227675821746691329300%22%2C%227653195005384887573%22%2C%227675791609572740374%22]}

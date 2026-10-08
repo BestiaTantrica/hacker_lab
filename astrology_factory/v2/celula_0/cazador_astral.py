@@ -20,7 +20,7 @@ load_dotenv(FACTORY_ROOT / ".env")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 
-VAULT_BASE = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Reusables")
+VAULT_BASE = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados")
 REGISTRY_PATH = VAULT_BASE / "registry.json"
 
 # Filtro de Calidad: Términos PROHIBIDOS en la bóveda

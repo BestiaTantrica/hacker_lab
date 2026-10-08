@@ -6,8 +6,8 @@ import subprocess
 import json
 
 # Directorios de la Bóveda
-VAULT_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Reusables"
-GLITCH_DIR = os.path.join(VAULT_DIR, "Glitches_Source")
+VAULT_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados"
+GLITCH_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Descargas_Crudas/Glitches_Source"
 PALETTES_FILE = os.path.join(os.path.dirname(__file__), "transit_palettes.json")
 
 def load_palettes():

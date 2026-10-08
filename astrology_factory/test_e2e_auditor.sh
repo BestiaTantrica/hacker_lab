@@ -4,8 +4,14 @@
 
 set -e  # Salir inmediatamente si un comando falla
 
-LOG_FILE="auditoria_e2e_$(date +%Y%m%d_%H%M%S).log"
-FACTORY_DIR="/home/tomas2/WORKSPACE/LAB/astrology_factory"
+LOG_DIR="logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="${LOG_DIR}/auditoria_e2e_$(date +%Y%m%d_%H%M%S).log"
+
+# Limpieza: mantener solo los ultimos 5 logs
+ls -1t "$LOG_DIR"/auditoria_e2e_*.log 2>/dev/null | tail -n +6 | xargs -r rm -f
+
+FACTORY_DIR="/home/LAB/astrology_factory"
 
 echo "==========================================================" | tee -a "$LOG_FILE"
 echo "🚀 INICIANDO AUDITORÍA END-TO-END DE LA FÁBRICA ASTROLÓGICA" | tee -a "$LOG_FILE"
