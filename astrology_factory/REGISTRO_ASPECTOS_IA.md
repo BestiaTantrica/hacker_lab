@@ -130,12 +130,18 @@
 - [x] **Nodos Lunares en Capricornio** (Destino Kármico bajo Cima de la Montaña)
   - *Abstracto*: `arte_propio_nodos_capricornio_...`
   - *Emocional/Sátira*: `arte_propio_emocion_nodos_capricornio_...`
-- [ ] **Quirón Conjunción Saturno** (Fusión Intensa entre Herida Inconsciente y Límites y Karma)
+- [x] **Quirón Conjunción Saturno** (Fusión Intensa entre Herida Inconsciente y Límites y Karma)
   - *Abstracto*: `arte_propio_quiron_saturno_...`
-  - *Emocional/Sátira*: PENDIENTE
-- [ ] **Venus en Aries** (Amor y Estética bajo Inicios Explosivos)
-- [ ] **Nodos Lunares Sextil Luna** (Oportunidad Creativa entre Destino Kármico y Emociones y Refugio)
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_saturno_...`
+- [x] **Venus en Aries** (Amor y Estética bajo Inicios Explosivos)
+  - *Abstracto*: `arte_propio_venus_aries_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_venus_aries_...`
+- [x] **Nodos Lunares Sextil Luna** (Oportunidad Creativa entre Destino Kármico y Emociones y Refugio)
+  - *Abstracto*: `arte_propio_nodos_luna_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_nodos_luna_...`
 - [ ] **Quirón Oposición Neptuno** (Tensión y Espejo entre Herida Inconsciente y Sueños y Niebla)
+  - *Abstracto*: `arte_propio_quiron_neptuno_...`
+  - *Emocional/Sátira*: PENDIENTE
 - [ ] **Júpiter Oposición Lilith** (Tensión y Espejo entre Expansión y Suerte y Poder Oculto y Tabúes)
 - [ ] **Luna en Libra** (Emociones y Refugio bajo Armonía Estética)
 - [ ] **Urano en Acuario** (Rebeldía y Electricidad bajo Visión Futurista)
