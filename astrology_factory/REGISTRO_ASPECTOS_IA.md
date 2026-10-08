@@ -106,9 +106,15 @@
 - [x] **Luna en Escorpio** (Emociones y Refugio bajo Intensidad Oscura)
   - *Abstracto*: `arte_propio_luna_escorpio_...`
   - *Emocional/Sátira*: `arte_propio_emocion_luna_escorpio_...`
-- [ ] **Sol en Capricornio** (Identidad y Ego bajo Cima de la Montaña)
-- [ ] **Sol en Piscis** (Identidad y Ego bajo Océano Místico)
-- [ ] **Quirón Cuadratura Júpiter** (Fricción y Conflicto entre Herida Inconsciente y Expansión y Suerte)
+- [x] **Sol en Capricornio** (Identidad y Ego bajo Cima de la Montaña)
+  - *Abstracto*: `arte_propio_sol_capricornio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_sol_capricornio_...`
+- [x] **Sol en Piscis** (Identidad y Ego bajo Océano Místico)
+  - *Abstracto*: `arte_propio_sol_piscis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_sol_piscis_...`
+- [x] **Quirón Cuadratura Júpiter** (Fricción y Conflicto entre Herida Inconsciente y Expansión y Suerte)
+  - *Abstracto*: `arte_propio_quiron_jupiter_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_jupiter_...`
 - [ ] **Neptuno en Libra** (Sueños y Niebla bajo Armonía Estética)
 - [ ] **Júpiter en Libra** (Expansión y Suerte bajo Armonía Estética)
 - [ ] **Luna en Cáncer** (Emociones y Refugio bajo Aguas Maternas)
