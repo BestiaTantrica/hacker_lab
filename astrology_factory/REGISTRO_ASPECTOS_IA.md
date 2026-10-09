@@ -295,10 +295,18 @@
 - [ ] **Luna Conjunción Mercurio** (Fusión Intensa entre Emociones y Refugio y Mente y Velocidad)
 - [ ] **Marte Conjunción Saturno** (Fusión Intensa entre Acción y Fuego y Límites y Karma)
 - [ ] **Venus Conjunción Marte** (Fusión Intensa entre Amor y Estética y Acción y Fuego)
-- [ ] **Mercurio Conjunción Luna** (Fusión Intensa entre Mente y Velocidad y Emociones y Refugio)
-- [ ] **Plutón Cuadratura Saturno** (Fricción y Conflicto entre Transformación y Sombras y Límites y Karma)
-- [ ] **Júpiter Trígono Lilith** (Flujo Armónico entre Expansión y Suerte y Poder Oculto y Tabúes)
-- [ ] **Urano Trígono Quirón** (Flujo Armónico entre Rebeldía y Electricidad y Herida Inconsciente)
+- [x] **Mercurio Conjunción Luna** (Fusión Intensa entre Mente y Velocidad y Emociones y Refugio)
+  - *Abstracto*: `arte_propio_mercurio_luna_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_mercurio_luna_...`
+- [x] **Plutón Cuadratura Saturno** (Fricción y Conflicto entre Transformación y Sombras y Límites y Karma)
+  - *Abstracto*: `arte_propio_pluton_saturno_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_saturno_...`
+- [x] **Júpiter Trígono Lilith** (Flujo Armónico entre Expansión y Suerte y Poder Oculto y Tabúes)
+  - *Abstracto*: `arte_propio_jupiter_lilith_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_lilith_...`
+- [x] **Urano Trígono Quirón** (Flujo Armónico entre Rebeldía y Electricidad y Herida Inconsciente)
+  - *Abstracto*: `arte_propio_urano_quiron_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_quiron_...`
 - [ ] **Luna en Leo** (Emociones y Refugio bajo Fuego Creativo)
 - [ ] **Plutón en Géminis** (Transformación y Sombras bajo Dualidad Mental)
 - [ ] **Urano en Libra** (Rebeldía y Electricidad bajo Armonía Estética)
