@@ -151,9 +151,21 @@
 - [x] **Urano en Acuario** (Rebeldía y Electricidad bajo Visión Futurista)
   - *Abstracto*: `arte_propio_urano_acuario_...`
   - *Emocional/Sátira*: `arte_propio_emocion_urano_acuario_...`
-- [ ] **Luna Oposición Lilith** (Tensión y Espejo entre Emociones y Refugio y Poder Oculto y Tabúes)
-- [ ] **Luna en Acuario** (Emociones y Refugio bajo Visión Futurista)
-- [ ] **Saturno en Virgo** (Límites y Karma bajo Orden y Detalle)
+- [x] **Luna Oposición Lilith** (Tensión y Espejo entre Emociones y Refugio y Poder Oculto y Tabúes)
+  - *Abstracto*: `arte_propio_luna_lilith_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_lilith_...`
+- [x] **Luna en Acuario** (Emociones y Refugio bajo Visión Futurista)
+  - *Abstracto*: `arte_propio_luna_acuario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_acuario_...`
+- [x] **Saturno en Virgo** (Límites y Karma bajo Orden y Detalle)
+  - *Abstracto*: `arte_propio_saturno_virgo_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_saturno_virgo_...`
+- [x] **Urano Conjunción Neptuno** (Fusión Intensa entre Visión Futurista y Sueños y Niebla)
+  - *Abstracto*: `arte_propio_urano_neptuno_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_neptuno_...`
+- [x] **Quirón en Tauro** (Herida Inconsciente bajo Abundancia Terrenal)
+  - *Abstracto*: `arte_propio_quiron_tauro_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_tauro_...`
 - [ ] **Lilith en Escorpio** (Poder Oculto y Tabúes bajo Intensidad Oscura)
 - [ ] **Urano Trígono Júpiter** (Flujo Armónico entre Rebeldía y Electricidad y Expansión y Suerte)
 - [ ] **Plutón Conjunción Luna** (Fusión Intensa entre Transformación y Sombras y Emociones y Refugio)
@@ -350,7 +362,9 @@
 - [ ] **Mercurio Trígono Urano** (Flujo Armónico entre Mente y Velocidad y Rebeldía y Electricidad)
 - [ ] **Luna Trígono Venus** (Flujo Armónico entre Emociones y Refugio y Amor y Estética)
 - [ ] **Plutón Oposición Neptuno** (Tensión y Espejo entre Transformación y Sombras y Sueños y Niebla)
-- [ ] **Júpiter en Escorpio** (Expansión y Suerte bajo Intensidad Oscura)
+- [x] **Júpiter en Escorpio** (Expansión y Suerte bajo Intensidad Oscura)
+  - *Abstracto*: `arte_propio_jupiter_escorpio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_escorpio_...`
 - [ ] **Mercurio Oposición Neptuno** (Tensión y Espejo entre Mente y Velocidad y Sueños y Niebla)
 - [ ] **Plutón Trígono Neptuno** (Flujo Armónico entre Transformación y Sombras y Sueños y Niebla)
 - [ ] **Neptuno Cuadratura Quirón** (Fricción y Conflicto entre Sueños y Niebla y Herida Inconsciente)
