@@ -13,19 +13,14 @@ CATEGORIES = [
 
 def main():
     print("🛸 Inciando Auto-Scraper Daemon. Bucle infinito activado.")
-    idx = 0
     while True:
-        cat = CATEGORIES[idx % len(CATEGORIES)]
-        print(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] 🚀 Lanzando vault_scraper.py para: {cat}")
-        
-        # Llama al scraper
-        subprocess.run(["python3", "/home/LAB/astrology_factory/content_factory/vault_scraper.py", cat])
-        
-        # Siguiente categoría
-        idx += 1
-        
-        # Pausa de 1 hora entre categorías para proteger las APIs
-        print(f"⏳ Terminó {cat}. Durmiendo 1 hora antes de la próxima categoría...")
+        for cat in CATEGORIES:
+            print(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] 🚀 Lanzando vault_scraper.py para: {cat}")
+            subprocess.run(["python3", "/home/LAB/astrology_factory/content_factory/vault_scraper.py", cat])
+            time.sleep(10)  # Breve pausa entre categorías para no saturar
+
+        # Pausa de 1 hora después de revisar TODAS las categorías
+        print(f"⏳ Terminó el ciclo completo de 18 categorías. Durmiendo 1 hora antes de volver a empezar...")
         time.sleep(3600)
 
 if __name__ == "__main__":
