@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = document.querySelector('.btn-text');
     const loader = document.querySelector('.loader');
     const messageDiv = document.getElementById('formMessage');
+    
+    let currentUserEmail = "";
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -40,9 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (vivoResult.status === 'success' && vivoResult.html) {
                 personalResponseDiv.innerHTML = vivoResult.html;
                 personalResponseDiv.classList.remove('hidden');
+                document.getElementById('chatContainer').classList.remove('hidden');
             }
             
             if (subResult.status === 'success') {
+                currentUserEmail = formData.get('email');
                 form.reset();
             }
             
@@ -79,6 +83,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 rMsg.textContent = 'Error de conexión.';
                 rMsg.className = 'message show error';
             }
+        });
+    }
+
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatHistory = document.getElementById('chatHistory');
+    
+    if (chatForm) {
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message || !currentUserEmail) return;
+            
+            // Agregar mensaje del usuario
+            chatHistory.innerHTML += `<div style="color: #fff; align-self: flex-end; margin-left: auto;"><strong>Tú:</strong> ${message}</div>`;
+            chatInput.value = '';
+            
+            // Loading state
+            const loadingId = 'loading-' + Date.now();
+            chatHistory.innerHTML += `<div id="${loadingId}" style="color: #aaa;"><strong>Oráculo:</strong> Pensando...</div>`;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            const chatFormData = new FormData();
+            chatFormData.append('email', currentUserEmail);
+            chatFormData.append('message', message);
+            
+            try {
+                const res = await fetch('/api/chat', { method: 'POST', body: chatFormData });
+                const result = await res.json();
+                
+                document.getElementById(loadingId).remove();
+                if (result.status === 'success') {
+                    chatHistory.innerHTML += `<div style="color: #4a90e2;"><strong>Oráculo:</strong> ${result.reply}</div>`;
+                } else {
+                    chatHistory.innerHTML += `<div style="color: #ff3333;"><strong>Error:</strong> ${result.message}</div>`;
+                }
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                chatHistory.innerHTML += `<div style="color: #ff3333;"><strong>Error:</strong> No se pudo conectar con el Oráculo.</div>`;
+            }
+            chatHistory.scrollTop = chatHistory.scrollHeight;
         });
     }
 });

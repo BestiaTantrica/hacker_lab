@@ -60,17 +60,48 @@
             <div id="personalResponse" class="hidden" style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; text-align: left; line-height: 1.6; border: 1px solid rgba(255,255,255,0.1);">
                 <!-- Aquí se inyectará el HTML generado por la IA -->
             </div>
+
+            <!-- Interfaz de Chat Integrada -->
+            <div id="chatContainer" class="hidden" style="margin-top: 1.5rem; background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(240, 201, 135, 0.3); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 10px;">
+                <h3 style="color: #f0c987; margin: 0; font-size: 1.1rem; text-align: left;">Chatea con el Oráculo</h3>
+                <div id="chatHistory" style="height: 200px; overflow-y: auto; text-align: left; font-size: 0.9rem; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 4px; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="color: #4a90e2;"><strong>Oráculo:</strong> Hola. Siento tu energía. ¿Qué preguntas tienes sobre tu carta astral?</div>
+                </div>
+                <form id="chatForm" style="display: flex; gap: 10px;">
+                    <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." required style="flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff;">
+                    <button type="submit" class="primary-btn" style="padding: 10px 15px; font-size: 0.9rem;">Enviar</button>
+                </form>
+            </div>
+            
+            <div class="social-links" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 15px; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                <p style="font-size: 1.1rem; color: #f0c987; font-weight: 600;">¿Quieres seguir descubriendo tu universo?</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <a href="https://t.me/PortalTarotBot" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #0088cc, #005580); border: 1px solid #00aaff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
+                        Habla con el Oráculo en Telegram
+                    </a>
+                    <a href="https://www.youtube.com/@portaltarotmistico" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #cc0000, #800000); border: 1px solid #ff3333; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
+                        Suscríbete en YouTube
+                    </a>
+                    <a href="https://www.tiktok.com/@portaltarotmistico" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #000000, #222222); border: 1px solid #00f2fe; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
+                        Síguenos en TikTok
+                    </a>
+                </div>
+            </div>
             
             <div class="donation-section" style="margin-top: 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                
+                <!-- Sección de Venta de Videos Oculta Temporalmente -->
+                <!--
                 <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #f0c987;">Productos Premium (Formatos en Video)</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
                     <button class="primary-btn" style="background: linear-gradient(135deg, #1e3c72, #2a5298); border: 1px solid #4a90e2; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🎬 Video Carta Natal ($10 USD)</button>
                     <button class="primary-btn" style="background: linear-gradient(135deg, #870000, #190a05); border: 1px solid #d4145a; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🔥 Video Revolución Solar ($10 USD)</button>
                 </div>
+                -->
 
                 <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem;">¿Querés apoyar el oráculo libre?</p>
                 <p style="font-size: 1.1rem; font-weight: 600;">Mercado Pago (Alias): <span style="color: #4CAF50; user-select: all; cursor: pointer; letter-spacing: 1px;">vida.rucula</span></p>
-                <p style="font-size: 1.1rem; font-weight: 600;">PayPal: <span style="color: #0079C1; cursor: pointer;">donar@nodriza.com</span></p>
+                <p style="font-size: 1.1rem; font-weight: 600;">PayPal: <span style="color: #0079C1; cursor: pointer;">impresiones3dxyz@gmail.com</span></p>
                 <p style="font-size: 0.8rem; color: #888; margin-top: 0.3rem;">Aporte libre. Gracias por sumar a la constelación ✨</p>
                 
                 <hr style="border:none; border-top: 1px dashed rgba(255,255,255,0.1); margin: 20px 0;">
@@ -91,6 +122,14 @@
                 </form>
             </div>
         </section>
+
+        <footer style="margin-top: 3rem; text-align: center; font-size: 0.8rem; color: #666;">
+            <p>&copy; 2026 Portal Tarot Místico. Todos los derechos reservados.</p>
+            <p style="margin-top: 5px;">
+                <a href="/terms" style="color: #888; text-decoration: none; margin: 0 10px;">Términos y Condiciones</a> | 
+                <a href="/privacy" style="color: #888; text-decoration: none; margin: 0 10px;">Política de Privacidad</a>
+            </p>
+        </footer>
     </main>
 
     <script src="/static/js/app.js"></script>
