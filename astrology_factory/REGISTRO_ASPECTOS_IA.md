@@ -307,8 +307,12 @@
 - [x] **Urano Trígono Quirón** (Flujo Armónico entre Rebeldía y Electricidad y Herida Inconsciente)
   - *Abstracto*: `arte_propio_urano_quiron_...`
   - *Emocional/Sátira*: `arte_propio_emocion_urano_quiron_...`
-- [ ] **Luna en Leo** (Emociones y Refugio bajo Fuego Creativo)
-- [ ] **Plutón en Géminis** (Transformación y Sombras bajo Dualidad Mental)
+- [x] **Luna en Leo** (Emociones y Refugio bajo Fuego Creativo)
+  - *Abstracto*: `arte_propio_luna_leo_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_leo_...`
+- [x] **Plutón en Géminis** (Transformación y Sombras bajo Dualidad Mental)
+  - *Abstracto*: `arte_propio_pluton_geminis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_geminis_...`
 - [ ] **Urano en Libra** (Rebeldía y Electricidad bajo Armonía Estética)
 - [ ] **Nodos Lunares en Acuario** (Destino Kármico bajo Visión Futurista)
 - [ ] **Júpiter en Géminis** (Expansión y Suerte bajo Dualidad Mental)
