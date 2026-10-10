@@ -286,12 +286,12 @@ async def tiktok_callback(code: str = None, state: str = None, error: str = None
         
     json_resp = resp.json()
     
-    if "data" not in json_resp or "access_token" not in json_resp["data"]:
+    if "access_token" not in json_resp:
         return HTMLResponse(f"<h1>Error en la respuesta de TikTok:</h1><p>{json_resp}</p>")
         
-    access_token = json_resp["data"]["access_token"]
-    refresh_token = json_resp["data"]["refresh_token"]
-    open_id = json_resp["data"].get("open_id", "admin_account")
+    access_token = json_resp["access_token"]
+    refresh_token = json_resp["refresh_token"]
+    open_id = json_resp.get("open_id", "admin_account")
     
     try:
         with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
