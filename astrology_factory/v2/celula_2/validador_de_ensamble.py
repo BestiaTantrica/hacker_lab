@@ -2,7 +2,7 @@
 """
 🌓 CÉLULA MADRE 2 — Script 2.2: validador_de_ensamble.py
 El guardián matemático. Lee lista_de_corte.json y lo transforma en
-lista_de_corte_validada.json — el archivo sagrado que usa la Célula 3.
+lista_de_corte_validada.json — el archivo sagrado que usa video_maker.py.
 NUNCA ejecuta FFmpeg. Solo audita, mide y anota instrucciones.
 
 Uso:
@@ -68,6 +68,11 @@ def guardar_lista_validada(lista: dict) -> Path:
     return ruta
 
 # ── ffprobe ───────────────────────────────────────────────────────────────────
+
+FORMATOS_IMG = {".jpg", ".jpeg", ".png"}
+
+def _es_imagen(path: Path) -> bool:
+    return path.suffix.lower() in FORMATOS_IMG
 
 def get_duracion_video_ms(path: Path) -> float | None:
     """
@@ -204,7 +209,22 @@ def opcion_1_dry_run() -> tuple[list[dict], list[str]]:
             resultados.append(resultado)
             continue
 
-        # 2. Duración con ffprobe
+        # 2. Duración: imágenes → el motor aplica zoompan al hueco; videos → ffprobe
+        if _es_imagen(path):
+            dur_video_ms = dur_hueco   # la imagen llena el slot entero vía zoompan
+            resultado["verificacion"] = {
+                "existe":       True,
+                "dur_video_ms": round(dur_video_ms, 3),
+                "dur_video_s":  round(dur_video_ms / 1000, 3),
+                "es_valido":    True,
+                "error":        None,
+                "es_imagen":    True,
+                "necesita_loop": False,
+            }
+            log(f"  {num:>2}  {rol:<22}  {dur_hueco/1000:>8.2f}s  {'📷 IMG':<12}  {path.name[:35]}", CYAN)
+            resultados.append(resultado)
+            continue
+
         dur_video_ms = get_duracion_video_ms(path)
         if dur_video_ms is None or dur_video_ms <= 0:
             msg = f"Toma {num}: ffprobe no pudo leer {path.name}"
@@ -246,12 +266,14 @@ def opcion_1_dry_run() -> tuple[list[dict], list[str]]:
     # Resumen
     num_ok     = sum(1 for r in resultados if r["verificacion"].get("es_valido"))
     num_loops  = sum(1 for r in resultados if r["verificacion"].get("necesita_loop"))
+    num_img    = sum(1 for r in resultados if r["verificacion"].get("es_imagen"))
     num_err    = len(errores)
 
     log(f"\n  {'─'*50}", CYAN)
     log(f"  📊 RESUMEN DRY-RUN:", CYAN)
     log(f"     ✅ Válidos:   {num_ok}/{len(asignaciones)}", VERDE)
     log(f"     🔄 Necesitan loop: {num_loops}", AMARILLO)
+    log(f"     📷 Imágenes (zoompan): {num_img}", CYAN)
     log(f"     ❌ Errores:   {num_err}", ROJO if num_err else VERDE)
 
     for w in warnings:
@@ -271,7 +293,7 @@ def opcion_1_dry_run() -> tuple[list[dict], list[str]]:
 def opcion_2_calcular_instrucciones() -> list[dict]:
     """
     Por cada toma en lista_de_corte.json, inyecta las instrucciones matemáticas
-    exactas que la Célula 3 usará en FFmpeg:
+    exactas que video_maker.py usará en FFmpeg:
     - trim: cortar el video a la duración exacta del hueco
     - loop: repetir el video N veces y luego cortar
 
@@ -300,6 +322,13 @@ def opcion_2_calcular_instrucciones() -> list[dict]:
             instrucciones.append(r)
             continue
 
+        if verif.get("es_imagen"):
+            r["accion_ffmpeg"]  = "zoompan"
+            r["requiere_loop"]  = False
+            log(f"  {num:>2}  {rol:<20}  {dur_hueco/1000:>8.2f}s  {'---':>10}  📷 ZOOMPAN (motor)", CYAN)
+            instrucciones.append(r)
+            continue
+
         dur_video_ms = verif["dur_video_ms"]
         instruccion  = calcular_instruccion_ffmpeg(dur_video_ms, dur_hueco)
 
@@ -319,23 +348,25 @@ def opcion_2_calcular_instrucciones() -> list[dict]:
         instrucciones.append(r)
 
     # Resumen de loops
-    num_loops = sum(1 for i in instrucciones if i.get("requiere_loop"))
-    num_trims = sum(1 for i in instrucciones if i.get("accion_ffmpeg") == "trim")
+    num_loops    = sum(1 for i in instrucciones if i.get("requiere_loop"))
+    num_trims    = sum(1 for i in instrucciones if i.get("accion_ffmpeg") == "trim")
+    num_zoompan  = sum(1 for i in instrucciones if i.get("accion_ffmpeg") == "zoompan")
     log(f"\n  {'─'*50}", CYAN)
     log(f"  📊 Instrucciones calculadas:", CYAN)
-    log(f"     ✂️  Trim:  {num_trims}", VERDE)
-    log(f"     🔄 Loop:  {num_loops}", AMARILLO if num_loops else VERDE)
+    log(f"     ✂️  Trim:           {num_trims}", VERDE)
+    log(f"     🔄 Loop:           {num_loops}", AMARILLO if num_loops else VERDE)
+    log(f"     📷 Zoompan (img): {num_zoompan}", CYAN)
 
     return instrucciones
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# OPCIÓN 3 — Reporte Final (El Handoff a Célula 3)
+# OPCIÓN 3 — Reporte Final (El Handoff a video_maker.py)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def opcion_3_reporte_final():
     """
     Ejecuta Opción 1 + 2 internamente, consolida TODO en un único
-    lista_de_corte_validada.json — el archivo sagrado para la Célula 3.
+    lista_de_corte_validada.json — el archivo sagrado para video_maker.py (FFmpeg Builder).
 
     Estructura final de cada entrada:
     {
@@ -346,7 +377,7 @@ def opcion_3_reporte_final():
       dur_video_ms [verificado], resolucion, es_vertical
     }
     """
-    log("\n📋 OPCIÓN 3 — Reporte Final (Handoff a Célula 3)", MAGENTA)
+    log("\n📋 OPCIÓN 3 — Reporte Final (Handoff a video_maker.py)", MAGENTA)
     log("  Ejecutando verificación + cálculo de instrucciones...\n", GRIS)
 
     instrucciones = opcion_2_calcular_instrucciones()
@@ -390,7 +421,7 @@ def opcion_3_reporte_final():
 
     # ── Imprimir tabla resumen final ─────────────────────────────────────────
     log(f"\n{'═'*70}", VERDE)
-    log(f"  📦 LISTA DE CORTE VALIDADA — HANDOFF A CÉLULA 3", VERDE)
+    log(f"  📦 LISTA DE CORTE VALIDADA — HANDOFF A VIDEO_MAKER", VERDE)
     log(f"{'═'*70}", VERDE)
     log(f"  {'#':>2}  {'ROL':<20}  {'INICIO':>8}  {'FIN':>8}  {'ACCIÓN':<8}  ARCHIVO", CYAN)
     log(f"  {'─'*70}", GRIS)
@@ -424,15 +455,15 @@ def opcion_3_reporte_final():
 
     if bloqueado:
         log(f"\n  🚨 ATENCIÓN: Producción BLOQUEADA por regla anti-spam.", ROJO)
-        log(f"     Edita la asignación antes de pasar a Célula 3.", ROJO)
+        log(f"     Edita la asignación antes de pasar a video_maker.py.", ROJO)
     elif sin_video:
         log(f"\n  ⚠️  Hay {len(sin_video)} tomas sin video. Revisar antes de renderizar.", AMARILLO)
     else:
-        log(f"\n  ✅ Todo en orden. Listo para Célula 3.", VERDE)
+        log(f"\n  ✅ Todo en orden. Listo para video_maker.py.", VERDE)
 
     ruta = guardar_lista_validada(lista_validada)
 
-    log(f"\n  ➡️  Siguiente: fabrica_microclips.py --opcion 1", AMARILLO)
+    log(f"\n  ➡️  Siguiente: python content_factory/video_maker.py", AMARILLO)
     return str(ruta)
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -446,7 +477,7 @@ def main():
         epilog="""
   1  Dry-run: verifica existencia, duración y validez de cada video asignado
   2  Calcula instrucciones FFmpeg (trim o loop) para cada toma
-  3  Reporte final completo → lista_de_corte_validada.json (HANDOFF A CÉLULA 3)
+  3  Reporte final completo → lista_de_corte_validada.json (HANDOFF A VIDEO_MAKER)
 
 Flujo recomendado: --opcion 3 (ejecuta 1 y 2 internamente de forma silenciosa)
         """

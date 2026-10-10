@@ -23,6 +23,15 @@ def init_db():
                 fecha_auditoria TEXT
             )
         ''')
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS stats_uso (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                asset_id TEXT NOT NULL,
+                evento_id TEXT NOT NULL,
+                fecha_uso TEXT NOT NULL,
+                UNIQUE(asset_id, evento_id)
+            )
+        ''')
         conn.commit()
 
 def registrar_asset(ruta_archivo: Path, tipo: str, estado: str, etiquetas: list = None):
@@ -69,6 +78,48 @@ def obtener_todos_los_assets_aprobados() -> list[tuple]:
         c = conn.cursor()
         c.execute("SELECT ruta_archivo, etiquetas FROM assets WHERE estado = 'aprobado'")
         return c.fetchall()
+
+def registrar_uso(asset_id: str, evento_id: str):
+    """Registra que un asset fue usado en un evento. Idempotente."""
+    init_db()
+    fecha = datetime.datetime.now().isoformat()
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('''
+            INSERT OR IGNORE INTO stats_uso (asset_id, evento_id, fecha_uso)
+            VALUES (?, ?, ?)
+        ''', (asset_id, evento_id, fecha))
+        conn.commit()
+
+
+def limpiar_uso_evento(evento_id: str):
+    """Elimina registros de uso de un evento (para re-renders idempotentes)."""
+    init_db()
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('DELETE FROM stats_uso WHERE evento_id = ?', (evento_id,))
+        conn.commit()
+
+
+def obtener_usos_por_asset(asset_id: str) -> list[str]:
+    """Retorna lista de evento_ids donde se usó este asset."""
+    init_db()
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('SELECT evento_id FROM stats_uso WHERE asset_id = ?', (asset_id,))
+        return [row[0] for row in c.fetchall()]
+
+
+def obtener_todos_los_usos() -> dict[str, list[str]]:
+    """Retorna {asset_id: [evento_id, ...]} para todos los assets con uso registrado."""
+    init_db()
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('SELECT asset_id, evento_id FROM stats_uso ORDER BY asset_id')
+        resultado = {}
+        for asset_id, evento_id in c.fetchall():
+            resultado.setdefault(asset_id, []).append(evento_id)
+        return resultado
 
 if __name__ == "__main__":
     init_db()

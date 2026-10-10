@@ -4,13 +4,23 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import sqlite3
 import os
-import google.generativeai as genai
+from google import genai
+from dotenv import load_dotenv
 from email_dispatcher import send_email_with_audio
+
+# Rutas absolutas y relativas al proyecto
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+load_dotenv(os.path.join(PROJECT_DIR, ".env"))
 
 app = FastAPI(title="Astrology Factory Web")
 
 # Configure Gemini for web chat
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY_WEB", os.environ.get("GEMINI_API_KEY")))
+api_key = os.environ.get("GEMINI_API_KEY_WEB", os.environ.get("GEMINI_API_KEY"))
+if api_key:
+    gemini_client = genai.Client(api_key=api_key)
+else:
+    gemini_client = None
 
 # Rutas absolutas y relativas al proyecto
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -89,7 +99,18 @@ async def subscribe(
 
         return JSONResponse(content={"status": "success", "message": "¡Suscripción exitosa! Prepárate para descubrir tu universo interior."})
     except sqlite3.IntegrityError:
-        return JSONResponse(status_code=400, content={"status": "error", "message": "Este correo ya está registrado."})
+        # El correo ya está registrado, vamos a actualizar sus datos en lugar de rechazarlo
+        try:
+            with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE subscribers 
+                    SET name = ?, birth_date = ?, birth_time = ?, birth_city = ?
+                    WHERE email = ?
+                ''', (name, birth_date, birth_time, birth_city, email))
+            return JSONResponse(content={"status": "success", "message": "¡Bienvenido de vuelta! Tus datos astrales han sido actualizados."})
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -110,12 +131,24 @@ async def transito_vivo(
         res = ph.generate_for_user(name, birth_date, birth_time)
         html_response = res.get("mensaje_personalizado", "")
         
-        # Enviar email
-        try:
-            email_body = f"<h1>Hola {name}, aquí está tu lectura inicial:</h1><br>" + html_response
-            send_email_with_audio(email, "Bienvenido al Oráculo - Tu Primera Lectura", email_body)
-        except Exception as email_err:
-            print("Error enviando email:", email_err)
+        # Enviar email solo si no hubo error en la IA
+        if not res.get("error"):
+            try:
+                email_body = f"<h1>Hola {name}, aquí está tu lectura inicial:</h1><br>" + html_response
+                send_email_with_audio(email, "Bienvenido al Oráculo - Tu Primera Lectura", email_body)
+            except Exception as email_err:
+                print("Error enviando email:", email_err)
+        else:
+            print("No se envía email porque hubo un error en la IA. Agendando para reintento.")
+            try:
+                with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute('''
+                        INSERT INTO pending_emails (user_email, status)
+                        VALUES (?, 'pending')
+                    ''', (email,))
+            except Exception as db_err:
+                print("Error guardando en pending_emails:", db_err)
 
         return JSONResponse(content={"status": "success", "html": html_response})
     except Exception as e:
@@ -173,10 +206,16 @@ No seas excesivamente largo, responde de forma concisa y amigable como si estuvi
 Mensaje de {name}: {message}
 """
         
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
+        if gemini_client:
+            response = gemini_client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt,
+            )
+            reply = response.text
+        else:
+            reply = "Error: La IA no está configurada."
         
-        return JSONResponse(content={"status": "success", "reply": response.text})
+        return JSONResponse(content={"status": "success", "reply": reply})
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 

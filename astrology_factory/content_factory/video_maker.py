@@ -1,858 +1,445 @@
 """
-video_maker.py — v4 (Single-Pass FFmpeg + Glitch Engine Ready)
-────────────────────────────────────────────────────────────────
-Novedades respecto a v3:
-  • Storyboard generado por Gemini desde el guion (concordancia imagen-relato)
-  • Pexels Videos como background: movimiento real, sin Ken Burns artificial
-  • Imágenes estáticas como fallback con scale+crop pan suave
-  • Símbolo astrológico watermark (♏♎✦☽☉) en escenas relevantes
-  • Color grading por energía + vignette (heredado de v3)
-  • Arquitectura SINGLE-PASS en memoria (filter_complex global), ultra rápida
-  • Auto-copia a Bóveda al finalizar
+video_maker.py — v5 · FFmpeg Builder (Single-Pass)
+──────────────────────────────────────────────────
+Este script ya NO decide nada. Es un constructor de comandos FFmpeg.
 
-RUNBOOK: No llamar a este archivo directamente si se desean glitches astrológicos.
-El punto de entrada correcto es `editing_reviewer.py`, que detecta el aspecto, inyecta
-los glitches visuales y luego invoca este script como backend de renderizado.
+  ÚNICO input de contenido : <paths.temp>/lista_de_corte_validada_<evento_id>.json
+                             (producido por v2/celula_2/validador_de_ensamble.py --opcion 3)
+  Rutas / render / aspecto : contexto_astrologico.json (nada hardcodeado)
+
+Eliminado respecto a v4 (ahora es trabajo de la Célula 2 / db_visual):
+  • glob / lectura directa de directorios de la bóveda
+  • score_file_v2, PHRASE_TO_ARCHETYPE, transit_palettes.json, storyboard.txt, guion.txt
+  • inferencia de energía/aspecto desde texto (el aspecto sale de ADN["transito"]["tipo_aspecto"])
+  • símbolo watermark y movimiento "inteligente" deducidos del texto de la escena
+  • historial de uso de assets (lo lleva nodriza_visual.py)
+  • render en 2 pasadas con clips .mkv temporales (temp_clips/) y copia posterior a la bóveda
+
+SINGLE-PASS: un solo `ffmpeg` con un único filter_complex:
+  cada corte → [scale/crop | zoompan al vuelo si es JPG/PNG] → grading → xfade encadenado
+  → subtítulos ASS quemados una sola vez → mux con el audio.
+  Cero escrituras intermedias a disco.
+
+Compatibilidad de imports (verificada, regla 3):
+  • subtitle_generator.py importa solo os / json / whisper  → no depende de nada de este módulo.
+  • audio_mixer.py importa solo os / subprocess / json       → no depende de nada de este módulo.
+  • Ambos se importan como módulos hermanos, por eso se conserva `sys.path.append(<este directorio>)`.
+  • glob, shutil, datetime/timedelta y _json_hist eran de uso EXCLUSIVO de este archivo
+    (selección de assets, historial, copia a bóveda) y se purgaron junto con esa lógica.
+
+RUNBOOK: el entry-point sigue siendo `python content_factory/video_maker.py [Nombre_Evento]`.
+Sin argumento usa ADN["produccion"]["evento_id"].
 """
 
+import json
 import os
 import subprocess
 import sys
-import glob
-import shutil
-import json as _json_hist
-from datetime import datetime, timedelta
+from pathlib import Path
 
-FPS          = 25
-XFADE_DUR     = 0.40  # Crossfade de 0.4s: dissolve suave, ambas imágenes superpuestas
-FADE_DUR     = XFADE_DUR  # CRÍTICO: igual a XFADE_DUR para que video == audio matemáticamente
-MAX_IMAGE_DUR = 3.0   # 3s por clip = 2.6s visibles + 0.4s crossfade (el viewer ve 2.6s limpios)
-MAX_VIDEO_DUR = 5.0   # Videos: 5s por clip = 4.6s visibles + 0.4s crossfade
-MIN_CLIP_DUR  = XFADE_DUR + 0.4  # Mínimo para que el crossfade tenga margen (0.8s)
-MAX_CLIPS_PER_SCENE = 10  # Límite superior de clips por escena (auto-fill hasta este tope)
+CONTENT_FACTORY_DIR = Path(__file__).resolve().parent
+FACTORY_ROOT        = CONTENT_FACTORY_DIR.parent
+ADN_PATH            = FACTORY_ROOT / "contexto_astrologico.json"
+PALETTES_PATH       = CONTENT_FACTORY_DIR / "astrology_palettes.json"
 
-# ── Memoria Persistente de Assets ────────────────────────────────────────────
-# Reemplaza el set volátil anterior. Persiste entre renders para evitar
-# repetición entre días consecutivos con el mismo tránsito (ej: Lunes→Martes).
-VAULT_HISTORY_PATH = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/historial_uso_assets.json"
-HISTORY_WINDOW_HOURS = 168  # 7 días = 1 ciclo semanal completo de contenido
-PENALIZACION_RECIENTE = -50.0  # Penalización blanda: permite reuso si no hay alternativa
+FORMATOS_IMG = {".jpg", ".jpeg", ".png"}
 
-# Cache en memoria para el render actual (no duplicar dentro del mismo video)
-_assets_usados_en_render: set = set()
+# ── Parámetros del Builder (no son rutas; las rutas viven en el ADN) ─────────
+XFADE_DUR_DEFAULT = 0.40   # se sobreescribe con ADN["render"]["xfade_duracion_s"] si existe
+SUPERSAMPLE       = 2      # las imágenes se amplían ×2 antes del zoompan (evita el "jitter" por redondeo)
+ZOOM_BASE         = 1.08   # zoom máximo Ken Burns para imágenes normales
+ZOOM_ICONICA      = 1.14   # zoom máximo para imágenes icónicas (tarot, signos, símbolos…)
+MIN_FRAMES_IMG    = 2
 
-def _load_history() -> dict:
-    """Carga el historial persistente {basename: iso_timestamp}."""
-    if os.path.exists(VAULT_HISTORY_PATH):
-        try:
-            with open(VAULT_HISTORY_PATH, "r", encoding="utf-8") as _hf:
-                return _json_hist.load(_hf)
-        except Exception:
-            return {}
-    return {}
-
-def _save_history(history: dict):
-    """Guarda historial, limpiando entradas más viejas de 14 días (2 ciclos semanales).
-    Esto mantiene el archivo liviano sin borrar datos aún relevantes."""
-    cutoff = datetime.utcnow() - timedelta(days=14)
-    cleaned = {k: v for k, v in history.items()
-               if datetime.fromisoformat(v) > cutoff}
-    os.makedirs(os.path.dirname(VAULT_HISTORY_PATH), exist_ok=True)
-    with open(VAULT_HISTORY_PATH, "w", encoding="utf-8") as _hf:
-        _json_hist.dump(cleaned, _hf, indent=2)
-
-def _mark_used(filepath: str, history: dict):
-    """Registra un asset como usado ahora mismo (en memoria y en disco)."""
-    _assets_usados_en_render.add(filepath)
-    history[os.path.basename(filepath)] = datetime.utcnow().isoformat()
-
-def _is_recently_used(filepath: str, history: dict) -> bool:
-    """True si el asset fue usado en la ventana de HISTORY_WINDOW_HOURS."""
-    basename = os.path.basename(filepath)
-    if basename not in history:
-        return False
-    used_at = datetime.fromisoformat(history[basename])
-    return (datetime.utcnow() - used_at) < timedelta(hours=HISTORY_WINDOW_HOURS)
-
-# Mapeo Guion → Arquetipo Visual (para los 5 frases del guion astrológico)
-# La clave es el índice de frase (0-4), el valor es la categoría de triada a priorizar
-PHRASE_TO_ARCHETYPE = {
-    0: "esoteric_art",    # Frase 1: Contexto duro  → símbolo planetario, zodiaco, astronomía
-    1: "raw_realism",     # Frase 2: Teoría/Historia → naturaleza real, océano, sombras
-    2: "abstract_glitch", # Frase 3: Mecánica        → texturas, fractales, glitch
-    3: "raw_realism",     # Frase 4: Sugestión íntima → personas reales, manos, ojos
-    4: "cta_portal",      # Frase 5: CTA             → portal cósmico, neon, gateway
+# Transiciones xfade que FFmpeg 7.x acepta. Cualquier otra → "fade".
+XFADE_VALIDAS = {
+    "fade", "fadeblack", "fadewhite", "fadegrays", "dissolve", "distance", "pixelize",
+    "radial", "circleopen", "circleclose", "vertopen", "vertclose", "horzopen", "horzclose",
+    "wipeleft", "wiperight", "wipeup", "wipedown", "slideleft", "slideright", "slideup",
+    "slidedown", "smoothleft", "smoothright", "smoothup", "smoothdown",
+    "diagtl", "diagtr", "diagbl", "diagbr", "hlslice", "hrslice", "vuslice", "vdslice",
+    "hblur", "zoomin",
 }
-# Keywords de búsqueda para el CTA (no está en las triadas JSON)
-_CTA_KEYWORDS = {"portal", "cosmic", "neon", "gateway", "glow", "cta", "link", "universe", "nebula"}
-
-FONT_SYMBOL = "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf"
-FONT_TEXT   = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+XFADE_FALLBACK = "fade"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Helpers
+# Configuración (ADN) y helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
-def get_audio_duration(mp3_path: str) -> float:
-    cmd = ["ffprobe", "-i", mp3_path, "-show_entries", "format=duration",
-           "-v", "quiet", "-of", "csv=p=0"]
-    result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+def _cargar_adn() -> dict:
+    with open(ADN_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _configuracion(adn: dict) -> dict:
+    render = adn["render"]
+    w, h = (int(x) for x in render["resolucion"].split("x"))
+    paths = adn["assets"]["paths"]
+    return {
+        "W": w,
+        "H": h,
+        "FPS": int(render["fps"]),
+        "CRF": int(render.get("crf", 20)),
+        "PRESET": render.get("ffmpeg_preset", "fast"),
+        "XFADE": float(render.get("xfade_duracion_s", XFADE_DUR_DEFAULT)),
+        "TEMP_DIR": Path(paths["temp"]),
+        "AUDIO_DIR": Path(paths["audio_master"]),
+        "SUB_DIR": Path(paths["subtitulos"]),
+        "FINAL_DIR": Path(paths["videos_finales"]),
+        "SEMANA": adn["produccion"]["semana_prefijo"],
+        "ASPECTO": str(adn.get("transito", {}).get("tipo_aspecto", "")).lower(),
+        "COLOR_GRADE": render.get("color_grade", {}),
+    }
+
+
+def _ffprobe_duracion(path: Path) -> float | None:
+    cmd = ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)]
+    r = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     try:
-        return float(result.stdout.strip())
+        d = float(r.stdout.strip())
+        return d if d > 0 else None
     except ValueError:
-        return 60.0
-
-
-def parse_ass_durations(ass_path: str) -> list[tuple[float, float]]:
-    """Extrae (start_sec, end_sec) de cada línea de diálogo."""
-    dialogues = []
-    if not os.path.exists(ass_path):
-        return dialogues
-    
-    with open(ass_path, "r", encoding="utf-8") as f:
-        for line in f:
-            if line.startswith("Dialogue:"):
-                parts = line.split(",", 9)
-                if len(parts) >= 10:
-                    start_str, end_str = parts[1], parts[2]
-                    def time_to_sec(t_str):
-                        h, m, s = t_str.split(":")
-                        return int(h)*3600 + int(m)*60 + float(s)
-                    dialogues.append((time_to_sec(start_str), time_to_sec(end_str)))
-    return dialogues
+        return None
 
 
 def _escape_filter(path: str) -> str:
     return path.replace("\\", "/").replace(":", "\\:").replace("'", "\\'")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Color grading por energía astrológica
-# ─────────────────────────────────────────────────────────────────────────────
+def _es_imagen(path: str) -> bool:
+    return Path(path).suffix.lower() in FORMATOS_IMG
 
-def _color_filter(aspect: str) -> str:
-    import json
-    db_path = os.path.join(os.path.dirname(__file__), "astrology_palettes.json")
-    if os.path.exists(db_path):
-        with open(db_path, "r", encoding="utf-8") as f:
-            palettes = json.load(f)
-            if aspect in palettes:
-                return palettes[aspect]["grading_vf"]
-    return "eq=brightness=0.0:saturation=1.1:contrast=1.05,curves=r='0/0 0.5/0.53 1/0.98'"
+
+def _xfade_valida(nombre: str | None) -> str:
+    return nombre if nombre in XFADE_VALIDAS else XFADE_FALLBACK
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Transiciones variadas por energía
+# Color grading (declarado, no inferido)
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Tabla de transiciones xfade por aspecto astrológico
-# Devuelve (transition_name, duration_sec)
-_ASPECT_TRANSITIONS = {
-    "conjuncion":  ("dissolve",   0.40),  # Fusión, unión lenta
-    "trigono":     ("fade",       0.50),  # Flujo armónico
-    "sextil":      ("pixelize",   0.30),  # Oportunidad que aparece
-    "cuadratura":  ("fadeblack",  0.20),  # Tensión, corte agresivo
-    "oposicion":   ("slideleft",  0.30),  # Polaridad, fuerzas opuestas
-    "quincuncio":  ("pixelize",   0.25),  # Ajuste incómodo
-}
-
-def _get_transition(aspect: str, query_to: str) -> tuple[str, float]:
-    """Retorna (xfade_type, XFADE_DUR) según aspecto astrológico.
-    
-    REGLA: La duración SIEMPRE es XFADE_DUR (constante global) para mantener
-    el timing matemático correcto (FADE_DUR = XFADE_DUR en los clips).
-    Solo varía el TIPO de transición según el aspecto.
-    
-    NO aplicar override por keywords de escena — fadeblack crea negro entre
-    imágenes, que es exactamente lo que el usuario NO quiere. El aspecto
-    astrológico es la única variable para el tipo de transición.
+def _filtro_grading(cfg: dict) -> str:
     """
-    base_transition, _ = _ASPECT_TRANSITIONS.get(aspect, ("dissolve", XFADE_DUR))
-    return (base_transition, XFADE_DUR)
+    Prioridad: grading del aspecto declarado en el ADN (astrology_palettes.json) →
+    color_grade del ADN render. Viñeta solo si ADN render.color_grade.vignette es true.
+    """
+    vf = None
+    if PALETTES_PATH.exists():
+        with open(PALETTES_PATH, "r", encoding="utf-8") as f:
+            palettes = json.load(f)
+        vf = palettes.get(cfg["ASPECTO"], {}).get("grading_vf")
+
+    cg = cfg["COLOR_GRADE"]
+    if not vf:
+        vf = (f"eq=brightness={cg.get('brillo', 0.0):.3f}:contrast={cg.get('contraste', 1.0):.3f}"
+              f":saturation={cg.get('saturacion', 1.0):.3f}:gamma={cg.get('gamma', 1.0):.3f}")
+    if cg.get("vignette", False):
+        vf += ",vignette=angle=PI/4"
+    return vf
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Símbolo astrológico watermark
+# Lectura y validación de la lista de corte validada
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _symbol_filter(query: str) -> str | None:
-    """Devuelve filtro drawtext con símbolo astrológico, o None si no aplica."""
-    q = query.lower()
-    if "scorpio" in q:    symbol = "\u265f"   # ♏ (fallback: usar texto)
-    elif "venus" in q:    symbol = "\u2640"   # ♀
-    elif "balance" in q or "scale" in q or "libra" in q: symbol = "\u264e"  # ♎
-    elif "moon" in q:     symbol = "\u263d"   # ☽
-    elif any(k in q for k in ["star", "cosmos", "universe"]): symbol = "\u2736"  # ✶
-    elif "sun" in q or "solar" in q: symbol = "\u2609"  # ☉
-    else:
+def _cargar_lista_validada(cfg: dict, evento: str) -> dict | None:
+    ruta = cfg["TEMP_DIR"] / f"lista_de_corte_validada_{evento}.json"
+    if not ruta.exists():
+        print(f"❌ No existe {ruta}")
+        print("   Ejecuta primero: nodriza_visual.py --opcion 1 → validador_de_ensamble.py --opcion 3")
+        return None
+    with open(ruta, encoding="utf-8") as f:
+        data = json.load(f)
+    if not data.get("validado"):
+        print(f"❌ {ruta.name} no está marcada como validada.")
+        return None
+    if data.get("bloqueado_anti_spam"):
+        print("🚨 La lista de corte está BLOQUEADA por la regla anti-spam del validador. Edita la asignación.")
+        return None
+    if not data.get("tomas"):
+        print(f"❌ {ruta.name} no contiene tomas.")
+        return None
+    return data
+
+
+def _cortes_de_toma(toma: dict) -> list[dict]:
+    """Cortes explícitos de la toma; si el JSON no trae 'cortes', un único corte con archivo_video."""
+    cortes = toma.get("cortes")
+    if cortes:
+        return cortes
+    if toma.get("archivo_video"):
+        return [{
+            "archivo": toma["archivo_video"],
+            "duracion_s": float(toma.get("duracion_s") or toma.get("duracion_ms", 0) / 1000.0),
+            "transicion_entrada": toma.get("transicion_entrada"),
+            "es_iconica": False,
+            "reverse": False,
+        }]
+    return []
+
+
+def _planificar_slots(tomas: list[dict], dur_audio: float | None) -> list[dict] | None:
+    """
+    Aplana tomas → cortes y fija la duración de cada slot para que la línea de tiempo
+    sea GAPLESS y coincida con el audio:
+      · la 1ª toma arranca en 0; cada toma termina donde empieza la siguiente
+      · la última toma se estira hasta la duración del audio (si es mayor)
+      · las duraciones de los cortes se reescalan para sumar exactamente el hueco de su toma
+    """
+    tomas = sorted(tomas, key=lambda t: (t.get("inicio_ms", 0), t.get("num_toma", 0)))
+    slots = []
+    for k, toma in enumerate(tomas):
+        cortes = _cortes_de_toma(toma)
+        if not cortes:
+            print(f"❌ Toma {toma.get('num_toma', k + 1)} sin cortes ni archivo_video.")
+            return None
+
+        inicio = 0.0 if k == 0 else toma["inicio_ms"] / 1000.0
+        if k < len(tomas) - 1:
+            fin = tomas[k + 1]["inicio_ms"] / 1000.0
+        else:
+            fin = max(toma["fin_ms"] / 1000.0, dur_audio or 0.0)
+        objetivo = fin - inicio
+
+        suma = sum(float(c.get("duracion_s", 0)) for c in cortes)
+        if objetivo <= 0 or suma <= 0:
+            print(f"❌ Toma {toma.get('num_toma', k + 1)}: duración inválida (hueco={objetivo:.3f}s, cortes={suma:.3f}s).")
+            return None
+
+        factor = objetivo / suma
+        durs = [float(c["duracion_s"]) * factor for c in cortes]
+        durs[-1] = objetivo - sum(durs[:-1])   # el último absorbe el residuo → suma exacta
+
+        for j, (c, d) in enumerate(zip(cortes, durs)):
+            slots.append({
+                "toma": toma.get("num_toma", k + 1),
+                "archivo": c["archivo"],
+                "dur": d,
+                "es_imagen": _es_imagen(c["archivo"]),
+                "es_iconica": bool(c.get("es_iconica", False)),
+                "reverse": bool(c.get("reverse", False)),
+                "transicion": None if not slots else _xfade_valida(
+                    c.get("transicion_entrada") or (toma.get("transicion_entrada") if j == 0 else None)
+                ),
+            })
+    return slots
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Audio y subtítulos (rutas del ADN)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _resolver_audio(cfg: dict, evento: str, aspecto: str, tomas: list[dict]) -> Path | None:
+    """
+    Mejor audio ya mezclado por la Célula 3: _sfx > _binaural > _mix.
+    Si solo existe la narración cruda, se aplica el diseño sonoro legado (audio_mixer).
+    """
+    for sufijo in ("_sfx", "_binaural", "_mix"):
+        p = cfg["AUDIO_DIR"] / f"{evento}{sufijo}.mp3"
+        if p.exists():
+            print(f"🔊 Audio: {p.name}")
+            return p
+
+    raw = cfg["AUDIO_DIR"] / f"{evento}.mp3"
+    if not raw.exists():
+        print(f"❌ No se encontró audio para '{evento}' en {cfg['AUDIO_DIR']}")
         return None
 
-    if not os.path.exists(FONT_SYMBOL):
+    if str(CONTENT_FACTORY_DIR) not in sys.path:
+        sys.path.append(str(CONTENT_FACTORY_DIR))
+    from audio_mixer import mix_frequency_layer
+    guion_text = " ".join(t.get("texto", "") for t in tomas).strip()
+    words_json = str(raw).replace(".mp3", "_words.json")
+    return Path(mix_frequency_layer(str(raw), guion_text, words_json, aspecto, []))
+
+
+def _resolver_ass(cfg: dict, evento: str) -> Path | None:
+    ass = cfg["SUB_DIR"] / f"{evento}.ass"
+    if ass.exists():
+        print(f"💾 Subtítulos ASS: {ass.name}")
+        return ass
+
+    narracion = cfg["AUDIO_DIR"] / f"{evento}.mp3"
+    if not narracion.exists():
+        print("⚠️  Sin ASS ni narración cruda para transcribir. Se renderiza sin subtítulos.")
         return None
 
-    esc_font = _escape_filter(FONT_SYMBOL)
-    return (f"drawtext=fontfile='{esc_font}'"
-            f":text='{symbol}'"
-            f":fontsize=72:fontcolor=white@0.22"
-            f":x=w-100:y=55")
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Ken Burns Dinámico y Rápido (Crop animado)
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _smart_movement_filter(idx: int, clip_dur: float, query: str) -> str:
-    OW, OH = 1080, 1920
-    q = query.lower()
-    
-    # Evaluar la energía de la escena
-    es_dinamica = any(k in q for k in ["mars", "uranus", "fire", "action", "tension", "sudden", "strike", "anger", "fast"])
-    
-    # Zoom muy sutil para no marear ni perder detalle
-    zoom_max = 1.04 if es_dinamica else 1.02
-    iw, ih = int(OW * zoom_max), int(OH * zoom_max)
-    D = f"{clip_dur:.4f}"
-    
-    # Variar el tipo de movimiento según si es dinámica o no
-    if not es_dinamica:
-        # Energía calmada: Zoom microscópico 1.01, sin paneo
-        x = f"(in_w-{OW})/2"
-        y = f"(in_h-{OH})/2"
-    else:
-        # Energía dinámica: Zoom levísimo 1.03, sin paneo lateral (solo centrado)
-        x = f"(in_w-{OW})/2"
-        y = f"(in_h-{OH})/2"
-        
-    return f"scale={iw}:{ih}:force_original_aspect_ratio=increase,crop={OW}:{OH}:x='{x}':y='{y}'"
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Bóveda Automática
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _copy_to_vault(evento_name: str, out_video: str):
-    # Extraer prefijo de semana: "Semana2_Octubre_Lunes" → "Semana2_Octubre"
-    parts = evento_name.split("_")
-    semana_prefix = "_".join(parts[:2]) if len(parts) >= 2 else "Misc"
-    vault_dir = f"/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Videos_Finales/{semana_prefix}"
-    
-    print(f"\n📦 Copiando a Bóveda automática: {vault_dir}")
+    if str(CONTENT_FACTORY_DIR) not in sys.path:
+        sys.path.append(str(CONTENT_FACTORY_DIR))
+    from subtitle_generator import generate_ass
+    print("📝 Generando subtítulos con Whisper...")
     try:
-        os.makedirs(vault_dir, exist_ok=True)
-        dest = os.path.join(vault_dir, f"FINAL_{evento_name}.mp4")
-        shutil.copy2(out_video, dest)
-        print(f"   ✅ ¡Copiado exitoso! → {dest}")
+        return Path(generate_ass(str(narracion), modelo="small",
+                                 video_width=cfg["W"], video_height=cfg["H"]))
     except Exception as e:
-        print(f"   ❌ Error al copiar a Bóveda: {e}")
+        print(f"⚠️  Whisper falló ({e}). Sin subtítulos.")
+        return None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Constructor del filter_complex (Single-Pass)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _cadena_post(cfg: dict, grading: str) -> str:
+    # `fps` va ÚLTIMO: setpts deja el frame rate indefinido (1/0) y xfade exige CFR en ambas entradas.
+    return f"{grading},format=yuv420p,setsar=1,setpts=PTS-STARTPTS,fps={cfg['FPS']}"
+
+
+def _cadena_imagen(i: int, slot: dict, largo: float, cfg: dict, grading: str) -> str:
+    """
+    TRANSMUTACIÓN DINÁMICA: JPG/PNG → clip con Ken Burns (zoompan) al vuelo, sin archivo intermedio.
+    La imagen entra como UN solo frame (sin -loop); zoompan genera los `frames` de salida.
+    Zoom determinista por número de frame de salida (`on`): alterna zoom-in / zoom-out por índice.
+    """
+    W, H, FPS = cfg["W"], cfg["H"], cfg["FPS"]
+    frames = max(MIN_FRAMES_IMG, round(largo * FPS))
+    sw, sh = W * SUPERSAMPLE, H * SUPERSAMPLE
+    zmax = ZOOM_ICONICA if slot["es_iconica"] else ZOOM_BASE
+    dz = zmax - 1.0
+    z = f"1+{dz:.4f}*on/{frames}" if i % 2 == 0 else f"{zmax:.4f}-{dz:.4f}*on/{frames}"
+    return (
+        f"[{i}:v]scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh},"
+        f"setsar=1,format=yuv420p,"
+        f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={W}x{H}:fps={FPS},"
+        f"{_cadena_post(cfg, grading)}[c{i}]"
+    )
+
+
+def _cadena_video(i: int, slot: dict, largo: float, cfg: dict, grading: str) -> str:
+    W, H, FPS = cfg["W"], cfg["H"], cfg["FPS"]
+    cadena = f"[{i}:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS}"
+    if slot["reverse"]:
+        # Cierre en reversa: engancha con el inicio del loop (el corte es corto, el buffer es pequeño)
+        cadena += f",trim=duration={largo:.4f},setpts=PTS-STARTPTS,reverse,setpts=PTS-STARTPTS"
+    return f"{cadena},{_cadena_post(cfg, grading)}[c{i}]"
+
+
+def construir_comando(slots: list[dict], audio: Path, ass: Path | None, salida: Path,
+                      cfg: dict, grading: str) -> tuple[list[str], dict]:
+    """Devuelve (comando_ffmpeg, resumen). Función pura: no toca el disco."""
+    n = len(slots)
+    FPS = cfg["FPS"]
+
+    # Crossfade seguro: nunca más del 45% del slot más corto (cada clip participa en 2 transiciones)
+    xfade = cfg["XFADE"]
+    if n > 1:
+        xfade = min(xfade, 0.45 * min(s["dur"] for s in slots))
+
+    # Cada clip (menos el último) dura su slot + xfade: la transición cae sobre el inicio del slot siguiente
+    largos = [s["dur"] + (xfade if i < n - 1 else 0.0) for i, s in enumerate(slots)]
+
+    cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"]
+    for i, (s, largo) in enumerate(zip(slots, largos)):
+        if s["es_imagen"]:
+            cmd += ["-i", s["archivo"]]
+        else:
+            cmd += ["-stream_loop", "-1", "-t", f"{largo:.4f}", "-i", s["archivo"]]
+    cmd += ["-i", str(audio)]
+
+    partes = []
+    for i, (s, largo) in enumerate(zip(slots, largos)):
+        partes.append(_cadena_imagen(i, s, largo, cfg, grading) if s["es_imagen"]
+                      else _cadena_video(i, s, largo, cfg, grading))
+
+    previo, acumulado = "[c0]", 0.0
+    for k in range(1, n):
+        acumulado += slots[k - 1]["dur"]
+        salida_k = f"[x{k}]"
+        partes.append(
+            f"{previo}[c{k}]xfade=transition={slots[k]['transicion']}"
+            f":duration={xfade:.4f}:offset={acumulado:.4f}{salida_k}"
+        )
+        previo = salida_k
+
+    if ass is not None:
+        partes.append(f"{previo}ass='{_escape_filter(str(ass))}',format=yuv420p[vout]")
+    else:
+        partes.append(f"{previo}format=yuv420p[vout]")
+
+    cmd += [
+        "-filter_complex", ";".join(partes),
+        "-map", "[vout]", "-map", f"{n}:a:0",
+        "-c:v", "libx264", "-crf", str(cfg["CRF"]), "-preset", cfg["PRESET"],
+        "-pix_fmt", "yuv420p", "-r", str(FPS),
+        "-c:a", "aac", "-b:a", "192k",
+        "-movflags", "+faststart",
+        "-shortest", str(salida),
+    ]
+
+    n_img = sum(1 for s in slots if s["es_imagen"])
+    resumen = {
+        "clips": n, "imagenes": n_img, "videos": n - n_img,
+        "xfade": xfade, "duracion_s": sum(s["dur"] for s in slots),
+    }
+    return cmd, resumen
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Pipeline principal
 # ─────────────────────────────────────────────────────────────────────────────
 
-def create_video(evento_name: str) -> str | None:
-    global _assets_usados_en_render
-    _assets_usados_en_render = set()  # Limpiar cache en-memoria en cada render
-    _uso_history = _load_history()    # Cargar historial persistente cross-render
-    base_dir  = os.path.dirname(os.path.dirname(__file__))
-    prod_dir  = os.path.join(base_dir, "produccion", evento_name)
-    mp3_path  = os.path.join(prod_dir, f"{evento_name}.mp3")
-    out_video = os.path.join(prod_dir, f"{evento_name}.mp4")
-    ass_path  = None
+def create_video(evento_name: str | None = None) -> str | None:
+    adn = _cargar_adn()
+    cfg = _configuracion(adn)
+    evento = evento_name or adn["produccion"]["evento_id"]
+    if evento != adn["produccion"]["evento_id"]:
+        print(f"⚠️  '{evento}' ≠ evento activo del ADN ({adn['produccion']['evento_id']}): "
+              f"aspecto y semana se toman del ADN activo.")
 
-    if not os.path.exists(mp3_path):
-        print(f"❌ No se encontró el audio: {mp3_path}")
+    # 1. Único input de contenido
+    lista = _cargar_lista_validada(cfg, evento)
+    if lista is None:
+        return None
+    tomas = lista["tomas"]
+    semana = lista.get("semana") or cfg["SEMANA"]
+
+    # 2. Audio (define la duración total)
+    audio = _resolver_audio(cfg, evento, cfg["ASPECTO"], tomas)
+    if audio is None:
+        return None
+    dur_audio = _ffprobe_duracion(audio)
+    if dur_audio is None:
+        print(f"⚠️  ffprobe no pudo leer {audio.name}; se usa la duración de la lista de corte.")
+
+    # 3. Slots gapless + verificación de que cada archivo exista (sin búsqueda alternativa)
+    slots = _planificar_slots(tomas, dur_audio)
+    if slots is None:
+        return None
+    faltantes = sorted({s["archivo"] for s in slots if not Path(s["archivo"]).is_file()})
+    if faltantes:
+        print("❌ Assets referenciados por la lista de corte que NO existen en disco:")
+        for f in faltantes:
+            print(f"   - {f}")
         return None
 
-    # ── 1. Subtítulos ASS ────────────────────────────────────────────────────
-    sys.path.append(os.path.dirname(__file__))
-    from subtitle_generator import generate_ass
-    
-    ass_cached = os.path.join(prod_dir, f"{evento_name}.ass")
-    if os.path.exists(ass_cached):
-        print(f"💾 ASS cacheado encontrado → skip Whisper ({ass_cached})")
-        ass_path = ass_cached
-    else:
-        print("📝 Generando subtítulos con Whisper...")
-        try:
-            ass_path = generate_ass(mp3_path, modelo="small",
-                                     video_width=1080, video_height=1920)
-        except Exception as e:
-            print(f"⚠️  Whisper falló ({e}). Sin subtítulos.")
+    # 4. Subtítulos y color
+    ass = _resolver_ass(cfg, evento)
+    grading = _filtro_grading(cfg)
 
-    # ── 2. Leer Storyboard y Aspecto ───────────────────────────
-    guion_path      = os.path.join(prod_dir, "guion.txt")
-    storyboard_path = os.path.join(prod_dir, "storyboard.txt")
-    
-    aspect = "conjuncion"
-    if os.path.exists(guion_path):
-        text = open(guion_path, encoding='utf-8').read().lower()
-        if "cuadratura" in text: aspect = "cuadratura"
-        elif "oposicion" in text or "oposición" in text: aspect = "oposicion"
-        elif "conjuncion" in text or "conjunción" in text: aspect = "conjuncion"
-        elif "sextil" in text: aspect = "sextil"
-        elif "trigono" in text or "trígono" in text: aspect = "trigono"
-        elif "quincuncio" in text: aspect = "quincuncio"
+    # 5. Un solo FFmpeg
+    destino_dir = cfg["FINAL_DIR"] / semana
+    destino_dir.mkdir(parents=True, exist_ok=True)
+    destino = destino_dir / f"FINAL_{evento}.mp4"
+    parcial = destino_dir / f"FINAL_{evento}.part.mp4"
 
-    print("\n🤖 Leyendo storyboard...")
-    if not os.path.exists(storyboard_path):
-        print("   ⚠️  No hay storyboard.txt. El buscador usará fallbacks genéricos.")
+    cmd, resumen = construir_comando(slots, audio, ass, parcial, cfg, grading)
+    print(f"\n🎞️  {len(tomas)} tomas → {resumen['clips']} cortes "
+          f"({resumen['videos']} videos + {resumen['imagenes']} imágenes con zoompan al vuelo)")
+    print(f"⚡ Single-pass · aspecto [{cfg['ASPECTO'].upper() or 'N/A'}] · xfade {resumen['xfade']:.2f}s "
+          f"· {resumen['duracion_s']:.2f}s · {cfg['W']}x{cfg['H']}@{cfg['FPS']}")
 
-
-    # ── 3. Preparación de Entorno ────────────────────────────────
-    print("\n🎬 Generando Arquitectura de Bóveda Offline...")
-
-    palettes_path = os.path.join(os.path.dirname(__file__), "transit_palettes.json")
-    transit_concepts = []
-    if os.path.exists(palettes_path):
-        import json
-        with open(palettes_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            # Find if this event is a transit (e.g. moon_in_aries) or contains it
-            for t in data.get("transits", []):
-                if t["name"] in evento_name.lower():
-                    transit_concepts = t.get("emotional_concepts", [])
-                    break
-
-    if transit_concepts:
-        print(f"   🌟 Tránsito detectado. Usando {len(transit_concepts)} conceptos puros.")
-        raw_queries = [f"{evento_name.lower()} {c}" for c in transit_concepts]
-    elif os.path.exists(storyboard_path):
-        with open(storyboard_path) as f:
-            raw_queries = [l.strip() for l in f if l.strip()]
-    else:
-        raw_queries = []
-        
-    final_queries = []
-    
-    # ── 4. Calcular tiempos ──────────────────────────────────────────────────
-    duracion_total = get_audio_duration(mp3_path)
-    dialogues: list[tuple[float, float]] = []
-    
-    # Leemos subtitulos
-    raw_dialogues = []
-    if ass_path and os.path.exists(ass_path):
-        raw_dialogues = parse_ass_durations(ass_path)
-        
-    if not raw_dialogues:
-        print("❌ Error: No se encontraron subtítulos para sincronizar.")
-        return None
-        
-    M = len(raw_dialogues)
-
-    # ── 3.5. Buscar Assets en Bóveda Local ────────────────────────────────────
-    import glob
-    VAULT_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados"
-    GLITCH_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Descargas_Crudas/Glitches_Source"
-
-    vault_images = glob.glob(os.path.join(VAULT_DIR, "Imagenes", "**", "*.*"), recursive=True)
-    vault_videos = glob.glob(os.path.join(VAULT_DIR, "Videos", "**", "*.*"), recursive=True)
-    vault_files = vault_images + vault_videos
-    glitch_files = glob.glob(os.path.join(GLITCH_DIR, "*.*"))
-
-    # Filtro robusto: os.path.isfile() sigue symlinks y verifica existencia real.
-    # Mínimo 50KB para descartar thumbs corruptos. Excluir frames temporales.
-    valid_vault_files = [
-        f for f in vault_files
-        if os.path.isfile(f)              # sigue symlinks → descarta rotos
-        and os.path.getsize(f) > 50_000  # mínimo 50KB
-        and not f.endswith("_frame.jpg")  # excluir frames temporales de scoring
-    ]
-    
-    if not valid_vault_files:
-        print("❌ Bóveda vacía. Espera a que el Vault Scraper descargue assets.")
-        return None
-
-    num_scenes = len(raw_queries) if raw_queries else max(1, M // 3)
-    scene_groups = {}
-    
-    # Número total de frases del guión (por defecto 5)
-    N_PHRASES = 5
-
-    # ── Detectar tránsito activo: buscar en múltiples fuentes (orden de prioridad) ──
-    # El nombre del evento (ej: "Semana3_Octubre_Lunes") no contiene el tránsito.
-    # Las fuentes correctas son: transito.txt, guion.txt, storyboard.txt.
-    import json as _json
-    _transit_triads_by_cat: dict[str, list[str]] = {}
-    _transit_emotional: list[str] = []
-    _storyboard_keywords: set = set()  # keywords directas del storyboard para scoring fallback
-
-    # Construir corpus de texto del evento desde guion + storyboard + transito.txt
-    _event_corpus = evento_name.lower().replace("_", " ")
-    for _src_name in ["transito.txt", "guion.txt", "storyboard.txt"]:
-        _src_path = os.path.join(prod_dir, _src_name)
-        if os.path.exists(_src_path):
-            with open(_src_path, "r", encoding="utf-8") as _sf:
-                _txt = _sf.read().lower()
-                _event_corpus += " " + _txt
-                # Extraer keywords del storyboard (las palabras del id: y descripción)
-                if _src_name == "storyboard.txt":
-                    for _line in _txt.splitlines():
-                        _line = _line.strip()
-                        if _line.startswith("["):
-                            # Limpiar negaciones y marcadores
-                            _clean = _line.replace("-animal","").replace("-cartoon","").replace("-cute","").replace("-vector","").replace("-character","").replace("-kids","")
-                            _words = set(_clean.replace("|","").replace("_"," ").split())
-                            _storyboard_keywords |= {w for w in _words if len(w) > 3}
-
-    palettes_path_vm = os.path.join(os.path.dirname(__file__), "transit_palettes.json")
-    if os.path.exists(palettes_path_vm):
-        with open(palettes_path_vm, "r", encoding="utf-8") as _pf:
-            _pdata = _json.load(_pf)
-        _best_match_score = 0
-        _best_transit = None
-        for _t in _pdata.get("transits", []):
-            # Contar cuántas palabras del nombre del tránsito aparecen en el corpus
-            _twords = [w for w in _t["name"].lower().split("_") if len(w) > 2]
-            _match_count = sum(1 for w in _twords if w in _event_corpus)
-            if _match_count > _best_match_score:
-                _best_match_score = _match_count
-                _best_transit = _t
-        if _best_transit:
-            _transit_emotional = _best_transit.get("emotional_concepts", [])
-            _at = _best_transit.get("artistic_triads", {})
-            for _cat in ["raw_realism", "esoteric_art", "abstract_glitch"]:
-                _transit_triads_by_cat[_cat] = _at.get(_cat, [])
-            print(f"   🔭 Tránsito detectado: {_best_transit['name']} (score={_best_match_score})")
-        else:
-            print("   ⚠️  No se encontró tránsito en JSON. Usando keywords del storyboard para scoring.")
-
-    def score_file_v2(f: str, query_words: set, archetype_cat: str = "",
-                      scene_id: str = "") -> float:
-        """Scoring NARRATIVO — la escena específica manda. (Diagnóstico v5)
-
-        PIRÁMIDE INVERTIDA (la coherencia del relato domina sobre el tránsito):
-        +50  Match exacto de ID de escena en el filename
-        +10  Palabras de la escena específica que está sonando
-        + 5  Arquetipo de frase (raw_realism / esoteric_art / etc.)
-        + 2  Conceptos del tránsito (ahora contexto/fallback)
-        + 4  Bonus de recencia mtime (tiebreaker cuando la bóveda está saturada)
-        -50  Asset usado en las últimas 168h (penalización blanda cross-render)
-        -100 Asset ya usado en ESTE render (descarte dentro del video)
-        """
-        filename = os.path.basename(f).lower()
-        filename_noext = filename.replace(".mp4", "").replace(".jpg", "").replace(".png", "")
-        file_words = set(filename_noext.replace("_", " ").replace("-", " ").split())
-
-        score = 0.0
-
-        # ── Nivel 0 (+50): Match exacto de ID de escena ──────────────────────
-        # Si el filename contiene el ID de storyboard (ej: scorpio_symbol_dark),
-        # es una imagen descargada PARA esta escena → máxima prioridad.
-        if scene_id and scene_id.strip():
-            sid_words = set(scene_id.lower().replace("_", " ").split())
-            if len(sid_words) > 1 and sid_words <= file_words:  # subset exacto
-                score += 50.0
-            elif sid_words & file_words:  # match parcial del ID
-                score += 25.0
-
-        # ── Nivel 1 (+10/palabra): Palabras de la ESCENA ESPECÍFICA ──────────
-        # La narrativa local es la ley. Esto era Nivel 5 con +1 → ahora es el rey.
-        scene_matches = query_words & file_words
-        score += float(len(scene_matches)) * 10.0
-
-        # ── Nivel 2 (+5): Arquetipo de la frase ──────────────────────────────
-        if archetype_cat and archetype_cat != "cta_portal":
-            for kw in _transit_triads_by_cat.get(archetype_cat, []):
-                twords = set(kw.lower().split())
-                if twords & file_words:
-                    score += 5.0
-        if archetype_cat == "cta_portal":
-            if _CTA_KEYWORDS & file_words:
-                score += 5.0
-
-        # ── Nivel 3 (+2): Conceptos del tránsito (ahora solo contexto/fallback) ──
-        # Reducido de +3 a +2, y ya NO es el nivel dominante.
-        for concept in _transit_emotional:
-            cwords = set(concept.lower().split())
-            if cwords & file_words:
-                score += 2.0
-        # Triadas generales del tránsito (fallback)
-        for _cat_triads in _transit_triads_by_cat.values():
-            for triad in _cat_triads:
-                twords = set(triad.lower().split())
-                if twords & file_words:
-                    score += 1.0  # Reducido: solo guía suave
-
-        # ── Penalización cross-render: usado en las últimas 72h (-50) ─────────
-        # Blanda: permite reuso si la bóveda está vacía, pero prioriza material fresco.
-        if _is_recently_used(f, _uso_history):
-            score += PENALIZACION_RECIENTE
-
-        # ── Penalización in-render: ya usado en ESTE video (-100) ─────────────
-        if f in _assets_usados_en_render:
-            score -= 100.0
-
-        # ── Penalización absoluta a basura/mundano (-1000) ─────────────
-        garbage_words = {"baby", "babies", "bebé", "niño", "niña", "kid", "kids", "child", "children", "toddler", "family", "funny", "dog", "cat", "pet", "home", "casual", "cute", "meme", "vlog"}
-        if garbage_words & file_words:
-            score -= 1000.0
-
-        return score
-
-    for s_idx in range(num_scenes):
-        scene_groups[s_idx] = []
-
-        # Determinar qué frase del guión corresponde a esta escena (0-4)
-        phrase_idx = min(int(s_idx * N_PHRASES / num_scenes), N_PHRASES - 1)
-        archetype_cat = PHRASE_TO_ARCHETYPE.get(phrase_idx, "")
-
-        # Matching semántico: rotar entre los conceptos disponibles (raw_queries)
-        if raw_queries:
-            query = raw_queries[s_idx % len(raw_queries)]
-        else:
-            query = ""
-
-        # Extraer scene_id: si el query tiene formato "[id] descripcion", extraemos el id
-        scene_id = ""
-        _q_stripped = query.strip()
-        if _q_stripped.startswith("["):
-            _bracket_end = _q_stripped.find("]")
-            if _bracket_end > 0:
-                scene_id = _q_stripped[1:_bracket_end].strip()
-                query = _q_stripped[_bracket_end+1:].strip()
-
-        query_words = set(query.lower().replace("_", " ").split())
-
-        # Ordenar por score NARRATIVO — la escena específica manda (Diagnóstico v5)
-        best_files = sorted(
-            valid_vault_files,
-            key=lambda f: score_file_v2(f, query_words, archetype_cat, scene_id),
-            reverse=True
-        )
-
-        # Tomar los primeros MAX_CLIPS_PER_SCENE únicos no usados EN ESTE render
-        # Más clips en el grupo = el auto-fill de frases largas tiene material de donde elegir
-        selected_files = []
-        for f in best_files:
-            if f not in _assets_usados_en_render:
-                selected_files.append(f)
-                if len(selected_files) >= MAX_CLIPS_PER_SCENE:
-                    break
-        # Fallback: si todos ya fueron usados en este render, tomar los mejores rankeados
-        if not selected_files:
-            selected_files = best_files[:MAX_CLIPS_PER_SCENE]
-
-        for main_f in selected_files:
-            _mark_used(main_f, _uso_history)
-            main_type = "video" if main_f.endswith(".mp4") else "image"
-            scene_groups[s_idx].append((main_f, main_type, False))
-
-        final_queries.append(query)
-        
-    queries = final_queries
-    
-    # Calcular los tiempos
-    # Para cada frase, calculamos su duración total (hasta el inicio de la siguiente)
-    final_bg_files = []
-    final_queries = []
-    
-    # Map cada Whisper chunk i a un scene index (s_idx)
-    s_idx_list = []
-    num_scenes = max(scene_groups.keys()) + 1 if scene_groups else 1
-    for i in range(M):
-        s_idx = min(int(i * num_scenes / M), num_scenes - 1)
-        s_idx_list.append(s_idx)
-        
-    for i in range(M):
-        s = raw_dialogues[i][0]
-        if i == 0: s = 0.0 # El primer clip arranca siempre en 0
-        
-        e = raw_dialogues[i+1][0] if i < M - 1 else duracion_total
-        phrase_dur = e - s
-        
-        s_idx = s_idx_list[i]
-        if s_idx not in scene_groups or not scene_groups[s_idx]:
-            continue # Skip si no hay imagenes en este grupo
-            
-        # Distribuir las imágenes de la escena entre los chunks que la comparten
-        chunks_sharing = [j for j in range(M) if s_idx_list[j] == s_idx]
-        num_chunks = len(chunks_sharing)
-        pos = chunks_sharing.index(i)
-        
-        group = scene_groups[s_idx]
-        K_total = len(group)
-        
-        # Asignar un subconjunto de imágenes a este chunk específico
-        imgs_per_chunk = max(1, K_total // num_chunks)
-        start_idx = pos * imgs_per_chunk
-        end_idx = start_idx + imgs_per_chunk
-        
-        if pos == num_chunks - 1:
-            end_idx = K_total # El último chunk se lleva el resto
-            
-        my_images = group[start_idx:end_idx]
-        if not my_images: 
-            my_images = group # fallback seguro
-            
-        K = len(my_images)
-        
-        if K == 1:
-            dialogues.append((s, e))
-            final_bg_files.append(my_images[0])
-            final_queries.append(queries[s_idx])
-        else:
-            # Edición Astrológica: calcular cuántas imágenes NECESITA esta frase.
-            # Regla de densidad: corte cada MAX_IMAGE_DUR segundos como máximo.
-            # Si phrase_dur=12s y MAX_IMAGE_DUR=3s → necesitamos mínimo 4 clips.
-            clips_needed = max(1, int(phrase_dur / MAX_IMAGE_DUR) + 1)
-            max_fitting = max(1, int(phrase_dur / MIN_CLIP_DUR))
-            effective_K = min(K, min(clips_needed, max_fitting))
-
-            # ── AUTO-FILL: si la frase necesita más clips de los que tiene el grupo ──
-            # Pedir más clips a la bóveda con el mismo query semántico de la escena.
-            if clips_needed > K and len(valid_vault_files) > K:
-                _q_words_local = set(queries[s_idx].lower().replace("_", " ").split())
-                _extra_candidates = sorted(
-                    valid_vault_files,
-                    key=lambda ff: score_file_v2(ff, _q_words_local,
-                                                  PHRASE_TO_ARCHETYPE.get(
-                                                      min(int(s_idx * N_PHRASES / num_scenes), N_PHRASES - 1), ""
-                                                  )),
-                    reverse=True
-                )
-                _extra_added = 0
-                for _ef in _extra_candidates:
-                    if _extra_added >= (clips_needed - K):
-                        break
-                    if _ef not in _assets_usados_en_render and _ef not in [x[0] for x in my_images]:
-                        _ef_type = "video" if _ef.endswith(".mp4") else "image"
-                        my_images.append((_ef, _ef_type, False))
-                        _mark_used(_ef, _uso_history)
-                        _extra_added += 1
-                K = len(my_images)
-                effective_K = min(K, clips_needed)
-
-            normals = my_images[:effective_K]
-            effective_K = len(normals)
-
-            # Distribuir equitativamente — sin cap de MAX_IMAGE_DUR en la asignación inicial:
-            # el cap se aplica clip a clip para que el sobrante se redistribuya en el siguiente.
-            dur_per_img = phrase_dur / effective_K
-            curr_time = s
-
-            for j, asset in enumerate(normals):
-                bg_path_j, bg_type_j, _ = asset
-                cap = MAX_VIDEO_DUR if bg_type_j == "video" else MAX_IMAGE_DUR
-
-                if j == effective_K - 1:
-                    # Último slot: absorbe remanente (mantiene audio sync)
-                    dur = e - curr_time
-                    # Si el remanente es exageradamente largo (>cap*1.5), partir en dos
-                    if dur > cap * 1.5 and len(normals) < MAX_CLIPS_PER_SCENE:
-                        # Reciclar el mismo asset una vez más para llenar el hueco
-                        mid = curr_time + cap
-                        dialogues.append((curr_time, mid))
-                        final_bg_files.append(asset)
-                        final_queries.append(queries[s_idx])
-                        curr_time = mid
-                        dur = e - curr_time
-                    
-                    dialogues.append((curr_time, curr_time + dur))
-                    final_bg_files.append(asset)
-                    final_queries.append(queries[s_idx])
-                    curr_time += dur
-                else:
-                    dur = min(dur_per_img, cap)
-                    dialogues.append((curr_time, curr_time + dur))
-                    final_bg_files.append(asset)
-                    final_queries.append(queries[s_idx])
-                    curr_time += dur
-
-    if dialogues and dialogues[-1][1] < duracion_total:
-        last_s, last_e = dialogues[-1]
-        dialogues[-1] = (last_s, duracion_total)
-
-    bg_files = final_bg_files
-    queries = final_queries
-    N = len(bg_files)
-    
-    print(f"\\n🎞️  {M} frases mapeadas a {N} cortes dinámicos psicológicos")
-    
-    # Tiempos de transición (inicio de cada escena desde la 2ª) para chimes
-    transition_times = [dialogues[i][0] for i in range(1, len(dialogues))]
-
-
-    n_videos = sum(1 for _, t, _ in bg_files if t == "video")
-    n_imgs   = len(bg_files) - n_videos
-
-    print(f"   {n_videos} videos + {n_imgs} imágenes | Color grading astrológico | Vignette")
-
-    # ── 5. 2-Pass FFmpeg Builder ──────────────────────────────────────────────
-    print(f"\n⚡ Procesando {N} clips de forma acelerada (2-Pass)...")
-
-    temp_dir = os.path.join(prod_dir, "temp_clips")
-    os.makedirs(temp_dir, exist_ok=True)
-    
-    clip_files = []
-    calculated_clip_durs = []
-    glitch_timestamps = []
-
-    for idx, ((bg_path, bg_type, is_g), query) in enumerate(zip(bg_files, queries)):
-        tipo_icon = "📹" if bg_type == "video" else "🖼️ "
-        print(f"   [{idx+1}/{N}] Renderizando {tipo_icon} clip {idx:02d}...")
-
-        start_sec, end_sec = dialogues[idx]
-        clip_dur = (end_sec - start_sec) + FADE_DUR
-            
-        if idx == N - 1:
-            clip_dur += 2.0
-            
-        calculated_clip_durs.append(clip_dur)
-
-        # Pass 1: Renderizar clip individual con sus filtros exactos
-        # Usamos .mkv en lugar de .ts para compatibilidad con xfade en Pass 2
-        clip_out = os.path.join(temp_dir, f"clip_{idx:02d}.mkv")
-        
-        cmd = ["ffmpeg", "-y"]
-        if bg_type == "image":
-            cmd.extend(["-loop", "1", "-t", f"{clip_dur:.4f}", "-i", bg_path])
-            f_scale = _smart_movement_filter(idx, clip_dur, query)
-        else:
-            # Todos los videos deben tener stream_loop -1 para no quedar cortos por redondos matemáticos
-            cmd.extend(["-stream_loop", "-1", "-t", f"{clip_dur:.4f}", "-i", bg_path])
-            f_scale = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920"
-
-        filters = [f_scale]
-        filters.append(_color_filter(aspect))
-        filters.append("vignette=angle=PI/4")
-        
-        sym = _symbol_filter(query)
-        if sym:
-            filters.append(sym)
-            
-        filters.append(f"fps={FPS},format=yuv420p,setsar=1")
-        
-        # Quemamos el subtítulo global con offset de tiempo (setpts) para que lea la porción correcta del ASS
-        if ass_path and os.path.exists(ass_path):
-            esc = _escape_filter(ass_path)
-            filters.append(f"setpts=PTS+({start_sec}/TB),ass='{esc}',setpts=PTS-({start_sec}/TB)")
-        
-        chain = ",".join(filters)
-        
-        cmd.extend([
-            "-vf", chain,
-            "-c:v", "libx264", "-crf", "23",
-            "-preset", "veryfast",
-            "-aspect", "9:16",
-            "-x264-params", "bframes=0:keyint=25", # Previene marcos negros en la concatenación de .ts
-            clip_out
-        ])
-        
-        r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        if r.returncode != 0:
-             print(f"❌ Error renderizando clip {idx:02d}.")
-             return None
-        clip_files.append(clip_out)
-
-    # Diseño Sonoro Empático (Capa Musical + SFX)
-    sys.path.append(os.path.dirname(__file__))
-    from audio_mixer import mix_frequency_layer
-    guion_text = ""
-    script_path = os.path.join(prod_dir, "guion.txt")
-    if os.path.exists(script_path):
-        with open(script_path, "r", encoding="utf-8") as f:
-            guion_text = f.read().strip()
-    words_json_path = mp3_path.replace(".mp3", "_words.json")
-    mixed_path = mix_frequency_layer(mp3_path, guion_text, words_json_path, aspect, glitch_timestamps)
-
-    print("\n🎬 Ejecutando ensamble final con crossfades astrológicos (xfade {XFADE_DUR}s)...")
-
-    # Pass 2: Concat con xfade real — crossfade de 1s entre TODOS los clips
-    # El crossfade simultáneo evita frames negros y funde las imágenes suavemente.
-    xf_name, _xf_base = _get_transition(aspect, queries[0] if queries else "")
-    n_clips = len(clip_files)
-
-    if n_clips == 1:
-        # Clip único: no hay transición, pass directo
-        concat_cmd = [
-            "ffmpeg", "-y",
-            "-i", clip_files[0],
-            "-i", mixed_path,
-            "-c:v", "copy",
-            "-c:a", "aac", "-b:a", "192k",
-            "-map", "0:v:0", "-map", "1:a:0",
-            "-shortest", out_video
-        ]
-    else:
-        # Construir filter_complex con xfade encadenado entre todos los clips
-        # Usamos las duraciones calculadas matemáticamente en Pass 1 para precisión Gapless
-        clip_durs = calculated_clip_durs
-
-        # xfade siempre a XFADE_DUR (1.0s) — crossfade simultáneo que funde suavemente
-        filter_parts = []
-        last_label = "[0:v]"
-        cumulative = 0.0
-        for i in range(1, n_clips):
-            # La transición de cada clip puede tener override oscuro (fadeblack)
-            # pero la DURACIÓN siempre es XFADE_DUR para mantener coherencia editorial
-            q_i = queries[i] if i < len(queries) else ""
-            xf_i, _ = _get_transition(aspect, q_i)  # solo usamos el tipo, no la dur base
-            xf_d_i = XFADE_DUR  # duración fija: 1.0s siempre
-            offset = max(0.05, cumulative + clip_durs[i - 1] - xf_d_i)
-            out_label = f"[v{i}]" if i < n_clips - 1 else "[vout]"
-            filter_parts.append(
-                f"{last_label}[{i}:v]xfade=transition={xf_i}:duration={xf_d_i:.3f}:offset={offset:.4f}{out_label}"
-            )
-            last_label = out_label
-            cumulative += clip_durs[i - 1] - xf_d_i
-
-        fc = "; ".join(filter_parts)
-
-        # Construir inputs
-        concat_cmd = ["ffmpeg", "-y"]
-        for cf in clip_files:
-            concat_cmd.extend(["-i", cf])
-        concat_cmd.extend(["-i", mixed_path])
-        concat_cmd.extend([
-            "-filter_complex", fc,
-            "-map", "[vout]",
-            "-map", f"{n_clips}:a:0",
-            "-c:v", "libx264", "-crf", "20", "-preset", "veryfast",
-            "-pix_fmt", "yuv420p",   # forzar pixel format uniforme → evita errores xfade
-            "-c:a", "aac", "-b:a", "192k",
-            "-shortest",
-            out_video
-        ])
-        print(f"   \u2728 Crossfade {xf_i} {XFADE_DUR}s × {n_clips-1} transiciones [{aspect.upper()}]")
-
-    res = subprocess.run(concat_cmd, capture_output=True, text=True, cwd=temp_dir)
-
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, stdin=subprocess.DEVNULL)
     if res.returncode != 0:
-        print(f"⚠️  xfade falló (posible incompatibilidad de pixel format). Reintentando con concat simple...")
-        # Fallback: concat clásico sin transición si xfade falla
-        list_path = os.path.join(temp_dir, "clips.txt")
-        with open(list_path, "w") as lf:
-            for c in clip_files:
-                lf.write(f"file '{os.path.basename(c)}'\n")
-        fallback_cmd = [
-            "ffmpeg", "-y",
-            "-f", "concat", "-safe", "0",
-            "-i", list_path,
-            "-i", mixed_path,
-            "-c:v", "copy",
-            "-c:a", "aac", "-b:a", "192k",
-            "-map", "0:v:0", "-map", "1:a:0",
-            "-shortest", out_video
-        ]
-        res = subprocess.run(fallback_cmd, capture_output=True, text=True, cwd=temp_dir)
-        if res.returncode != 0:
-            print(f"❌ FFmpeg error en concat:\n{res.stderr[-3000:]}")
-            return None
+        print(f"❌ FFmpeg error:\n{res.stderr[-3000:]}")
+        if parcial.exists():
+            parcial.unlink()
+        return None
 
-    print(f"\n✅ ¡Video listo! → {out_video}")
-    
-    # ── 6. Persistir historial de uso de assets ──────────────────────────────
-    _save_history(_uso_history)
-    print(f"💾 Historial de assets actualizado ({len(_uso_history)} entradas).")
+    os.replace(parcial, destino)
+    print(f"\n✅ ¡Video listo! → {destino}")
+    return str(destino)
 
-    # ── 7. Copia a Bóveda Automática ───────────────────────────────────────────
-    _copy_to_vault(evento_name, out_video)
-    
-    return out_video
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Uso: python video_maker.py <Nombre_Evento>")
-    else:
-        create_video(sys.argv[1])
+    create_video(sys.argv[1] if len(sys.argv) > 1 else None)

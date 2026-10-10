@@ -4,6 +4,9 @@ from google import genai
 from google.genai import types
 from groq import Groq
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 # Custom Exception
 class GeminiAPIError(Exception): pass
