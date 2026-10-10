@@ -313,10 +313,18 @@
 - [x] **Plutón en Géminis** (Transformación y Sombras bajo Dualidad Mental)
   - *Abstracto*: `arte_propio_pluton_geminis_...`
   - *Emocional/Sátira*: `arte_propio_emocion_pluton_geminis_...`
-- [ ] **Urano en Libra** (Rebeldía y Electricidad bajo Armonía Estética)
-- [ ] **Nodos Lunares en Acuario** (Destino Kármico bajo Visión Futurista)
-- [ ] **Júpiter en Géminis** (Expansión y Suerte bajo Dualidad Mental)
-- [ ] **Saturno en Escorpio** (Límites y Karma bajo Intensidad Oscura)
+- [x] **Urano en Libra** (Rebeldía y Electricidad bajo Armonía Estética)
+  - *Abstracto*: `arte_propio_urano_libra_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_libra_...`
+- [x] **Nodos Lunares en Acuario** (Destino Kármico bajo Visión Futurista)
+  - *Abstracto*: `arte_propio_nodos_acuario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_nodos_acuario_...`
+- [x] **Júpiter en Géminis** (Expansión y Suerte bajo Dualidad Mental)
+  - *Abstracto*: `arte_propio_jupiter_geminis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_jupiter_geminis_...`
+- [x] **Saturno en Escorpio** (Límites y Karma bajo Intensidad Oscura)
+  - *Abstracto*: `arte_propio_saturno_escorpio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_saturno_escorpio_...`
 - [ ] **Marte en Géminis** (Acción y Fuego bajo Dualidad Mental)
 - [ ] **Urano Cuadratura Quirón** (Fricción y Conflicto entre Rebeldía y Electricidad y Herida Inconsciente)
 - [ ] **Urano Sextil Venus** (Oportunidad Creativa entre Rebeldía y Electricidad y Amor y Estética)
