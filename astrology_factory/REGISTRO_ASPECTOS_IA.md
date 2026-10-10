@@ -325,8 +325,12 @@
 - [x] **Saturno en Escorpio** (Límites y Karma bajo Intensidad Oscura)
   - *Abstracto*: `arte_propio_saturno_escorpio_...`
   - *Emocional/Sátira*: `arte_propio_emocion_saturno_escorpio_...`
-- [ ] **Marte en Géminis** (Acción y Fuego bajo Dualidad Mental)
-- [ ] **Urano Cuadratura Quirón** (Fricción y Conflicto entre Rebeldía y Electricidad y Herida Inconsciente)
+- [x] **Marte en Géminis** (Acción y Fuego bajo Dualidad Mental)
+  - *Abstracto*: `arte_propio_marte_geminis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_marte_geminis_...`
+- [x] **Urano Cuadratura Quirón** (Fricción y Conflicto entre Rebeldía y Electricidad y Herida Inconsciente)
+  - *Abstracto*: `arte_propio_urano_quiron_cuadratura_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_quiron_cuadratura_...`
 - [ ] **Urano Sextil Venus** (Oportunidad Creativa entre Rebeldía y Electricidad y Amor y Estética)
 - [ ] **Plutón en Aries** (Transformación y Sombras bajo Inicios Explosivos)
 - [ ] **Saturno en Acuario** (Límites y Karma bajo Visión Futurista)
