@@ -166,10 +166,18 @@
 - [x] **Quirón en Tauro** (Herida Inconsciente bajo Abundancia Terrenal)
   - *Abstracto*: `arte_propio_quiron_tauro_...`
   - *Emocional/Sátira*: `arte_propio_emocion_quiron_tauro_...`
-- [ ] **Lilith en Escorpio** (Poder Oculto y Tabúes bajo Intensidad Oscura)
-- [ ] **Urano Trígono Júpiter** (Flujo Armónico entre Rebeldía y Electricidad y Expansión y Suerte)
-- [ ] **Plutón Conjunción Luna** (Fusión Intensa entre Transformación y Sombras y Emociones y Refugio)
-- [ ] **Lilith Oposición Venus** (Tensión y Espejo entre Poder Oculto y Tabúes y Amor y Estética)
+- [x] **Lilith en Escorpio** (Poder Oculto y Tabúes bajo Intensidad Oscura)
+  - *Abstracto*: `arte_propio_lilith_escorpio_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_lilith_escorpio_...`
+- [x] **Urano Trígono Júpiter** (Flujo Armónico entre Rebeldía y Electricidad y Expansión y Suerte)
+  - *Abstracto*: `arte_propio_urano_jupiter_trigono_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_jupiter_trigono_...`
+- [x] **Plutón Conjunción Luna** (Fusión Intensa entre Transformación y Sombras y Emociones y Refugio)
+  - *Abstracto*: `arte_propio_pluton_luna_conjuncion_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_luna_conjuncion_...`
+- [x] **Lilith Oposición Venus** (Tensión y Espejo entre Poder Oculto y Tabúes y Amor y Estética)
+  - *Abstracto*: `arte_propio_lilith_venus_oposicion_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_lilith_venus_oposicion_...`
 - [ ] **Sol Sextil Venus** (Oportunidad Creativa entre Identidad y Ego y Amor y Estética)
 - [ ] **Neptuno Trígono Sol** (Flujo Armónico entre Sueños y Niebla y Identidad y Ego)
 - [ ] **Urano Conjunción Júpiter** (Fusión Intensa entre Rebeldía y Electricidad y Expansión y Suerte)
