@@ -184,12 +184,24 @@
 - [x] **Neptuno Trígono Sol** (Flujo Armónico entre Sueños y Niebla y Identidad y Ego)
   - *Abstracto*: `arte_propio_neptuno_sol_trigono_...`
   - *Emocional/Sátira*: `arte_propio_emocion_neptuno_sol_trigono_...`
-- [ ] **Urano Conjunción Júpiter** (Fusión Intensa entre Rebeldía y Electricidad y Expansión y Suerte)
-- [ ] **Quirón Cuadratura Plutón** (Fricción y Conflicto entre Herida Inconsciente y Transformación y Sombras)
-- [ ] **Plutón Oposición Saturno** (Tensión y Espejo entre Transformación y Sombras y Límites y Karma)
-- [ ] **Luna Oposición Mercurio** (Tensión y Espejo entre Emociones y Refugio y Mente y Velocidad)
-- [ ] **Saturno en Piscis** (Límites y Karma bajo Océano Místico)
-- [ ] **Quirón en Sagitario** (Herida Inconsciente bajo Búsqueda de Verdad)
+- [x] **Urano Conjunción Júpiter** (Fusión Intensa entre Rebeldía y Electricidad y Expansión y Suerte)
+  - *Abstracto*: `arte_propio_urano_jupiter_conjuncion_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_urano_jupiter_conjuncion_...`
+- [x] **Quirón Cuadratura Plutón** (Fricción y Conflicto entre Herida Inconsciente y Transformación y Sombras)
+  - *Abstracto*: `arte_propio_quiron_pluton_cuadratura_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_pluton_cuadratura_...`
+- [x] **Plutón Oposición Saturno** (Tensión y Espejo entre Transformación y Sombras y Límites y Karma)
+  - *Abstracto*: `arte_propio_pluton_saturno_oposicion_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_pluton_saturno_oposicion_...`
+- [x] **Luna Oposición Mercurio** (Tensión y Espejo entre Emociones y Refugio y Mente y Velocidad)
+  - *Abstracto*: `arte_propio_luna_mercurio_oposicion_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_luna_mercurio_oposicion_...`
+- [x] **Saturno en Piscis** (Límites y Karma bajo Océano Místico)
+  - *Abstracto*: `arte_propio_saturno_piscis_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_saturno_piscis_...`
+- [x] **Quirón en Sagitario** (Herida Inconsciente bajo Búsqueda de Verdad)
+  - *Abstracto*: `arte_propio_quiron_sagitario_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_quiron_sagitario_...`
 - [ ] **Plutón en Piscis** (Transformación y Sombras bajo Océano Místico)
 - [ ] **Júpiter en Cáncer** (Expansión y Suerte bajo Aguas Maternas)
 - [ ] **Mercurio en Aries** (Mente y Velocidad bajo Inicios Explosivos)
