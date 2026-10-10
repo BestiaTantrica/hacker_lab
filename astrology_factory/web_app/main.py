@@ -242,7 +242,7 @@ async def tiktok_login():
     redirect_uri = os.environ.get("TIKTOK_REDIRECT_URI")
     
     state = "tiktok_admin_123"
-    scopes = "user.info.basic,video.upload"
+    scopes = "user.info.basic,video.publish,video.upload"
     
     auth_url = (
         "https://www.tiktok.com/v2/auth/authorize/?"
