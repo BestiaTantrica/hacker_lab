@@ -178,8 +178,12 @@
 - [x] **Lilith Oposición Venus** (Tensión y Espejo entre Poder Oculto y Tabúes y Amor y Estética)
   - *Abstracto*: `arte_propio_lilith_venus_oposicion_...`
   - *Emocional/Sátira*: `arte_propio_emocion_lilith_venus_oposicion_...`
-- [ ] **Sol Sextil Venus** (Oportunidad Creativa entre Identidad y Ego y Amor y Estética)
-- [ ] **Neptuno Trígono Sol** (Flujo Armónico entre Sueños y Niebla y Identidad y Ego)
+- [x] **Sol Sextil Venus** (Oportunidad Creativa entre Identidad y Ego y Amor y Estética)
+  - *Abstracto*: `arte_propio_sol_venus_sextil_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_sol_venus_sextil_...`
+- [x] **Neptuno Trígono Sol** (Flujo Armónico entre Sueños y Niebla y Identidad y Ego)
+  - *Abstracto*: `arte_propio_neptuno_sol_trigono_...`
+  - *Emocional/Sátira*: `arte_propio_emocion_neptuno_sol_trigono_...`
 - [ ] **Urano Conjunción Júpiter** (Fusión Intensa entre Rebeldía y Electricidad y Expansión y Suerte)
 - [ ] **Quirón Cuadratura Plutón** (Fricción y Conflicto entre Herida Inconsciente y Transformación y Sombras)
 - [ ] **Plutón Oposición Saturno** (Tensión y Espejo entre Transformación y Sombras y Límites y Karma)
