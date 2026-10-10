@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vincular TikTok</title>
+    <link rel="stylesheet" href="/static/index.css">
+    <style>
+        body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .admin-card {
+            background-color: rgba(31, 40, 51, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #00f2fe;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn-tiktok {
+            background: linear-gradient(90deg, #ff0050, #00f2fe);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-tiktok:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 80, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <h1>Vincular Cuenta (Admin)</h1>
+        <p>Esta página es de uso exclusivo para el administrador. Haz clic en el botón inferior para autorizar a la Factoría Astrológica a subir videos de manera automática a tu cuenta de TikTok.</p>
+        <a href="/api/tiktok/login" class="btn-tiktok">Autorizar Auto-Publicación con TikTok</a>
+    </div>
+</body>
+</html>
