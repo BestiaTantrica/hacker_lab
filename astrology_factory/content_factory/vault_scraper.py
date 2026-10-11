@@ -141,12 +141,14 @@ def scraper_loop(target_category=None):
             downloads_done = 0
 
             # 1. Bajar Imágenes (Pixabay)
-            target_images = 7
-            target_videos = 3
+            target_images = 4
+            target_videos = 6
+            images_done = 0
+            videos_done = 0
             
             images = search_pixabay_images(concept, per_page=15)
             for img in images:
-                if downloads_done >= target_images: break
+                if images_done >= target_images: break
                 i_id = f"pix_i_{img['id']}"
                 if i_id in registry: continue
                 
@@ -161,15 +163,15 @@ def scraper_loop(target_category=None):
                     print(f"   ↓ Descargando foto: {os.path.basename(dest)}...", flush=True)
                     if download_file(url, dest):
                         print(f"   ✅ Foto guardada.")
-                        downloads_done += 1
+                        images_done += 1
                         registry.add(i_id)
                         save_registry(registry)
                         time.sleep(1)
 
             # 2. Bajar Videos (Pexels)
-            videos = search_pexels_videos(concept, per_page=10)
+            videos = search_pexels_videos(concept, per_page=15)
             for v in videos:
-                if downloads_done >= (target_images + target_videos): break
+                if videos_done >= target_videos: break
                 v_id = f"pex_v_{v['id']}"
                 if v_id in registry: continue
                 
@@ -185,10 +187,12 @@ def scraper_loop(target_category=None):
                     print(f"   ↓ Descargando video: {os.path.basename(dest)}...", flush=True)
                     if download_file(url, dest):
                         print(f"   ✅ Video guardado.")
-                        downloads_done += 1
+                        videos_done += 1
                         registry.add(v_id)
                         save_registry(registry)
                         time.sleep(1)
+
+            downloads_done = images_done + videos_done
 
             # 3. Bajar Glitches Específicos para este concepto
             glitch_queries = [f"{concept} glitch", f"{concept} broken", f"{concept} distorted"]
