@@ -16,38 +16,43 @@ Este documento detalla el flujo de trabajo manual para tomar las imágenes está
 
 ---
 
-## 2. Herramientas y Casos de Uso (Free Tiers)
+## 2. Herramientas y Políticas de Créditos Gratuitos
 
-### A. Hailuo AI (MiniMax) / Kling AI
-**Especialidad:** Rostros humanos, realismo y coherencia física. Son las mejores IAs para mantener la cara del personaje sin que se deforme.
-- **Caso de uso en el Proyecto:** Usar para las imágenes de la carpeta `11_Humanos_Emociones` (Los retratos cinemáticos).
-- **Prompt Recomendado:** *"Subtle cinematic movement, deep breathing, wind gently blowing hair, highly emotional, steady camera, 8k resolution."*
-- **Tip:** Evita pedir que el personaje hable o corra. Los movimientos sutiles (parpadear, respirar, girar un poco la cabeza) dan el efecto esotérico perfecto.
+### 🟢 Las que se RENUEVAN DIARIAMENTE (Uso Continuo):
+1. **Kling AI ([klingai.com](https://klingai.com/)):**
+   - **Créditos:** **66 créditos diarios** gratuitos (se resetean cada 24 hs, no acumulables).
+   - **Rendimiento:** Alcanza para unas **6 generaciones diarias** (10 créditos c/u).
+   - **Especialidad:** Rostros, coherencia física y retratos (`11_Humanos_Emociones`). Es el reemplazo directo y superior de Hailuo.
+   - **Prompt Recomendado:** *"Subtle cinematic movement, deep slow breathing, dark wind gently moving hair, intense piercing gaze, steady camera, 8k cinematic realism."*
 
-### B. Pika Labs
-**Especialidad:** Control específico de zonas (Motion Brush).
-- **Caso de uso en el Proyecto:** Excelente para imágenes donde queremos que el personaje se quede quieto pero el entorno se mueva (ej. El océano detrás del Sol en Piscis, o el fuego de Aries).
-- **Cómo usar:** 
-  1. Sube la imagen.
-  2. Selecciona la herramienta "Motion Brush".
-  3. Pinta solo el agua, el humo o el fuego.
-  4. En los parámetros, dale fuerza al movimiento del fluido.
-- **Prompt Recomendado:** *"Flowing neon fluid, glowing embers rising, seamless looping energy, mystical."*
+2. **PixVerse ([pixverse.ai](https://pixverse.ai/)):**
+   - **Créditos:** **60 créditos diarios** gratuitos (se resetean a las 00:00 UTC, no acumulables).
+   - **Rendimiento:** Permite unas 3-5 animaciones diarias.
+   - **Especialidad:** Efectos de luz, partículas, destellos, velocidad y magia (`07_Espacio_Galaxias`, `14_Glitch_VFX`).
+   - **Prompt Recomendado:** *"Electric sparks drifting, glowing aura pulsing slowly, dynamic volumetric light rays, smooth cinematic motion."*
 
-### C. Luma Dream Machine
-**Especialidad:** Movimientos de cámara dinámicos, paisajes inmersivos y transiciones de entornos.
-- **Caso de uso en el Proyecto:** Para imágenes de `13_Abstracto_Fluidos` o montañas/paisajes (ej. Nodos en Capricornio).
-- **Prompt Recomendado:** *"Slow cinematic push in, mystical fog rolling, glowing ethereal light, dark atmospheric background."*
-- **Tip:** Luma es excelente para hacer zooms que te meten "dentro" de la carta astral o la geometría sagrada.
+3. **Luma Dream Machine ([lumalabs.ai/dream-machine](https://lumalabs.ai/dream-machine)):**
+   - **Créditos:** Cupo de generaciones diarias gratuitas (con cola de espera estándar).
+   - **Especialidad:** Zooms inmersivos, niebla, agua y texturas fluidas (`13_Abstracto_Fluidos`, `10_Naturaleza_Paisajes`).
+   - **Prompt Recomendado:** *"Slow cinematic push in, mystical fog rolling, glowing ethereal light, dark atmospheric background."*
 
-### D. PixVerse
-**Especialidad:** Animación rápida con soporte de sujetos específicos. Es genial para pruebas rápidas si te quedas sin créditos en las otras.
-- **Caso de uso en el Proyecto:** Para fondos mágicos, galaxias girando o estrellas brillantes.
-- **Prompt Recomendado:** *"Stars twinkling, cosmic dust moving slowly, dark mystical space."*
+4. **Vidu AI ([vidu.studio](https://www.vidu.studio/)):**
+   - **Créditos:** Check-in diario con recarga de créditos al iniciar sesión cada día.
+   - **Especialidad:** Transiciones cinemáticas y dinamismo.
 
 ---
 
-## 3. Consideraciones Importantes
+### 🔴 Las de PAQUETE ÚNICO (No renuevan a diario):
+- **Hailuo AI (MiniMax):** Da un bono de bienvenida inicial de uso único (que expira a los pocos días). Una vez consumido, requiere plan de pago o crear otra cuenta.
+- **RunwayML (Gen-2 / Gen-3):** Da 125 créditos fijos por única vez al registrarte y no se renuevan nunca más en la capa gratis.
+- **Pika Labs:** Créditos mensuales limitados o de prueba inicial, no diarios.
 
-*   **Evitar Deformaciones:** Si la IA web deforma la imagen (ej. le salen tres manos o el ojo se derrite), descarta el video. Es preferible usar la imagen fija original con un efecto de zoom en nuestro editor final, a usar un mal video de IA.
-*   **Renovación de Créditos:** Entra a todas estas plataformas con las cuentas gratuitas de tu equipo. Casi todas renuevan créditos de forma diaria o mensual. Quema los créditos diarios rotando entre las 5 IAs mencionadas.
+---
+
+## 3. Estrategia de Cosecha Diaria ("Daily Farm")
+
+Para no gastar un solo centavo y alimentar la Bóveda todos los días:
+1. **Entrar primero a Kling AI:** Gastar los 66 créditos diarios animando los retratos humanos (`11_Humanos_Emociones`).
+2. **Entrar a PixVerse:** Gastar los 60 créditos diarios en texturas de energía y espacio (`13_Abstracto_Fluidos` / `07_Espacio_Galaxias`).
+3. **Entrar a Luma Dream Machine:** Mandar a generar 2 o 3 tomas con niebla o paisajes mientras trabajas en otra cosa.
+4. Si necesitas usar Hailuo de nuevo, se requiere registrarse con otra cuenta de correo debido a que su política es de paquete único.
