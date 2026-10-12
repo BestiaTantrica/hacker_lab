@@ -56,3 +56,13 @@ Para no gastar un solo centavo y alimentar la Bóveda todos los días:
 2. **Entrar a PixVerse:** Gastar los 60 créditos diarios en texturas de energía y espacio (`13_Abstracto_Fluidos` / `07_Espacio_Galaxias`).
 3. **Entrar a Luma Dream Machine:** Mandar a generar 2 o 3 tomas con niebla o paisajes mientras trabajas en otra cosa.
 4. Si necesitas usar Hailuo de nuevo, se requiere registrarse con otra cuenta de correo debido a que su política es de paquete único.
+
+---
+
+## 4. Aislamiento de Cuentas Paralelas en Navegador
+
+- En Google Chrome, **todas las ventanas de incógnito comparten la misma sesión y cookies**. Intentar abrir dos ventanas de incógnito para dos cuentas distintas causará colisión de sesiones y deslogueos.
+- Para operar 2 a 4 cuentas en paralelo sin interferencias:
+  1. Usar **Perfiles de Chrome independientes** (icono de perfil arriba a la derecha -> *"Añadir perfil"*). Cada perfil aísla 100% sus cookies y sesiones de Google.
+  2. Alternar con ventanas normales y privadas de navegadores secundarios (Firefox / Brave).
+- Ante el bloqueo temporal de Kling por "Peak Hours" (servidores saturados para cuentas gratuitas), rotar inmediatamente a PixVerse (60 créditos diarios) o Luma Dream Machine.

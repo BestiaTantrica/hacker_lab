@@ -129,5 +129,6 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 
 9. **Roadmap Futuro: Visor Astrológico Interactivo (Web3 / App)**:
    - Se establece en la arquitectura de Astrology Factory la creación futura de un **Visor Web Interactivo** donde el consultante pueda explorar su rueda Bi-Wheel dinámicamente, posando el cursor o tocando cada planeta o aspecto para desplegar la interpretación psicológica en tiempo real.
-
-
+10. **Invariante de Estabilidad en Pipelines y Procesos Activos**:
+    - PROHIBIDO modificar parámetros internos, cuotas, ratios o lógica de scripts operativos (como `vault_scraper.py`, `video_maker.py`, etc.) sin instrucción explícita del usuario.
+    - Cuando el usuario indique "reanudar", "seguir descargando" o "encargarse", el agente debe limitarse a verificar el estado, reiniciar procesos caídos o ejecutar el flujo con la configuración vigente, sin alterar el código fuente.
