@@ -118,3 +118,16 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
      2) `coordenadas_retorno` (latitud, longitud, ciudad y huso horario del lugar donde la persona se encuentra físicamente al momento de su retorno): determinan el Ascendente anual, el Medio Cielo anual y las 12 Casas Placidus de la Revolución Solar.
    - **Regla de Formulario/Producto**: Los formularios de compra y APIs del producto deben solicitar obligatoriamente tanto el lugar de nacimiento como la ciudad de cumpleaños/residencia para ese año. Prohibido asumir que la persona pasa su retorno en la ciudad natal sin confirmación expresa.
 
+7. **Invariante de Renderizado UI (Prevención de Glitches LaTeX)**:
+   - PROHIBIDO el uso del signo de dólar `$` suelto en respuestas de texto o documentación (ej: precios o costos). En la interfaz de Antigravity, el signo de dólar activa el modo de fórmulas matemáticas de LaTeX (`$...$`), colapsando espacios, comprimiendo tipografía en cursiva y provocando parpadeos/saltos de pantalla molestos para el usuario. Escribir siempre: `0 USD`, `costo cero`, `gratuito` o escaparlo estrictamente como `\$`.
+
+8. **Pedagogía Audiovisual en Videos de Revolución Solar (Iluminación Dinámica)**:
+   - En informes escritos (PDF/Markdown), las leyendas de texto explicativas al pie son útiles para lectura pausada. En el formato de **video (10-15 minutos)**, los textos estáticos pequeños son ilegibles y saturan al espectador.
+   - En el renderizador de video (`video_maker_premium.py`), la pedagogía de la rueda Bi-Wheel se implementa mediante **iluminación focalizada y contraste dinámico**:
+     * Al explicar el Ascendente anual (el portal), la rueda atenúa el fondo y hace brillar en cian fluorescente únicamente la flecha marcadora y la Casa Natal sobre la que aterriza.
+     * Al analizar un aspecto mayor (ej: cuadratura u oposición), la rueda entra en penumbra y se ilumina exclusivamente la cuerda que une ambos planetas.
+
+9. **Roadmap Futuro: Visor Astrológico Interactivo (Web3 / App)**:
+   - Se establece en la arquitectura de Astrology Factory la creación futura de un **Visor Web Interactivo** donde el consultante pueda explorar su rueda Bi-Wheel dinámicamente, posando el cursor o tocando cada planeta o aspecto para desplegar la interpretación psicológica en tiempo real.
+
+
