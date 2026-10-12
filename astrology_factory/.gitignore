@@ -12,6 +12,10 @@ produccion/
 ready_for_capcut/
 *.mp3
 *.wav
+*.mp4
+video_full/
+video_preview_full/
+video_test/
 
 # Archivos de caché y python
 __pycache__/
