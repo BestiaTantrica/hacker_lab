@@ -536,57 +536,61 @@ def renderizar_capitulo(
             broll_idx += 1
             foco_rueda = True
 
-    # Construir inputs y filter_complex de FFmpeg
-    inputs = []
-    filter_chains = []
+    # Renderizar cada micro-escena en un fragmento TS temporal (evita saturación de RAM)
+    temp_dir = output_mp4.parent / f"temp_cap_{cap_info['num']}"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    ts_files = []
 
     for i, esc in enumerate(escenas):
-        p = str(esc["path"])
+        ts_out = temp_dir / f"scene_{i:02d}.ts"
+        ts_files.append(ts_out)
         d = esc["duracion"]
+        p = str(esc["path"])
+
         if esc["tipo"] == "imagen":
-            inputs.extend(["-loop", "1", "-t", f"{d:.3f}", "-i", p])
-            # Escalar y centrar a 1920x1080 con fps 25
-            filter_chains.append(
-                f"[{i}:v]scale=1920:1080:force_original_aspect_ratio=decrease,"
-                f"pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x080b12,fps=25,setsar=1[v{i}];"
-            )
+            cmd_scene = [
+                "ffmpeg", "-y",
+                "-loop", "1", "-t", f"{d:.3f}", "-i", p,
+                "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x080b12,fps=25",
+                "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                str(ts_out)
+            ]
         else:
-            inputs.extend(["-t", f"{d:.3f}", "-i", p])
-            # Cortar y reescalar video a 1920x1080
-            filter_chains.append(
-                f"[{i}:v]scale=1920:1080:force_original_aspect_ratio=increase,"
-                f"crop=1920:1080,fps=25,setsar=1[v{i}];"
-            )
+            cmd_scene = [
+                "ffmpeg", "-y",
+                "-t", f"{d:.3f}", "-i", p,
+                "-vf", "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=25",
+                "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                "-an",
+                str(ts_out)
+            ]
 
-    # Input de audio (índice len(escenas))
-    audio_idx = len(escenas)
-    inputs.extend(["-t", f"{duracion_real:.3f}", "-i", str(audio_mp3)])
+        r = subprocess.run(cmd_scene, capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"Error renderizando micro-escena {i}:\n{r.stderr[-400:]}")
 
-    # Concatenar todos los clips visuales
-    n_clips = len(escenas)
-    cadena_concat = "".join(f"[v{i}]" for i in range(n_clips))
-    filter_concat = f"{cadena_concat}concat=n={n_clips}:v=1:a=0[outv]"
+    # Concatenar todos los fragmentos TS y muxear con el audio final
+    concat_list_txt = temp_dir / "scenes_list.txt"
+    with open(concat_list_txt, "w", encoding="utf-8") as f:
+        for ts in ts_files:
+            f.write(f"file '{ts.resolve()}'\n")
 
-    filter_complex = "".join(filter_chains) + filter_concat
-
-    cmd = [
-        "ffmpeg", "-y"
-    ] + inputs + [
-        "-filter_complex", filter_complex,
-        "-map", "[outv]",
-        "-map", f"{audio_idx}:a",
-        "-c:v", "libx264",
-        "-preset", "fast",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-b:a", "192k",
+    cmd_mux = [
+        "ffmpeg", "-y",
+        "-f", "concat", "-safe", "0", "-i", str(concat_list_txt),
+        "-t", f"{duracion_real:.3f}", "-i", str(audio_mp3),
+        "-c:v", "copy",
+        "-c:a", "aac", "-b:a", "192k",
         "-shortest",
         str(output_mp4)
     ]
 
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd_mux, capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"FFmpeg falló al compilar capítulo {cap_info['num']}:\n{r.stderr[-600:]}")
+
+    # Limpiar fragmentos temporales
+    shutil.rmtree(temp_dir, ignore_errors=True)
 
     print(f"   ✅ Capítulo {cap_info['num']} generado: {output_mp4.name} ({_probe_duration(output_mp4):.1f}s)")
     return output_mp4
