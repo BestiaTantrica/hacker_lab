@@ -184,7 +184,20 @@ class GraficadorRuedaAstrologica:
         sujeto = carta_data["sujeto"]
         title_text = f"CARTA ASTRAL: {sujeto['nombre'].upper()}\n{sujeto['fecha_hora_local']} hs | Lat: {sujeto['latitud']}° Lon: {sujeto['longitud']}°"
         plt.title(title_text, color='#d4af37', fontsize=13, fontweight='bold', pad=30, y=1.02)
-        
+
+        # 6. Leyenda Pedagógica Visual (Bajar a Tierra para el Consultante)
+        leyenda_texto = (
+            "GUÍA RÁPIDA DE LECTURA (CÓMO LEER TU MAPA)\n"
+            "• ANILLO EXTERIOR: Los 12 Signos del Zodíaco (Arquetipos: Fuego, Tierra, Aire, Agua).\n"
+            "• NÚMEROS (1 a 12): Las Casas Astrológicas = Escenarios de tu vida (1: Identidad · 4: Hogar · 7: Pareja · 10: Vocación).\n"
+            "• SÍMBOLOS AMARILLOS: Planetas = Fuerzas psíquicas internas (☉ Sol: Conciencia · ☽ Luna: Emociones · ☿ Mercurio: Mente).\n"
+            "• LÍNEAS CENTRALES: Diálogos entre tus planetas ( Rojo: Tensión / Desafío formativo ·  Azul: Talento y fluidez natural ·  Dorado: Conjunción potente).\n"
+            "• ASCENDENTE (AC a la izquierda, 9 en punto): Tu puerta de entrada al mundo y lente de contacto con la realidad."
+        )
+        fig.text(0.5, 0.03, leyenda_texto, ha='center', va='center',
+                 color='#e2e8f0', fontsize=8.8, fontweight='medium', linespacing=1.5,
+                 bbox=dict(boxstyle='round,pad=0.6', facecolor='#101626', edgecolor='#d4af37', linewidth=1.0, alpha=0.9))
+
         # Guardar en alta resolución
         plt.savefig(output_path, format='png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=180)
         plt.close()

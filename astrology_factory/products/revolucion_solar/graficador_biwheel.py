@@ -178,17 +178,31 @@ class GraficadorBiWheelAstrologica:
                 
                 ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.65, linewidth=1.2, zorder=4)
 
-        # Título y Leyenda Integrada
+        # Título y Leyenda Integrada Pedagógica
         sujeto = carta_natal["sujeto"]["nombre"]
         anio_rs = carta_rs["revolucion_solar"]["anio"]
         ciudad_rs = carta_rs["revolucion_solar"]["ciudad_retorno"]
         fecha_rs = carta_rs["revolucion_solar"]["fecha_hora_exacta_local"]
+        casa_natal_portal = carta_rs['superposicion_clave']['ascendente_rs_en_casa_natal']['casa_natal']
+        asc_rs_fmt = carta_rs['angulos_rs']['Ascendente_RS']['formato']
         
-        fig.text(0.5, 0.04, 
-                 f"REVOLUCIÓN SOLAR {anio_rs} · {sujeto.upper()}\n"
-                 f"Retorno Solar: {fecha_rs} hs ({ciudad_rs}) | AC RS en {carta_rs['angulos_rs']['Ascendente_RS']['formato']} (Casa {carta_rs['superposicion_clave']['ascendente_rs_en_casa_natal']['casa_natal']} Natal)\n"
-                 f"Anillo Interior (Amarillo): Carta Natal · Anillo Exterior (Cian): Revolución Solar · Centro: Aspectos de Activación",
-                 ha='center', va='center', color='#e2e8f0', fontsize=9.5, linespacing=1.4)
+        # Título superior
+        fig.text(0.5, 0.96, f"REVOLUCIÓN SOLAR {anio_rs} · {sujeto.upper()}",
+                 ha='center', va='center', color='#d4af37', fontsize=13, fontweight='bold')
+        fig.text(0.5, 0.935, f"Retorno Solar Exacto: {fecha_rs} hs ({ciudad_rs}) · Ascendente RS: {asc_rs_fmt}",
+                 ha='center', va='center', color='#00f2fe', fontsize=10, fontweight='medium')
+
+        # Caja de Leyenda Pedagógica Inferior (Bajar a tierra para el consultante)
+        leyenda_biwheel = (
+            "GUÍA RÁPIDA DE LA RUEDA DOBLE (CÓMO LEER EL MAPA DEL AÑO)\n"
+            "• ANILLO INTERIOR (Dorado): Tu Carta Natal de nacimiento = Tu ADN psicológico permanente.\n"
+            "• ANILLO EXTERIOR (Cian Eléctrico): La Revolución Solar = El cielo y los tránsitos durante estos 12 meses.\n"
+            f"• MARCADOR 'AC_RS' (Cian): El Portal del Año = Cae en tu Casa Natal {casa_natal_portal} (el gran escenario protagonista del ciclo).\n"
+            "• LÍNEAS CENTRALES: Cables de activación anual ( Rojo: Fricción que madura ·  Azul: Oportunidad y fluidez ·  Dorado: Conjunción directa)."
+        )
+        fig.text(0.5, 0.04, leyenda_biwheel, ha='center', va='center',
+                 color='#e2e8f0', fontsize=8.8, fontweight='medium', linespacing=1.5,
+                 bbox=dict(boxstyle='round,pad=0.6', facecolor='#101626', edgecolor='#00f2fe', linewidth=1.0, alpha=0.9))
 
         os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
         plt.tight_layout()
