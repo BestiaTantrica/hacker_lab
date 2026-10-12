@@ -1,5 +1,5 @@
 # 🛸 NAVE NODRIZA: BITÁCORA DE ESTADO GLOBAL
-*Última actualización: 2026-10-10 17:05:00*
+*Última actualización: 2026-10-11 22:20:00*
 
 Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 **PROHIBIDO ROMPER EL ESQUEMA DE 3 NIVELES.**
@@ -23,7 +23,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] Producto 1 (Carta Astral Premium): Arquitectura de aislamiento completada en `products/carta_natal/`.
 - [x] Motor matemático (Swiss Ephemeris) y graficador de rueda profesional (Matplotlib con Ascendente en 180° y aspectos).
 - [x] Estándar de Oro (Few-Shot) generado con Claude para Tomás y Messi (`ejemplos_oro/`).
-- [x] Motor de producción automatizado listo en `generador_carta_natal.py`.
+- [x] Motor de producción automatizado en `generador_carta_natal.py` con arquitectura modular en 6 bloques (~10 páginas sin riesgo de recortes ni degradación).
+- [x] Incorporación formal de la Sección 10 en `PROJECT_RULES.md` vía `/learn` (Invariantes de calidad, tono pedagógico de autor, cero sinastría, rutas absolutas para imágenes y chunking modular).
 
 ---
 

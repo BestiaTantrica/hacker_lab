@@ -79,3 +79,36 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 ## 8. DIRECTRICES ARQUITECTÓNICAS V2 (SINGLE-PASS Y SSOT)
 1. **Single-Pass Rendering (FFmpeg)**: Prohibido el pre-renderizado de assets (transmutar JPGs a MP4 temporalmente). Las imágenes estáticas deben enviarse crudas (rutas absolutas) al renderizador final (`video_maker.py`). Cualquier efecto de movimiento (ej. Ken Burns / `zoompan`) debe aplicarse dinámicamente ("al vuelo") dentro del `filter_complex` en el comando FFmpeg final.
 2. **Base de Datos Visual como "Single Source of Truth" (SSoT)**: Cero lecturas ciegas al sistema de archivos. Todo script que necesite assets visuales debe consultarlos exclusivamente a través de la base de datos SQLite (`assets_visuales.db` gestionada por `db_visual.py`). El motor de renderizado (`video_maker.py`) es "tonto": no elige assets por heurística ni `glob`, solo obedece las rutas absolutas indicadas en el archivo JSON de corte validado.
+
+
+## 9. API E INTEGRACIÓN (TIKTOK SANDBOX)
+1. **TikTok Content Posting API (v2)**: Para publicar videos directamente (Direct Post), el scope obligatorio es `video.publish`. El scope `video.upload` está reservado para la Content Sharing API (borradores en inbox).
+2. **Pruebas Sandbox**: Las cuentas de prueba (`Target Users`) deben estar explícitamente añadidas en el portal y DEBEN ser cuentas configuradas como Privadas en la app móvil; de lo contrario, se obtendrá `unaudited_client_can_only_post_to_private_accounts`.
+3. **Review End-to-End**: En aplicaciones Server-Side, la revisión de TikTok exige mostrar el flujo completo. Se requiere un botón de testing en el panel admin que invoque manualmente la función de publicación en backend para demostrar el envío del video.
+
+## 10. PRODUCTOS PREMIUM Y LECTURAS ASTRALES (CARTA NATAL / REVOLUCIÓN SOLAR)
+
+1. **Aislamiento Estricto por Producto (Zero-Mixing)**:
+   - Cada producto comercial reside de forma autónoma en `products/<nombre_producto>/` (ej: `products/carta_natal/`).
+   - PROHIBIDO cruzar o importar scripts, vademécums o historiales de videos diarios dentro de los generadores de cartas natales o reportes escritos.
+
+2. **ADN del Autor y Tono de Redacción (Regla Tomás)**:
+   - La carta natal de Tomás (Aries/Acuario/Sagitario) es el **sistema operativo de redacción**: directo al hueso, lúcido, pedagógico, enérgico y con voseo argentino maduro.
+   - **Estructura Didáctica Obligatoria**: Todo astro y casa debe explicarse bajo la tríada: *qué es, cómo funciona y por qué* (educar al consultante antes de interpretar).
+   - **PROHIBIDO el Humo y la Cursilería**: Vetado terminantemente el lenguaje new-age barroco ("mar primordial", "carro lunar", "códice cósmico").
+   - **PROHIBIDA la Sinastría con el Autor**: El autor jamás menciona sus propios planetas ni se compara con el consultante. Su carta es su motor interno de mirada.
+   - **PROHIBIDO Prohibir Temas**: No censurar temas de la vida real (dinero, cuerpo, relaciones, profesión). Se abordan con psicología profunda y sin conjeturas baratas de horóscopo.
+
+3. **Arquitectura Híbrida "Gold Standard" (Claude + APIs Producción)**:
+   - **Matemática y Gráficos (100% Python determinístico, costo $0)**: Swiss Ephemeris (`swisseph`) para posiciones, casas Placidus y aspectos. Ruedas en Matplotlib con **Ascendente fijo a la izquierda (180° / 9 en punto)**, aspectos en el centro y fondo espacial.
+   - **Claude como Arquitecto / Molde de Oro**: Se utiliza a Claude para forjar los reportes de referencia (`ejemplos_oro/`).
+   - **APIs de Producción (Gemini 3.8 / Groq 120b)**: Generan los pedidos individuales de clientes inyectando los ejemplos de Claude como Few-Shot, logrando calidad de autor a costo y tiempo mínimos.
+
+4. **Visualización de Gráficos en Markdown**:
+   - Todo render o imagen de rueda incrustada en reportes Markdown DEBE usar rutas absolutas (`![caption](/home/tomas2/.../imagen.png)`). Las rutas relativas no resuelven en la interfaz y rompen la experiencia de usuario.
+
+5. **Generación Modular por Capítulos (Chunking de Alta Resolución sin Cortes)**:
+   - Para reportes extensos de 10 páginas (~4.000 a 5.000 palabras), la redacción por IA NUNCA debe ejecutarse en una sola llamada ni en bloques amontonados de 4 capítulos.
+   - Debe dividirse en 5 o 6 llamadas modulares y consecutivas (Preliminares/Estructura, Trinidad de Identidad, Planetas Personales, Estructura Social/Kármica, Fuerzas Transpersonales/Vocación, Geometría de Aspectos y Cierre).
+   - Esto evita recortes por límites de tokens de salida (`MAX_TOKENS`), garantiza profundidad analítica y respeta la pedagogía de cada sección sin apurar ni resumir la conclusión.
+

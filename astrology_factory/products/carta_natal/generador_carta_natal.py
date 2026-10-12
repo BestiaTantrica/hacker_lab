@@ -159,15 +159,52 @@ POSICIONES:
 ---
 
 """
-        # Bloques de redacción
+        # Bloques de redacción en 6 etapas modulares (Garantiza 10 páginas sin cortes ni degradación)
         bloques = [
-            ("Introducción y Trinidad", "Escribe la bienvenida pedagógica (qué tenés en las manos, cómo leer este mapa con la tabla de casas y el resumen de elementos/modalidades) y el Capítulo 1 completo: La Trinidad de la Identidad (Sol, Luna y Ascendente explicados a fondo con qué es, cómo funciona y en la práctica)."),
-            ("Mente, Vínculos y Acción", "Escribe el Capítulo 2 (Mercurio, Venus y Marte) y el Capítulo 3 (Júpiter y Saturno: expansión y estructura), analizando cada astro en su signo, casa y aspectos según los datos provistos."),
-            ("Karma, Vocación y Aspectos", "Escribe el Capítulo 4 (Quirón, Lilith y Nodos Lunares), el Capítulo 5 (Planetas generacionales), el Capítulo 6 (Medio Cielo y vocación), el Capítulo 7 (Los diálogos centrales / aspectos mayores) y el Cierre del astrólogo firmado por Tomás.")
+            ("1/6: Preliminares y Mapa de un Vistazo", 
+             "Redacta las secciones iniciales:\n"
+             "1. '## Bienvenida: qué tenés en las manos' (explicar que no es un horóscopo, precisión astronómica, mapa no sentencia, la tríada qué/cómo/por qué).\n"
+             "2. '## Cómo leer este mapa en cinco minutos' (Planeta=Qué, Signo=Cómo, Casa=Dónde; tabla markdown con las 12 casas y su terreno; La rueda paso a paso con Ascendente a la izquierda a 180° y lectura antihoraria).\n"
+             "3. '## Tu mapa de un vistazo' (tabla markdown completa con todos los planetas, grados y casas calculados; desglose de Elementos con conteo e interpretación de excesos/carencias; desglose de Modalidades; y análisis de Dónde se concentra la energía / eje conductor)."),
+
+            ("2/6: Capítulo 1 — La Trinidad de la Identidad", 
+             "Redacta completo el '## Capítulo 1 — La trinidad de la identidad: Sol, Luna y Ascendente':\n"
+             "- Introducción a las 3 capas fundamentales.\n"
+             "- '### El Sol en [Signo], Casa [X]': Qué es, Cómo funciona, En tu carta (signo y casa), En la práctica (recurso y punto ciego).\n"
+             "- '### La Luna en [Signo], Casa [X]': Qué es, Cómo funciona, En tu carta (signo y casa), En la práctica (recurso y mecanismo defensivo).\n"
+             "- '### El Ascendente en [Signo] (y su Regente)': Qué es, Cómo funciona, En tu carta (signo, grado y dónde opera su planeta regente), En la práctica.\n"
+             "- Síntesis de integración de la trinidad."),
+
+            ("3/6: Capítulo 2 — Mente, Vínculos y Acción", 
+             "Redacta completo el '## Capítulo 2 — Mente, vínculos y acción: Mercurio, Venus y Marte':\n"
+             "- '### Mercurio en [Signo], Casa [X]': Función mental, comunicación, estilo de razonamiento (Qué es, Cómo funciona, En tu carta, En la práctica).\n"
+             "- '### Venus en [Signo], Casa [X]': Lo que valorás, estilo afectivo, goce y magnetismo (Qué es, Cómo funciona, En tu carta, En la práctica).\n"
+             "- '### Marte en [Signo], Casa [X]': Motor de acción, asertividad, impulso y manejo del conflicto (Qué es, Cómo funciona, En tu carta, En la práctica)."),
+
+            ("4/6: Capítulos 3 y 4 — Estructura Social y Mapa Evolutivo", 
+             "Redacta los Capítulos 3 y 4:\n"
+             "- '## Capítulo 3 — Expansión y estructura: Júpiter y Saturno':\n"
+             "  * Júpiter (sentido, confianza, expansión vs desborde).\n"
+             "  * Saturno (límite, maduración, frustración formativa y maestría).\n"
+             "- '## Capítulo 4 — Mapa evolutivo y sombra: Quirón, Lilith y los Nodos':\n"
+             "  * Quirón (la herida nuclear y el talento de resiliencia).\n"
+             "  * Lilith (el instinto no domesticado, la sombra y el poder rebelde).\n"
+             "  * Eje Nodal: Nodo Norte (dirección de crecimiento) vs Nodo Sur (zona de confort e inercia)."),
+
+            ("5/6: Capítulos 5 y 6 — Generacionales y Vocación", 
+             "Redacta los Capítulos 5 y 6:\n"
+             "- '## Capítulo 5 — Los planetas generacionales: Urano, Neptuno y Plutón': Explicar su función de fondo y aterrizarlos a la vida cotidiana según la casa que ocupa cada uno en esta carta.\n"
+             "- '## Capítulo 6 — Vocación y legado: el Medio Cielo': Analizar el Medio Cielo (MC) y el Fondo del Cielo (IC), la huella pública, vocación y el equilibrio entre vida profesional y raíces íntimas."),
+
+            ("6/6: Capítulo 7 y Cierre — Diálogos Centrales y Despedida", 
+             "Redacta el tramo final:\n"
+             "- '## Capítulo 7 — Los diálogos centrales: aspectos planetarios': Analizar detalladamente los 4 a 6 aspectos mayores más tensos y armónicos con menor orbe, explicando el diálogo psicológico entre ambos planetas.\n"
+             "- '## Cierre del astrólogo': Síntesis integradora sobre cómo opera este mapa como una totalidad, consejos concretos de maduración y despedida con la firma del autor (Tomás).\n"
+             "- '### Ficha técnica': Tabla resumen final de efemérides y datos.")
         ]
 
         for i, (nombre_b, instruccion) in enumerate(bloques):
-            print(f"[{nombre}] Generando bloque {i+1}/3: {nombre_b}...")
+            print(f"[{nombre}] Generando bloque {nombre_b}...")
             prompt = f"""
 DATOS MATEMÁTICOS DEL CONSULTANTE:
 {resumen_datos}
@@ -175,10 +212,14 @@ DATOS MATEMÁTICOS DEL CONSULTANTE:
 TAREA A REDACTAR AHORA:
 {instruccion}
 
-Escribe directamente en formato Markdown impecable, siguiendo rigurosamente el tono y nivel de detalle del Estándar de Oro.
+REGLAS DE FORMATO:
+- Escribe directamente en Markdown impecable.
+- NO repitas el título principal de la carta ni la imagen de la rueda (ya están incluidos en el encabezado).
+- Mantén el tono pedagógico riguroso, directo, adulto, sin cursilerías ni oráculos abstractos, fiel al Estándar de Oro.
 """
             texto_bloque = self._llamar_ia(prompt, system_prompt)
-            doc_final += texto_bloque + "\n\n---\n\n"
+            doc_final += texto_bloque.strip() + "\n\n---\n\n"
+
 
         # Guardar resultado final
         with open(output_path, "w", encoding="utf-8") as f:
