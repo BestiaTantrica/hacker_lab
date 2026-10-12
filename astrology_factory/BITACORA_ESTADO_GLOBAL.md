@@ -21,10 +21,15 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 **Estado / Decisiones Actuales:**
 - [x] Limpieza de basura técnica V1 y deprecación de la Célula 3 (Mover scripts a `archived_legacy`).
 - [x] Producto 1 (Carta Astral Premium): Arquitectura de aislamiento completada en `products/carta_natal/`.
-- [x] Motor matemático (Swiss Ephemeris) y graficador de rueda profesional (Matplotlib con Ascendente en 180° y aspectos).
-- [x] Estándar de Oro (Few-Shot) generado con Claude para Tomás y Messi (`ejemplos_oro/`).
-- [x] Motor de producción automatizado en `generador_carta_natal.py` con arquitectura modular en 6 bloques (~10 páginas sin riesgo de recortes ni degradación).
-- [x] Incorporación formal de la Sección 10 en `PROJECT_RULES.md` vía `/learn` (Invariantes de calidad, tono pedagógico de autor, cero sinastría, rutas absolutas para imágenes y chunking modular).
+- [x] Producto 2 (Revolución Solar en Video + Carta Astral): Pipeline integral completado en `products/revolucion_solar/`:
+  - Cálculo de retorno exacto con Swiss Ephemeris (`calculador_revolucion_solar.py`).
+  - Graficador Bi-Wheel espacial pedagógico en 16:9 con Ascendente natal fijo a 180° (`graficador_biwheel.py`).
+  - Handoff y Guiones de Oro forjados con Claude High para Tomás y Messi (`ejemplos_oro/`).
+  - Motor masivo de generación de guiones a costo cero con Gemini 3.8 Flash / Groq (`generador_guion_rs_produccion.py`).
+  - Renderizador de video modular en micro-escenas TS y ensamble final sin recodificación (`video_maker_premium.py`), verificado con caso Camila (11.4 min en 1080p / 312 MB).
+- [ ] **Deuda Estética y de Curaduría (A refinar en próximas sesiones)**:
+  - La edición y el ritmo visual del video aún son básicos: falta más fluidez en transiciones y dinamismo en Ken Burns.
+  - La selección de stock de video/imagen es actualmente genérica o insuficiente: la Bóveda necesita enriquecimiento o curaduría dirigida (I2V / T2I) para conceptos específicos de Revolución Solar (fragua, límites, cuerpo, pactos, etc.) en lugar de depender solo de clips aleatorios.
 
 ---
 
@@ -35,5 +40,5 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] TAREA 1: Arquitectura de la Base de Datos Visual (SQLite). **[COMPLETADO]**
 - [x] TAREA 2: Refactorización Inteligente de la Célula 2 y Single-Pass en FFmpeg. **[COMPLETADO]**
 - [ ] TAREA 3: Integración de la Célula Acuñadora (Tokenización Web3 / IPFS).
-- [ ] TAREA 4 (PREMIUM): Soporte de "Chunking" en `video_maker.py` (o creación de `video_maker_premium.py`) para compilar videos largos sin colapsar FFmpeg.
-- [ ] TAREA 5 (PREMIUM): Creación de un `motor_narrativo_premium.py` en la Célula 1 para estructurar guiones astrológicos extendidos (Revolución Solar) por capítulos.
+- [x] TAREA 4 (PREMIUM): Soporte de "Chunking" y creación de `video_maker_premium.py` para videos de 10-15 min sin saturación de memoria. **[COMPLETADO]**
+- [x] TAREA 5 (PREMIUM): Motor de producción narrativa modular en 6 capítulos para Revolución Solar (`generador_guion_rs_produccion.py`). **[COMPLETADO]**
