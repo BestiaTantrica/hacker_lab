@@ -19,5 +19,5 @@
 | 6 | **Neptuno Trígono Sol** | Abstracto | `arte_propio_neptuno_sol_trigono_1791655420342.jpg` | PixVerse | `anim_pixverse_abstracto_neptuno_sol.mp4` | ✅ Completado |
 | 7 | **Quirón Cuadratura Plutón** | Abstracto | `arte_propio_quiron_pluton_cuadratura_1791674345994.jpg` | PixVerse | `anim_pixverse_abstracto_quiron_pluton.mp4` | ✅ Completado |
 | 8 | **Marte en Cáncer** | Abstracto | `arte_propio_marte_cancer_1791216425518.jpg` | PixVerse | `anim_pixverse_abstracto_marte_cancer.mp4` | ✅ Completado |
-| 9 | **Sol en Piscis** | Emocional | `arte_propio_emocion_sol_piscis_1791472701518.jpg` | Luma Dream Machine | `anim_luma_emocion_sol_piscis.mp4` | 🟡 Listo para subir |
+| 9 | **Sol en Piscis** | Emocional | `arte_propio_emocion_sol_piscis_1791472701518.jpg` | Luma Dream Machine | `anim_luma_emocion_sol_piscis.mp4` | ✅ Completado |
 | 10 | **Sol Oposición Saturno** | Abstracto | `arte_propio_sol_saturno_1791213605662.jpg` | PixVerse | `anim_pixverse_abstracto_sol_saturno.mp4` | ✅ Completado |
