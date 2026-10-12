@@ -3,9 +3,10 @@ from datetime import datetime
 
 class EphemerisCalculator:
     def __init__(self):
-        # Configurar la ruta de los archivos de efemérides (opcional si se usa el modelo básico)
-        # swe.set_ephe_path('/path/to/ephe')
-        pass
+        # Configurar la ruta de los archivos de efemérides
+        import os
+        ephe_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ephe')
+        swe.set_ephe_path(ephe_path)
 
     def _datetime_to_julian(self, dt: datetime) -> float:
         """Convierte datetime a día juliano (UT)."""
@@ -25,7 +26,7 @@ class EphemerisCalculator:
             
         jd = self._datetime_to_julian(dt)
         
-        # Cuerpos celestes principales
+        # Cuerpos celestes principales y puntos cármicos
         bodies = {
             'Sol': swe.SUN,
             'Luna': swe.MOON,
@@ -36,7 +37,10 @@ class EphemerisCalculator:
             'Saturno': swe.SATURN,
             'Urano': swe.URANUS,
             'Neptuno': swe.NEPTUNE,
-            'Plutón': swe.PLUTO
+            'Plutón': swe.PLUTO,
+            'Quirón': swe.CHIRON,
+            'Nodo Norte': swe.TRUE_NODE,
+            'Lilith': swe.MEAN_APOG
         }
         
         positions = {}

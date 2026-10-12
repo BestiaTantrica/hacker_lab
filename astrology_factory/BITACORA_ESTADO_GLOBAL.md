@@ -1,5 +1,5 @@
 # 🛸 NAVE NODRIZA: BITÁCORA DE ESTADO GLOBAL
-*Última actualización: 2026-09-25 17:21:25*
+*Última actualización: 2026-10-10 17:05:00*
 
 Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 **PROHIBIDO ROMPER EL ESQUEMA DE 3 NIVELES.**
@@ -11,6 +11,7 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 
 **Estado / Tareas Activas:**
 - [ ] Descargar por tandas (1000 assets) para Octubre
+- [ ] Procesar automatización de TikTok (En espera de aprobación)
 
 ---
 
@@ -18,7 +19,11 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 *Responsabilidad: Creación de nuevas células, ajuste de estéticas (ej. Fusionador Visual), lógicas de negocio inmediatas.*
 
 **Estado / Decisiones Actuales:**
-- (Vacío / Sin tareas pendientes)
+- [x] Limpieza de basura técnica V1 y deprecación de la Célula 3 (Mover scripts a `archived_legacy`).
+- [x] Producto 1 (Carta Astral Premium): Arquitectura de aislamiento completada en `products/carta_natal/`.
+- [x] Motor matemático (Swiss Ephemeris) y graficador de rueda profesional (Matplotlib con Ascendente en 180° y aspectos).
+- [x] Estándar de Oro (Few-Shot) generado con Claude para Tomás y Messi (`ejemplos_oro/`).
+- [x] Motor de producción automatizado listo en `generador_carta_natal.py`.
 
 ---
 
@@ -26,7 +31,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 *Responsabilidad: Resolución de deudas técnicas masivas, problemas de catalogación/curaduría compleja o re-estructuración de la base de datos.*
 
 **Deudas Técnicas Pendientes (Handoff preparado):**
-- [ ] TAREA 1: Arquitectura de la Base de Datos Visual (SQLite/JSON para indexar assets).
-- [ ] TAREA 2: Refactorización Inteligente de la Célula 2 (Matching semántico vía consultas).
+- [x] TAREA 1: Arquitectura de la Base de Datos Visual (SQLite). **[COMPLETADO]**
+- [x] TAREA 2: Refactorización Inteligente de la Célula 2 y Single-Pass en FFmpeg. **[COMPLETADO]**
 - [ ] TAREA 3: Integración de la Célula Acuñadora (Tokenización Web3 / IPFS).
-
+- [ ] TAREA 4 (PREMIUM): Soporte de "Chunking" en `video_maker.py` (o creación de `video_maker_premium.py`) para compilar videos largos sin colapsar FFmpeg.
+- [ ] TAREA 5 (PREMIUM): Creación de un `motor_narrativo_premium.py` en la Célula 1 para estructurar guiones astrológicos extendidos (Revolución Solar) por capítulos.
