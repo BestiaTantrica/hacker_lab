@@ -112,3 +112,9 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
    - Debe dividirse en 5 o 6 llamadas modulares y consecutivas (Preliminares/Estructura, Trinidad de Identidad, Planetas Personales, Estructura Social/Kármica, Fuerzas Transpersonales/Vocación, Geometría de Aspectos y Cierre).
    - Esto evita recortes por límites de tokens de salida (`MAX_TOKENS`), garantiza profundidad analítica y respeta la pedagogía de cada sección sin apurar ni resumir la conclusión.
 
+6. **Cálculo de Revolución Solar: Doble Geocodificación Obligatoria**:
+   - Todo cálculo de Revolución Solar (Retorno Solar) exige estrictamente dos conjuntos de coordenadas geográficas independientes:
+     1) `coordenadas_natales` (latitud, longitud, fecha, hora natal): determinan la Carta Natal base y el grado zodiacal exacto al que debe retornar el Sol al segundo de arco.
+     2) `coordenadas_retorno` (latitud, longitud, ciudad y huso horario del lugar donde la persona se encuentra físicamente al momento de su retorno): determinan el Ascendente anual, el Medio Cielo anual y las 12 Casas Placidus de la Revolución Solar.
+   - **Regla de Formulario/Producto**: Los formularios de compra y APIs del producto deben solicitar obligatoriamente tanto el lugar de nacimiento como la ciudad de cumpleaños/residencia para ese año. Prohibido asumir que la persona pasa su retorno en la ciudad natal sin confirmación expresa.
+
