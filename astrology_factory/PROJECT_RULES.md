@@ -129,6 +129,17 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 
 9. **Roadmap Futuro: Visor Astrológico Interactivo (Web3 / App)**:
    - Se establece en la arquitectura de Astrology Factory la creación futura de un **Visor Web Interactivo** donde el consultante pueda explorar su rueda Bi-Wheel dinámicamente, posando el cursor o tocando cada planeta o aspecto para desplegar la interpretación psicológica en tiempo real.
+
+11. **Curaduría Audiovisual Dirigida y Edición Cinematográfica de la Rueda (Revolución Solar)**:
+    - **Estado (2026-10-12)**: El pipeline técnico funciona end-to-end (video de 11.4 min en 1080p verificado), pero la edición es rígida y el stock es genérico o insuficiente. Es la deuda prioritaria del producto.
+    - **La rueda nunca se muestra estática y completa durante más de unos segundos**: mostrar el gráfico entero repetidas veces no aclara nada y mata la estética. Cada aparición debe tener:
+      1. *Zoom dirigido* (Ken Burns hacia coordenadas calculadas) sobre el sector, planeta, casa o cuerda del que habla la locución en ese momento.
+      2. *Resaltado selectivo*: la cuerda de aspecto o el planeta en cuestión brilla (grosor/color/glow) y el resto de la rueda queda en penumbra.
+      3. *Etiqueta grande y breve* en pantalla (ej. "Saturno RS en cuadratura al Sol natal"), legible en TV y móvil; nunca texto chico.
+    - **Implementación preferida (costo cero)**: Matplotlib ya conoce las coordenadas exactas de cada planeta, casa y cuerda. Generar variantes PNG por foco (rueda atenuada + elemento resaltado) y animar el zoom con `zoompan`/crop de FFmpeg hacia esas coordenadas. El foco se elige según las menciones de planetas y aspectos en cada tramo del guion.
+    - **Stock**: queda vetada la selección aleatoria por carpeta cuando la locución aborda metáforas concretas (fragua, cuerpo, pactos, dinero, límites). Mapear escena con asset de forma semántica y enriquecer la Bóveda con piezas dirigidas (T2I/I2V) por arquetipo de casa y planeta.
+    - **Ritmo**: duración variable de planos, disoluciones suaves (`xfade`) y movimiento continuo para sostener 12 a 15 minutos de atención.
+
 10. **Invariante de Estabilidad en Pipelines y Procesos Activos**:
     - PROHIBIDO modificar parámetros internos, cuotas, ratios o lógica de scripts operativos (como `vault_scraper.py`, `video_maker.py`, etc.) sin instrucción explícita del usuario.
     - Cuando el usuario indique "reanudar", "seguir descargando" o "encargarse", el agente debe limitarse a verificar el estado, reiniciar procesos caídos o ejecutar el flujo con la configuración vigente, sin alterar el código fuente.
