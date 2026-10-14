@@ -23,3 +23,4 @@
 | 10 | **Sol Oposición Saturno** | Abstracto | `arte_propio_sol_saturno_1791213605662.jpg` | PixVerse | `anim_pixverse_abstracto_sol_saturno.mp4` | ✅ Completado |
 | 11 | **Júpiter en Géminis** | Abstracto | `arte_propio_jupiter_geminis_1791604800984.jpg` | PixVerse | `anim_pixverse_abstracto_jupiter_geminis.mp4` | ✅ Completado |
 | 12 | **Eclipse Lunar** | Abstracto | `arte_propio_eclipse_lunar_1791255647953.jpg` | Luma Dream Machine | `anim_luma_abstracto_eclipse_lunar.mp4` | ✅ Completado |
+| 13 | **Luna en Aries** | Abstracto | `arte_propio_luna_aries_1791296297568.jpg` | PixVerse | `anim_pixverse_abstracto_luna_aries.mp4` | ✅ Completado |
