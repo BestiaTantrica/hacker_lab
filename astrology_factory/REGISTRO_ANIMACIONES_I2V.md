@@ -31,3 +31,6 @@
 | 18 | **Júpiter en Escorpio** | Abstracto | `arte_propio_jupiter_escorpio_1791562667598.jpg` | PixVerse | `anim_pixverse_abstracto_jupiter_escorpio.mp4` | ✅ Completado |
 | 19 | **Luna Trígono Neptuno** | Abstracto | `arte_propio_luna_neptuno_1791296230398.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_neptuno.mp4` | ✅ Completado |
 | 20 | **Luna en Acuario** | Abstracto | `arte_propio_luna_acuario_1791562577108.jpg` | PixVerse | `anim_pixverse_abstracto_luna_acuario.mp4` | ✅ Completado |
+| 21 | **Marte Cuadratura Saturno** | Abstracto | `arte_propio_marte_saturno_1791241341334.jpg` | PixVerse | `anim_pixverse_abstracto_marte_saturno.mp4` | ✅ Completado |
+| 22 | **Mercurio en Acuario** | Abstracto | `arte_propio_mercurio_acuario_1791313311598.jpg` | PixVerse | `anim_pixverse_abstracto_mercurio_acuario.mp4` | ✅ Completado |
+| 23 | **Luna en Cáncer** | Abstracto | `arte_propio_luna_cancer_1791474708448.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_cancer.mp4` | ✅ Completado |
