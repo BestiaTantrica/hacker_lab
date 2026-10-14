@@ -32,20 +32,16 @@ Todo cálculo de Retorno Solar requiere **dos pares de coordenadas geográficas 
 - `ejemplos_oro/`: Repositorio de guiones canónicos de referencia redactados por Claude High (`guion_oro_rs_tomas.md`).
 - `generador_guion_rs_produccion.py`: Motor de producción masiva a costo $0 para clientes reales utilizando Gemini 3.8 Flash / Groq 120B guiado por Few-Shot prompting.
 - `video_maker_premium.py`: Ensamblador de video con chunking modular por capítulos y concatenación gapless en FFmpeg. Integra blend progresivo de neón y zoompan astronómico hacia coordenadas (cx, cy).
+- `animador_espiral_3d.py`: Generador de la Espiral Temporal 3D ("Tirabuzón de Retornos Solares") que simula el paso del tiempo desde la Carta Natal (Z=0, oro) hasta la Revolución Solar anual (Z=Top, cian) en hiperlapso cinemático 1080p.
 
 ---
 
 ### 3. Motor Visual Bi-Wheel y Enfoque Quirúrgico
 
 1. **Preservación Total del Mandala**:
-   - Nunca se elimina el contexto astrológico: signos zodiacales, 12 casas natales y de RS, planetas y aspectos base permanecen 100% visibles.
-2. **Sistema de Enfoque Neón Aditivo**:
-   - Detección astronómica de coordenadas de foco `(cx, cy)` según el tipo de elemento (planeta, casa o aspecto).
-   - Generación sincronizada de pares `solo_base` (mandala limpio) y `foco` (con reticle lock, halos concéntricos y láseres de activación).
-   - Mezcla progresiva vía FFmpeg `blend` acoplada al `zoompan` para encender los efectos mientras la cámara avanza.
-
-### 4. Hoja de Ruta para Próximas Sesiones
-
-- **Sincronización Narrativa Fina**: El Bi-Wheel inicia fijo (1.0x) para brindar contexto general y luego panea/zoomea quirúrgicamente hacia la zona exacta cuando la locución pronuncia el término clave.
-- **Espiral Temporal 3D ("Tirabuzón de Retornos")**: Renderizado en perspectiva 3D del árbol temporal de cumpleaños, mostrando cómo la carta natal se proyecta año tras año en una hélice hasta la Revolución Solar actual.
-- **Vitalidad de Cuerpos Celestes**: Respiración de luz en glifos, líneas de aspecto con flujo de energía y HUD cósmico limpio sin saturar la pantalla.
+   - Signos zodiacales, 12 casas natales y de RS, planetas con halos orbe y aspectos base permanecen 100% visibles.
+2. **Coreografía de Cámara Fija -> Zoom Quirúrgico**:
+   - Cada capítulo abre con un **plano general fijo (1.0x)** durante los primeros 4-6 segundos, con paneles pedagógicos completos para asimilar el contexto general.
+   - En el enfoque específico (Portal, Sol, Luna, Marte, Saturno, aspectos), la cámara ejecuta un paneo y zoom profundo (1.75x) centrado al píxel en las coordenadas `(cx, cy)` del elemento, mientras los paneles exteriores se disuelven para dar paso al mandala expandido y sus retículos neón sin recorte tosco de texto.
+3. **Espiral Temporal 3D ("Tirabuzón")**:
+   - Animación 3D nativa generada en Python (Matplotlib 3D + NumPy + FFmpeg) a $0 costo que ilustra cómo el retorno solar de este año es la cima de un árbol de ciclos anuales que nacieron en la carta natal.

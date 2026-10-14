@@ -28,13 +28,19 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - Motor masivo de generación de guiones a costo cero con Gemini 3.8 Flash / Groq (`generador_guion_rs_produccion.py`).
   - Renderizador de video modular en micro-escenas TS y ensamble final sin recodificación (`video_maker_premium.py`), verificado con caso Camila (11.4 min en 1080p / 312 MB).
 - [x] **Mejora del Motor Bi-Wheel y Zoom Dinámico (`products/revolucion_solar/`)**:
-  - **Preservación Total del Mandala**: Se restauraron signos (alpha=0.38), 12 casas natales y de RS, glifos de planetas y red de aspectos completa para mantener 100% el contexto cósmico.
+  - **Preservación Total del Mandala**: Se restauraron signos (alpha=0.38), 12 casas natales y de RS, planetas y red de aspectos completa para mantener 100% el contexto cósmico.
   - **Sistema de Enfoque Neón Aditivo**: Destello de halos concéntricos, mira telescópica (reticle lock) en coordenadas astronómicas exactas, aura de casas/portales y láser de aspectos de activación.
-  - **Blend Progresivo y Zoom Profundo (1.0x -> 1.75x)**: Generación pareada `solo_base` y `foco` para evitar ghosting de títulos; encendido cinemático con zoom dirigido a coordenadas (cx, cy).
-- [ ] **Hoja de Ruta Inmediata (Próxima Sesión)**:
-  - **Coreografía de Cámara y Sincronización con Guion**: Eliminar micro-cortes y transiciones innecesarias. Al inicio del capítulo el plano es fijo (1.0x) para asimilar el mandala completo; luego realiza paneo/zoom quirúrgico al punto exacto cuando el audio lo nombra.
-  - **Espiral Temporal 3D ("Tirabuzón de Retornos Solares")**: Prototipar animación en espiral/hélice temporal desde la carta natal (Z=0) subiendo año a año hasta la Revolución Solar actual para dar profundidad y volumen visual.
-  - **Vitalidad Planetaria y Placer Visual**: Pulsos sutiles en los glifos activos, partículas de energía sobre los aspectos láser y HUD estelar limpio.
+  - **Planetas como Gemas Radiantes**: Orbes celestes con halo atmosférico y micro-badges circulares de cristal oscuro para los 10 planetas natales (oro) y de RS (cian).
+  - **Eliminación de Transiciones Redundantes y Coreografía Fija -> Zoom**:
+    * Apertura de capítulo en **Plano General Fijo (1.0x)**: El espectador asimila toda la carta sin movimiento brusco.
+    * Enfoques específicos por astro/casa: Paneo y zoom quirúrgico (1.0x -> 1.75x) centrado al píxel en `(cx, cy)`.
+    * Paneles laterales disueltos en zoom: Los paneles explicativos están en la toma fija y se disuelven suavemente al acercarse la cámara, eliminando recortes toscos de texto.
+  - **Espiral Temporal 3D ("Tirabuzón de Retornos Solares") (`animador_espiral_3d.py`)**:
+    * Generador 3D a costo cero en Python/Matplotlib 3D/FFmpeg.
+    * Conecta la Carta Natal en la base (Z=0, oro) con la Revolución Solar en la cima (Z=Top, cian) a través de una hélice de anillos temporales y haz de luz ascendente en hiperlapso (4.0s @ 25fps).
+- [ ] **Hoja de Ruta Inmediata**:
+  - Sincronización fina de los paneos con las marcas de tiempo exactas del audio (Whisper/Edge-TTS).
+  - Integrar la espiral 3D como obertura introductoria antes del Capítulo 1 en el render final.
 
 ---
 

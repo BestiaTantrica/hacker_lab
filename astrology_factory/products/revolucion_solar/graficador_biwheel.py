@@ -213,10 +213,12 @@ class GraficadorBiWheelAstrologica:
                         color='#ffd700', fontsize=9.0, fontweight='bold',
                         bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor='#ffd700', linewidth=1.2, alpha=0.9), zorder=11)
             else:
-                # Planeta natal estándar: siempre visible con grado y glifo
-                ax.scatter([rad], [0.56], color='#f1c40f', s=18, zorder=7)
+                # Planeta natal estándar: orbe radiante con halo y glifo nítido
+                ax.scatter([rad], [0.56], color='#ffd700', s=70, alpha=0.25, zorder=6)
+                ax.scatter([rad], [0.56], color='#f1c40f', s=24, zorder=7)
                 ax.text(rad, 0.49, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
-                        color='#ffffff', fontsize=8.0, fontweight='bold', zorder=8)
+                        color='#ffffff', fontsize=8.2, fontweight='bold', zorder=8,
+                        bbox=dict(boxstyle='circle,pad=0.18', facecolor='#080b12', edgecolor='#d4af37', linewidth=0.7, alpha=0.85))
 
         # 4. Planetas de la Revolución Solar (Anillo Exterior: r = 0.72 / 0.79)
         rs_planets = carta_rs["planetas_rs"]
@@ -247,10 +249,12 @@ class GraficadorBiWheelAstrologica:
                         color='#00f2fe', fontsize=9.2, fontweight='bold',
                         bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor='#00f2fe', linewidth=1.2, alpha=0.9), zorder=11)
             else:
-                # Planeta RS estándar: siempre visible con grado y glifo
-                ax.scatter([rad], [0.72], color='#00f2fe', s=20, zorder=7)
+                # Planeta RS estándar: orbe radiante con halo cian y glifo nítido
+                ax.scatter([rad], [0.72], color='#00f2fe', s=75, alpha=0.28, zorder=6)
+                ax.scatter([rad], [0.72], color='#00f2fe', s=26, zorder=7)
                 ax.text(rad, 0.79, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
-                        color='#00f2fe', fontsize=8.5, fontweight='bold', zorder=8)
+                        color='#00f2fe', fontsize=8.8, fontweight='bold', zorder=8,
+                        bbox=dict(boxstyle='circle,pad=0.18', facecolor='#080b12', edgecolor='#00f2fe', linewidth=0.7, alpha=0.85))
 
         # 5. Marcador Especial: Ascendente de la Revolución Solar
         asc_rs_deg = carta_rs["angulos_rs"]["Ascendente_RS"]["grado_absoluto"]
@@ -308,8 +312,9 @@ class GraficadorBiWheelAstrologica:
                             color='#ffffff', fontsize=8.5, fontweight='bold',
                             bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor=asp["color"], linewidth=1.5, alpha=0.95), zorder=7)
                 else:
-                    # Todos los demás aspectos se mantienen visibles para ver el mapa cósmico completo
-                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.55, linewidth=1.3, zorder=4)
+                    # Todos los demás aspectos con aura sutil para mayor profundidad espacial
+                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.18, linewidth=3.5, zorder=3)
+                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.60, linewidth=1.4, zorder=4)
 
         # 7. Título y Leyenda Integrada Pedagógica
         sujeto = carta_natal["sujeto"]["nombre"]

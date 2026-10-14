@@ -339,11 +339,14 @@ def generar_marco_biwheel_pedagogico(
     titulo: str,
     consultante: str,
     output_path: Path,
-    foco_info: Optional[Dict[str, Any]] = None
+    foco_info: Optional[Dict[str, Any]] = None,
+    incluir_paneles_laterales: bool = True
 ) -> Path:
     """
     Enmarca la rueda Bi-Wheel (2600x2600) en un lienzo 1920x1080 con bandas pedagógicas
     laterales que explican el foco del capítulo (Regla 8 y 11 de PROJECT_RULES.md).
+    Si incluir_paneles_laterales=False, no dibuja las columnas de texto en los márgenes
+    exteriores para permitir zooms y paneos cinematográficos sin recorte de texto.
     """
     canvas = _crear_fondo_estelar(1920, 1080)
 
@@ -359,41 +362,42 @@ def generar_marco_biwheel_pedagogico(
 
     draw = ImageDraw.Draw(canvas)
 
-    try:
-        f_sec_title = ImageFont.truetype(FONT_TITLE_PATH, 24)
-        f_sec_text  = ImageFont.truetype(FONT_BODY_PATH, 18)
-        f_sec_val   = ImageFont.truetype(FONT_BODY_PATH, 16)
-    except Exception:
-        f_sec_title = f_sec_text = f_sec_val = ImageFont.load_default()
+    if incluir_paneles_laterales:
+        try:
+            f_sec_title = ImageFont.truetype(FONT_TITLE_PATH, 24)
+            f_sec_text  = ImageFont.truetype(FONT_BODY_PATH, 18)
+            f_sec_val   = ImageFont.truetype(FONT_BODY_PATH, 16)
+        except Exception:
+            f_sec_title = f_sec_text = f_sec_val = ImageFont.load_default()
 
-    izq_tag = foco_info.get("izq_tag", f"CAPÍTULO {cap_num}") if foco_info else f"CAPÍTULO {cap_num}"
-    izq_val = foco_info.get("izq_val", titulo) if foco_info else titulo
-    der_tag = foco_info.get("der_tag", "ANÁLISIS BI-WHEEL") if foco_info else "ANÁLISIS BI-WHEEL"
-    der_val = foco_info.get("der_val", "Interior: Natal\nExterior: RS 2026") if foco_info else "Interior: Natal\nExterior: RS 2026"
+        izq_tag = foco_info.get("izq_tag", f"CAPÍTULO {cap_num}") if foco_info else f"CAPÍTULO {cap_num}"
+        izq_val = foco_info.get("izq_val", titulo) if foco_info else titulo
+        der_tag = foco_info.get("der_tag", "ANÁLISIS BI-WHEEL") if foco_info else "ANÁLISIS BI-WHEEL"
+        der_val = foco_info.get("der_val", "Interior: Natal\nExterior: RS 2026") if foco_info else "Interior: Natal\nExterior: RS 2026"
 
-    # ── PANEL LATERAL IZQUIERDO (x: 40 a 400) ─────────────────────────────────
-    draw.line([(40, 380), (40, 700)], fill=COLOR_GOLD, width=3)
-    draw.text((60, 400), f"CAPÍTULO {cap_num}", fill=COLOR_GOLD, font=f_sec_title)
-    draw.text((60, 440), izq_tag, fill=COLOR_CYAN, font=f_sec_text)
+        # ── PANEL LATERAL IZQUIERDO (x: 40 a 400) ─────────────────────────────────
+        draw.line([(40, 380), (40, 700)], fill=COLOR_GOLD, width=3)
+        draw.text((60, 400), f"CAPÍTULO {cap_num}", fill=COLOR_GOLD, font=f_sec_title)
+        draw.text((60, 440), izq_tag, fill=COLOR_CYAN, font=f_sec_text)
 
-    y_pos = 490
-    for linea in izq_val.split("\n"):
-        draw.text((60, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
-        y_pos += 26
+        y_pos = 490
+        for linea in izq_val.split("\n"):
+            draw.text((60, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
+            y_pos += 26
 
-    draw.text((60, y_pos + 20), f"Consultante: {consultante}", fill=COLOR_MUTED, font=f_sec_val)
+        draw.text((60, y_pos + 20), f"Consultante: {consultante}", fill=COLOR_MUTED, font=f_sec_val)
 
-    # ── PANEL LATERAL DERECHO (x: 1520 a 1880) ────────────────────────────────
-    draw.line([(1520, 380), (1520, 700)], fill=COLOR_GOLD, width=3)
-    draw.text((1540, 400), "ANÁLISIS BI-WHEEL", fill=COLOR_GOLD, font=f_sec_title)
-    draw.text((1540, 440), der_tag, fill=COLOR_CYAN, font=f_sec_text)
+        # ── PANEL LATERAL DERECHO (x: 1520 a 1880) ────────────────────────────────
+        draw.line([(1520, 380), (1520, 700)], fill=COLOR_GOLD, width=3)
+        draw.text((1540, 400), "ANÁLISIS BI-WHEEL", fill=COLOR_GOLD, font=f_sec_title)
+        draw.text((1540, 440), der_tag, fill=COLOR_CYAN, font=f_sec_text)
 
-    y_pos = 490
-    for linea in der_val.split("\n"):
-        draw.text((1540, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
-        y_pos += 26
+        y_pos = 490
+        for linea in der_val.split("\n"):
+            draw.text((1540, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
+            y_pos += 26
 
-    draw.text((1540, y_pos + 20), "Ascendente Natal a 180°", fill=COLOR_MUTED, font=f_sec_val)
+        draw.text((1540, y_pos + 20), "Ascendente Natal a 180°", fill=COLOR_MUTED, font=f_sec_val)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(str(output_path), "PNG")
@@ -629,42 +633,57 @@ def renderizar_capitulo(
     escenas: List[Dict] = []
     tiempo_acumulado = 0.0
 
-    # 1. Placa inicial
-    dur_placa = min(2.5 if preview else 3.5, duracion_real)
-    escenas.append({"tipo": "placa", "path": placa_png, "duracion": dur_placa})
-    tiempo_acumulado += dur_placa
+    # 1. Placa inicial (2.5s a 3.0s si hay tiempo suficiente)
+    if duracion_real > 6.0:
+        dur_placa = min(2.5 if preview else 3.0, duracion_real * 0.15)
+        escenas.append({"tipo": "placa", "path": placa_png, "duracion": dur_placa})
+        tiempo_acumulado += dur_placa
 
-    broll_idx = 0
-    foco_idx = 0
-    foco_rueda = True
+    # 2. Rueda Fija al inicio (1.0x plano general fijo para asimilar todo el contexto cósmico)
+    # Regla: Al principio siempre debe ser fijo para que el espectador vea la totalidad del mapa
+    tiempo_disponible = duracion_real - tiempo_acumulado
+    dur_fija = min(4.0 if preview else 6.0, tiempo_disponible * 0.25)
+    foco_item_inicial = biwheel_focos[0] if biwheel_focos else {}
+    p_base_inicial = foco_item_inicial.get("path_base", foco_item_inicial.get("path"))
+    escenas.append({
+        "tipo": "biwheel_fijo",
+        "path": p_base_inicial,
+        "duracion": dur_fija
+    })
+    tiempo_acumulado += dur_fija
 
-    while tiempo_acumulado < duracion_real:
-        tiempo_restante = duracion_real - tiempo_acumulado
-        if foco_rueda or not brolls:
-            dur_escena = min(8.0 if preview else 14.0, tiempo_restante)
-            foco_item = biwheel_focos[foco_idx % len(biwheel_focos)]
-            escenas.append({
-                "tipo": "biwheel",
-                "path_base": foco_item.get("path_base", foco_item.get("path")),
-                "path_foco": foco_item.get("path_foco", foco_item.get("path")),
-                "coords": foco_item.get("coords", {"x": 960, "y": 540}),
-                "duracion": dur_escena
-            })
-            tiempo_acumulado += dur_escena
-            foco_idx += 1
-            foco_rueda = False
-        else:
-            asset = brolls[broll_idx % len(brolls)]
-            dur_escena = min(6.0 if preview else 10.0, tiempo_restante)
-            es_video = asset.suffix.lower() == ".mp4"
-            escenas.append({
-                "tipo": "video" if es_video else "imagen",
-                "path": asset,
-                "duracion": dur_escena
-            })
-            tiempo_acumulado += dur_escena
-            broll_idx += 1
-            foco_rueda = True
+    # 3. Focos específicos de la carta (un zoom quirúrgico para cada tema o astro del capítulo)
+    # Regla: Un paneo/zoom específico para cada parte diferente de la explicación, nunca el mismo
+    tiempo_para_focos = duracion_real - tiempo_acumulado
+    num_focos = max(1, len(biwheel_focos))
+
+    # Si sobra tiempo extenso (> 35s), dejamos una toma final de b-roll atmosférico como respiro
+    dejar_broll_final = (tiempo_para_focos > 35.0 and len(brolls) > 0 and not preview)
+    dur_broll_final = 8.0 if dejar_broll_final else 0.0
+    tiempo_focos_neto = max(4.0, tiempo_para_focos - dur_broll_final)
+
+    dur_por_foco = tiempo_focos_neto / float(num_focos)
+
+    for f_item in biwheel_focos:
+        escenas.append({
+            "tipo": "biwheel",
+            "path_base": f_item.get("path_base", f_item.get("path")),
+            "path_foco": f_item.get("path_foco", f_item.get("path")),
+            "coords": f_item.get("coords", {"x": 960, "y": 540}),
+            "duracion": dur_por_foco
+        })
+        tiempo_acumulado += dur_por_foco
+
+    # 4. Cierre atmosférico opcional (solo 1 toma limpia, sin ping-pong)
+    if dejar_broll_final and brolls:
+        asset_final = brolls[0]
+        es_video = asset_final.suffix.lower() == ".mp4"
+        escenas.append({
+            "tipo": "video" if es_video else "imagen",
+            "path": asset_final,
+            "duracion": dur_broll_final
+        })
+        tiempo_acumulado += dur_broll_final
 
     # Renderizar cada micro-escena en un fragmento TS temporal
     temp_dir = output_mp4.parent / f"temp_cap_{cap_info['num']}"
@@ -677,29 +696,45 @@ def renderizar_capitulo(
         d = esc["duracion"]
         total_frames = max(25, int(d * 25))
 
-        if esc["tipo"] == "biwheel":
+        if esc["tipo"] == "biwheel_fijo":
+            p = str(esc["path"])
+            cmd_scene = [
+                "ffmpeg", "-y",
+                "-loop", "1", "-t", f"{d:.3f}", "-i", p,
+                "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=25",
+                "-frames:v", str(total_frames),
+                "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                str(ts_out)
+            ]
+        elif esc["tipo"] == "biwheel":
             cx = esc["coords"].get("x", 960)
             cy = esc["coords"].get("y", 540)
             p_base = str(esc.get("path_base", esc.get("path_foco")))
             p_foco = str(esc.get("path_foco", esc.get("path_base")))
 
-            # Curvas cinematográficas: zoom profundo a 1.75x con 5s de deslizamiento y aparición de efectos
+            # Curvas cinematográficas: zoom profundo a 1.75x con deslizamiento y aparición de efectos neón
             max_zoom = 1.75
-            t_fade_start = 1.0
-            t_fade_dur = 3.5 if not preview else 2.5
-            t_zoom_start = 1.0
-            t_zoom_dur = 5.0 if not preview else 3.8
+            t_fade_start = 0.6
+            t_fade_dur = min(3.5, max(1.5, d * 0.4))
+            t_zoom_start = 0.6
+            t_zoom_dur = min(4.5, max(2.0, d * 0.5))
 
             f_zoom_start = int(t_zoom_start * 25)
             f_zoom_dur = max(25, int(t_zoom_dur * 25))
+
+            # Progresión exacta: centrado al píxel en (cx, cy)
+            p_expr = f"min(max((on-{f_zoom_start})/{f_zoom_dur},0),1)"
+            z_expr = f"1.0+{max_zoom - 1.0:.2f}*{p_expr}"
+            x_expr = f"(1920/2-(1920/zoom/2))+{p_expr}*( {cx} - 1920/2)"
+            y_expr = f"(1080/2-(1080/zoom/2))+{p_expr}*( {cy} - 1080/2)"
 
             if p_base != p_foco and Path(p_base).exists() and Path(p_foco).exists():
                 # Transición progresiva: comienza el mandala base y los efectos se encienden al acercarse la cámara
                 fc = (
                     f"[0:v][1:v]blend=all_expr='A*(1-min(max((T-{t_fade_start})/{t_fade_dur},0),1))+B*min(max((T-{t_fade_start})/{t_fade_dur},0),1)'[merged];"
-                    f"[merged]zoompan=z='1.0+{max_zoom - 1.0:.2f}*min(max((on-{f_zoom_start})/{f_zoom_dur},0),1)':"
-                    f"x='(iw/2-(iw/zoom/2))+(( {cx} - iw/2)*(1-1/zoom))':"
-                    f"y='(ih/2-(ih/zoom/2))+(( {cy} - ih/2)*(1-1/zoom))':"
+                    f"[merged]zoompan=z='{z_expr}':"
+                    f"x='{x_expr}':"
+                    f"y='{y_expr}':"
                     f"d=1:s=1920x1080:fps=25[v]"
                 )
                 cmd_scene = [
@@ -714,9 +749,9 @@ def renderizar_capitulo(
                 ]
             else:
                 vf = (
-                    f"zoompan=z='1.0+{max_zoom - 1.0:.2f}*min(max((on-{f_zoom_start})/{f_zoom_dur},0),1)':"
-                    f"x='(iw/2-(iw/zoom/2))+(( {cx} - iw/2)*(1-1/zoom))':"
-                    f"y='(ih/2-(ih/zoom/2))+(( {cy} - ih/2)*(1-1/zoom))':"
+                    f"zoompan=z='{z_expr}':"
+                    f"x='{x_expr}':"
+                    f"y='{y_expr}':"
                     f"d={total_frames}:s=1920x1080:fps=25"
                 )
                 cmd_scene = [
@@ -937,23 +972,25 @@ def procesar_video_revolucion_solar(
                 raw_foco_png = biwheel_path
                 coords = {"x": 960, "y": 540}
 
-            # Marco pedagógico para la base
+            # Marco pedagógico para la base (con paneles para el plano general fijo)
             generar_marco_biwheel_pedagogico(
                 biwheel_path=raw_base_png,
                 cap_num=c_num,
                 titulo=cap["titulo"],
                 consultante=consultante,
                 output_path=frame_base_png,
-                foco_info=foco
+                foco_info=foco,
+                incluir_paneles_laterales=True
             )
-            # Marco pedagógico para el foco
+            # Marco pedagógico para el foco (sin paneles laterales exteriores para evitar que se corten en el zoom)
             generar_marco_biwheel_pedagogico(
                 biwheel_path=raw_foco_png,
                 cap_num=c_num,
                 titulo=cap["titulo"],
                 consultante=consultante,
                 output_path=frame_foco_png,
-                foco_info=foco
+                foco_info=foco,
+                incluir_paneles_laterales=False
             )
 
             biwheel_focos.append({
