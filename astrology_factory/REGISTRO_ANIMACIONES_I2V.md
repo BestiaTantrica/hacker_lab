@@ -36,3 +36,4 @@
 | 23 | **Luna en Cáncer** | Abstracto | `arte_propio_luna_cancer_1791474708448.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_cancer.mp4` | ✅ Completado |
 | 24 | **Luna en Escorpio** | Abstracto | `arte_propio_luna_escorpio_1791327729856.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_escorpio.mp4` | ✅ Completado |
 | 25 | **Luna en Leo** | Abstracto | `arte_propio_luna_leo_1791587277468.jpg` | PixVerse | `anim_pixverse_abstracto_luna_leo.mp4` | ✅ Completado |
+| 26 | **Mercurio en Piscis** | Abstracto | `arte_propio_mercurio_piscis_1791309797396.jpg` | Luma Dream Machine | `anim_luma_abstracto_mercurio_piscis.mp4` | ✅ Completado |
