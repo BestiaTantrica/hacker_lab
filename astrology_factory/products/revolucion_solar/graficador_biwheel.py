@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Tuple
 
 class GraficadorBiWheelAstrologica:
     """
@@ -39,7 +39,41 @@ class GraficadorBiWheelAstrologica:
             'Quirón': '⚷', 'Nodo Norte': '☊', 'Lilith': '⚸'
         }
 
-    def generar_biwheel(self, carta_natal: Dict[str, Any], carta_rs: Dict[str, Any], output_path: str):
+    def to_canvas_xy(self, rad: float, r: float) -> Dict[str, int]:
+        """Convierte coordenadas polares (rad, r) a coordenadas pixel (X, Y) en canvas 1920x1080."""
+        cx, cy = 960, 540
+        r_px = r * 485.0
+        x = int(round(cx + r_px * np.cos(rad)))
+        y = int(round(cy - r_px * np.sin(rad)))
+        x = max(180, min(1740, x))
+        y = max(120, min(960, y))
+        return {"x": x, "y": y}
+
+    def generar_biwheel(
+        self,
+        carta_natal: Dict[str, Any],
+        carta_rs: Dict[str, Any],
+        output_path: str,
+        foco: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """Genera la rueda Bi-Wheel estándar o enfocada, retornando la ruta del archivo generado."""
+        out, _ = self.generar_biwheel_con_foco(carta_natal, carta_rs, output_path, foco=foco)
+        return out
+
+    def generar_biwheel_con_foco(
+        self,
+        carta_natal: Dict[str, Any],
+        carta_rs: Dict[str, Any],
+        output_path: str,
+        foco: Optional[Dict[str, Any]] = None,
+        solo_base: bool = False
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Grafica la rueda Bi-Wheel con soporte de Enfoque Pedagógico Dinámico (Regla 8 y 11).
+        Retorna (output_path, coords_foco) donde coords_foco = {'x': int, 'y': int} en el canvas 1920x1080.
+        Si solo_base=True, grafica la rueda limpia con todo el detalle cósmico pero sin la retícula de foco,
+        manteniendo idénticos los títulos y badges superiores para una transición de zoom perfecta.
+        """
         fig, ax = plt.subplots(figsize=(13, 13), subplot_kw={'projection': 'polar'})
         
         # Fondo Espacial Profundo
@@ -48,12 +82,19 @@ class GraficadorBiWheelAstrologica:
         ax.set_facecolor(bg_color)
         ax.axis('off')
 
+        # Configuración de Foco
+        foco_activo = (foco is not None and foco.get("tipo", "general") != "general") and not solo_base
+        foco_tipo = foco.get("tipo", "general") if (foco and not solo_base) else "general"
+        foco_nombre = foco.get("nombre", "").strip() if (foco and not solo_base) else ""
+        foco_casa = foco.get("casa", None) if (foco and not solo_base) else None
+        coords_foco = {"x": 960, "y": 540} # Por defecto al centro
+
         # Semilla fija para estrellas de fondo
         np.random.seed(42)
         n_stars = 180
         star_r = np.random.uniform(0.08, 0.98, n_stars)
         star_theta = np.random.uniform(0, 2 * np.pi, n_stars)
-        star_alpha = np.random.uniform(0.15, 0.6, n_stars)
+        star_alpha = np.random.uniform(0.10 if foco_activo else 0.15, 0.4 if foco_activo else 0.6, n_stars)
         star_sizes = np.random.uniform(2, 10, n_stars)
         ax.scatter(star_theta, star_r, c='#ffffff', alpha=star_alpha, s=star_sizes, zorder=1)
 
@@ -66,6 +107,7 @@ class GraficadorBiWheelAstrologica:
             return np.radians(wheel_deg)
 
         # 1. Anillo Exterior: Signos del Zodiaco (0.86 a 1.0)
+        alpha_signos = 0.38
         for i in range(12):
             sign_name = self.ZODIAC_SIGNS[i]
             glyph = self.ZODIAC_GLYPHS[i]
@@ -78,59 +120,105 @@ class GraficadorBiWheelAstrologica:
             if rads[-1] < rads[0]:
                 rads = np.unwrap(rads)
                 
-            ax.fill_between(rads, 0.86, 1.0, color=color, alpha=0.35, edgecolor='#d4af37', linewidth=1.2, zorder=2)
+            ax.fill_between(rads, 0.86, 1.0, color=color, alpha=alpha_signos, edgecolor='#d4af37', linewidth=1.2, zorder=2)
             
             mid_deg = deg_start + 15.0
             mid_rad = to_wheel_rad(mid_deg)
             ax.text(mid_rad, 0.93, f"{glyph}\n{sign_name}", ha='center', va='center', 
-                    color='#ffffff', fontsize=9.5, fontweight='bold', zorder=3)
+                    color='#ffffff', fontsize=9.2, fontweight='bold', zorder=3)
 
         # Círculos concéntricos de demarcación
         theta_full = np.linspace(0, 2 * np.pi, 250)
-        ax.plot(theta_full, [1.0] * 250, color='#d4af37', linewidth=1.5, zorder=4)
-        ax.plot(theta_full, [0.86] * 250, color='#d4af37', linewidth=1.2, zorder=4)
-        ax.plot(theta_full, [0.72] * 250, color='#00d2ff', linewidth=1.0, linestyle='--', alpha=0.7, zorder=4) # Límite RS vs Natal
-        ax.plot(theta_full, [0.56] * 250, color='#d4af37', linewidth=1.0, zorder=4) # Demarcación planetas natales
-        ax.plot(theta_full, [0.42] * 250, color='#4a5568', linewidth=0.8, linestyle=':', zorder=4) # Límite casas natales
-        ax.plot(theta_full, [0.30] * 250, color='#2d3748', linewidth=0.8, zorder=4) # Centro de aspectos
+        ax.plot(theta_full, [1.0] * 250, color='#d4af37', linewidth=1.2, alpha=0.9, zorder=4)
+        ax.plot(theta_full, [0.86] * 250, color='#d4af37', linewidth=1.0, alpha=0.9, zorder=4)
+        ax.plot(theta_full, [0.72] * 250, color='#00d2ff', linewidth=0.8, linestyle='--', alpha=0.75, zorder=4)
+        ax.plot(theta_full, [0.56] * 250, color='#d4af37', linewidth=0.8, alpha=0.85, zorder=4)
+        ax.plot(theta_full, [0.42] * 250, color='#4a5568', linewidth=0.6, linestyle=':', alpha=0.8, zorder=4)
+        ax.plot(theta_full, [0.30] * 250, color='#2d3748', linewidth=0.6, alpha=0.8, zorder=4)
 
         # 2. Casas Natales (Cúspides y números 1 a 12)
         cuspides_natal = carta_natal["cuspides_grados"]
+        casa_natal_portal = carta_rs['superposicion_clave']['ascendente_rs_en_casa_natal']['casa_natal']
+
         for h in range(12):
             c_deg = cuspides_natal[h]
             c_next = cuspides_natal[(h + 1) % 12]
             rad_cusp = to_wheel_rad(c_deg)
             
-            # Líneas de cúspides natales (desde r=0.30 hasta r=0.86)
-            is_ang = (h in [0, 3, 6, 9])
-            lw = 1.6 if is_ang else 0.7
-            ls = '-' if is_ang else '--'
-            c_line = '#f39c12' if is_ang else '#4a5568'
-            ax.plot([rad_cusp, rad_cusp], [0.30, 0.86], color=c_line, linewidth=lw, linestyle=ls, zorder=5)
-
-            # Número de Casa Natal centrado en su sector (r=0.36)
             diff_h = (c_next - c_deg) % 360.0
             mid_c_deg = (c_deg + diff_h / 2.0) % 360.0
             mid_rad = to_wheel_rad(mid_c_deg)
-            ax.text(mid_rad, 0.36, str(h + 1), ha='center', va='center', 
-                    color='#cbd5e0', fontsize=8.5, fontweight='bold', zorder=6)
 
-        # 3. Planetas de la Carta Natal (Anillo Interior: r = 0.48)
+            es_casa_enfocada = (foco_tipo == "casa" and foco_casa == (h + 1))
+            es_casa_portal = (foco_tipo == "portal" and (h + 1) == casa_natal_portal)
+
+            # Relleno del sector enfocado (iluminación dinámica de casa con borde luminoso)
+            if es_casa_enfocada or es_casa_portal:
+                degs_sec = np.linspace(c_deg, c_deg + diff_h, 30)
+                rads_sec = np.array([to_wheel_rad(d) for d in degs_sec])
+                if rads_sec[-1] < rads_sec[0]:
+                    rads_sec = np.unwrap(rads_sec)
+                glow_color = '#00f2fe' if es_casa_portal else '#ffd700'
+                ax.fill_between(rads_sec, 0.30, 0.86, color=glow_color, alpha=0.28, zorder=3)
+                coords_foco = self.to_canvas_xy(mid_rad, 0.45)
+
+            # Líneas de cúspides natales
+            is_ang = (h in [0, 3, 6, 9])
+            if es_casa_enfocada or es_casa_portal:
+                c_line = '#00f2fe' if es_casa_portal else '#ffd700'
+                ax.plot([rad_cusp, rad_cusp], [0.30, 0.86], color=c_line, linewidth=3.2, zorder=6)
+                ax.plot([rad_cusp, rad_cusp], [0.30, 0.86], color=c_line, linewidth=10.0, alpha=0.35, zorder=5)
+            else:
+                lw = 1.4 if is_ang else 0.7
+                ls = '-' if is_ang else '--'
+                c_line = '#f39c12' if is_ang else '#4a5568'
+                ax.plot([rad_cusp, rad_cusp], [0.30, 0.86], color=c_line, linewidth=lw, linestyle=ls, zorder=5)
+
+            # Número de Casa Natal
+            if es_casa_enfocada or es_casa_portal:
+                color_num = '#00f2fe' if es_casa_portal else '#ffd700'
+                ax.text(mid_rad, 0.36, str(h + 1), ha='center', va='center', 
+                        color=color_num, fontsize=12, fontweight='bold', zorder=7,
+                        bbox=dict(boxstyle='circle,pad=0.25', facecolor='#080b12', edgecolor=color_num, linewidth=1.6, alpha=0.95))
+            else:
+                ax.text(mid_rad, 0.36, str(h + 1), ha='center', va='center', 
+                        color='#cbd5e0', fontsize=8.5, fontweight='bold', zorder=6)
+
+        # 3. Planetas de la Carta Natal (Anillo Interior: r = 0.48 / 0.56)
         natal_planets = carta_natal["planetas"]
-        # Agrupar para evitar solapamientos leves
         sorted_natal = sorted(natal_planets.items(), key=lambda x: x[1]["grado_absoluto"])
         for p_name, p_info in sorted_natal:
             deg = p_info["grado_absoluto"]
             rad = to_wheel_rad(deg)
             glyph = self.PLANET_GLYPHS.get(p_name, p_name[:2])
             
-            # Punto de posición exacta natal
-            ax.scatter([rad], [0.56], color='#f1c40f', s=16, zorder=7)
-            # Glifo y grado
-            ax.text(rad, 0.49, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
-                    color='#ffffff', fontsize=8, fontweight='bold', zorder=8)
+            es_planeta_foco = (foco_tipo == "planeta" and foco_nombre.lower() == p_name.lower() and foco.get("es_natal", False))
+            
+            if es_planeta_foco:
+                coords_foco = self.to_canvas_xy(rad, 0.56)
+                # Halos concéntricos neón oro
+                for s_glow, a_glow in [(450, 0.12), (280, 0.25), (150, 0.45), (60, 0.80)]:
+                    ax.scatter([rad], [0.56], color='#ffd700', s=s_glow, alpha=a_glow, zorder=8)
+                ax.scatter([rad], [0.56], facecolors='none', edgecolors='#ffd700', s=550, linewidth=2.2, linestyle='--', zorder=9)
+                # Mira cruzada (crosshair ticks)
+                dt = 0.04
+                dr = 0.05
+                ax.plot([rad - dt, rad + dt], [0.56, 0.56], color='#ffd700', linewidth=1.5, zorder=9)
+                ax.plot([rad, rad], [0.56 - dr, 0.56 + dr], color='#ffd700', linewidth=1.5, zorder=9)
+                ax.text(rad, 0.48, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
+                        color='#ffd700', fontsize=12, fontweight='bold', zorder=10,
+                        bbox=dict(boxstyle='circle,pad=0.32', facecolor='#080b12', edgecolor='#ffd700', linewidth=1.8, alpha=0.98))
+                # HUD callout
+                ax.text(rad, 0.38, f"✦ {p_name.upper()} {p_info['grado_en_signo']}° ✦", ha='center', va='center',
+                        color='#ffd700', fontsize=9.0, fontweight='bold',
+                        bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor='#ffd700', linewidth=1.2, alpha=0.9), zorder=11)
+            else:
+                # Planeta natal estándar: siempre visible con grado y glifo
+                ax.scatter([rad], [0.56], color='#f1c40f', s=18, zorder=7)
+                ax.text(rad, 0.49, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
+                        color='#ffffff', fontsize=8.0, fontweight='bold', zorder=8)
 
-        # 4. Planetas de la Revolución Solar (Anillo Exterior: r = 0.79)
+        # 4. Planetas de la Revolución Solar (Anillo Exterior: r = 0.72 / 0.79)
         rs_planets = carta_rs["planetas_rs"]
         sorted_rs = sorted(rs_planets.items(), key=lambda x: x[1]["grado_absoluto"])
         for p_name, p_info in sorted_rs:
@@ -138,24 +226,52 @@ class GraficadorBiWheelAstrologica:
             rad = to_wheel_rad(deg)
             glyph = self.PLANET_GLYPHS.get(p_name, p_name[:2])
             
-            # Punto de posición de RS (destacado en Cian / Azul Eléctrico)
-            ax.scatter([rad], [0.72], color='#00f2fe', s=20, zorder=7)
-            # Glifo y grado anual
-            ax.text(rad, 0.79, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
-                    color='#00f2fe', fontsize=8.5, fontweight='bold', zorder=8)
+            es_planeta_foco = (foco_tipo == "planeta" and foco_nombre.lower() == p_name.lower() and not foco.get("es_natal", False))
+            
+            if es_planeta_foco:
+                coords_foco = self.to_canvas_xy(rad, 0.72)
+                # Halos concéntricos neón cian
+                for s_glow, a_glow in [(500, 0.12), (300, 0.28), (160, 0.50), (70, 0.85)]:
+                    ax.scatter([rad], [0.72], color='#00f2fe', s=s_glow, alpha=a_glow, zorder=8)
+                ax.scatter([rad], [0.72], facecolors='none', edgecolors='#00f2fe', s=600, linewidth=2.4, linestyle='--', zorder=9)
+                # Mira cruzada (crosshair ticks)
+                dt = 0.04
+                dr = 0.05
+                ax.plot([rad - dt, rad + dt], [0.72, 0.72], color='#00f2fe', linewidth=1.6, zorder=9)
+                ax.plot([rad, rad], [0.72 - dr, 0.72 + dr], color='#00f2fe', linewidth=1.6, zorder=9)
+                ax.text(rad, 0.79, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
+                        color='#00f2fe', fontsize=12.5, fontweight='bold', zorder=10,
+                        bbox=dict(boxstyle='circle,pad=0.35', facecolor='#080b12', edgecolor='#00f2fe', linewidth=2.0, alpha=0.98))
+                # HUD callout
+                ax.text(rad, 0.65, f"✦ {p_name.upper()} {p_info['grado_en_signo']}° ✦", ha='center', va='center',
+                        color='#00f2fe', fontsize=9.2, fontweight='bold',
+                        bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor='#00f2fe', linewidth=1.2, alpha=0.9), zorder=11)
+            else:
+                # Planeta RS estándar: siempre visible con grado y glifo
+                ax.scatter([rad], [0.72], color='#00f2fe', s=20, zorder=7)
+                ax.text(rad, 0.79, f"{glyph}\n{p_info['grado_en_signo']}°", ha='center', va='center',
+                        color='#00f2fe', fontsize=8.5, fontweight='bold', zorder=8)
 
-        # 5. Marcador Especial: Ascendente de la Revolución Solar (¿Dónde cae en el natal?)
+        # 5. Marcador Especial: Ascendente de la Revolución Solar
         asc_rs_deg = carta_rs["angulos_rs"]["Ascendente_RS"]["grado_absoluto"]
         asc_rs_rad = to_wheel_rad(asc_rs_deg)
-        # Flecha o línea marcadora destacada
-        ax.plot([asc_rs_rad, asc_rs_rad], [0.30, 0.86], color='#00f2fe', linewidth=2.2, linestyle='-', zorder=9)
-        ax.text(asc_rs_rad, 0.83, "AC_RS", ha='center', va='center',
-                color='#00f2fe', fontsize=7.5, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='#080b12', edgecolor='#00f2fe', alpha=0.8), zorder=10)
+        es_portal_foco = (foco_tipo == "portal" or foco_nombre.upper() in ["AC_RS", "ASCENDENTE_RS", "PORTAL", "ASCENDENTE"])
+
+        if es_portal_foco:
+            coords_foco = self.to_canvas_xy(asc_rs_rad, 0.80)
+            ax.plot([asc_rs_rad, asc_rs_rad], [0.30, 0.88], color='#00ffff', linewidth=4.0, zorder=10)
+            ax.plot([asc_rs_rad, asc_rs_rad], [0.30, 0.88], color='#00ffff', linewidth=16, alpha=0.35, zorder=9)
+            ax.text(asc_rs_rad, 0.85, "✦ PORTAL AC_RS ✦", ha='center', va='center',
+                    color='#00ffff', fontsize=10.5, fontweight='bold',
+                    bbox=dict(boxstyle='round,pad=0.35', facecolor='#080b12', edgecolor='#00ffff', linewidth=2.2), zorder=11)
+        else:
+            ax.plot([asc_rs_rad, asc_rs_rad], [0.30, 0.86], color='#00f2fe', linewidth=2.0, linestyle='-', zorder=9)
+            ax.text(asc_rs_rad, 0.83, "AC_RS", ha='center', va='center',
+                    color='#00f2fe', fontsize=7.5, fontweight='bold',
+                    bbox=dict(boxstyle='round,pad=0.2', facecolor='#080b12', edgecolor='#00f2fe', alpha=0.85), zorder=10)
 
         # 6. Aspectos de Activación Anual (Cuerdas en el núcleo r <= 0.30)
-        # Dibujamos los 8 aspectos más exactos entre planetas de RS y planetas Natales
-        aspectos_act = carta_rs["aspectos_intercartas"][:8]
+        aspectos_act = carta_rs["aspectos_intercartas"][:10]
         for asp in aspectos_act:
             p_rs_name = asp["cuerpo_rs"]
             p_nat_name = asp["cuerpo_natal"]
@@ -167,32 +283,58 @@ class GraficadorBiWheelAstrologica:
                 rad_rs = to_wheel_rad(deg_rs)
                 rad_nat = to_wheel_rad(deg_nat)
                 
-                # Curva interior uniendo ambos puntos
-                c_points = 25
-                curve_r = np.linspace(0.30, 0.30, c_points)
-                # Crear arco que pasa cerca del centro
+                c_points = 30
                 t_interp = np.linspace(0, 1, c_points)
                 curve_rads = rad_rs + t_interp * (rad_nat - rad_rs)
-                # Modulación de radio para arquear hacia el centro
                 curve_r = 0.30 * (1 - 0.75 * np.sin(np.pi * t_interp))
                 
-                ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.65, linewidth=1.2, zorder=4)
+                es_aspecto_foco = (
+                    foco_tipo == "aspecto" and (
+                        foco_nombre.lower() in [p_rs_name.lower(), p_nat_name.lower(), asp.get("aspecto", "").lower()]
+                    )
+                )
 
-        # Título y Leyenda Integrada Pedagógica
+                if es_aspecto_foco:
+                    mid_rad = (rad_rs + rad_nat) / 2.0
+                    coords_foco = self.to_canvas_xy(mid_rad, 0.20)
+                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.40, linewidth=16, zorder=5)
+                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=1.0, linewidth=4.0, zorder=6)
+                    # Halos en los dos planetas conectados
+                    ax.scatter([rad_rs], [0.72], color=asp["color"], s=280, alpha=0.4, zorder=8)
+                    ax.scatter([rad_nat], [0.56], color=asp["color"], s=280, alpha=0.4, zorder=8)
+                    # Badge central del aspecto
+                    nom_asp = asp.get("aspecto", "").upper()
+                    ax.text(mid_rad, 0.18, f"✦ {nom_asp} ✦", ha='center', va='center',
+                            color='#ffffff', fontsize=8.5, fontweight='bold',
+                            bbox=dict(boxstyle='round,pad=0.25', facecolor='#080b12', edgecolor=asp["color"], linewidth=1.5, alpha=0.95), zorder=7)
+                else:
+                    # Todos los demás aspectos se mantienen visibles para ver el mapa cósmico completo
+                    ax.plot(curve_rads, curve_r, color=asp["color"], alpha=0.55, linewidth=1.3, zorder=4)
+
+        # 7. Título y Leyenda Integrada Pedagógica
         sujeto = carta_natal["sujeto"]["nombre"]
         anio_rs = carta_rs["revolucion_solar"]["anio"]
         ciudad_rs = carta_rs["revolucion_solar"]["ciudad_retorno"]
         fecha_rs = carta_rs["revolucion_solar"]["fecha_hora_exacta_local"]
-        casa_natal_portal = carta_rs['superposicion_clave']['ascendente_rs_en_casa_natal']['casa_natal']
         asc_rs_fmt = carta_rs['angulos_rs']['Ascendente_RS']['formato']
         
-        # Título superior
-        fig.text(0.5, 0.96, f"REVOLUCIÓN SOLAR {anio_rs} · {sujeto.upper()}",
-                 ha='center', va='center', color='#d4af37', fontsize=13, fontweight='bold')
-        fig.text(0.5, 0.935, f"Retorno Solar Exacto: {fecha_rs} hs ({ciudad_rs}) · Ascendente RS: {asc_rs_fmt}",
-                 ha='center', va='center', color='#00f2fe', fontsize=10, fontweight='medium')
+        if foco and foco.get("titulo"):
+            tit_foco = foco["titulo"]
+            sub_foco = foco.get("subtitulo", "")
+            fig.text(0.5, 0.965, f"✦ {tit_foco.upper()} ✦",
+                     ha='center', va='center', color='#00f2fe' if 'RS' in tit_foco else '#ffd700',
+                     fontsize=13, fontweight='bold',
+                     bbox=dict(boxstyle='round,pad=0.4', facecolor='#0b111e', edgecolor='#00f2fe', linewidth=1.2, alpha=0.92))
+            if sub_foco:
+                fig.text(0.5, 0.935, sub_foco,
+                         ha='center', va='center', color='#e2e8f0', fontsize=9.5, fontweight='medium')
+        else:
+            fig.text(0.5, 0.96, f"REVOLUCIÓN SOLAR {anio_rs} · {sujeto.upper()}",
+                     ha='center', va='center', color='#d4af37', fontsize=13, fontweight='bold')
+            fig.text(0.5, 0.935, f"Retorno Solar Exacto: {fecha_rs} hs ({ciudad_rs}) · Ascendente RS: {asc_rs_fmt}",
+                     ha='center', va='center', color='#00f2fe', fontsize=10, fontweight='medium')
 
-        # Caja de Leyenda Pedagógica Inferior (Bajar a tierra para el consultante)
+        # Caja de Leyenda Pedagógica Inferior
         leyenda_biwheel = (
             "GUÍA RÁPIDA DE LA RUEDA DOBLE (CÓMO LEER EL MAPA DEL AÑO)\n"
             "• ANILLO INTERIOR (Dorado): Tu Carta Natal de nacimiento = Tu ADN psicológico permanente.\n"
@@ -208,4 +350,5 @@ class GraficadorBiWheelAstrologica:
         plt.tight_layout()
         plt.savefig(output_path, dpi=200, facecolor=bg_color, edgecolor='none')
         plt.close(fig)
-        return output_path
+        return output_path, coords_foco
+

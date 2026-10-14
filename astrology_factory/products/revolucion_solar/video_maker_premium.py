@@ -23,13 +23,18 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 
 # ── Constantes y Rutas Maestras ───────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from products.revolucion_solar.graficador_biwheel import GraficadorBiWheelAstrologica
+
 VAULT_VIDEOS_DIR = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Videos")
 VAULT_IMAGES_DIR = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes")
 VAULT_AUDIO_DIR  = Path("/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Stock_Sonoro")
@@ -333,11 +338,12 @@ def generar_marco_biwheel_pedagogico(
     cap_num: int,
     titulo: str,
     consultante: str,
-    output_path: Path
+    output_path: Path,
+    foco_info: Optional[Dict[str, Any]] = None
 ) -> Path:
     """
     Enmarca la rueda Bi-Wheel (2600x2600) en un lienzo 1920x1080 con bandas pedagógicas
-    laterales que explican el foco del capítulo (Regla 8 de PROJECT_RULES.md).
+    laterales que explican el foco del capítulo (Regla 8 y 11 de PROJECT_RULES.md).
     """
     canvas = _crear_fondo_estelar(1920, 1080)
 
@@ -348,7 +354,6 @@ def generar_marco_biwheel_pedagogico(
         # Posición centrada horizontalmente: x = (1920 - 1040) / 2 = 440, y = 20
         canvas.paste(rueda_resized, (440, 20), rueda_resized)
     else:
-        # Placeholder si no existe
         draw_temp = ImageDraw.Draw(canvas)
         draw_temp.rectangle([440, 20, 1480, 1060], outline=COLOR_GOLD, width=3)
 
@@ -361,58 +366,18 @@ def generar_marco_biwheel_pedagogico(
     except Exception:
         f_sec_title = f_sec_text = f_sec_val = ImageFont.load_default()
 
-    # Contenido temático según capítulo (Regla 8)
-    focos_por_cap = {
-        1: {
-            "izq_tag": "PORTAL DEL AÑO",
-            "izq_val": "Ascendente RS\ny Casas Base",
-            "der_tag": "TERRITORIO",
-            "der_val": "Interior: Natal\nExterior: RS 2026\nFlecha: Entrada"
-        },
-        2: {
-            "izq_tag": "TRINIDAD ANUAL",
-            "izq_val": "Sol (Consciente)\nLuna (Instinto)",
-            "der_tag": "VIBRACIÓN",
-            "der_val": "Propósito Solar\nvs Demanda Emocional\nen Casas Activas"
-        },
-        3: {
-            "izq_tag": "ACCIÓN Y DESEO",
-            "izq_val": "Marte (Impulso)\nVenus (Atracción)",
-            "der_tag": "TERRENO",
-            "der_val": "Conquista Material\nPactos y Vínculos\nEnergía Disponible"
-        },
-        4: {
-            "izq_tag": "LEYES Y PRUEBAS",
-            "izq_val": "Saturno (Frontera)\nJúpiter (Expansión)",
-            "der_tag": "ARQUITECTURA",
-            "der_val": "Maduración Kármica\nLímites Reales\nCrecimiento Firme"
-        },
-        5: {
-            "izq_tag": "PUNTOS DE TENSIÓN",
-            "izq_val": "Aspectos Mayores\nCuerdas Activas",
-            "der_tag": "DINÁMICA",
-            "der_val": "Rojo: Fricción Creativa\nAzul: Fluidez y Puente\nDorado: Conjunción"
-        },
-        6: {
-            "izq_tag": "SÍNTESIS GLOBAL",
-            "izq_val": "Maduración 2026\nEl Mapa Completo",
-            "der_tag": "INTEGRACIÓN",
-            "der_val": "Soberanía Personal\nportaltarotmistico.com\nTomás"
-        },
-    }
-
-    info = focos_por_cap.get(cap_num, focos_por_cap[1])
+    izq_tag = foco_info.get("izq_tag", f"CAPÍTULO {cap_num}") if foco_info else f"CAPÍTULO {cap_num}"
+    izq_val = foco_info.get("izq_val", titulo) if foco_info else titulo
+    der_tag = foco_info.get("der_tag", "ANÁLISIS BI-WHEEL") if foco_info else "ANÁLISIS BI-WHEEL"
+    der_val = foco_info.get("der_val", "Interior: Natal\nExterior: RS 2026") if foco_info else "Interior: Natal\nExterior: RS 2026"
 
     # ── PANEL LATERAL IZQUIERDO (x: 40 a 400) ─────────────────────────────────
-    # Barra dorada
     draw.line([(40, 380), (40, 700)], fill=COLOR_GOLD, width=3)
-
     draw.text((60, 400), f"CAPÍTULO {cap_num}", fill=COLOR_GOLD, font=f_sec_title)
-    draw.text((60, 440), info["izq_tag"], fill=COLOR_CYAN, font=f_sec_text)
+    draw.text((60, 440), izq_tag, fill=COLOR_CYAN, font=f_sec_text)
 
-    # Texto descriptivo
     y_pos = 490
-    for linea in info["izq_val"].split("\n"):
+    for linea in izq_val.split("\n"):
         draw.text((60, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
         y_pos += 26
 
@@ -420,12 +385,11 @@ def generar_marco_biwheel_pedagogico(
 
     # ── PANEL LATERAL DERECHO (x: 1520 a 1880) ────────────────────────────────
     draw.line([(1520, 380), (1520, 700)], fill=COLOR_GOLD, width=3)
-
     draw.text((1540, 400), "ANÁLISIS BI-WHEEL", fill=COLOR_GOLD, font=f_sec_title)
-    draw.text((1540, 440), info["der_tag"], fill=COLOR_CYAN, font=f_sec_text)
+    draw.text((1540, 440), der_tag, fill=COLOR_CYAN, font=f_sec_text)
 
     y_pos = 490
-    for linea in info["der_val"].split("\n"):
+    for linea in der_val.split("\n"):
         draw.text((1540, y_pos), linea, fill=COLOR_WHITE, font=f_sec_val)
         y_pos += 26
 
@@ -434,6 +398,165 @@ def generar_marco_biwheel_pedagogico(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(str(output_path), "PNG")
     return output_path
+
+
+def obtener_focos_capitulo(cap_num: int, cap_info: Dict, datos_rs: Optional[Dict]) -> List[Dict[str, Any]]:
+    """
+    Retorna la lista de focos temáticos y planetarios para un capítulo según sus datos astrológicos.
+    Permite alternar entre los puntos de mayor relieve mencionados por la locución.
+    """
+    if not datos_rs or "revolucion_solar" not in datos_rs or "carta_natal" not in datos_rs:
+        return [{
+            "tipo": "general", "titulo": "CARTA BI-WHEEL", "subtitulo": "Mapa Anual Completo",
+            "izq_tag": "MAPA DEL AÑO", "izq_val": "Interior: Natal\nExterior: RS",
+            "der_tag": "TERRITORIO", "der_val": "Ciclo Anual"
+        }]
+
+    natal = datos_rs["carta_natal"]
+    rs = datos_rs["revolucion_solar"]
+    planetas_rs = rs.get("planetas_rs", {})
+    angulos_rs = rs.get("angulos_rs", {})
+    casa_portal = rs.get("superposicion_clave", {}).get("ascendente_rs_en_casa_natal", {}).get("casa_natal", 1)
+    asc_rs_signo = angulos_rs.get("Ascendente_RS", {}).get("signo", "Aries")
+    asc_rs_fmt = angulos_rs.get("Ascendente_RS", {}).get("formato", "")
+
+    if cap_num == 1:
+        return [
+            {
+                "tipo": "portal",
+                "nombre": "AC_RS",
+                "titulo": f"EL PORTAL: ASCENDENTE ANUAL EN {asc_rs_signo.upper()}",
+                "subtitulo": f"Aterriza en tu Casa {casa_portal} Natal · {asc_rs_fmt}",
+                "izq_tag": "PORTAL DEL AÑO",
+                "izq_val": f"Ascendente RS en {asc_rs_signo}\nGrado: {asc_rs_fmt}",
+                "der_tag": "ESCENARIO PROTAGONISTA",
+                "der_val": f"Casa Natal {casa_portal}\nDemanda Concreta\nFoco y Presencia"
+            },
+            {
+                "tipo": "casa",
+                "casa": casa_portal,
+                "titulo": f"ESCENARIO PROTAGONISTA: CASA {casa_portal} NATAL",
+                "subtitulo": "El gran taller de manifestación y aprendizaje del año",
+                "izq_tag": "ESCENARIO ACTIVO",
+                "izq_val": f"Casa {casa_portal} Natal\nFuerzas Concentradas\nOrden y Soberanía",
+                "der_tag": "DESAFÍO ANUAL",
+                "der_val": "Poner el cuerpo\nSin abstracciones\nMaduración real"
+            }
+        ]
+    elif cap_num == 2:
+        sol_info = planetas_rs.get("Sol", {})
+        luna_info = planetas_rs.get("Luna", {})
+        return [
+            {
+                "tipo": "planeta",
+                "nombre": "Sol",
+                "titulo": f"SOL RS EN {sol_info.get('formato', 'Sol RS')}",
+                "subtitulo": f"Propósito consciente del ciclo · Casa {sol_info.get('casa', '')} RS",
+                "izq_tag": "PROPÓSITO CONSCIENTE",
+                "izq_val": f"Sol en {sol_info.get('signo', '')} {sol_info.get('grado_en_signo', '')}°\nCasa {sol_info.get('casa', '')} Anual",
+                "der_tag": "DIRECCIÓN SOLAR",
+                "der_val": "Voluntad y lucidez\nExpresión de verdad\nSin concesiones"
+            },
+            {
+                "tipo": "planeta",
+                "nombre": "Luna",
+                "titulo": f"LUNA RS EN {luna_info.get('formato', 'Luna RS')}",
+                "subtitulo": f"El pulso emocional y reactivo del año · Casa {luna_info.get('casa', '')} RS",
+                "izq_tag": "PULSO EMOCIONAL",
+                "izq_val": f"Luna en {luna_info.get('signo', '')} {luna_info.get('grado_en_signo', '')}°\nCasa {luna_info.get('casa', '')} Anual",
+                "der_tag": "NECESIDAD VISCERAL",
+                "der_val": "Respuesta inmediata\nDrenaje de tensión\nLímites claros"
+            }
+        ]
+    elif cap_num == 3:
+        marte_info = planetas_rs.get("Marte", {})
+        venus_info = planetas_rs.get("Venus", {})
+        return [
+            {
+                "tipo": "planeta",
+                "nombre": "Marte",
+                "titulo": f"MARTE RS EN {marte_info.get('formato', 'Marte RS')}",
+                "subtitulo": f"Vector de conquista, empuje y asertividad · Casa {marte_info.get('casa', '')} RS",
+                "izq_tag": "IMPULSO Y ACCIÓN",
+                "izq_val": f"Marte en {marte_info.get('signo', '')} {marte_info.get('grado_en_signo', '')}°\nCasa {marte_info.get('casa', '')} Anual",
+                "der_tag": "MOTOR DE COMBATE",
+                "der_val": "Iniciativa y coraje\nEnergía disponible\nSin postergaciones"
+            },
+            {
+                "tipo": "planeta",
+                "nombre": "Venus",
+                "titulo": f"VENUS RS EN {venus_info.get('formato', 'Venus RS')}",
+                "subtitulo": f"Pactos, valor personal y vínculos estratégicos · Casa {venus_info.get('casa', '')} RS",
+                "izq_tag": "DESEO Y VÍNCULOS",
+                "izq_val": f"Venus en {venus_info.get('signo', '')} {venus_info.get('grado_en_signo', '')}°\nCasa {venus_info.get('casa', '')} Anual",
+                "der_tag": "ARMONÍA Y PACTOS",
+                "der_val": "Negociación lúcida\nMagnetismo personal\nCuidado del valor"
+            }
+        ]
+    elif cap_num == 4:
+        saturno_info = planetas_rs.get("Saturno", {})
+        jupiter_info = planetas_rs.get("Júpiter", {})
+        return [
+            {
+                "tipo": "planeta",
+                "nombre": "Saturno",
+                "titulo": f"SATURNO RS EN {saturno_info.get('formato', 'Saturno RS')}",
+                "subtitulo": f"Frontera de realidad, disciplina y maduración · Casa {saturno_info.get('casa', '')} RS",
+                "izq_tag": "LEYES Y LÍMITES",
+                "izq_val": f"Saturno en {saturno_info.get('signo', '')} {saturno_info.get('grado_en_signo', '')}°\nCasa {saturno_info.get('casa', '')} Anual",
+                "der_tag": "ARQUITECTURA KÁRMICA",
+                "der_val": "Construcción sólida\nPaciencia estratégica\nPago de peajes"
+            },
+            {
+                "tipo": "planeta",
+                "nombre": "Júpiter",
+                "titulo": f"JÚPITER RS EN {jupiter_info.get('formato', 'Júpiter RS')}",
+                "subtitulo": f"Expansión fértil, confianza y nuevos horizontes · Casa {jupiter_info.get('casa', '')} RS",
+                "izq_tag": "HORIZONTE FÉRTIL",
+                "izq_val": f"Júpiter en {jupiter_info.get('signo', '')} {jupiter_info.get('grado_en_signo', '')}°\nCasa {jupiter_info.get('casa', '')} Anual",
+                "der_tag": "CRECIMIENTO REAL",
+                "der_val": "Oportunidades vivas\nSentido de avance\nMultiplicación"
+            }
+        ]
+    elif cap_num == 5:
+        aspectos = rs.get("aspectos_intercartas", [])
+        asp1 = aspectos[0] if len(aspectos) > 0 else {"aspecto": "Tensión", "cuerpo_rs": "Saturno", "cuerpo_natal": "Sol", "color": "#e74c3c"}
+        asp2 = aspectos[1] if len(aspectos) > 1 else {"aspecto": "Fluidez", "cuerpo_rs": "Júpiter", "cuerpo_natal": "Luna", "color": "#2980b9"}
+        return [
+            {
+                "tipo": "aspecto",
+                "nombre": asp1.get("cuerpo_rs", ""),
+                "titulo": f"ACTIVACIÓN ANUAL: {asp1.get('aspecto', '').upper()} {asp1.get('cuerpo_rs', '')} - {asp1.get('cuerpo_natal', '')}",
+                "subtitulo": "Punto de fricción que cataliza maduración y enfoque",
+                "izq_tag": "CABLE DE TENSIÓN",
+                "izq_val": f"{asp1.get('cuerpo_rs', '')} RS ↔ {asp1.get('cuerpo_natal', '')} Natal\n{asp1.get('aspecto', '')}",
+                "der_tag": "TRANSFORMACIÓN",
+                "der_val": "Presión constructiva\nNo evadir el conflicto\nTemplar el carácter"
+            },
+            {
+                "tipo": "aspecto",
+                "nombre": asp2.get("cuerpo_rs", ""),
+                "titulo": f"PUENTE ARMÓNICO: {asp2.get('aspecto', '').upper()} {asp2.get('cuerpo_rs', '')} - {asp2.get('cuerpo_natal', '')}",
+                "subtitulo": "Vía de escape y fluidez disponible para destrabar el ciclo",
+                "izq_tag": "CANAL DESPEJADO",
+                "izq_val": f"{asp2.get('cuerpo_rs', '')} RS ↔ {asp2.get('cuerpo_natal', '')} Natal\n{asp2.get('aspecto', '')}",
+                "der_tag": "RECURSO ACTIVO",
+                "der_val": "Fluidez natural\nIntegración ágil\nRespira el mapa"
+            }
+        ]
+    else:
+        anio = rs.get("revolucion_solar", {}).get("anio", 2026)
+        return [
+            {
+                "tipo": "general",
+                "titulo": f"SÍNTESIS MAESTRA · REVOLUCIÓN SOLAR {anio}",
+                "subtitulo": "Integración del mapa completo · Soberanía y madurez personal",
+                "izq_tag": "MAPA COMPLETO",
+                "izq_val": f"Revolución Solar {anio}\n12 Meses de Ciclo\nADN y Retorno",
+                "der_tag": "SOBERANÍA",
+                "der_val": "Las cartas marcan el suelo\nTu voluntad construye\nportaltarotmistico.com"
+            }
+        ]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -480,7 +603,7 @@ def seleccionar_broll_para_capitulo(cap_num: int, cantidad_max: int = 4) -> List
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 5. COMPOSITOR DE TIMELINE Y RENDERIZADOR FFmpeg
+# 5. COMPOSITOR DE TIMELINE Y RENDERIZADOR FFmpeg CON KEN BURNS DINÁMICO
 # ─────────────────────────────────────────────────────────────────────────────
 
 def renderizar_capitulo(
@@ -488,44 +611,51 @@ def renderizar_capitulo(
     audio_mp3: Path,
     duracion_audio: float,
     placa_png: Path,
-    biwheel_frame_png: Path,
+    biwheel_focos: List[Dict],
     output_mp4: Path,
     preview: bool = False
 ) -> Path:
     """
     Renderiza un capítulo individual en MP4 (1080p @ 25fps) coordinado con el audio.
-    Alterna rítmicamente: Placa (3.5s) → Bi-Wheel (14s) → B-Roll (10s) → Bi-Wheel (14s)...
+    Alterna rítmicamente: Placa (3.5s) → Bi-Wheel con zoom focal (13s) → B-Roll (10s) → Bi-Wheel Foco 2 (13s)...
+    Aplica efecto Ken Burns cinemático dirigido hacia las coordenadas calculadas de cada astro o casa.
     """
-    duracion_real = min(15.0, duracion_audio) if preview else duracion_audio
+    duracion_real = min(20.0, duracion_audio) if preview else duracion_audio
     print(f"🎬 Renderizando Capítulo {cap_info['num']}: {cap_info['titulo']} ({duracion_real:.1f}s)...")
 
     # Seleccionar B-Roll
     brolls = seleccionar_broll_para_capitulo(cap_info["num"], cantidad_max=4)
 
-    # Construir lista de escenas visuales
-    # Escena 0: Placa del capítulo (3.5s)
-    # Escenas subsecuentes: Bi-Wheel (12-14s) alternando con B-Roll (8-10s)
     escenas: List[Dict] = []
     tiempo_acumulado = 0.0
 
     # 1. Placa inicial
-    dur_placa = min(3.5, duracion_real)
-    escenas.append({"tipo": "imagen", "path": placa_png, "duracion": dur_placa})
+    dur_placa = min(2.5 if preview else 3.5, duracion_real)
+    escenas.append({"tipo": "placa", "path": placa_png, "duracion": dur_placa})
     tiempo_acumulado += dur_placa
 
     broll_idx = 0
+    foco_idx = 0
     foco_rueda = True
 
     while tiempo_acumulado < duracion_real:
         tiempo_restante = duracion_real - tiempo_acumulado
         if foco_rueda or not brolls:
-            dur_escena = min(14.0, tiempo_restante)
-            escenas.append({"tipo": "imagen", "path": biwheel_frame_png, "duracion": dur_escena})
+            dur_escena = min(8.0 if preview else 14.0, tiempo_restante)
+            foco_item = biwheel_focos[foco_idx % len(biwheel_focos)]
+            escenas.append({
+                "tipo": "biwheel",
+                "path_base": foco_item.get("path_base", foco_item.get("path")),
+                "path_foco": foco_item.get("path_foco", foco_item.get("path")),
+                "coords": foco_item.get("coords", {"x": 960, "y": 540}),
+                "duracion": dur_escena
+            })
             tiempo_acumulado += dur_escena
+            foco_idx += 1
             foco_rueda = False
         else:
             asset = brolls[broll_idx % len(brolls)]
-            dur_escena = min(10.0, tiempo_restante)
+            dur_escena = min(6.0 if preview else 10.0, tiempo_restante)
             es_video = asset.suffix.lower() == ".mp4"
             escenas.append({
                 "tipo": "video" if es_video else "imagen",
@@ -536,7 +666,7 @@ def renderizar_capitulo(
             broll_idx += 1
             foco_rueda = True
 
-    # Renderizar cada micro-escena en un fragmento TS temporal (evita saturación de RAM)
+    # Renderizar cada micro-escena en un fragmento TS temporal
     temp_dir = output_mp4.parent / f"temp_cap_{cap_info['num']}"
     temp_dir.mkdir(parents=True, exist_ok=True)
     ts_files = []
@@ -545,17 +675,77 @@ def renderizar_capitulo(
         ts_out = temp_dir / f"scene_{i:02d}.ts"
         ts_files.append(ts_out)
         d = esc["duracion"]
-        p = str(esc["path"])
+        total_frames = max(25, int(d * 25))
 
-        if esc["tipo"] == "imagen":
+        if esc["tipo"] == "biwheel":
+            cx = esc["coords"].get("x", 960)
+            cy = esc["coords"].get("y", 540)
+            p_base = str(esc.get("path_base", esc.get("path_foco")))
+            p_foco = str(esc.get("path_foco", esc.get("path_base")))
+
+            # Curvas cinematográficas: zoom profundo a 1.75x con 5s de deslizamiento y aparición de efectos
+            max_zoom = 1.75
+            t_fade_start = 1.0
+            t_fade_dur = 3.5 if not preview else 2.5
+            t_zoom_start = 1.0
+            t_zoom_dur = 5.0 if not preview else 3.8
+
+            f_zoom_start = int(t_zoom_start * 25)
+            f_zoom_dur = max(25, int(t_zoom_dur * 25))
+
+            if p_base != p_foco and Path(p_base).exists() and Path(p_foco).exists():
+                # Transición progresiva: comienza el mandala base y los efectos se encienden al acercarse la cámara
+                fc = (
+                    f"[0:v][1:v]blend=all_expr='A*(1-min(max((T-{t_fade_start})/{t_fade_dur},0),1))+B*min(max((T-{t_fade_start})/{t_fade_dur},0),1)'[merged];"
+                    f"[merged]zoompan=z='1.0+{max_zoom - 1.0:.2f}*min(max((on-{f_zoom_start})/{f_zoom_dur},0),1)':"
+                    f"x='(iw/2-(iw/zoom/2))+(( {cx} - iw/2)*(1-1/zoom))':"
+                    f"y='(ih/2-(ih/zoom/2))+(( {cy} - ih/2)*(1-1/zoom))':"
+                    f"d=1:s=1920x1080:fps=25[v]"
+                )
+                cmd_scene = [
+                    "ffmpeg", "-y",
+                    "-loop", "1", "-t", f"{d:.3f}", "-i", p_base,
+                    "-loop", "1", "-t", f"{d:.3f}", "-i", p_foco,
+                    "-filter_complex", fc,
+                    "-map", "[v]",
+                    "-frames:v", str(total_frames),
+                    "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                    str(ts_out)
+                ]
+            else:
+                vf = (
+                    f"zoompan=z='1.0+{max_zoom - 1.0:.2f}*min(max((on-{f_zoom_start})/{f_zoom_dur},0),1)':"
+                    f"x='(iw/2-(iw/zoom/2))+(( {cx} - iw/2)*(1-1/zoom))':"
+                    f"y='(ih/2-(ih/zoom/2))+(( {cy} - ih/2)*(1-1/zoom))':"
+                    f"d={total_frames}:s=1920x1080:fps=25"
+                )
+                cmd_scene = [
+                    "ffmpeg", "-y",
+                    "-i", p_foco,
+                    "-vf", vf,
+                    "-frames:v", str(total_frames),
+                    "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                    str(ts_out)
+                ]
+        elif esc["tipo"] in ["imagen", "placa"]:
+            p = str(esc["path"])
+            # Ken Burns sutil para placas y fotos fijas de B-Roll (elimina tomas estáticas muertas)
+            zoom_step = 0.05 / float(total_frames)
+            vf = (
+                f"zoompan=z='min(zoom+{zoom_step:.6f},1.05)':"
+                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+                f"d={total_frames}:s=1920x1080:fps=25"
+            )
             cmd_scene = [
                 "ffmpeg", "-y",
-                "-loop", "1", "-t", f"{d:.3f}", "-i", p,
-                "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x080b12,fps=25",
+                "-i", p,
+                "-vf", vf,
+                "-frames:v", str(total_frames),
                 "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
                 str(ts_out)
             ]
-        else:
+        else: # video
+            p = str(esc["path"])
             cmd_scene = [
                 "ffmpeg", "-y",
                 "-t", f"{d:.3f}", "-i", p,
@@ -641,12 +831,14 @@ def concatenar_capitulos(lista_mp4s: List[Path], output_final_mp4: Path) -> Path
 def procesar_video_revolucion_solar(
     guion_path: Path,
     biwheel_path: Path,
+    datos_path: Optional[Path] = None,
     output_dir: Optional[Path] = None,
     preview: bool = False,
     capitulo_especifico: Optional[int] = None
 ) -> Path:
     """
     Ejecuta el pipeline completo de renderizado de video para una Revolución Solar.
+    Genera variantes de rueda Bi-Wheel con zoom dinámico Ken Burns y resaltado selectivo.
     """
     if output_dir is None:
         output_dir = guion_path.parent / "video_render"
@@ -657,9 +849,25 @@ def procesar_video_revolucion_solar(
     consultante = metadata.get("consultante", "Consultante")
     año = metadata.get("año", "2026")
 
+    # 2. Cargar datos astrológicos si existen para activar los focos dinámicos
+    datos_rs = None
+    if datos_path and datos_path.exists():
+        with open(datos_path, "r", encoding="utf-8") as f:
+            datos_rs = json.load(f)
+            print(f"📊 Datos astrológicos cargados desde: {datos_path.name}")
+    else:
+        candidatos_json = list(guion_path.parent.glob("datos_rs_*.json"))
+        if candidatos_json:
+            with open(candidatos_json[0], "r", encoding="utf-8") as f:
+                datos_rs = json.load(f)
+                print(f"📊 Datos astrológicos detectados automáticamente: {candidatos_json[0].name}")
+
+    graficador = GraficadorBiWheelAstrologica() if (datos_rs and "carta_natal" in datos_rs and "revolucion_solar" in datos_rs) else None
+
     print("\n" + "═" * 70)
     print(f"🚀 INICIANDO RENDERIZADOR PREMIUM DE REVOLUCIÓN SOLAR ({año})")
     print(f"   Consultante: {consultante}")
+    print(f"   Focos Dinámicos & Ken Burns: {'ACTIVADO (NASA Ephemeris)' if graficador else 'DESACTIVADO (Modo Fallback Estático)'}")
     print(f"   Modo: {'PREVIEW RÁPIDO (15s por cap)' if preview else 'PRODUCCIÓN COMPLETA'}")
     print(f"   Directorio de trabajo: {output_dir}")
     print("═" * 70 + "\n")
@@ -677,11 +885,10 @@ def procesar_video_revolucion_solar(
         print(f"\n▶️  Procesando Capítulo {c_num}: {cap['titulo']}")
 
         # Rutas de trabajo del capítulo
-        voz_raw_mp3    = output_dir / f"cap_{c_num}_voz_raw.mp3"
+        voz_raw_mp3     = output_dir / f"cap_{c_num}_voz_raw.mp3"
         audio_mixed_mp3 = output_dir / f"cap_{c_num}_audio.mp3"
-        placa_png      = output_dir / f"cap_{c_num}_placa.png"
-        biwheel_png    = output_dir / f"cap_{c_num}_biwheel_foco.png"
-        cap_mp4        = output_dir / f"capitulo_{c_num}.mp4"
+        placa_png       = output_dir / f"cap_{c_num}_placa.png"
+        cap_mp4         = output_dir / f"capitulo_{c_num}.mp4"
 
         # A. Síntesis de voz (reutiliza si ya fue sintetizado)
         if voz_raw_mp3.exists() and voz_raw_mp3.stat().st_size > 1000 and _probe_duration(voz_raw_mp3) > 1.0:
@@ -699,16 +906,70 @@ def procesar_video_revolucion_solar(
         # C. Generación de placa de inicio
         generar_placa_capitulo(c_num, cap["titulo"], consultante, placa_png)
 
-        # D. Generación de marco Bi-Wheel focalizado (Regla 8)
-        generar_marco_biwheel_pedagogico(biwheel_path, c_num, cap["titulo"], consultante, biwheel_png)
+        # D. Generación de marcos Bi-Wheel focalizados dinámicos (Regla 8 y 11)
+        focos_cap = obtener_focos_capitulo(c_num, cap, datos_rs)
+        biwheel_focos = []
 
-        # E. Compilación FFmpeg del capítulo
+        for f_idx, foco in enumerate(focos_cap):
+            raw_base_png = output_dir / f"cap_{c_num}_rueda_base_{f_idx+1}.png"
+            frame_base_png = output_dir / f"cap_{c_num}_biwheel_base_{f_idx+1}.png"
+            raw_foco_png = output_dir / f"cap_{c_num}_rueda_raw_{f_idx+1}.png"
+            frame_foco_png = output_dir / f"cap_{c_num}_biwheel_foco_{f_idx+1}.png"
+
+            if graficador:
+                # 1. Rueda base limpia (todo el mandala cósmico completo sin retícula de foco)
+                graficador.generar_biwheel_con_foco(
+                    carta_natal=datos_rs["carta_natal"],
+                    carta_rs=datos_rs["revolucion_solar"],
+                    output_path=str(raw_base_png),
+                    foco=foco,
+                    solo_base=True
+                )
+                # 2. Rueda con foco neón (resaltado aditivo con mira telescópica y aura)
+                _, coords = graficador.generar_biwheel_con_foco(
+                    carta_natal=datos_rs["carta_natal"],
+                    carta_rs=datos_rs["revolucion_solar"],
+                    output_path=str(raw_foco_png),
+                    foco=foco
+                )
+            else:
+                raw_base_png = biwheel_path
+                raw_foco_png = biwheel_path
+                coords = {"x": 960, "y": 540}
+
+            # Marco pedagógico para la base
+            generar_marco_biwheel_pedagogico(
+                biwheel_path=raw_base_png,
+                cap_num=c_num,
+                titulo=cap["titulo"],
+                consultante=consultante,
+                output_path=frame_base_png,
+                foco_info=foco
+            )
+            # Marco pedagógico para el foco
+            generar_marco_biwheel_pedagogico(
+                biwheel_path=raw_foco_png,
+                cap_num=c_num,
+                titulo=cap["titulo"],
+                consultante=consultante,
+                output_path=frame_foco_png,
+                foco_info=foco
+            )
+
+            biwheel_focos.append({
+                "path_base": frame_base_png,
+                "path_foco": frame_foco_png,
+                "coords": coords,
+                "foco_info": foco
+            })
+
+        # E. Compilación FFmpeg del capítulo con Ken Burns dinámico
         renderizar_capitulo(
             cap_info=cap,
             audio_mp3=audio_mixed_mp3,
             duracion_audio=dur_voz,
             placa_png=placa_png,
-            biwheel_frame_png=biwheel_png,
+            biwheel_focos=biwheel_focos,
             output_mp4=cap_mp4,
             preview=preview
         )
@@ -736,6 +997,7 @@ def main():
     )
     parser.add_argument("--guion", required=True, type=Path, help="Ruta al archivo Markdown del guion.")
     parser.add_argument("--biwheel", required=True, type=Path, help="Ruta al archivo PNG de la rueda Bi-Wheel.")
+    parser.add_argument("--datos", type=Path, default=None, help="Ruta al archivo JSON con los datos astrológicos (opcional, auto-detectado).")
     parser.add_argument("--output_dir", type=Path, default=None, help="Directorio de salida para los renders.")
     parser.add_argument("--preview", action="store_true", help="Modo preview rápido (15s por capítulo).")
     parser.add_argument("--capitulo", type=int, default=None, choices=range(1, 7), help="Renderizar solo el capítulo N (1-6).")
@@ -746,6 +1008,7 @@ def main():
         procesar_video_revolucion_solar(
             guion_path=args.guion,
             biwheel_path=args.biwheel,
+            datos_path=args.datos,
             output_dir=args.output_dir,
             preview=args.preview,
             capitulo_especifico=args.capitulo
@@ -757,3 +1020,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
