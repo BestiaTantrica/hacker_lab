@@ -27,3 +27,5 @@
 | 14 | **Quirón en Casa 12** | Abstracto | `arte_propio_quiron_casa12_1791291684218.jpg` | Luma Dream Machine | `anim_luma_abstracto_quiron_casa12.mp4` | ✅ Completado |
 | 15 | **Eclipse Solar** | Abstracto | `arte_propio_eclipse_solar_1791241566175.jpg` | Luma Dream Machine | `anim_luma_abstracto_eclipse_solar.mp4` | ✅ Completado |
 | 16 | **Lilith Oposición Venus** | Abstracto | `arte_propio_lilith_venus_oposicion_1791655057054.jpg` | PixVerse | `anim_pixverse_abstracto_lilith_venus.mp4` | ✅ Completado |
+| 17 | **Luna Cuadratura Plutón** | Abstracto | `arte_propio_luna_pluton_1791213638464.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_pluton.mp4` | ✅ Completado |
+| 18 | **Júpiter en Escorpio** | Abstracto | `arte_propio_jupiter_escorpio_1791562667598.jpg` | PixVerse | `anim_pixverse_abstracto_jupiter_escorpio.mp4` | ✅ Completado |
