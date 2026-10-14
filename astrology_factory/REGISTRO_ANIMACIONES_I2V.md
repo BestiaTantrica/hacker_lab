@@ -37,3 +37,5 @@
 | 24 | **Luna en Escorpio** | Abstracto | `arte_propio_luna_escorpio_1791327729856.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_escorpio.mp4` | ✅ Completado |
 | 25 | **Luna en Leo** | Abstracto | `arte_propio_luna_leo_1791587277468.jpg` | PixVerse | `anim_pixverse_abstracto_luna_leo.mp4` | ✅ Completado |
 | 26 | **Mercurio en Piscis** | Abstracto | `arte_propio_mercurio_piscis_1791309797396.jpg` | Luma Dream Machine | `anim_luma_abstracto_mercurio_piscis.mp4` | ✅ Completado |
+| 27 | **Marte en Géminis** | Abstracto | `arte_propio_marte_geminis_1791605635639.jpg` | PixVerse | `anim_pixverse_abstracto_marte_geminis.mp4` | ✅ Completado |
+| 28 | **Luna Llena / Fases Lunares** | Abstracto | `arte_propio_luna_fases_1791255909154.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_fases.mp4` | ✅ Completado |
