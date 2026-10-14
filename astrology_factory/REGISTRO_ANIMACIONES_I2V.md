@@ -21,3 +21,5 @@
 | 8 | **Marte en Cáncer** | Abstracto | `arte_propio_marte_cancer_1791216425518.jpg` | PixVerse | `anim_pixverse_abstracto_marte_cancer.mp4` | ✅ Completado |
 | 9 | **Sol en Piscis** | Emocional | `arte_propio_emocion_sol_piscis_1791472701518.jpg` | Luma Dream Machine | `anim_luma_emocion_sol_piscis.mp4` | ✅ Completado |
 | 10 | **Sol Oposición Saturno** | Abstracto | `arte_propio_sol_saturno_1791213605662.jpg` | PixVerse | `anim_pixverse_abstracto_sol_saturno.mp4` | ✅ Completado |
+| 11 | **Júpiter en Géminis** | Abstracto | `arte_propio_jupiter_geminis_1791604800984.jpg` | PixVerse | `anim_pixverse_abstracto_jupiter_geminis.mp4` | ✅ Completado |
+| 12 | **Eclipse Lunar** | Abstracto | `arte_propio_eclipse_lunar_1791255647953.jpg` | Luma Dream Machine | `anim_luma_abstracto_eclipse_lunar.mp4` | ✅ Completado |
