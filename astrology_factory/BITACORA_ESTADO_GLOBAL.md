@@ -53,3 +53,20 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [ ] TAREA 3: Integración de la Célula Acuñadora (Tokenización Web3 / IPFS).
 - [x] TAREA 4 (PREMIUM): Soporte de "Chunking" y creación de `video_maker_premium.py` para videos de 10-15 min sin saturación de memoria. **[COMPLETADO]**
 - [x] TAREA 5 (PREMIUM): Motor de producción narrativa modular en 6 capítulos para Revolución Solar (`generador_guion_rs_produccion.py`). **[COMPLETADO]**
+
+---
+
+## 📌 PAUTAS CRÍTICAS DE REDISEÑO (FEEDBACK TOMÁS - 15/10/2026)
+1. **Rigor Astrológico en Líneas de Aspectos**:
+   - Las líneas son RECTAS euclidianas (cuerdas entre planetas), NUNCA curvas senoidales.
+   - En reposo deben ser suaves para no saturar; solo se iluminan con fuerza los aspectos activos que el locutor menciona.
+2. **Planetas Grandes y con Glifos Claros**:
+   - No más puntos minúsculos. Deben ser orbes celestes de gran tamaño con sus símbolos (☉, ☽, ☿, ♀, etc.) y grados legibles.
+3. **Limpieza del Fondo**:
+   - Eliminar el sembrado aleatorio de puntos blancos (estrellas falsas) que ensucian la lectura técnica de los grados y casas.
+4. **Continuidad Dinámica (Sin Cortes Bruscos de Diapositiva)**:
+   - Eliminar el pegado tosco de clips estáticos o espirales aislados.
+   - La animación debe ser un viaje continuo: parte de la Carta Natal -> los planetas transitan y giran describiendo el paso de los años -> se acopla el anillo exterior de la Revolución Solar 2026.
+   - La cámara viaja fluidamente (zoom cinematográfico continuo) hacia la Casa 9 / Ascendente en Libra SIN borrar el resto de la carta (el mandala completo permanece vivo en el fondo).
+5. **Títulos Flotantes Minimalistas**:
+   - Cero carteles gigantescos o parrafadas de informe. Solo badges flotantes elegantes y grandes con fundido suave (`fade-in/out`), sincronizados al relato oral.
