@@ -1,0 +1,3 @@
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_produccion/seg1_acto1.mp4'
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_produccion/seg2_acto2.mp4'
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_produccion/seg3_acto3.mp4'

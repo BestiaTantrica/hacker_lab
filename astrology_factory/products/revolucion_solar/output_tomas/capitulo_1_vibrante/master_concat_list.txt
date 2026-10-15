@@ -1,0 +1,3 @@
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_vibrante/clip1_natal.mp4'
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_vibrante/clip2_espiral_biwheel.mp4'
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_vibrante/clip3_zoom_casa9.mp4'

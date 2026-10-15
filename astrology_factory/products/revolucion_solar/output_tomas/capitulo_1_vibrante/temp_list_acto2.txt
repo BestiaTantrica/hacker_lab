@@ -1,0 +1,2 @@
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_vibrante/temp_espiral.mp4'
+file '/home/LAB/astrology_factory/products/revolucion_solar/output_tomas/capitulo_1_vibrante/temp_biwheel.mp4'
