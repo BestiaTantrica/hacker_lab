@@ -51,7 +51,10 @@ backup_2026_proyectos_viejos/**/temp/
 backup_2026_proyectos_viejos/**/assets_generados/
 backup_2026_proyectos_viejos/**/venv/
 *.mp4
+*.webm
 *.srt
+web_logs*.txt
+frame*.jpg
 
 # Targets y datos sensibles (OPSEC)
 auth_*.txt

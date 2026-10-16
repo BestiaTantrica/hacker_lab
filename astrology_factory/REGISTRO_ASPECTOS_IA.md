@@ -15,9 +15,39 @@
 - [x] **Venus en Escorpio**
   - *Abstracto*: `arte_propio_venus_escorpio_...` (Rosa sumergida en oscuridad)
   - *Emocional/Sátira*: `arte_propio_emocion_venus_...` (Obsesión, ojo reflejando deseo)
-- [x] **Luna Cuadratura Plutón**
-  - *Abstracto*: `arte_propio_luna_pluton_...` (Luna en aguas turbulentas)
-  - *Emocional/Sátira*: `arte_propio_emocion_luna_...` (Reflejo sombrío en espejo)
+- [x] **Sol en Aries (Carta Natal Tomás - Capítulo 1)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_sol_aries_01_gestacion.png` (Durmiente en cenizas)
+    - Cuadro 2: `arte_propio_secuencia_tomas_sol_aries_02_despertar.jpg` (Fractura y plasma)
+    - Cuadro 3: `arte_propio_secuencia_tomas_sol_aries_03_marcha.jpg` (Guerrero de pie en marcha)
+    - Cuadro 4: `arte_propio_secuencia_tomas_sol_aries_04_verbo.jpg` (Voz y ondas de luz dorada)
+  - *Catálogo Individual*:
+    - *Abstracto*: `arte_propio_abstracto_tomas_sol_aries.jpg` (Carnero cósmico en fuego)
+    - *Escenario*: `arte_propio_escenario_tomas_sol_aries.jpg` (Templo de columnas y auroras)
+    - *Emocional*: `arte_propio_emocion_tomas_sol_aries.png` (Retrato guerrero bajo brasas)
+- [x] **Luna en Sagitario (Carta Natal Tomás - Capítulo 1)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_luna_sagitario_01_encierro.jpg` (Asfixia en la cripta oscura)
+    - Cuadro 2: `arte_propio_secuencia_tomas_luna_sagitario_02_escape.jpg` (Fuga a la pradera estelar)
+    - Cuadro 3: `arte_propio_secuencia_tomas_luna_sagitario_03_cumbre.jpg` (Cumbre sobre las nubes con auroras)
+- [x] **Ascendente en Acuario (Carta Natal Tomás - Capítulo 1)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_asc_acuario_01_matrix.jpg` (La matriz y la masa gris)
+    - Cuadro 2: `arte_propio_secuencia_tomas_asc_acuario_02_observador.jpg` (El ojo lúcido geométrico)
+    - Cuadro 3: `arte_propio_secuencia_tomas_asc_acuario_03_puente.jpg` (El puente de luz sobre el abismo)
+- [x] **Mercurio en Aries (Carta Natal Tomás - Capítulo 2)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_mercurio_aries_01_tension.png` (Tensión y sobrecarga mental)
+    - Cuadro 2: `arte_propio_secuencia_tomas_mercurio_aries_02_eureka.png` (Rayo eureka y pluma de fuego)
+    - Cuadro 3: `arte_propio_secuencia_tomas_mercurio_aries_03_escritura.png` (Trazo incandescente en pergamino)
+    - Cuadro 4: `arte_propio_secuencia_tomas_mercurio_aries_04_orador.png` (Palabra directa que corta la niebla)
+- [x] **Venus en Piscis (Carta Natal Tomás - Capítulo 2)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_venus_piscis_01_orilla.png` (La llegada a la orilla abisal)
+    - Cuadro 2: `arte_propio_secuencia_tomas_venus_piscis_02_inmersion.png` (La inmersión en las aguas místicas)
+    - Cuadro 3: `arte_propio_secuencia_tomas_venus_piscis_03_metamorfosis.png` (La metamorfosis bioluminiscente)
+    - Cuadro 4: `arte_propio_secuencia_tomas_venus_piscis_04_perla.png` (El corazón de perla cósmica)
+
 
 ---
 

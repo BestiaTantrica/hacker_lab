@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navegador Cinemático Bi-Wheel — Tomás 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Viewport Canvas -->
+    <div id="canvas-wrapper">
+      <canvas id="astro-canvas"></canvas>
+    </div>
+
+    <!-- Barra Superior -->
+    <header class="top-bar">
+      <div class="brand-badge">
+        <span class="icon-logo">☉</span>
+        <div>
+          <div class="brand-title">Motor Bi-Wheel Cinemático</div>
+          <div class="brand-subtitle">Tomás • Revolución Solar 2026 (44 Años)</div>
+        </div>
+      </div>
+
+      <!-- Selector de Modo / Capas -->
+      <nav class="mode-switcher" id="mode-switcher">
+        <button class="mode-btn active" data-mode="natal" id="btn-mode-natal">
+          <span>♈</span> Carta Natal
+        </button>
+        <button class="mode-btn" data-mode="transicion" id="btn-mode-trans">
+          <span>⚡</span> Acoplamiento RS
+        </button>
+        <button class="mode-btn rs-theme" data-mode="biwheel" id="btn-mode-biwheel">
+          <span>🌀</span> Bi-Wheel Completa
+        </button>
+      </nav>
+
+      <!-- Botones de Acción Superior -->
+      <div style="pointer-events: auto; display: flex; gap: 8px;">
+        <button class="dock-btn highlight-portal" id="btn-record-capitulo1" title="Graba el video 1080p con audio sincronizado">
+          <span>🎬</span> Renderizar Video (MP4)
+        </button>
+        <button class="dock-btn" id="btn-toggle-inspector">
+          <span>🔍</span> Inspector
+        </button>
+      </div>
+    </header>
+
+    <!-- Leyenda Flotante -->
+    <div class="floating-legend">
+      <div class="legend-item">
+        <span class="legend-dot natal"></span>
+        <span>Carta Natal (1982) • Oro</span>
+      </div>
+      <div class="legend-item" id="legend-rs">
+        <span class="legend-dot rs"></span>
+        <span>Revolución Solar (2026) • Cian</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot aspect"></span>
+        <span>Aspectos Euclidianos Rectos</span>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Dock (Piedra Angular para recorrer cada rincón) -->
+    <footer class="nav-dock">
+      <button class="dock-btn" id="btn-nav-general" title="Vista panorámica">
+        <span>🌌</span> Plano General (1.0x)
+      </button>
+      <div class="dock-divider"></div>
+      <button class="dock-btn" id="btn-nav-asc" title="Ascendente Natal en Acuario">
+        <span>🌅</span> Asc Natal (♒ 21°)
+      </button>
+      <button class="dock-btn" id="btn-nav-sol" title="Sol Natal en Aries">
+        <span>☀️</span> Sol Natal (♈ 21°)
+      </button>
+      <button class="dock-btn highlight-portal" id="btn-nav-portal-rs" title="El Gran Retorno: Ascendente RS en Libra 14° sobre Casa 9 Natal">
+        <span>⚡</span> Portal RS: Casa 9 (♎ 14°)
+      </button>
+      <button class="dock-btn" id="btn-nav-luna-rs" title="Luna RS en Acuario">
+        <span>🌙</span> Luna RS (♒ 10°)
+      </button>
+      <div class="dock-divider"></div>
+      <button class="dock-btn" id="btn-nav-tour" title="Recorrido guiado cinemático">
+        <span>🎬</span> Tour Automático
+      </button>
+    </footer>
+
+    <!-- Controles de Zoom -->
+    <aside class="zoom-controls">
+      <button class="zoom-btn" id="btn-zoom-in" title="Acercar (+)">+</button>
+      <div class="zoom-level" id="zoom-indicator">1.0x</div>
+      <button class="zoom-btn" id="btn-zoom-out" title="Alejar (-)">−</button>
+      <button class="zoom-btn" id="btn-zoom-reset" title="Restablecer (0)">⟲</button>
+    </aside>
+
+    <!-- Panel Inspector de Rincón (Desplegable) -->
+    <section class="inspector-panel collapsed" id="inspector-panel">
+      <div class="panel-header">
+        <h3 id="inspector-title">Inspector de Rincón</h3>
+        <button class="close-btn" id="btn-close-inspector">&times;</button>
+      </div>
+      <div class="panel-content">
+        <!-- Target Activo -->
+        <div class="target-badge-card" id="target-card">
+          <div class="target-orb natal" id="target-icon">☉</div>
+          <div class="target-meta">
+            <h4 id="target-name">Sol Natal</h4>
+            <p id="target-pos">Aries 21° 59' • Casa 3</p>
+          </div>
+        </div>
+
+        <div id="target-details">
+          <div class="detail-row">
+            <span class="label">Elemento / Modalidad:</span>
+            <span class="val" id="det-elem">Fuego • Cardinal</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Grado Absoluto:</span>
+            <span class="val" id="det-grado">21.98°</span>
+          </div>
+          <div class="detail-row" id="det-superp-row" style="display:none;">
+            <span class="label">Superposición Natal:</span>
+            <span class="val" id="det-superp">Casa 9 Natal</span>
+          </div>
+        </div>
+
+        <!-- Selector de Categorías con Pestañas -->
+        <div class="inspector-category-tabs">
+          <button class="cat-tab-btn active" data-tab="natal" id="tab-btn-natal">🪐 Natales</button>
+          <button class="cat-tab-btn" data-tab="rs" id="tab-btn-rs">🌀 RS 2026</button>
+          <button class="cat-tab-btn" data-tab="casas" id="tab-btn-casas">🏛️ Casas</button>
+        </div>
+
+        <!-- Contenedores de Listas por Pestaña -->
+        <div class="cat-tab-pane active" id="pane-natal">
+          <div class="jump-list-grid" id="jump-natal-planets"></div>
+        </div>
+        <div class="cat-tab-pane" id="pane-rs">
+          <div class="jump-list-grid" id="jump-rs-planets"></div>
+        </div>
+        <div class="cat-tab-pane" id="pane-casas">
+          <div class="jump-list-grid" id="jump-houses"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tooltip Flotante -->
+    <div id="hover-tooltip"></div>
+
+    <!-- HUD de Grabación / Renderizado Cinemático -->
+    <div id="recording-overlay" style="display: none;">
+      <div class="rec-card">
+        <div class="rec-header">
+          <div class="rec-live-indicator">
+            <span class="rec-dot"></span> REC 1080p
+          </div>
+          <div class="rec-timer" id="rec-timer">00:00 / 02:01</div>
+        </div>
+        <div class="director-badge" id="director-badge">ACTO 1: RAÍZ NATAL • PLANO GENERAL</div>
+        <div class="rec-progress-track">
+          <div class="rec-progress-fill" id="rec-progress-fill"></div>
+        </div>
+        <div class="rec-status-msg" id="recording-status-msg">
+          Grabando coreografía a 1080p sincronizada con la locución de Tomás...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carga de datos y lógica -->
+  <script src="data_tomas.js"></script>
+  <script src="app.js"></script>
+  <script src="video_director.js"></script>
+</body>
+</html>

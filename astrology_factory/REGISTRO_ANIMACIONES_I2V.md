@@ -39,3 +39,9 @@
 | 26 | **Mercurio en Piscis** | Abstracto | `arte_propio_mercurio_piscis_1791309797396.jpg` | Luma Dream Machine | `anim_luma_abstracto_mercurio_piscis.mp4` | ✅ Completado |
 | 27 | **Marte en Géminis** | Abstracto | `arte_propio_marte_geminis_1791605635639.jpg` | PixVerse | `anim_pixverse_abstracto_marte_geminis.mp4` | ✅ Completado |
 | 28 | **Luna Llena / Fases Lunares** | Abstracto | `arte_propio_luna_fases_1791255909154.jpg` | Luma Dream Machine | `anim_luma_abstracto_luna_fases.mp4` | ✅ Completado |
+| 29 | **Sol en Aries (Cap. 1 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_gestacion` a `04_verbo` | Luma Dream Machine | `anim_luma_secuencia_tomas_sol_aries.mp4` | ✅ Completado (10.0s) |
+| 30 | **Luna en Sagitario (Cap. 1 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_encierro` a `04_flecha` | Luma Dream Machine | `anim_luma_secuencia_tomas_luna_sagitario.mp4` | ✅ Completado (10.0s) |
+| 31 | **Ascendente en Acuario (Cap. 1 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_matrix` a `04_prisma` | Luma Dream Machine | `anim_luma_secuencia_tomas_asc_acuario.mp4` | ✅ Completado (10.0s) |
+| 32 | **Mercurio en Aries (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_tension` a `04_orador` | Luma Dream Machine | `anim_luma_secuencia_tomas_mercurio_aries.mp4` | ✅ Completado (10.0s) |
+| 33 | **Venus en Piscis (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_orilla` a `04_perla` | Luma Dream Machine | `anim_luma_secuencia_tomas_venus_piscis.mp4` | ✅ Completado (10.0s) |
+

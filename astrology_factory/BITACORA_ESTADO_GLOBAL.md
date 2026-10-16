@@ -1,5 +1,5 @@
 # 🛸 NAVE NODRIZA: BITÁCORA DE ESTADO GLOBAL
-*Última actualización: 2026-10-11 22:20:00*
+*Última actualización: 2026-10-15 23:45:00*
 
 Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 **PROHIBIDO ROMPER EL ESQUEMA DE 3 NIVELES.**
@@ -11,7 +11,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 
 **Estado / Tareas Activas:**
 - [ ] Descargar por tandas (1000 assets) para Octubre
-- [ ] Procesar automatización de TikTok (En espera de aprobación)
+- [x] **Aprobación de App TikTok (Producción)**: Resuelta la observación de consistencia de marca (*Brand Consistency*). Generados favicons multirresolución (`favicon.ico`, 32x32, 16x16, 180x180) y `app_icon.png` desde `logo_tiktok_1024.jpeg`. Integrados en `index.html`, `terms.html`, `privacy.html` y endpoint `/favicon.ico` en FastAPI. Desplegado en vivo en OCI-2 (`portaltarotmistico.com`) y solicitud reenviada a revisión con éxito.
+- [ ] Procesar automatización de TikTok (En espera del veredicto final de revisión)
 
 ---
 
@@ -38,9 +39,25 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Espiral Temporal 3D ("Tirabuzón de Retornos Solares") (`animador_espiral_3d.py`)**:
     * Generador 3D a costo cero en Python/Matplotlib 3D/FFmpeg.
     * Conecta la Carta Natal en la base (Z=0, oro) con la Revolución Solar en la cima (Z=Top, cian) a través de una hélice de anillos temporales y haz de luz ascendente en hiperlapso (4.0s @ 25fps).
+- [x] **Piedra Angular V3: Navegador Cinemático Vectorial Perfeccionado (`visor_cinematico/`)**:
+  - **Corrección Angular y Desbloqueo de Acuario**: Resuelto el cálculo continuo de sectores zodiacales (eliminada la discontinuidad de módulo en 360°), visualizando con nitidez impecable el sector y glifo de Acuario en el horizonte izquierdo.
+  - **Rótulos de Texto en los 12 Signos**: Integrados los nombres en mayúsculas (`♒ ACUARIO`, `♓ PISCIS`, `♈ ARIES`, etc.) con tipografía `Outfit` junto a glifos cromáticos ampliados (22px) con resplandor elemental.
+  - **Ejes Cardinales y Ascendente Protagonistas**:
+    * Eje Horizontal (180°): Línea dorada gruesa (3px) con badge flotante `◀ ASC: ♒ ACUARIO 21° 54'`.
+    * Descendente (0°): Badge `DSC: ♌ LEO 21° 54' ▶`.
+    * Medio Cielo (MC en Escorpio 16°40') y Fondo de Cielo (IC en Tauro 16°40') con líneas y badges dedicados.
+  - **Agrandado y Legibilidad Máxima**:
+    * Orbes planetarios ampliados a 22px de radio (dorados natales y cian RS) con glifos interiores a 20px bold.
+    * Badges de nombre y grado agrandados a 12px bold con alto contraste.
+    * Números de casas natales (1 a 12) enmarcados en chapas circulares nítidas de 12px bold.
+  - **Líneas de Aspectos Euclidianos Vivas**: Aumentada la opacidad base a 0.40 (línea 1.6px) para que toda la geometría sagrada sea visible en reposo, manteniendo el resplandor neón concentrado al activarse o seleccionarse.
+- [x] **Voz Humana Argentina / Rioplatense (`es-AR-TomasNeural`)**:
+  - Eliminado el sintetizador robótico gallego.
+  - Actualizado `edge-tts` a 7.3.1 y activada la voz argentina masculina de alta fidelidad `es-AR-TomasNeural` con cadencia reflexiva (`--rate=-3%`, `--pitch=-1Hz`) y silencios naturales respirables entre actos.
+  - Master de audio del Capítulo 1 re-sintetizado con éxito (145.54 segundos) y sincronizado con `video_director.js`.
 - [ ] **Hoja de Ruta Inmediata**:
-  - Sincronización fina de los paneos con las marcas de tiempo exactas del audio (Whisper/Edge-TTS).
-  - Integrar la espiral 3D como obertura introductoria antes del Capítulo 1 en el render final.
+  - Integración de los clips e imágenes sugestivas/transiciones que Tomás está reuniendo para el montaje final.
+  - Extender la coreografía de navegación a los Capítulos 2 a 6.
 
 ---
 
