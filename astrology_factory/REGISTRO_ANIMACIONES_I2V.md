@@ -46,5 +46,7 @@
 | 33 | **Venus en Piscis (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_orilla` a `04_perla` | Luma Dream Machine | `anim_luma_secuencia_tomas_venus_piscis.mp4` | ✅ Completado (10.0s) |
 | 34 | **Marte en Libra (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_banquete` a `04_balanza` | Luma Dream Machine | `anim_luma_secuencia_tomas_marte_libra.mp4` | ✅ Completado (10.0s) |
 | 35 | **Júpiter en Escorpio (Cap. 3 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_descenso` a `04_soberano` | Luma Dream Machine | `anim_luma_secuencia_tomas_jupiter_escorpio.mp4` | ✅ Completado (10.0s) |
+| 36 | **Saturno en Libra (Cap. 3 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_cincel` a `04_balanza` | Luma Dream Machine | `anim_luma_secuencia_tomas_saturno_libra.mp4` | ✅ Completado (10.0s) |
+
 
 

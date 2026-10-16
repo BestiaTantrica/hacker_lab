@@ -235,8 +235,34 @@ A medida que generes las imágenes, descárgalas y me las pasas (o me dices dón
 > 🎥 **PROMPT UNIFICADO PARA LUMA (Júpiter en Escorpio):**
 > `Continuous mystical transformation sequence: a dark burgundy-robed scholar carrying an emerald lantern descends a spiral basalt staircase into a vaulted subterranean crypt; he unlatches a massive grimoire on an iron scorpion lectern, radiant golden alchemical runes floating up from the parchment into the dark air; looking upward with blazing violet eyes, a surge of emerald fire and golden plasma erupts from the altar, dissolving shadows into spinning sacred geometric mandalas; camera drifts to an intimate close-up as he gently cups a spinning golden galaxy glowing inside a black obsidian sphere, a calm smile of supreme occult mastery on his face. Swirling smoke physics, floating incandescent glyphs, fluid plasma dynamics, seamless metamorphosis, zero static camera zoom.`
 
----
+#### 3.2 SATURNO EN LIBRA (Casa 9): "EL ESCULTOR DEL TEMPLO DE CRISTAL Y LA GEOMETRÍA SAGRADA"
+*Regla de Encadenamiento Dinámico (Luma):* Tensión del cincel ➔ Golpe del mazo y fractura controlada ➔ Pulido del espejo celestial ➔ Contemplación y paz en el orden inmutable.
 
+- **[Cuadro 1: La Tensión del Cincel y el Mármol Bruto (La Duda y la Exigencia)]**
+  - **Narrativa:** Un asceta escultor de mirada severa y manos agrietadas, vestido con túnica de lino negro manchada de polvo de mármol, sostiene con tensión extrema un cincel de hierro apoyado contra un bloque bruto de mármol negro. Iluminación tenebrista de una linterna.
+  - **Prompt T2I:** `Intense cinematic close-up of a solitary ascetic sculptor with weathered hands and focused severe eyes, wearing dusty black linen robes, holding a cold iron chisel firmly pressed against a raw block of obsidian marble, atmosphere of agonizing precision and discipline, single lantern casting dramatic chiaroscuro shadows on stone, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_saturno_libra_01_cincel.jpg`
+  - *(Variante Juez Stock):* `arte_propio_secuencia_tomas_saturno_libra_01_trono_juez_stock.jpg` (guardado también en B-Roll)
+
+- **[Cuadro 2: El Golpe y la Fractura Sagrada (El Rigor del Límite)]**
+  - **Narrativa:** Plano de acción en esfuerzo físico. El escultor descarga con fuerza contenida un pesado mazo de bronce sobre el cincel. Un fragmento tosco de roca cae pesadamente al suelo levantando polvo blanco y chispas, revelando una curva geométrica pulida como un espejo.
+  - **Prompt T2I:** `Dynamic medium action shot of the ascetic sculptor striking the chisel with a heavy bronze mallet, massive kinetic force cleanly cleaving away a rough stone slab that crashes to the floor, erupting in white marble dust and sparks, revealing a flawless polished mirror-like geometric curve underneath, muscular strain and disciplined poise, dramatic directional light --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_saturno_libra_02_golpe.jpg`
+
+- **[Cuadro 3: El Pulido del Espejo Celestial (El Encuentro de la Armonía / Casa 9)]**
+  - **Narrativa:** Plano entero de espaldas / tres cuartos. El taller abierto a una noche fría plagada de constelaciones brillantes. El hombre pasa un paño de seda sobre la superficie pulida de la escultura monumental (dos pilares en simetría perfecta), que refleja el mapa estelar con nitidez matemática.
+  - **Prompt T2I:** `Full wide shot of the sculptor from behind, wiping white dust from the monumental sculpture with a dark silk cloth, the open-air workshop revealing a vast midnight sky filled with cold brilliant constellations, the twin polished marble pillars reflecting the star map with absolute mathematical symmetry, breathtaking scale and solitude, epic dark fantasy --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_saturno_libra_03_espejo.jpg`
+
+- **[Cuadro 4: La Paz del Orden Inmutable (El Remate Emocional: La Verdad Sostenida)]**
+  - **Narrativa:** Primer plano cinematográfico con retroceso. El escultor da un paso atrás en profunda serenidad espiritual al amanecer plateado. La escultura proyecta en el suelo una sombra con forma de balanza perfecta. Paz conquistada a través de la verdad y la disciplina.
+  - **Prompt T2I:** `Cinematic close-up of the sculptor's weathered face stepping back in deep spiritual serenity, cold silver dawn light illuminating his calm eyes, in the background the magnificent completed marble monument casts a shadow resembling a perfect sacred balance scale across the stone floor, hard-won peace through absolute truth and geometry, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_saturno_libra_04_balanza.jpg`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Saturno en Libra):**
+> `Continuous alchemical masonry sequence: an ascetic sculptor presses an iron chisel with intense tension against raw obsidian stone in a dimly lit workshop; with a powerful blow of a bronze mallet he cleaves away a massive rock fragment that crashes down in clouds of white dust and sparks, revealing a mirror-smooth curve; he steps around the monumental twin pillars, wiping away the remaining dust with a silk cloth as the polished stone reflects the vast starry night sky in perfect mathematical symmetry; camera slowly pans to his weathered face as he steps back into the cold silver dawn, gazing in quiet awe as the monument's shadow forms a perfect balance scale on the floor. Heavy kinetic stone-carving physics, dispersing marble dust, smooth cloth wiping motion, celestial reflection transitions, seamless metamorphosis, zero static camera zoom.`
+
+---
 
 ### ⚔️ CAPÍTULO 7: LA GRAN OPOSICIÓN (Eje 3-9: Sol/Mercurio vs Saturno/Plutón)
 *Arco narrativo de 2 personajes:* La colisión frontal entre el Guerrero Solar (la chispa mental inmediata) y el Monolito de Saturno/Plutón (la ley del tiempo y el poder kármico).

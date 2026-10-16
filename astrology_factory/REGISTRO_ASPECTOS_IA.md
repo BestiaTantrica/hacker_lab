@@ -60,6 +60,14 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_jupiter_escorpio_02_grimorio.jpg` (La apertura del grimorio de sombras)
     - Cuadro 3: `arte_propio_secuencia_tomas_jupiter_escorpio_03_transmutacion.jpg` (La erupción de la transmutación)
     - Cuadro 4: `arte_propio_secuencia_tomas_jupiter_escorpio_04_soberano.jpg` (El soberano de la verdad oculta)
+- [x] **Saturno en Libra (Carta Natal Tomás - Capítulo 3)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis + Variante Stock)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_saturno_libra_01_cincel.jpg` (La tensión del cincel y el mármol bruto)
+    - Cuadro 1 (Variante Juez Stock): `arte_propio_secuencia_tomas_saturno_libra_01_trono_juez_stock.jpg` (y archivado en B-Roll)
+    - Cuadro 2: `arte_propio_secuencia_tomas_saturno_libra_02_golpe.jpg` (El golpe y la fractura sagrada)
+    - Cuadro 3: `arte_propio_secuencia_tomas_saturno_libra_03_espejo.jpg` (El pulido del espejo celestial)
+    - Cuadro 4: `arte_propio_secuencia_tomas_saturno_libra_04_balanza.jpg` (La paz del orden inmutable)
+
 
 
 

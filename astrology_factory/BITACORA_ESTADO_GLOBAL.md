@@ -59,12 +59,14 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - Implementada arquitectura de 4 keyframes continuos por astro para generación en Luma multi-imagen (clips de 10s continuos sin zoom estático).
   - **Capítulo 1 (100%)**: Sol en Aries, Luna en Sagitario, Ascendente en Acuario (12 keyframes + 3 videos).
   - **Capítulo 2 (100%)**: Mercurio en Aries, Venus en Piscis, Marte en Libra + variante (13 keyframes + 3 videos).
-  - **Capítulo 3 (50%)**: Júpiter en Escorpio (4 keyframes + 1 video).
-  - Total archivado y validado en Bóveda: 29 imágenes + 7 videos cinemáticos (70 segundos continuos).
+  - **Capítulo 3 (100%)**: Júpiter en Escorpio, Saturno en Libra + variante stock (9 keyframes + 2 videos).
+  - Total archivado y validado en Bóveda: 34 imágenes + 8 videos cinemáticos (80+ segundos continuos).
 - [ ] **Hoja de Ruta Inmediata**:
-  - Continuar con **Saturno en Libra** (Capítulo 3.2) y los capítulos 4 al 7 (La Gran Oposición).
+  - Iniciar **Capítulo 4: La Herida, la Sombra y el Destino** (Quirón en Tauro C4, Lilith en Sagitario C11, Nodos Lunares C5/C11).
+  - Continuar con Capítulos 5 al 7 (La Gran Oposición).
   - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
   - Extender la coreografía de navegación a los Capítulos 2 a 6.
+
 
 
 ---
