@@ -206,6 +206,38 @@ A medida que generes las imágenes, descárgalas y me las pasas (o me dices dón
 
 ---
 
+### 🏛️ CAPÍTULO 3: VOCACIÓN, MAESTRÍA Y PODER SOCIAL (Júpiter y Saturno)
+*La dialéctica entre la expansión hacia los misterios profundos (Júpiter en Escorpio) y la construcción de la estructura moral implacable y el juicio justo (Saturno en Libra).*
+
+#### 3.1 JÚPITER EN ESCORPIO (Casa 9): "EL ALQUIMISTA DE LAS PROFUNDIDADES Y EL OJO DE LA REVELACIÓN"
+*Arco narrativo en 4 tomas:* La búsqueda de la verdad que no teme descender a los abismos. De la cripta secreta al códice arcano, la transmutación del veneno en sabiduría y la posesión de la galaxia interior.
+
+- **[Cuadro 1: El Descenso a la Cripta Abisal (El Llamado de lo Prohibido)]**
+  - **Narrativa:** Un místico erudito con túnica ceremonial de terciopelo color vino tinto oscuro y bordados en oro viejo desciende por una escalera circular de piedra volcánica hacia una biblioteca subterránea abisal. En su mano sostiene una linterna de hierro con llama verde esmeralda y violeta que ilumina mapas estelares y glifos antiguos tallados en los muros de basalto húmedo.
+  - **Prompt T2I:** `Cinematic wide shot of a profound occult scholar in dark burgundy velvet robes and antique gold filigree descending spiral basalt stone stairs into an ancient subterranean library, holding an iron lantern burning with an eerie emerald and violet flame, towering damp stone walls carved with arcane astronomical glyphs, damp atmospheric mist, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_jupiter_escorpio_01_descenso.png`
+
+- **[Cuadro 2: La Apertura del Grimorio de Sombras (El Conocimiento Oculto)]**
+  - **Narrativa:** Plano medio del mismo erudito arrodillado ante un atril de hierro forjado con forma de escorpión. Abre con reverencia un gigantesco grimorio con herrajes de bronce: al tocar las páginas negras, símbolos arcanos dorados incandescentes se desprenden del papel y flotan en el aire alrededor de sus manos.
+  - **Prompt T2I:** `Medium shot of the same scholar unlocking an ancient massive grimoire on an ornate wrought-iron scorpion lectern, ancient black parchment pages releasing floating incandescent golden runes and glowing alchemical equations that hover in the dark air around his focused face, hyper-detailed fantasy realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_jupiter_escorpio_02_grimorio.png`
+
+- **[Cuadro 3: La Erupción de la Transmutación (La Sabiduría Nacida del Fuego)]**
+  - **Narrativa:** Plano cinemático de movimiento dinámico. El erudito alza el rostro y sus ojos brillan con luz violeta y dorada pura. Del centro del altar brota una columna de fuego alquímico y vapor esmeralda que disuelve las sombras opresivas, convirtiendo la oscuridad en una red de filamentos cósmicos y geometría sagrada flotante.
+  - **Prompt T2I:** `Dynamic cinematic medium shot of the scholar looking upward as his eyes ignite with pure celestial violet and gold fire, a powerful pillar of emerald alchemical plasma and golden sparks surging from the altar, dissolving dark shadows into floating sacred geometrical mandalas, epic dramatic rim lighting --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_jupiter_escorpio_03_transmutacion.png`
+
+- **[Cuadro 4: El Soberano de la Verdad Oculta (Casa 9: La Fe Inconmovible)]**
+  - **Narrativa:** Primer plano cinematográfico majestuoso. El sabio sostiene en la palma abierta de su mano una esfera de cristal negro obsidiana dentro de la cual gira una galaxia dorada viva. En su rostro hay una expresión de paz imperturbable, poder supremo y entendimiento cósmico total.
+  - **Prompt T2I:** `Majestic cinematic close-up of the serene scholar holding a miniature spinning golden spiral galaxy trapped inside a flawless black obsidian orb resting in his open palm, radiant light caustics dancing on his calm smiling face, supreme occult wisdom, deep emotional depth, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_jupiter_escorpio_04_soberano.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Júpiter en Escorpio):**
+> `Continuous mystical transformation sequence: a dark burgundy-robed scholar carrying an emerald lantern descends a spiral basalt staircase into a vaulted subterranean crypt; he unlatches a massive grimoire on an iron scorpion lectern, radiant golden alchemical runes floating up from the parchment into the dark air; looking upward with blazing violet eyes, a surge of emerald fire and golden plasma erupts from the altar, dissolving shadows into spinning sacred geometric mandalas; camera drifts to an intimate close-up as he gently cups a spinning golden galaxy glowing inside a black obsidian sphere, a calm smile of supreme occult mastery on his face. Swirling smoke physics, floating incandescent glyphs, fluid plasma dynamics, seamless metamorphosis, zero static camera zoom.`
+
+---
+
+
 ### ⚔️ CAPÍTULO 7: LA GRAN OPOSICIÓN (Eje 3-9: Sol/Mercurio vs Saturno/Plutón)
 *Arco narrativo de 2 personajes:* La colisión frontal entre el Guerrero Solar (la chispa mental inmediata) y el Monolito de Saturno/Plutón (la ley del tiempo y el poder kármico).
 

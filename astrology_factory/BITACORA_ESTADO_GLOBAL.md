@@ -55,9 +55,17 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - Eliminado el sintetizador robótico gallego.
   - Actualizado `edge-tts` a 7.3.1 y activada la voz argentina masculina de alta fidelidad `es-AR-TomasNeural` con cadencia reflexiva (`--rate=-3%`, `--pitch=-1Hz`) y silencios naturales respirables entre actos.
   - Master de audio del Capítulo 1 re-sintetizado con éxito (145.54 segundos) y sincronizado con `video_director.js`.
+- [x] **Producción Cinemática de Metamorfosis (Luma Dream Machine + T2I 9:16)**:
+  - Implementada arquitectura de 4 keyframes continuos por astro para generación en Luma multi-imagen (clips de 10s continuos sin zoom estático).
+  - **Capítulo 1 (100%)**: Sol en Aries, Luna en Sagitario, Ascendente en Acuario (12 keyframes + 3 videos).
+  - **Capítulo 2 (100%)**: Mercurio en Aries, Venus en Piscis, Marte en Libra + variante (13 keyframes + 3 videos).
+  - **Capítulo 3 (50%)**: Júpiter en Escorpio (4 keyframes + 1 video).
+  - Total archivado y validado en Bóveda: 29 imágenes + 7 videos cinemáticos (70 segundos continuos).
 - [ ] **Hoja de Ruta Inmediata**:
-  - Integración de los clips e imágenes sugestivas/transiciones que Tomás está reuniendo para el montaje final.
+  - Continuar con **Saturno en Libra** (Capítulo 3.2) y los capítulos 4 al 7 (La Gran Oposición).
+  - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
   - Extender la coreografía de navegación a los Capítulos 2 a 6.
+
 
 ---
 

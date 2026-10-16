@@ -44,4 +44,7 @@
 | 31 | **Ascendente en Acuario (Cap. 1 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_matrix` a `04_prisma` | Luma Dream Machine | `anim_luma_secuencia_tomas_asc_acuario.mp4` | ✅ Completado (10.0s) |
 | 32 | **Mercurio en Aries (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_tension` a `04_orador` | Luma Dream Machine | `anim_luma_secuencia_tomas_mercurio_aries.mp4` | ✅ Completado (10.0s) |
 | 33 | **Venus en Piscis (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_orilla` a `04_perla` | Luma Dream Machine | `anim_luma_secuencia_tomas_venus_piscis.mp4` | ✅ Completado (10.0s) |
+| 34 | **Marte en Libra (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_banquete` a `04_balanza` | Luma Dream Machine | `anim_luma_secuencia_tomas_marte_libra.mp4` | ✅ Completado (10.0s) |
+| 35 | **Júpiter en Escorpio (Cap. 3 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_descenso` a `04_soberano` | Luma Dream Machine | `anim_luma_secuencia_tomas_jupiter_escorpio.mp4` | ✅ Completado (10.0s) |
+
 

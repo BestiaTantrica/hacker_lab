@@ -47,6 +47,21 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_venus_piscis_02_inmersion.png` (La inmersión en las aguas místicas)
     - Cuadro 3: `arte_propio_secuencia_tomas_venus_piscis_03_metamorfosis.png` (La metamorfosis bioluminiscente)
     - Cuadro 4: `arte_propio_secuencia_tomas_venus_piscis_04_perla.png` (El corazón de perla cósmica)
+- [x] **Marte en Libra (Carta Natal Tomás - Capítulo 2)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis + Variante)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_marte_libra_01_banquete.png` (El banquete del tablero oculto)
+    - Cuadro 1 (Variante): `arte_propio_secuencia_tomas_marte_libra_01_banquete_variante.png`
+    - Cuadro 2: `arte_propio_secuencia_tomas_marte_libra_02_desenvaine.png` (La tensión del hilo rojo y el desenvaine)
+    - Cuadro 3: `arte_propio_secuencia_tomas_marte_libra_03_estocada.png` (El corte quirúrgico en la penumbra)
+    - Cuadro 4: `arte_propio_secuencia_tomas_marte_libra_04_balanza.png` (La balanza en equilibrio absoluto)
+- [x] **Júpiter en Escorpio (Carta Natal Tomás - Capítulo 3)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_jupiter_escorpio_01_descenso.jpg` (El descenso a la cripta abisal)
+    - Cuadro 2: `arte_propio_secuencia_tomas_jupiter_escorpio_02_grimorio.jpg` (La apertura del grimorio de sombras)
+    - Cuadro 3: `arte_propio_secuencia_tomas_jupiter_escorpio_03_transmutacion.jpg` (La erupción de la transmutación)
+    - Cuadro 4: `arte_propio_secuencia_tomas_jupiter_escorpio_04_soberano.jpg` (El soberano de la verdad oculta)
+
+
 
 
 ---
