@@ -264,6 +264,92 @@ A medida que generes las imágenes, descárgalas y me las pasas (o me dices dón
 
 ---
 
+### 🌿 CAPÍTULO 4: LA HERIDA, LA SOMBRA Y EL DESTINO (Quirón, Lilith y Nodos Lunares)
+*El viaje a la vulnerabilidad radical, la rebelión contra la manada y el salto cuántico del alma.*
+
+#### 4.1 QUIRÓN EN TAURO (Casa 4): "EL SANADOR DE LAS RAÍCES Y EL ÁRBOL DE LA VIDA"
+*Regla de Encadenamiento Dinámico:* Arrodillado en dolor sobre ruinas secas ➔ Hundir las manos y sembrar savia dorada en la grieta ➔ Levantamiento físico mientras brotan raíces vivas ➔ Descanso sereno apoyado en el roble ancestral con la cicatriz de oro kintsugi.
+
+- **[Cuadro 1: El Desarraigo en las Ruinas Ancestrales (La Herida del Hogar)]**
+  - **Narrativa:** Plano general melancólico. Una figura descalza con ropas de lino rústico y desgarrado está arrodillada en el suelo de piedra agrietada y tierra seca de una antigua casa en ruinas abierta al cielo frío. Sus dedos tocan con dolor una fisura estéril. En su costado brilla una cicatriz profunda con una suave luz ámbar melancólica.
+  - **Prompt T2I:** `Cinematic wide shot of a barefoot wounded wanderer in rustic tattered earthy linen robes kneeling on the dry cracked stone floor of an ancient ruined ancestral house open to an overcast sky, touching a barren fissure in the dry ground with sorrowful reverence, a faint glowing amber scar pulsing gently on their ribcage, melancholic visceral atmosphere, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_quiron_tauro_01_ruinas.png`
+
+- **[Cuadro 2: La Siembra de la Savia Dorada (El Acto de Sanación Activa)]**
+  - **Narrativa:** Primer plano medio en esfuerzo catártico. La figura se inclina hacia adelante hundiendo con fuerza sus dos manos en la grieta de la tierra. De la herida luminosa de su pecho o de sus palmas gotea una savia líquida de oro puro que impregna la tierra seca. De la fisura subterránea empieza a brotar un resplandor de vida esmeralda y chispas doradas.
+  - **Prompt T2I:** `Intense cinematic close-up of the wanderer's weathered hands plunged deep into the dark cracked soil, liquid golden healing sap dripping from their palms into the earth fissure, an underground pulse of vibrant emerald light and golden spore sparks surging from the fertile depths, visceral emotional catharsis, hyper-detailed fantasy realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_quiron_tauro_02_siembra.png`
+
+- **[Cuadro 3: El Brotamiento de la Tierra Viva (La Transmutación en Tránsito)]**
+  - **Narrativa:** Plano americano dinámico con ascenso corporal. La figura se pone de pie con ímpetu renovado mientras desde la grieta brotan a gran velocidad gruesas raíces de roble entrelazadas con musgo bioluminiscente, hiedras y flores silvestres doradas que cubren y curan todo el suelo de piedra agrietada. El viento mueve su pelo y su ropa.
+  - **Prompt T2I:** `Dynamic medium shot of the wanderer rising powerfully to their feet as colossal oak roots, bioluminescent green moss, and glowing golden wildflowers erupt vigorously from the fissure beneath their bare feet, rapidly transforming the desolate stone ruins into a lush flourishing sanctuary, swirling pollen particles in the air --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_quiron_tauro_03_raices.png`
+
+- **[Cuadro 4: El Roble del Refugio Eterno (El Remate: La Paz de la Cicatriz Sagrada)]**
+  - **Narrativa:** Primer plano cinematográfico con luz dorada de amanecer. El sujeto está de pie, en profunda calma y enraizado con fuerza, apoyando su frente y una mano contra el tronco colosal de un roble milenario florecido en el centro del hogar. La cicatriz de su cuerpo está ahora sellada con oro kintsugi radiante. Una sensación de nutrición, pertenencia y paz indestructible.
+  - **Prompt T2I:** `Poignant cinematic close-up of the wanderer leaning their forehead and hand gently against the ancient bark of a towering sacred oak tree, warm golden sunrise rays filtering through lush emerald leaves, the scar on their body now sealed and healed with glowing kintsugi gold veins, tear of gratitude, supreme emotional peace and grounded belonging, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_quiron_tauro_04_roble.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Quirón en Tauro):**
+> `Continuous botanical rebirth sequence: a wounded wanderer in earthy linen kneels sorrowfully on cracked stone in ancient house ruins, amber light glowing from a chest wound; leaning forward with raw intensity, they plunge both hands into the dry earth as liquid gold sap drips from their fingers into the dark crack; as they rise powerfully to their feet, thick ancient tree roots and blooming glowing wildflowers burst from the ground in rapid growth, swallowing the ruins into a fertile green sanctuary; camera tracks gently forward into an intimate close-up as they rest their forehead against the giant oak trunk, sunrise rays warming their face as the wound seals into solid luminous kintsugi gold. Organic root-growing physics, swirling golden pollen dynamics, rising body biomechanics, seamless metamorphosis, zero static camera zoom.`
+
+#### 4.2 LILITH EN SAGITARIO (Casa 11): "LA FLECHA HEREJE Y LA RUPTURA DEL REBAÑO"
+*Regla de Encadenamiento Dinámico:* Cercada inmóvil en el rebaño enmascarado ➔ Ruptura violenta del círculo y encendido de la llama rebelde ➔ Carrera frenética por la estepa infinita ➔ Tensión del arco en el risco y disparo al cenit cósmico que se fractura en luz libre.
+
+- **[Cuadro 1: El Cerco de las Máscaras Blancas (La Asfixia del Rebaño / Tensión Estática)]**
+  - **Narrativa:** Plano medio general en penumbras. Una figura femenina salvaje de mirada indómita y cabellera negra azotada por el viento gélido está de pie en medio de una multitud de figuras encapuchadas con máscaras de porcelana blanca idénticas que la rodean en un círculo asfixiante bajo la niebla de una plaza fría. Ella no lleva máscara; su mirada desafía la masa que intenta absorberla.
+  - **Prompt T2I:** `Cinematic wide shot of a fierce untamed woman with wild long black hair standing defiant in the center of an ominous circle of identical hooded figures wearing expressionless white porcelain masks, dark cold mist swirling around their feet in a gothic cobblestone square, heavy atmosphere of suffocating societal conformity and alienation, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_lilith_sagitario_01_mascaras.png`
+
+- **[Cuadro 2: La Llama Hereje y la Ruptura (La Fractura Física del Cerco)]**
+  - **Narrativa:** Primer plano medio dinámico. La figura rompe el cerco con un movimiento brusco, arrancándose un velo oscuro. En su mano derecha desnuda hace brotar una llama incandescente violeta y carmesí que enciende una flecha de obsidiana. Las figuras enmascaradas retroceden aterrorizadas cubriéndose los rostros ante la luz cruda.
+  - **Prompt T2I:** `Dynamic medium shot of the wild woman violently breaking through the circle, tearing away a dark shroud, her bare hand igniting a fierce blazing violet and crimson alchemical fire that sets an obsidian arrow ablaze, the masked figures recoiling in terror from the blazing raw truth, intense facial expression of untamed feral power --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_lilith_sagitario_02_ignicion.png`
+
+- **[Cuadro 3: La Fuga hacia el Horizonte Salvaje (Desplazamiento Dinámico a Gran Velocidad)]**
+  - **Narrativa:** Plano americano / entero en movimiento veloz. La mujer corre descalza con velocidad voraz y zancadas poderosas por una estepa infinita bajo un cielo nocturno de nubes tormentosas y estrellas libres, dejando atrás en la distancia las luces frías de la ciudad amurallada. Su manto negro ondea como alas y la flecha llameante deja una estela de brasas en el aire.
+  - **Prompt T2I:** `Kinetic full tracking shot of the untamed woman sprinting with ferocious grace across an infinite windswept midnight steppe, bare feet kicking up dry grass, dark cloak billowing like raven wings behind her, carrying the glowing violet torch arrow leaving a trail of embers, distant walled city left far behind under a wild starry tempest, epic fantasy realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_lilith_sagitario_03_carrera.png`
+
+- **[Cuadro 4: El Disparo que Fractura la Cúpula (El Remate Triunfal / La Libertad Conquistada)]**
+  - **Narrativa:** Primer plano medio contrapicado al borde de un risco colosal. La mujer tensa al límite un arco curvo de ébano y dispara la flecha de fuego violeta directo al cenit del firmamento. La flecha perfora la cúpula de nubes oscuras, abriendo una grieta cósmica por donde cae una lluvia de polvo estelar libre y dorado sobre su rostro triunfante y risueño.
+  - **Prompt T2I:** `Dramatic low-angle close-up of the fierce archer woman at the cliff's precipice, fully drawing a recurve ebony bow and releasing a blinding violet fire arrow upward, the arrow piercing the dark cloud canopy creating a colossal shockwave of glowing starlight and gold aurora rain that bathes her ecstatic laughing face, supreme unconquerable freedom, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_lilith_sagitario_04_flecha.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Lilith en Sagitario):**
+> `Continuous feral liberation sequence: a wild dark-haired woman stands surrounded by suffocating white-masked figures in cold fog; with a violent burst of power she breaks the circle, her hand igniting a blazing violet flame on an obsidian arrow that scatters the crowd; she sprints with ferocious grace across a wide midnight wilderness, cloak billowing as violet embers trail behind her; camera sweeps to a triumphant low-angle close-up as she draws an ebony recurve bow and shoots the flaming arrow straight into the zenith, shattering dark clouds into a brilliant aurora shower of golden starlight over her laughing face. Kinetic sprinting physics, swirling violet fire embers, rapid fabric dynamics, celestial shockwave burst, seamless metamorphosis, zero static camera zoom.`
+
+#### 4.3 NODOS LUNARES (Eje Leo C5 - Acuario C11): "EL PUENTE DEL DESTINO: DEL REY SOLITARIO A LA RED CÓSMICA"
+*Regla de Encadenamiento Dinámico:* Sentado melancólico con la máscara en el teatro vacío (Nodo Sur en Leo) ➔ De pie arrojando la máscara y despojándose de la capa ➔ Marcha hacia adelante sobre el puente de filamentos de luz entre la multitud de almas ➔ Consagración en el domo geodésico sosteniendo el orbe de la red cuántica (Nodo Norte en Acuario).
+
+- **[Cuadro 1: El Trono Bajo el Reflector Vacío (Nodo Sur en Leo / Casa 5)]**
+  - **Narrativa:** Plano medio general melancólico. Un carismático rey y artista con capa de terciopelo carmesí y bordados dorados está sentado en un trono dorado solitario en un teatro decadente y vacío, bajo el cono de luz de un único reflector blanco cenital. Sostiene en su mano una pesada máscara dorada de león que acaba de quitarse. Mirada melancólica de soledad: el ego agotado de actuar sin sentido.
+  - **Prompt T2I:** `Cinematic medium shot of a weary charismatic artist-king in rich crimson velvet and tattered gold embroidery seated alone on a solitary ornate golden throne in a vast empty dark theatre, illuminated by a single harsh theatrical white spotlight, resting an ornate gold lion mask in his lap, melancholic gaze into the dark auditorium, feeling of hollow fame and ego exhaustion, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_nodos_lunares_01_trono_leo.png`
+
+- **[Cuadro 2: La Renuncia a la Máscara y el Descenso (La Ruptura de la Ilusión)]**
+  - **Narrativa:** Plano medio dinámico. El artista se pone de pie con firmeza y arroja la máscara dorada al suelo del escenario, que se resquebraja desprendiendo chispas. Se quita la pesada capa carmesí y da un paso decidido fuera del cono de luz del reflector, adentrándose con valentía en la penumbra hacia lo desconocido.
+  - **Prompt T2I:** `Dynamic medium shot of the artist rising to his feet and letting the heavy crimson mantle fall to the floorboards, casting away the golden lion mask which shatters in glowing sparks, stepping resolutely out of the spotlight beam into the surrounding velvet darkness, dramatic posture of radical liberation, cinematic chiaroscuro --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_nodos_lunares_02_renuncia.png`
+
+- **[Cuadro 3: La Marcha por el Puente Cuántico (El Tránsito hacia la Red / Casa 11)]**
+  - **Narrativa:** Plano americano / entero en movimiento de marcha firme hacia adelante. El protagonista camina con ropas sencillas de lino oscuro sobre un puente flotante de filamentos de fibra óptica cian y dorada que cruza una vasta nebulosa cósmica. A sus costados caminan cientos de siluetas etéreas de luz (la hermandad humana) avanzando al unísono, conectadas por hilos de luz que laten al mismo ritmo.
+  - **Prompt T2I:** `Full tracking shot of the protagonist walking forward with steady confident strides across a glowing cyan and gold fibre-optic suspension bridge spanning an ethereal deep space nebula, surrounded by luminous translucent figures of fellow seekers walking alongside in harmonious unity, pulsing interconnected light threads linking all souls together, visionary sci-fi realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_nodos_lunares_03_puente.png`
+
+- **[Cuadro 4: El Nodo de la Matriz Universal (Nodo Norte en Acuario / Remate Sagrado)]**
+  - **Narrativa:** Primer plano medio cinematográfico. El protagonista llega al centro de un domo geodésico estelar transparente. Sostiene entre sus dos manos un orbe holográfico de luz cian y platino que pulsa suavemente, sincronizando todas las constelaciones y líneas de energía de la red cósmica. Una sonrisa serena de profunda fraternidad, visión de futuro y trascendencia del ego.
+  - **Prompt T2I:** `Dramatic cinematic close-up of the protagonist standing at the apex of a transparent geodesic observatory dome, cupping a glowing holographic cyan and solar-gold sphere in both hands that harmonizes intricate glowing cosmic network grids, radiant starlight reflecting in serene grateful eyes, pure visionary fellowship and transcendent destiny, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_nodos_lunares_04_matriz.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Nodos Lunares):**
+> `Continuous nodal destiny transition sequence: a weary crowned artist sits alone in a spotlight on a dark theater throne holding a gold lion mask; he stands up, casting the mask aside and shedding his heavy crimson cape as he steps out of the light; he walks forward with purposeful strides onto a vast suspension bridge of glowing cyan fibre-optics suspended over deep space nebulae, joined by countless radiant silhouettes walking in unison; camera glides forward into an intimate close-up as he reaches a celestial geodesic dome, cradling a glowing holographic network sphere between his hands that synchronizes the cosmic grid under radiant starbeams. Smooth fabric shedding physics, glowing fibre-optic particle dynamics, forward walking momentum, network synchronizing light burst, seamless metamorphosis, zero static camera zoom.`
+
+---
+
+
+
+
 ### ⚔️ CAPÍTULO 7: LA GRAN OPOSICIÓN (Eje 3-9: Sol/Mercurio vs Saturno/Plutón)
 *Arco narrativo de 2 personajes:* La colisión frontal entre el Guerrero Solar (la chispa mental inmediata) y el Monolito de Saturno/Plutón (la ley del tiempo y el poder kármico).
 

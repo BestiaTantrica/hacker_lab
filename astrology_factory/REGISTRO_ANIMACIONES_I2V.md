@@ -47,6 +47,9 @@
 | 34 | **Marte en Libra (Cap. 2 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_banquete` a `04_balanza` | Luma Dream Machine | `anim_luma_secuencia_tomas_marte_libra.mp4` | ✅ Completado (10.0s) |
 | 35 | **Júpiter en Escorpio (Cap. 3 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_descenso` a `04_soberano` | Luma Dream Machine | `anim_luma_secuencia_tomas_jupiter_escorpio.mp4` | ✅ Completado (10.0s) |
 | 36 | **Saturno en Libra (Cap. 3 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_cincel` a `04_balanza` | Luma Dream Machine | `anim_luma_secuencia_tomas_saturno_libra.mp4` | ✅ Completado (10.0s) |
+| 37 | **Quirón en Tauro (Cap. 4 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_ruinas` a `04_roble` | Luma Dream Machine | `anim_luma_secuencia_tomas_quiron_tauro.mp4` | ✅ Completado (10.0s) |
+| 38 | **Lilith en Sagitario (Cap. 4 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_mascaras` a `04_flecha` | Luma Dream Machine | `anim_luma_secuencia_tomas_lilith_sagitario.mp4` | ✅ Completado (10.0s) |
+| 39 | **Nodos Lunares (Cap. 4 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_trono_leo` a `04_matriz` | Luma Dream Machine | `anim_luma_secuencia_tomas_nodos_lunares.mp4` | ✅ Completado (10.0s) |
 
 
 

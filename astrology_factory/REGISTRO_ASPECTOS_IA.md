@@ -67,6 +67,27 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_saturno_libra_02_golpe.jpg` (El golpe y la fractura sagrada)
     - Cuadro 3: `arte_propio_secuencia_tomas_saturno_libra_03_espejo.jpg` (El pulido del espejo celestial)
     - Cuadro 4: `arte_propio_secuencia_tomas_saturno_libra_04_balanza.jpg` (La paz del orden inmutable)
+- [x] **Quirón en Tauro (Carta Natal Tomás - Capítulo 4)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_quiron_tauro_01_ruinas.jpg` (El desarraigo en las ruinas ancestrales)
+    - Cuadro 2: `arte_propio_secuencia_tomas_quiron_tauro_02_siembra.jpg` (La siembra de la savia dorada)
+    - Cuadro 3: `arte_propio_secuencia_tomas_quiron_tauro_03_raices.jpg` (El brotamiento de la tierra viva)
+    - Cuadro 4: `arte_propio_secuencia_tomas_quiron_tauro_04_roble.jpg` (El roble del refugio eterno)
+- [x] **Lilith en Sagitario (Carta Natal Tomás - Capítulo 4)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_lilith_sagitario_01_mascaras.png` (El cerco de las máscaras blancas)
+    - Cuadro 2: `arte_propio_secuencia_tomas_lilith_sagitario_02_ignicion.png` (La llama hereje y la ruptura)
+    - Cuadro 3: `arte_propio_secuencia_tomas_lilith_sagitario_03_carrera.png` (La fuga hacia el horizonte salvaje)
+    - Cuadro 4: `arte_propio_secuencia_tomas_lilith_sagitario_04_flecha.png` (El disparo que fractura la cúpula)
+- [x] **Nodos Lunares (Carta Natal Tomás - Capítulo 4)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_nodos_lunares_01_trono_leo.jpg` (El trono bajo el reflector vacío - Nodo Sur en Leo)
+    - Cuadro 2: `arte_propio_secuencia_tomas_nodos_lunares_02_renuncia.jpg` (La renuncia a la máscara y el descenso)
+    - Cuadro 3: `arte_propio_secuencia_tomas_nodos_lunares_03_puente.jpg` (La marcha por el puente cuántico hacia la red)
+    - Cuadro 4: `arte_propio_secuencia_tomas_nodos_lunares_04_matriz.jpg` (El nodo de la matriz universal - Nodo Norte en Acuario)
+
+
+
 
 
 
