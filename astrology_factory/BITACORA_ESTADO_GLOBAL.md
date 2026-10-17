@@ -73,10 +73,17 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - Servicio `telegrambot.service` actualizado y verificado en ejecución en OCI.
 - [x] **Guía Maestra de Curaduría de Assets Astrológicos**:
   - Documento creado en `produccion/GUIA_CURADURIA_STOCK_ASTROLOGICO.md` con la taxonomía SSoT para SQLite (`img_abstracto_*`, `img_emocion_*`, `vid_*`), especificaciones de búsqueda por planeta/signo y prompts optimizados para animación I2V en Luma / Pixverse sin gastar APIs.
+- [x] **Salto de Paradigma V3: El Glifo Maestro (Alfabeto Modular Astrológico)**:
+  - Superado el modelo de combinatoria infinita rígida (fuerza bruta).
+  - Documento canónico redactado en `produccion/ARQUITECTURA_GLIFO_MAESTRO_ALFABETO_MODULAR.md`.
+  - Cobertura 100% de la astrología occidental en 45 arquetipos universales (90 imágenes maestras): 12 Astros, 4 Ángulos (con Ascendente como núcleo de encarnación), 12 Signos, 12 Casas y 5 Aspectos Mayores.
+  - Fórmulas de composición y animación no reduccionistas que integran obligatoriamente la Casa terrenal y el Contexto Global del cielo.
+  - Nueva identidad visual de autor ("Tenebrismo Figurativo Sagrado") inspirada en el realismo místico contemporáneo (Roberto Ferri, Dino Valls), eliminando el plástico y la sobresaturación digital de IA.
 - [ ] **Hoja de Ruta Inmediata**:
-  - **Montaje y Renderizado**: Integrar los 16 clips cinemáticos y 66 imágenes sugestivas en el motor de renderizado de video modular (`products/carta_natal/` y `products/revolucion_solar/`).
-  - **Carta Natal de Lionel Messi**: Replicar la arquitectura de metamorfosis cinemática continua para los capítulos de la carta natal de Messi.
-  - **Coreografía Vectorial**: Extender la navegación dinámica con enfoque neón a los Capítulos 2 a 7 en el visor cinemático.
+  - **Fase 1 del Glifo Maestro**: Producción de los 12 Astros y 4 Ángulos Sagrados (Ascendente, Descendente, MC, IC).
+  - **Fase 2 del Glifo Maestro**: Producción de los 12 Signos y 12 Casas.
+  - **Fase 3 del Glifo Maestro**: Producción de los 5 Aspectos Mayores.
+  - **Montaje y Renderizado**: Integrar los 16 clips cinemáticos de la Carta Natal de Tomás y preparar el pipeline para el Glifo.
 
 
 
