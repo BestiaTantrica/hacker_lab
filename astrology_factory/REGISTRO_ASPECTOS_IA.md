@@ -109,6 +109,12 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_mc_escorpio_02_ignicion.png` (La ignición del fuego chamánico)
     - Cuadro 3: `arte_propio_secuencia_tomas_mc_escorpio_03_ascenso.png` (El ascenso al vértice del mundo con báculo escorpión)
     - Cuadro 4: `arte_propio_secuencia_tomas_mc_escorpio_04_soberano.png` (El soberano de la visión oculta con media máscara y serpiente-águila)
+- [x] **La Gran Oposición (Carta Natal Tomás - Capítulo 7 Clímax)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_gran_oposicion_01_desafio.jpg` (El desafío ante las puertas del titán)
+    - Cuadro 2: `arte_propio_secuencia_tomas_gran_oposicion_02_carga.jpg` (La carga del verbo incandescente)
+    - Cuadro 3: `arte_propio_secuencia_tomas_gran_oposicion_03_choque.jpg` (El choque cósmico de titanes)
+    - Cuadro 4: `arte_propio_secuencia_tomas_gran_oposicion_04_sintesis.jpg` (La síntesis del soberano eterno)
 
 
 

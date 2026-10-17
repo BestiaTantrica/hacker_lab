@@ -63,7 +63,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Capítulo 4 (100%)**: Quirón en Tauro, Lilith en Sagitario, Nodos Lunares (12 keyframes + 3 videos).
   - **Capítulo 5 (100%)**: Urano en Sagitario, Neptuno en Sagitario, Plutón en Libra (12 keyframes + 3 videos).
   - **Capítulo 6 (100%)**: Medio Cielo en Escorpio (4 keyframes + 1 video).
-  - Total archivado y validado en Bóveda: 62 imágenes + 15 videos cinemáticos (150+ segundos continuos).
+  - **Capítulo 7 (100% Clímax)**: La Gran Oposición Eje 3-9 Sol/Mercurio vs Saturno/Plutón (4 keyframes + 1 video).
+  - **CARTA NATAL DE TOMÁS 100% COMPLETADA EN BÓVEDA**: 66 imágenes curadas + 16 videos cinemáticos continuos de metamorfosis (160+ segundos continuos de metraje vertical 9:16).
 - [x] **Robustez Total del Bot y Canal de Telegram (Producción OCI-2)**:
   - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 6 API keys del `.env` y fallback entre modelos (`gemini-2.5-flash`, `3.8-flash`, `3.6-flash`).
   - **Botón Inline de Personalización**: Cada reporte diario en el canal público ahora incluye el botón con deep-link `[ 🔮 Solicitar mi Horóscopo Personalizado ]` hacia `https://t.me/PortalTarotBot?start=horoscopo_hoy`.
@@ -73,11 +74,9 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] **Guía Maestra de Curaduría de Assets Astrológicos**:
   - Documento creado en `produccion/GUIA_CURADURIA_STOCK_ASTROLOGICO.md` con la taxonomía SSoT para SQLite (`img_abstracto_*`, `img_emocion_*`, `vid_*`), especificaciones de búsqueda por planeta/signo y prompts optimizados para animación I2V en Luma / Pixverse sin gastar APIs.
 - [ ] **Hoja de Ruta Inmediata**:
-  - Iniciar **Capítulo 7: La Gran Oposición (Clímax de la Carta de Tomás)** (Eje 3-9: Sol/Mercurio vs Saturno/Plutón).
-  - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
-  - Continuar con Capítulo 6 (Medio Cielo en Escorpio) y Capítulo 7 (La Gran Oposición Sol/Mercurio vs Saturno/Plutón).
-  - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
-  - Extender la coreografía de navegación a los Capítulos 2 a 6.
+  - **Montaje y Renderizado**: Integrar los 16 clips cinemáticos y 66 imágenes sugestivas en el motor de renderizado de video modular (`products/carta_natal/` y `products/revolucion_solar/`).
+  - **Carta Natal de Lionel Messi**: Replicar la arquitectura de metamorfosis cinemática continua para los capítulos de la carta natal de Messi.
+  - **Coreografía Vectorial**: Extender la navegación dinámica con enfoque neón a los Capítulos 2 a 7 en el visor cinemático.
 
 
 
