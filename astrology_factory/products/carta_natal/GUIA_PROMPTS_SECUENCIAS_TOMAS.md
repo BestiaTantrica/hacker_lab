@@ -427,6 +427,37 @@ A medida que generes las imágenes, descárgalas y me las pasas (o me dices dón
 > `Continuous underworld rebirth sequence: a dark velvet-robed aristocrat stands before an antique mirror showing a reflection trapped in rusting chains; he delivers a crushing blow with an iron gauntlet, shattering the mirror into thousands of glass shards floating in slow motion to reveal a roaring volcanic rift; he marches forward through the shattered frame over melting golden shards as massive wings of black smoke and violet embers spread from his back; camera glides into an imposing close-up as he emerges in gleaming obsidian armor with gold inlays, holding a miniature phoenix of black fire in his palm, eyes burning with invincible sovereign power. Exploding glass physics, swirling volcanic smoke and ember dynamics, resolute marching momentum, incandescent armor transformation, seamless metamorphosis, zero static camera zoom.`
 
 ---
+
+### 👑 CAPÍTULO 6: LA CIMA DEL DESTINO Y LA MARCA VOCACIONAL (Medio Cielo en Escorpio)
+*La autoridad social que no teme descender a la sombra para rescatar el poder verdadero. De la muerte de la máscara mundana a la consagración chamánica en la cumbre visible.*
+
+#### 6.1 MEDIO CIELO EN ESCORPIO (Casa 10): "EL CHAMÁN EN LA CUMBRE DEL MUNDO Y LA TRANSMUTACIÓN PÚBLICA"
+*Regla de Encadenamiento Dinámico:* Arrodillado con cabeza gacha en la plaza de cenizas bajo el eclipse solar ➔ Ponerse de pie y quebrar la inercia con fuego esmeralda brotando del pecho que incinera la túnica de ceniza ➔ Ascenso decidido por la escalinata de basalto empuñando el báculo de cristal ➔ Consagración suprema en contrapicado con ojos de oro líquido, media máscara de platino y el águila/serpiente de luz.
+
+- **[Cuadro 1: La Vigilia de Ceniza bajo el Eclipse (El Agotamiento del Rol Mundano)]**
+  - **Narrativa:** Plano general en penumbras. En la terraza circular de una pirámide de basalto negro bajo un eclipse solar crepuscular con halo carmesí, un iniciado arrodillado con la cabeza gacha viste una túnica ceremonial de plumas negras y lino gastado manchada de cenizas. A su alrededor hay brasas humeantes en el suelo de piedra. Silencio tenso y abrumador: el peso de la mirada colectiva y la crisis vocacional antes de la revelación.
+  - **Prompt T2I:** `Cinematic wide shot of a solitary initiated mystic in tattered black raven-feather robes and charcoal linen kneeling head bowed on a circular basalt terrace atop a towering ziggurat, beneath an ominous solar eclipse with a glowing crimson corona, cold wind scattering ash and dying embers across dark flagstones, heavy solemn weight of impending destiny, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_mc_escorpio_01_vigilia.png`
+
+- **[Cuadro 2: La Ignición del Fuego Chamánico (La Ruptura de la Inercia)]**
+  - **Narrativa:** Plano medio dinámico. El iniciado levanta la cabeza con determinación salvaje y se pone de pie. De su pecho y de sus manos abiertas brota una violenta llamarada de plasma verde esmeralda y chispas doradas que incinera la capa de cenizas y rasga la túnica oscura, revelando un torso marcado por glifos alquímicos luminiscentes. El anillo del eclipse en el cielo ruge con filamentos solares.
+  - **Prompt T2I:** `Dynamic medium action shot of the mystic rising to his feet with fierce determination, chest erupting with a surge of brilliant emerald alchemical plasma and golden sparks incinerating the tattered dark cloak, revealing glowing alchemical scarification runes on his skin, the solar eclipse behind him flaring with incandescent solar prominences, heroic awakening --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_mc_escorpio_02_ignicion.png`
+
+- **[Cuadro 3: El Ascenso al Vértice del Mundo (El Desplazamiento Firme)]**
+  - **Narrativa:** Plano entero en marcha ascendente. El chamán sube con zancadas poderosas los últimos peldaños monolíticos hacia el punto más alto del templo. En su mano derecha empuña un báculo de hierro negro y madera fósil rematado en un escorpión tallado en cuarzo ahumado que emite un haz de luz verde esmeralda hacia el cenit, partiendo las nubes tormentosas en dos.
+  - **Prompt T2I:** `Full tracking shot of the shaman ascending the steep monolithic stone staircase toward the sky pinnacle with commanding athletic strides, holding an ancient black iron staff topped with a smoky quartz scorpion crystal beaming a focused column of emerald light directly into the stormy heavens, dark robes trailing behind like eagle wings, epic mythic realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_mc_escorpio_03_ascenso.png`
+
+- **[Cuadro 4: El Soberano de la Visión Oculta (Remate / La Maestría Pública)]**
+  - **Narrativa:** Primer plano medio contrapicado majestuoso. El chamán de pie en la cumbre absoluta del mundo, dominando el horizonte con una presencia magnética e inexpugnable. Viste media máscara ceremonial de platino y obsidiana; sus ojos brillan como oro líquido incandescente. Enroscada en su brazo y hombro reposa una serpiente-águila hecha de luz estelar esmeralda y platino. Expresión de autoridad total, lucidez implacable y redención conquistada.
+  - **Prompt T2I:** `Commanding low-angle close-up of the shaman standing atop the world pinnacle, wearing an ornate half-mask of polished platinum and black obsidian, eyes glowing with liquid solar gold, a mythical serpent-eagle of pure glowing emerald starlight coiled around his arm and shoulder, fierce sovereign authority and psychological mastery over life and death, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_mc_escorpio_04_soberano.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Medio Cielo en Escorpio):**
+> `Continuous vocational mastery sequence: a dark-robed mystic kneels in solemn meditation on a high basalt temple terrace under a glowing crimson solar eclipse; he stands up with fierce power as brilliant emerald alchemical fire bursts from his chest, incinerating ash and lighting up glowing runes on his body; he strides forward up a steep monolithic stone staircase carrying a black iron staff that beams emerald light straight into the stormy zenith; camera sweeps upward into an imposing low-angle close-up as he reaches the pinnacle wearing a polished obsidian and platinum half-mask, eyes blazing with liquid gold as an emerald light serpent coils around his arm against the radiant eclipsed sun. Volcanic ash scatter physics, crackling emerald plasma dynamics, powerful climbing momentum, blinding eclipse corona burst, seamless metamorphosis, zero static camera zoom.`
+
+---
 ### ⚔️ CAPÍTULO 7: LA GRAN OPOSICIÓN (Eje 3-9: Sol/Mercurio vs Saturno/Plutón)
 *Arco narrativo de 2 personajes:* La colisión frontal entre el Guerrero Solar (la chispa mental inmediata) y el Monolito de Saturno/Plutón (la ley del tiempo y el poder kármico).
 

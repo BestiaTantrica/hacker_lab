@@ -61,8 +61,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Capítulo 2 (100%)**: Mercurio en Aries, Venus en Piscis, Marte en Libra + variante (13 keyframes + 3 videos).
   - **Capítulo 3 (100%)**: Júpiter en Escorpio, Saturno en Libra + variante stock (9 keyframes + 2 videos).
   - **Capítulo 4 (100%)**: Quirón en Tauro, Lilith en Sagitario, Nodos Lunares (12 keyframes + 3 videos).
-  - **Capítulo 5 (En curso)**: Urano en Sagitario y Neptuno en Sagitario completados (8 keyframes + 2 videos). En preparación: Plutón en Libra.
-  - Total archivado y validado en Bóveda: 54 imágenes + 13 videos cinemáticos (130+ segundos continuos).
+  - **Capítulo 5 (100%)**: Urano en Sagitario, Neptuno en Sagitario, Plutón en Libra (12 keyframes + 3 videos).
+  - Total archivado y validado en Bóveda: 58 imágenes + 14 videos cinemáticos (140+ segundos continuos).
 - [x] **Robustez Total del Bot y Canal de Telegram (Producción OCI-2)**:
   - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 6 API keys del `.env` y fallback entre modelos (`gemini-2.5-flash`, `3.8-flash`, `3.6-flash`).
   - **Botón Inline de Personalización**: Cada reporte diario en el canal público ahora incluye el botón con deep-link `[ 🔮 Solicitar mi Horóscopo Personalizado ]` hacia `https://t.me/PortalTarotBot?start=horoscopo_hoy`.
@@ -72,7 +72,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] **Guía Maestra de Curaduría de Assets Astrológicos**:
   - Documento creado en `produccion/GUIA_CURADURIA_STOCK_ASTROLOGICO.md` con la taxonomía SSoT para SQLite (`img_abstracto_*`, `img_emocion_*`, `vid_*`), especificaciones de búsqueda por planeta/signo y prompts optimizados para animación I2V en Luma / Pixverse sin gastar APIs.
 - [ ] **Hoja de Ruta Inmediata**:
-  - Iniciar **Capítulo 5: Los Dioses del Cambio y la Transformación Transpersonal** (Urano en Sagitario C10, Neptuno en Sagitario C10, Plutón en Libra C8/C9).
+  - Iniciar **Capítulo 6: La Cima del Destino y la Marca Vocacional** (Medio Cielo en Escorpio - Casa 10).
+  - Continuar con **Capítulo 7: La Gran Oposición** (Eje 3-9: Sol/Mercurio vs Saturno/Plutón).
   - Continuar con Capítulo 6 (Medio Cielo en Escorpio) y Capítulo 7 (La Gran Oposición Sol/Mercurio vs Saturno/Plutón).
   - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
   - Extender la coreografía de navegación a los Capítulos 2 a 6.

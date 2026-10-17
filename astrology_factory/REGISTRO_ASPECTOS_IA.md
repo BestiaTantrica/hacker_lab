@@ -97,6 +97,12 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_neptuno_sagitario_02_levitacion.png` (La levitación de las aguas sagradas)
     - Cuadro 3: `arte_propio_secuencia_tomas_neptuno_sagitario_03_sendero.png` (El sendero flotante hacia el firmamento con ballenas astrales)
     - Cuadro 4: `arte_propio_secuencia_tomas_neptuno_sagitario_04_nebula.png` (El ojo de la devoción cósmica ante la supernova)
+- [x] **Plutón en Libra (Carta Natal Tomás - Capítulo 5)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_pluton_libra_01_espejo.png` (La galería de los espejos encadenados)
+    - Cuadro 2: `arte_propio_secuencia_tomas_pluton_libra_02_fractura.png` (El golpe catártico y la fractura del cristal)
+    - Cuadro 3: `arte_propio_secuencia_tomas_pluton_libra_03_travesia.png` (El paso por el umbral de fuego volcánico)
+    - Cuadro 4: `arte_propio_secuencia_tomas_pluton_libra_04_soberano.png` (El soberano renacido de obsidiana con fénix alquímico)
 
 
 
