@@ -91,6 +91,12 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_urano_sagitario_02_ignicion.png` (El chispazo y la apertura de la cúpula)
     - Cuadro 3: `arte_propio_secuencia_tomas_urano_sagitario_03_vuelo.png` (El salto al vacío en alas de circuito)
     - Cuadro 4: `arte_propio_secuencia_tomas_urano_sagitario_04_relampago.png` (El pararrayos de la iluminación cósmica)
+- [x] **Neptuno en Sagitario (Carta Natal Tomás - Capítulo 5)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_neptuno_sagitario_01_niebla.png` (La terraza de las ilusiones perdidas en la niebla)
+    - Cuadro 2: `arte_propio_secuencia_tomas_neptuno_sagitario_02_levitacion.png` (La levitación de las aguas sagradas)
+    - Cuadro 3: `arte_propio_secuencia_tomas_neptuno_sagitario_03_sendero.png` (El sendero flotante hacia el firmamento con ballenas astrales)
+    - Cuadro 4: `arte_propio_secuencia_tomas_neptuno_sagitario_04_nebula.png` (El ojo de la devoción cósmica ante la supernova)
 
 
 

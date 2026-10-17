@@ -51,3 +51,4 @@
 | 38 | **Lilith en Sagitario (Cap. 4 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_mascaras` a `04_flecha` | Luma Dream Machine | `anim_luma_secuencia_tomas_lilith_sagitario.mp4` | ✅ Completado (10.0s) |
 | 39 | **Nodos Lunares (Cap. 4 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_trono_leo` a `04_matriz` | Luma Dream Machine | `anim_luma_secuencia_tomas_nodos_lunares.mp4` | ✅ Completado (10.0s) |
 | 40 | **Urano en Sagitario (Cap. 5 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_torre` a `04_relampago` | Luma Dream Machine | `anim_luma_secuencia_tomas_urano_sagitario.mp4` | ✅ Completado (10.0s) |
+| 41 | **Neptuno en Sagitario (Cap. 5 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_niebla` a `04_nebula` | Luma Dream Machine | `anim_luma_secuencia_tomas_neptuno_sagitario.mp4` | ✅ Completado (10.0s) |
