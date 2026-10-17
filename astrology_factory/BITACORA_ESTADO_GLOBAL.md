@@ -61,7 +61,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Capítulo 2 (100%)**: Mercurio en Aries, Venus en Piscis, Marte en Libra + variante (13 keyframes + 3 videos).
   - **Capítulo 3 (100%)**: Júpiter en Escorpio, Saturno en Libra + variante stock (9 keyframes + 2 videos).
   - **Capítulo 4 (100%)**: Quirón en Tauro, Lilith en Sagitario, Nodos Lunares (12 keyframes + 3 videos).
-  - Total archivado y validado en Bóveda: 46 imágenes + 11 videos cinemáticos (110+ segundos continuos).
+  - **Capítulo 5 (En curso)**: Urano en Sagitario completado (4 keyframes + 1 video). En preparación: Neptuno en Sagitario y Plutón en Libra.
+  - Total archivado y validado en Bóveda: 50 imágenes + 12 videos cinemáticos (120+ segundos continuos).
 - [x] **Robustez Total del Bot y Canal de Telegram (Producción OCI-2)**:
   - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 6 API keys del `.env` y fallback entre modelos (`gemini-2.5-flash`, `3.8-flash`, `3.6-flash`).
   - **Botón Inline de Personalización**: Cada reporte diario en el canal público ahora incluye el botón con deep-link `[ 🔮 Solicitar mi Horóscopo Personalizado ]` hacia `https://t.me/PortalTarotBot?start=horoscopo_hoy`.

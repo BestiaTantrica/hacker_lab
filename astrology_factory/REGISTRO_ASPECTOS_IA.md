@@ -85,6 +85,12 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_nodos_lunares_02_renuncia.jpg` (La renuncia a la máscara y el descenso)
     - Cuadro 3: `arte_propio_secuencia_tomas_nodos_lunares_03_puente.jpg` (La marcha por el puente cuántico hacia la red)
     - Cuadro 4: `arte_propio_secuencia_tomas_nodos_lunares_04_matriz.jpg` (El nodo de la matriz universal - Nodo Norte en Acuario)
+- [x] **Urano en Sagitario (Carta Natal Tomás - Capítulo 5)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_urano_sagitario_01_torre.png` (El confinamiento en la torre obsoleta)
+    - Cuadro 2: `arte_propio_secuencia_tomas_urano_sagitario_02_ignicion.png` (El chispazo y la apertura de la cúpula)
+    - Cuadro 3: `arte_propio_secuencia_tomas_urano_sagitario_03_vuelo.png` (El salto al vacío en alas de circuito)
+    - Cuadro 4: `arte_propio_secuencia_tomas_urano_sagitario_04_relampago.png` (El pararrayos de la iluminación cósmica)
 
 
 

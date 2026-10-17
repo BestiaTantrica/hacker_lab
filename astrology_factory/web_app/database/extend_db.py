@@ -32,11 +32,30 @@ def extend_db():
     )
     ''')
     
-    # Asegurarnos de que telegram_id existe en subscribers
+    # Asegurarnos de que telegram_id y telegram_username existen en subscribers
     try:
         cursor.execute("ALTER TABLE subscribers ADD COLUMN telegram_id TEXT")
     except sqlite3.OperationalError:
         pass # La columna ya existe
+
+    try:
+        cursor.execute("ALTER TABLE subscribers ADD COLUMN telegram_username TEXT")
+    except sqlite3.OperationalError:
+        pass
+
+    # Tabla para persistencia y reintento de solicitudes de Telegram
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS pending_telegram_requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chat_id TEXT NOT NULL,
+        email TEXT,
+        request_type TEXT DEFAULT 'horoscopo_hoy',
+        status TEXT DEFAULT 'pending', -- 'pending', 'processing', 'completed', 'failed'
+        error_log TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
         
     conn.commit()
     conn.close()

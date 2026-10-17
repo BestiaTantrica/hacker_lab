@@ -345,11 +345,88 @@ A medida que generes las imágenes, descárgalas y me las pasas (o me dices dón
 > 🎥 **PROMPT UNIFICADO PARA LUMA (Nodos Lunares):**
 > `Continuous nodal destiny transition sequence: a weary crowned artist sits alone in a spotlight on a dark theater throne holding a gold lion mask; he stands up, casting the mask aside and shedding his heavy crimson cape as he steps out of the light; he walks forward with purposeful strides onto a vast suspension bridge of glowing cyan fibre-optics suspended over deep space nebulae, joined by countless radiant silhouettes walking in unison; camera glides forward into an intimate close-up as he reaches a celestial geodesic dome, cradling a glowing holographic network sphere between his hands that synchronizes the cosmic grid under radiant starbeams. Smooth fabric shedding physics, glowing fibre-optic particle dynamics, forward walking momentum, network synchronizing light burst, seamless metamorphosis, zero static camera zoom.`
 
+### ⚡ CAPÍTULO 5: LOS DIOSES DEL CAMBIO Y LA TRANSFORMACIÓN TRANSPERSONAL (Urano, Neptuno y Plutón)
+*Las fuerzas cósmicas que disuelven la máscara terrenal: el rayo de la genialidad, la disolución en el océano espiritual y la muerte/regeneración alquímica.*
+
+#### 5.1 URANO EN SAGITARIO (Casa 10): "EL RELÁMPAGO EN LA CUMBRE Y LA CAÍDA DE LA TORRE DE MARFIL"
+*Regla de Encadenamiento Dinámico:* Confinado ante el consejo estático en el observatorio cerrado ➔ Arcos voltaicos de plasma azul que funden los engranajes y abren la cúpula ➔ Salto al vacío desplegando alas de circuitos de luz sobre la tormenta ➔ Clavar el pararrayos en la cumbre absorbiendo el relámpago con ojos de pura electricidad.
+
+- **[Cuadro 1: El Confinamiento en la Torre Obsoleta (La Opresión Institucional / Reposo)]**
+  - **Narrativa:** Plano general en penumbras. Un joven astrónomo e inventor rebelde de mirada eléctrica y ropa contemporánea oscura está encerrado en la sala circular de una alta torre de piedra con cúpula de bronce cerrada y telescopios oxidados. Frente a él, un consejo de eruditos estáticos con togas pesadas y armaduras oxidadas le bloquean el paso, vigilando que nadie mire hacia arriba. Tensión opresiva.
+  - **Prompt T2I:** `Cinematic wide shot of a young rebellious astronomer-inventor with sharp electrifying eyes in dark tailored attire standing defiant in a circular stone observatory tower beneath a locked heavy bronze dome, surrounded by rigid dogmatic scholars in tarnished metal armor and dusty academic robes blocking the exit, suffocating stale atmosphere, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_urano_sagitario_01_torre.png`
+
+- **[Cuadro 2: El Chispazo y la Apertura de la Cúpula (La Ruptura Eléctrica)]**
+  - **Narrativa:** Plano medio dinámico. El inventor alza sus dos manos hacia los engranajes del techo: de sus dedos brotan violentos arcos voltaicos de plasma azul cian y chispas eléctricas que funden las cadenas de bronce. La cúpula se abre de par en par con un estruendo, dejando entrar un vendaval helado y la luz de un cielo nocturno tormentoso. Los eruditos retroceden cegados.
+  - **Prompt T2I:** `Dynamic medium shot of the inventor raising his hands as violent arcing bolts of blinding cyan plasma and electrical sparks surge from his fingertips, shattering the bronze dome gears, the massive ceiling panels splitting open to reveal a wild roaring midnight thunderstorm, gale winds whipping his clothes as the scholars recoil in blinding terror --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_urano_sagitario_02_ignicion.png`
+
+- **[Cuadro 3: El Salto al Vacío en Alas de Circuito (Desplazamiento Dinámico en Vuelo)]**
+  - **Narrativa:** Plano entero cinemático en movimiento de despegue y vuelo. El joven salta por la baranda de la torre hacia el abismo abierto, desplegando un planeador de alas translúcidas de cristal y circuitos de luz neón cian. Vuela a gran velocidad entre nubes de tormenta y rayos violetas sobre la ciudad dormida abajo, con expresión de euforia absoluta.
+  - **Prompt T2I:** `Full tracking action shot of the rebel inventor leaping from the stone parapet into open stormy sky, deploying lightweight translucent crystal glider wings laced with glowing cyan circuits, soaring at breakneck speed between dark thunderheads and crackling purple lightning high above a tiny sleeping city, visionary sci-fi fantasy realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_urano_sagitario_03_vuelo.png`
+
+- **[Cuadro 4: El Pararrayos de la Iluminación Cósmica (Remate Triunfal / La Cumbre Social)]**
+  - **Narrativa:** Primer plano medio contrapicado al aterrizar sobre la cúspide afilada de una montaña de roca negra. Clava una vara de pararrayos de plata en la roca: un relámpago celestial azul cobalto desciende directo de las estrellas y golpea la vara. Sus ojos brillan con pura electricidad estelar azul, con una sonrisa salvaje de libertad y genialidad conquistada en la cima del mundo.
+  - **Prompt T2I:** `Dramatic low-angle close-up of the inventor standing at the pinnacle of a black mountain peak, striking a slender silver rod into the stone, a colossal bolt of cosmic cobalt lightning striking the rod from starry heavens, illuminating his laughing euphoric face as electric blue fire pulses in his eyes, supreme intellectual awakening, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_urano_sagitario_04_relampago.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Urano en Sagitario):**
+> `Continuous electrifying rebellion sequence: a dark-clothed inventor stands defiant before rigid masked scholars in a locked stone observatory; violent cyan plasma arcs erupt from his hands, shattering bronze dome gears as the ceiling splits open to an open thunderstorm; he sprints and leaps over the stone parapet into the abyss, deploying glowing circuit crystal glider wings and soaring between purple lightning clouds; camera rushes into a dramatic low-angle close-up as he lands at a mountain peak and drives a silver rod into stone, channeling a massive cobalt lightning bolt that illuminates his laughing face with electric blue eyes. Crackling electrical plasma dynamics, roaring wind and fabric physics, gliding flight momentum, explosive celestial lightning strike, seamless metamorphosis, zero static camera zoom.`
+
+#### 5.2 NEPTUNO EN SAGITARIO (Casa 10): "EL CARTÓGRAFO DE NIEBLA Y EL OCÉANO CELESTIAL"
+*Regla de Encadenamiento Dinámico:* Arrodillado en la terraza del templo en ruinas rodeado de niebla asfixiante ➔ Levantarse y tocar el cuenco de lluvia, haciendo levitar gotas bioluminiscentes en gravedad cero ➔ Caminar ingrávido sobre el sendero de agua flotante entre ballenas astrales ➔ Rostro extático ante la supernova turquesa con la gota cósmica abriendo el tercer ojo.
+
+- **[Cuadro 1: La Terraza de las Ilusiones Perdidas (El Laberinto de Niebla)]**
+  - **Narrativa:** Plano general en penumbras. Un místico cartógrafo de cielos, vestido con túnica de lino índigo deshilachada, arrodillado sobre la terraza de piedra de un templo antiguo en ruinas en la cumbre de una montaña, rodeado por una niebla blanca espesa y opresiva. A su alrededor hay mapas celestes arrugados mojados por el rocío que se vuelven transparentes. Mira al cielo en busca de una señal trascendente perdida.
+  - **Prompt T2I:** `Cinematic wide shot of a solitary mystic sky-cartographer in tattered indigo linen robes kneeling on the mossy stone terrace of an ancient ruined mountaintop temple, swallowed by suffocating dense white fog, scattered damp parchment star charts turning translucent on the wet stones, melancholic longing for lost divine vision, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_neptuno_sagitario_01_niebla.png`
+
+- **[Cuadro 2: La Levigación de las Aguas Sagradas (La Disolución del Velo)]**
+  - **Narrativa:** Plano medio dinámico. El cartógrafo se pone de pie con suavidad y sumerge las puntas de sus dedos en un cuenco ceremonial de plata lleno de agua de lluvia. Al contacto, el agua desafía la gravedad y asciende en cientos de esferas y gotas flotantes que brillan con luz aguamarina y amatista bioluminiscente, disolviendo la niebla en remolinos de vapor cristalino.
+  - **Prompt T2I:** `Dynamic medium shot of the mystic standing up gracefully, fingertips dipping into an ornate silver basin of rainwater, causing the water to levitate upward in hundreds of zero-gravity floating spheres glowing with ethereal aquamarine and amethyst bioluminescence, dissolving the heavy fog into swirling crystalline mist, sublime spiritual awakening --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_neptuno_sagitario_02_levitacion.png`
+
+- **[Cuadro 3: El Sendero Flotante hacia el Firmamento (Tránsito Oceánico Ingrávido)]**
+  - **Narrativa:** Plano entero cinemático en avance. El místico camina con paso ingrávido sobre una corriente suspendida de agua luminosa que asciende hacia el cielo nocturno entre nubes cósmicas. A su lado nadan gráciles siluetas translúcidas de peces astrales y una colosal ballena celestial de luz dorada y turquesa. Su manto de lino flota en el aire como algas marinas en corrientes profundas.
+  - **Prompt T2I:** `Full tracking shot of the indigo-robed mystic walking weightlessly along a floating sky river of glowing liquid light ascending into a deep starlit abyss, surrounded by swimming translucent astral fish and a magnificent celestial whale made of turquoise and gold light gliding through the clouds, breathtaking visionary surrealism, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_neptuno_sagitario_03_sendero.png`
+
+- **[Cuadro 4: El Ojo de la Devoción Cósmica (Remate Sagrado / La Cumbre Oceánica)]**
+  - **Narrativa:** Primer plano cinematográfico íntimo y extático. El místico contempla el nacimiento de una nebulosa turquesa y violeta que se refleja con claridad cristalina en sus ojos húmedos de lágrimas de gratitud. Una sola gota de rocío estelar puro flota a milímetros de su entrecejo, irradiando halos de luz divina. Expresión de paz absoluta, compasión infinita y disolución en la divinidad.
+  - **Prompt T2I:** `Intimate cinematic close-up of the mystic's ecstatic face illuminated by a colossal glowing turquoise and violet nebula reflecting in tear-filled compassionate eyes, a single flawless glowing pearl droplet of starlight levitating millimeters before their forehead, serene transcendental bliss, dissolution of the separate self, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_neptuno_sagitario_04_nebula.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Neptuno en Sagitario):**
+> `Continuous mystical dissolution sequence: an indigo-robed sky cartographer kneels on a ruined mountain terrace enveloped in dense white fog; he rises smoothly and touches an ornate silver water basin, causing rainwater to levitate into hundreds of glowing aquamarine and amethyst spheres that part the mist; he walks forward in weightless grace along a floating river of starlit water, accompanied by swimming translucent celestial whales and luminous astral fish; camera sweeps into a breathtaking close-up as a vast turquoise and violet nebula blooms in the sky, reflecting in his tearful grateful eyes as a droplet of pure light floats before his brow. Fluid zero-gravity water physics, drifting bioluminescent particles, graceful floating fabric motion, celestial cosmic expansion, seamless metamorphosis, zero static camera zoom.`
+
+#### 5.3 PLUTÓN EN LIBRA (Casa 8/9): "LA ALQUIMIA DEL ESPEJO ROTO Y LA RESURRECCIÓN DE OBSIDIANA"
+*Regla de Encadenamiento Dinámico:* Contemplación sombría ante el espejo barroco atrapado en cadenas ➔ Golpe con guantelete de hierro negro que estalla el cristal en fragmentos suspendidos ➔ Marcha a través del umbral de fuego volcánico desplegando alas de humo y magma ➔ Consagración con armadura de obsidiana y fénix alquímico en la mano.
+
+- **[Cuadro 1: La Galería de los Espejos Encadenados (La Falsa Armonía)]**
+  - **Narrativa:** Plano general en penumbras. En una decadente galería barroca de mármol negro cubierta de cenizas y telarañas, un noble aristócrata vestido con jubón de terciopelo negro y gris ceniza se detiene frente a un gigantesco espejo con marco dorado carcomido. El reflejo en el espejo no lo imita: muestra su propia alma atada por pesadas cadenas de hierro oxidado, prisionera de la necesidad de complacer.
+  - **Prompt T2I:** `Cinematic wide shot of a grim aristocratic figure in charcoal velvet and tarnished silver standing in a decaying gothic hall of mirrors dusted with volcanic ash, gazing into a colossal ornate antique gilded mirror, the reflection trapped behind heavy rusting iron chains and staring back with haunting intensity, suffocating tension of toxic codependency, 35mm film grain, 8k --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_pluton_libra_01_espejo.png`
+
+- **[Cuadro 2: El Golpe Catártico y la Fractura del Cristal (La Ruptura de la Máscara)]**
+  - **Narrativa:** Plano medio dinámico. El protagonista avanza con furia contenida y descarga su puño cubierto por un guantelete de hierro negro contra el centro del espejo. El vidrio se quiebra en miles de esquirlas afiladas que quedan suspendidas flotando en el aire a cámara lenta, revelando detrás del marco un abismo ardiente de magma carmesí y humo negro.
+  - **Prompt T2I:** `Dynamic medium action shot of the aristocrat shattering the antique mirror with a savage blow from a black iron gauntlet, thousands of jagged razor-sharp glass shards exploding outward and freezing in suspended slow-motion, revealing a roaring chasm of crimson magma and obsidian smoke behind the broken frame, raw explosive catharsis --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_pluton_libra_02_fractura.png`
+
+- **[Cuadro 3: El Paso por el Umbral de Fuego (La Travesía por el Inframundo)]**
+  - **Narrativa:** Plano entero en movimiento de marcha decidida. La figura cruza el umbral del espejo roto, caminando imperturbable sobre los cristales rotos que se funden en filamentos de oro bajo sus botas. De su espalda emergen alas titánicas de humo de brea y brasas violetas mientras avanza por una calzada de basalto incandescente sin mirar atrás.
+  - **Prompt T2I:** `Full tracking shot of the figure stepping resolutely through the shattered mirror frame into the volcanic abyss, boots crushing glowing glass shards melting into molten gold ribbons, massive wings of dark obsidian smoke and violet embers billowing from their shoulders, fearless underworld descent, epic dark fantasy realism --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_pluton_libra_03_travesia.png`
+
+- **[Cuadro 4: El Soberano Renacido de Obsidiana (Remate Alquímico / El Poder Auténtico)]**
+  - **Narrativa:** Primer plano cinematográfico majestuoso y magnético. El noble emerge del fuego totalmente transmutado: viste una coraza de obsidiana pulida con filigrana de oro puro. En la palma abierta de su mano sostiene un fénix en miniatura hecho de fuego negro y esmeralda viva. Su mirada es de un poder invencible, una serenidad implacable y una belleza peligrosa que no pide permiso.
+  - **Prompt T2I:** `Majestic cinematic close-up of the transformed figure clad in polished black obsidian plate armor with pure liquid-gold inlays, holding a miniature living phoenix made of black fire and vibrant emerald embers cupped in their open hand, piercing magnetic gaze of absolute inner sovereignty, rebirth from ashes, 8k masterpiece --ar 9:16`
+  - **Archivo:** `arte_propio_secuencia_tomas_pluton_libra_04_soberano.png`
+
+> 🎥 **PROMPT UNIFICADO PARA LUMA (Plutón en Libra):**
+> `Continuous underworld rebirth sequence: a dark velvet-robed aristocrat stands before an antique mirror showing a reflection trapped in rusting chains; he delivers a crushing blow with an iron gauntlet, shattering the mirror into thousands of glass shards floating in slow motion to reveal a roaring volcanic rift; he marches forward through the shattered frame over melting golden shards as massive wings of black smoke and violet embers spread from his back; camera glides into an imposing close-up as he emerges in gleaming obsidian armor with gold inlays, holding a miniature phoenix of black fire in his palm, eyes burning with invincible sovereign power. Exploding glass physics, swirling volcanic smoke and ember dynamics, resolute marching momentum, incandescent armor transformation, seamless metamorphosis, zero static camera zoom.`
+
 ---
-
-
-
-
 ### ⚔️ CAPÍTULO 7: LA GRAN OPOSICIÓN (Eje 3-9: Sol/Mercurio vs Saturno/Plutón)
 *Arco narrativo de 2 personajes:* La colisión frontal entre el Guerrero Solar (la chispa mental inmediata) y el Monolito de Saturno/Plutón (la ley del tiempo y el poder kármico).
 
