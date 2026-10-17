@@ -62,7 +62,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Capítulo 3 (100%)**: Júpiter en Escorpio, Saturno en Libra + variante stock (9 keyframes + 2 videos).
   - **Capítulo 4 (100%)**: Quirón en Tauro, Lilith en Sagitario, Nodos Lunares (12 keyframes + 3 videos).
   - **Capítulo 5 (100%)**: Urano en Sagitario, Neptuno en Sagitario, Plutón en Libra (12 keyframes + 3 videos).
-  - Total archivado y validado en Bóveda: 58 imágenes + 14 videos cinemáticos (140+ segundos continuos).
+  - **Capítulo 6 (100%)**: Medio Cielo en Escorpio (4 keyframes + 1 video).
+  - Total archivado y validado en Bóveda: 62 imágenes + 15 videos cinemáticos (150+ segundos continuos).
 - [x] **Robustez Total del Bot y Canal de Telegram (Producción OCI-2)**:
   - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 6 API keys del `.env` y fallback entre modelos (`gemini-2.5-flash`, `3.8-flash`, `3.6-flash`).
   - **Botón Inline de Personalización**: Cada reporte diario en el canal público ahora incluye el botón con deep-link `[ 🔮 Solicitar mi Horóscopo Personalizado ]` hacia `https://t.me/PortalTarotBot?start=horoscopo_hoy`.
@@ -72,8 +73,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] **Guía Maestra de Curaduría de Assets Astrológicos**:
   - Documento creado en `produccion/GUIA_CURADURIA_STOCK_ASTROLOGICO.md` con la taxonomía SSoT para SQLite (`img_abstracto_*`, `img_emocion_*`, `vid_*`), especificaciones de búsqueda por planeta/signo y prompts optimizados para animación I2V en Luma / Pixverse sin gastar APIs.
 - [ ] **Hoja de Ruta Inmediata**:
-  - Iniciar **Capítulo 6: La Cima del Destino y la Marca Vocacional** (Medio Cielo en Escorpio - Casa 10).
-  - Continuar con **Capítulo 7: La Gran Oposición** (Eje 3-9: Sol/Mercurio vs Saturno/Plutón).
+  - Iniciar **Capítulo 7: La Gran Oposición (Clímax de la Carta de Tomás)** (Eje 3-9: Sol/Mercurio vs Saturno/Plutón).
+  - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
   - Continuar con Capítulo 6 (Medio Cielo en Escorpio) y Capítulo 7 (La Gran Oposición Sol/Mercurio vs Saturno/Plutón).
   - Integración de los clips e imágenes sugestivas/transiciones en el pipeline de renderizado y montaje final.
   - Extender la coreografía de navegación a los Capítulos 2 a 6.

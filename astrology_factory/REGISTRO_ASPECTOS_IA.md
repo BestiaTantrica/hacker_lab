@@ -103,6 +103,12 @@
     - Cuadro 2: `arte_propio_secuencia_tomas_pluton_libra_02_fractura.png` (El golpe catártico y la fractura del cristal)
     - Cuadro 3: `arte_propio_secuencia_tomas_pluton_libra_03_travesia.png` (El paso por el umbral de fuego volcánico)
     - Cuadro 4: `arte_propio_secuencia_tomas_pluton_libra_04_soberano.png` (El soberano renacido de obsidiana con fénix alquímico)
+- [x] **Medio Cielo en Escorpio (Carta Natal Tomás - Capítulo 6)**
+  - *Secuencia Narrativa (4 Cuadros Metamorfosis)*:
+    - Cuadro 1: `arte_propio_secuencia_tomas_mc_escorpio_01_vigilia.png` (La vigilia de ceniza bajo el eclipse)
+    - Cuadro 2: `arte_propio_secuencia_tomas_mc_escorpio_02_ignicion.png` (La ignición del fuego chamánico)
+    - Cuadro 3: `arte_propio_secuencia_tomas_mc_escorpio_03_ascenso.png` (El ascenso al vértice del mundo con báculo escorpión)
+    - Cuadro 4: `arte_propio_secuencia_tomas_mc_escorpio_04_soberano.png` (El soberano de la visión oculta con media máscara y serpiente-águila)
 
 
 

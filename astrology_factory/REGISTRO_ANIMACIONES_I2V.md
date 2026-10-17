@@ -53,3 +53,4 @@
 | 40 | **Urano en Sagitario (Cap. 5 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_torre` a `04_relampago` | Luma Dream Machine | `anim_luma_secuencia_tomas_urano_sagitario.mp4` | ✅ Completado (10.0s) |
 | 41 | **Neptuno en Sagitario (Cap. 5 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_niebla` a `04_nebula` | Luma Dream Machine | `anim_luma_secuencia_tomas_neptuno_sagitario.mp4` | ✅ Completado (10.0s) |
 | 42 | **Plutón en Libra (Cap. 5 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_espejo` a `04_soberano` | Luma Dream Machine | `anim_luma_secuencia_tomas_pluton_libra.mp4` | ✅ Completado (10.0s) |
+| 43 | **Medio Cielo en Escorpio (Cap. 6 Tomás)** | Secuencia Narrativa (4 Keyframes) | `01_vigilia` a `04_soberano` | Luma Dream Machine | `anim_luma_secuencia_tomas_mc_escorpio.mp4` | ✅ Completado (10.0s) |
