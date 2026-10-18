@@ -84,12 +84,39 @@ masterpiece oil painting and 35mm anamorphic cinematography, aesthetic synthesis
 
 ---
 
-## 🚀 5. INSTRUCCIÓN PARA INICIAR EL PRÓXIMO HILO
+## 🛠️ 5. PLATAFORMAS GRATUITAS RECOMENDADAS PARA RENDERIZADO
+
+Para producir las imágenes con la máxima calidad sin pagar suscripciones:
+
+1. **Hugging Face Spaces - FLUX.1 [schnell] (Oficial de Black Forest Labs, 100% gratuito):**
+   * Link: `https://huggingface.co/spaces/black-forest-labs/FLUX.1-schnell`
+   * Ideal para: Realismo anatómico supremo, manos perfectas, piel orgánica sin plástico.
+2. **Hugging Face Spaces - FLUX.1 [dev] (Mayor detalle y fidelidad artística):**
+   * Link: `https://huggingface.co/spaces/black-forest-labs/FLUX.1-dev`
+3. **Bing Image Creator / Microsoft Copilot (DALL-E 3, 60 imágenes diarias gratis):**
+   * Link: `https://www.bing.com/create`
+   * Ideal para: Iluminación dramática y escenografía compleja; requiere prompts narrativos concretos.
+4. **Pollinations.ai (Sin login, instantáneo con motor Flux):**
+   * Link: `https://pollinations.ai`
+
+---
+
+## 🛡️ 6. PROTOCOLO ANTI-SIMPLISMO PARA MODELOS GRATUITOS
+
+Para evitar que los modelos free generen caricaturas o renders 3D plásticos:
+1. **Física Concreta de la Luz:** Definir la fuente direccional (ej. *single low-angle candlelight*, *harsh chiaroscuro rim lighting*).
+2. **Texturas Táctiles Explícitas:** Detallar materiales orgánicos (*worn coarse linen, unpolished dark basalt, wet skin with micro-droplets, visible oil brushstrokes*).
+3. **Negativo Embebido en Positivo:** Incluir descriptores anti-digitales (*no plastic sheen, no 3d cartoon render, no anime, no saturated neon, authentic classical oil on canvas*).
+
+---
+
+## 🚀 7. INSTRUCCIÓN PARA INICIAR EL PRÓXIMO HILO
 
 Para comenzar en el nuevo hilo limpio, pegar este mensaje:
 
 ```text
 Hola Antigravity. Retomamos desde el hilo 1de15cdc-9d8d-461d-98ea-3dbb80250dba. 
 Ya leíste el documento MANIFIESTO_ESTILOS_FUSION_GLIFO.md y la arquitectura del Glifo Maestro en products/glifo_maestro/. 
-Vamos a arrancar a producir los primeros prompts del Bloque 1: Los Astros Personales y el Ascendente con la fusión Roberto Ferri + Cosmos tenebrista.
+Vamos a arrancar a producir los primeros prompts del Bloque 1: Los Astros Personales y el Ascendente con la fusión Roberto Ferri + Cosmos tenebrista, optimizados para Flux y DALL-E 3.
 ```
+
