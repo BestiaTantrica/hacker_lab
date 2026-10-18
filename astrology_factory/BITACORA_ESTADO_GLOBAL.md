@@ -78,12 +78,16 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - Documento canónico redactado en `produccion/ARQUITECTURA_GLIFO_MAESTRO_ALFABETO_MODULAR.md`.
   - Cobertura 100% de la astrología occidental en 45 arquetipos universales (90 imágenes maestras): 12 Astros, 4 Ángulos (con Ascendente como núcleo de encarnación), 12 Signos, 12 Casas y 5 Aspectos Mayores.
   - Fórmulas de composición y animación no reduccionistas que integran obligatoriamente la Casa terrenal y el Contexto Global del cielo.
-  - Nueva identidad visual de autor ("Tenebrismo Figurativo Sagrado") inspirada en el realismo místico contemporáneo (Roberto Ferri, Dino Valls), eliminando el plástico y la sobresaturación digital de IA.
+  - Nueva identidad visual de autor ("Tenebrismo Figurativo Sagrado") inspirada en el realismo místico contemporáneo (Roberto Ferri, Caravaggio), eliminando el plástico y la sobresaturación digital de IA.
 - [ ] **Hoja de Ruta Inmediata**:
-  - **Fase 1 del Glifo Maestro**: Producción de los 12 Astros y 4 Ángulos Sagrados (Ascendente, Descendente, MC, IC).
-  - **Fase 2 del Glifo Maestro**: Producción de los 12 Signos y 12 Casas.
-  - **Fase 3 del Glifo Maestro**: Producción de los 5 Aspectos Mayores.
-  - **Montaje y Renderizado**: Integrar los 16 clips cinemáticos de la Carta Natal de Tomás y preparar el pipeline para el Glifo.
+  - [x] **Hito 100% Completado: El Glifo Maestro (135 Prompts Canónicos)**:
+    - **Fase 1 (16 Arquetipos / 48 Prompts)** en `products/glifo_maestro/PROMPTS_FASE1_TRIPTICOS_GLIFO_MAESTRO.md`: 5 Astros Personales, 5 Transpersonales, 2 Puntos Kármicos (Quirón, Lilith) y 4 Ángulos Sagrados (ASC, DSC, MC, IC) con la regla del Tríptico (V1 Rostro/Torso, V2 Torsión/Espalda, V3 Gesto/Herida) bajo desnudo académico puro de Roberto Ferri.
+    - **Fases 2, 3 y 4 (29 Arquetipos / 87 Prompts)** en `products/glifo_maestro/PROMPTS_FASE2_MACROCOSMOS_CASAS_ASPECTOS.md`:
+      * 12 Signos Zodiacales (Macrocosmos elemental al óleo de betún, Caspar David Friedrich + Denis Villeneuve, cero personas).
+      * 12 Casas Astrológicas (Arquitectura sacra tenebrista, brutalismo y Piranesi, monolitos de basalto y luz cenital).
+      * 5 Aspectos Mayores (Geometría sagrada vincular, anatomía entrelazada estilo *Eros e Anteros* de Ferri).
+  - [ ] **Siguiente Paso Crítico**: Renderizado y Curaduría de Imágenes en FLUX.1 [dev] (arrancando por el Bloque 1: Sol, Luna, Mercurio, Venus, Marte y Ascendente).
+  - [ ] **Montaje y Renderizado**: Integrar los 16 clips cinemáticos de la Carta Natal de Tomás y preparar el pipeline de animación I2V con el Glifo.
 
 
 

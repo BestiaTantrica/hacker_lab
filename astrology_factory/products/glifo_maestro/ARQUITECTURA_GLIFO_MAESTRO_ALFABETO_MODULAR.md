@@ -72,14 +72,14 @@ $$\text{Input: } \sum [\text{Planetas } A, B, C] + [\text{Configuración / Aspec
 
 ### La Referencia Estética (Pintura Figurativa Oscura con Luz Trascendente)
 Buscamos un estilo que capture la anatomía precisa, la densidad del claroscuro y la luz misteriosa que emana de los cuerpos y la penumbra:
-* **Roberto Ferri:** El máximo exponente contemporáneo del tenebrismo hiperrealista. Figuras humanas desnudas o veladas, anatomía de precisión quirúrgica clásica, fondos oscuros densos y una luz sagrada que parece encender la piel desde adentro.
-* **Dino Valls:** Pintor español contemporáneo (Zaragoza). Maestría figurativa renacentista, atmósferas oscuras, simbolismo alquímico profundo, tratamiento austero y místico de la carne y el espíritu.
+* **Roberto Ferri:** El máximo exponente contemporáneo del tenebrismo hiperrealista. Figuras humanas desnudas o veladas, anatomía de precisión clásica escultural, fondos oscuros densos y una luz sagrada que enciende la piel desde adentro.
+* **Caravaggio:** El padre del claroscuro tenebrista radical. Luces dirigidas como cuchillas, sombras impenetrables de betún y autenticidad visceral de la carne y el lino.
 * **Guillermo Lorca:** Gran maestro chileno contemporáneo. Escenas tenebristas monumentales, claroscuro cinematográfico, misterio psicológico y tensión visceral.
 
 ### Pilares del Prompting Canónico (Style Suffix Obligatorio)
 Para blindar cada render y que pertenezca a una misma película pictórica:
 ```text
-masterpiece oil painting style influenced by Roberto Ferri and Dino Valls, intense chiaroscuro tenebrism, authentic anatomical realism, dark deep atmospheric shadows, tactile raw textures, sacred interior luminescence reflecting on skin and worn noble fabrics, 35mm film grain, mythic philosophical depth, no digital plasticity, no neon gloss, 8k --ar 9:16
+masterpiece oil painting style influenced by Roberto Ferri and Caravaggio, intense chiaroscuro tenebrism, authentic anatomical realism, dark deep atmospheric shadows, tactile raw textures, sacred interior luminescence reflecting on skin and worn noble fabrics, 35mm film grain, mythic philosophical depth, no digital plasticity, no neon gloss, 8k --ar 9:16
 ```
 
 ---

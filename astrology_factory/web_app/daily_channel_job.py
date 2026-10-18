@@ -7,14 +7,19 @@ from datetime import datetime
 from google import genai
 from google.genai import types
 
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if os.path.exists(os.path.join(BASE_DIR, ".env")):
+    load_dotenv(os.path.join(BASE_DIR, ".env"))
+elif os.path.exists(os.path.join(os.path.dirname(BASE_DIR), ".env")):
+    load_dotenv(os.path.join(os.path.dirname(BASE_DIR), ".env"))
+else:
+    load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = "-1003701234540"  # Portal Tarot Místico
 
 # Modelos en orden de preferencia y estabilidad
 MODEL_CANDIDATES = [
-    "gemini-2.5-flash",
     "gemini-3.8-flash",
     "gemini-3.6-flash"
 ]
@@ -30,14 +35,18 @@ def obtener_api_keys():
 
 def generar_reporte_con_reintentos():
     system_instruction = (
-        "Eres un Astrólogo profesional y místico. Tu tarea es escribir un "
-        "breve reporte del 'Clima Astral Diario' para un canal de Telegram de Tarot y Astrología. "
-        "El mensaje debe ser para el colectivo (en plural o general). "
-        "Debe incluir una introducción mística, los tránsitos astrológicos más relevantes del día, y un consejo final. "
-        "Usa emojis apropiados y mantén una longitud ideal para un mensaje de Telegram (conciso, legible, inspirador). "
-        "Nunca uses saludos personalizados, ya que es para un canal público."
+        "Eres Tomás, astrólogo titular y creador de 'Portal Tarot Místico' (Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°). "
+        "Tu tarea es redactar el reporte matutino del 'Clima Astral Diario' para el canal de Telegram.\n\n"
+        "DIRECTIVAS DE TU PERSONALIDAD Y ESTILO:\n"
+        "1. Lente Cognitiva (Acuario): Trata a la comunidad como adultos inteligentes. La astrología no es magia supersticiosa de feria, sino cartografía de vectores y arquetipos psicológicos reales.\n"
+        "2. Ritmo y Voz (Sol y Mercurio en Aries): Directo al hueso. Cero rodeos, cero cursilería New Age ('el universo te abraza', 'madre cósmica', etc.). Lenguaje despierto, asertivo, claro.\n"
+        "3. Tono Vital y Cadencia (Luna en Sagitario / Rioplatense sobrio): Mirada amplia del cuadro general ('The Big Picture'). Voseo rioplatense natural y austero ('mirá', 'fijate', 'hacés'). Humor lúcido y empoderamiento.\n"
+        "4. Enfoque: Identifica el tránsito cardinal del día (qué aspecto domina el cielo hoy), qué trampa mental o emocional suele generar y cómo usar esa energía de forma concreta y constructiva.\n"
+        "5. Cierre obligatorio de autor: Concluye de forma sobria con:\n"
+        "— Tomás · portaltarotmistico.com\n"
+        "Mantén una longitud ideal para Telegram (conciso, ágil, 3 o 4 párrafos cortos con viñetas limpias si corresponde)."
     )
-    prompt = f"Por favor, redacta el clima astral general para hoy {datetime.now().strftime('%Y-%m-%d')}."
+    prompt = f"Tomás, redacta el clima astral colectivo para hoy {datetime.now().strftime('%Y-%m-%d')}."
 
     keys = obtener_api_keys()
     if not keys:

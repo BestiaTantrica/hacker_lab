@@ -110,13 +110,27 @@ Para evitar que los modelos free generen caricaturas o renders 3D plásticos:
 
 ---
 
-## 🚀 7. INSTRUCCIÓN PARA INICIAR EL PRÓXIMO HILO
+## 📚 7. CATÁLOGO COMPLETO DE PROMPTS CANÓNICOS (135 PROMPTS / TRÍPTICOS)
 
-Para comenzar en el nuevo hilo limpio, pegar este mensaje:
+El 100% de los 45 arquetipos universales ha sido generado bajo la estética de **Roberto Ferri puro**, **Caspar David Friedrich + Denis Villeneuve** (Macrocosmos) y **Piranesi** (Arquitectura Sacra):
+
+1. **Fase 1: Los 16 Actores y Ángulos (48 Prompts):**
+   * Archivo: [PROMPTS_FASE1_TRIPTICOS_GLIFO_MAESTRO.md](file:///home/LAB/astrology_factory/products/glifo_maestro/PROMPTS_FASE1_TRIPTICOS_GLIFO_MAESTRO.md)
+   * Contenido: 5 Astros Personales, 5 Transpersonales, 2 Puntos Kármicos (Quirón, Lilith), 4 Ángulos (ASC, DSC, MC, IC).
+2. **Fases 2, 3 y 4: Macrocosmos, Casas y Aspectos (87 Prompts):**
+   * Archivo: [PROMPTS_FASE2_MACROCOSMOS_CASAS_ASPECTOS.md](file:///home/LAB/astrology_factory/products/glifo_maestro/PROMPTS_FASE2_MACROCOSMOS_CASAS_ASPECTOS.md)
+   * Contenido: 12 Signos Zodiacales (Macrocosmos elemental), 12 Casas Astrológicas (Arquitectura sacra tenebrista), 5 Aspectos Mayores (*Eros e Anteros*).
+
+---
+
+## 🚀 8. INSTRUCCIÓN PARA INICIAR LA SESIÓN DE RENDERIZADO
+
+Para comenzar directamente con la generación y curaduría en el siguiente hilo:
 
 ```text
-Hola Antigravity. Retomamos desde el hilo 1de15cdc-9d8d-461d-98ea-3dbb80250dba. 
-Ya leíste el documento MANIFIESTO_ESTILOS_FUSION_GLIFO.md y la arquitectura del Glifo Maestro en products/glifo_maestro/. 
-Vamos a arrancar a producir los primeros prompts del Bloque 1: Los Astros Personales y el Ascendente con la fusión Roberto Ferri + Cosmos tenebrista, optimizados para Flux y DALL-E 3.
+Hola Antigravity. Retomamos para arrancar la sesión de RENDERIZADO Y CURADURÍA de imágenes del Glifo Maestro en FLUX.1 [dev].
+Ya tenemos los 135 prompts canónicos listos en products/glifo_maestro/.
+Vamos a arrancar a renderizar y auditar el Bloque 1 de los Astros Personales (Sol, Luna, Mercurio, Venus, Marte) y el Ascendente.
 ```
+
 

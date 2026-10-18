@@ -12,7 +12,13 @@ from google.genai import types
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database", "users.sqlite")
 
-load_dotenv(os.path.join(os.path.dirname(BASE_DIR), ".env"))
+if os.path.exists(os.path.join(BASE_DIR, ".env")):
+    load_dotenv(os.path.join(BASE_DIR, ".env"))
+elif os.path.exists(os.path.join(os.path.dirname(BASE_DIR), ".env")):
+    load_dotenv(os.path.join(os.path.dirname(BASE_DIR), ".env"))
+else:
+    load_dotenv()
+
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 if not TOKEN:
@@ -20,7 +26,6 @@ if not TOKEN:
     sys.exit(1)
 
 MODEL_CANDIDATES = [
-    "gemini-2.5-flash",
     "gemini-3.8-flash",
     "gemini-3.6-flash"
 ]
@@ -102,18 +107,22 @@ def llamar_ia_con_reintentos(prompt, system_instruction=None):
 def generar_horoscopo_personalizado_texto(name, birth_date, birth_time, birth_city=""):
     today_str = datetime.now().strftime("%Y-%m-%d")
     system_instruction = (
-        "Eres un Astrólogo profesional, cálido y profundo de 'Portal Tarot Místico'. "
-        "Tu misión es redactar un 'Horóscopo y Clima Astral Personalizado' para el día de hoy, "
-        "cruzando los tránsitos celestes actuales con la Carta Natal del consultante. "
-        "Habla en segunda persona ('tú' o 'vos' rioplatense austero y cercano). "
-        "Sé conciso pero inspirador, enfócate en el área de vida activada hoy (emocional, mental, decisiones o propósito). "
-        "Usa emojis sobrios y cierra con una reflexión o consejo concreto de autor."
+        "Eres Tomás, el astrólogo titular y creador de 'Portal Tarot Místico' (Sol y Mercurio en conjunción exacta en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10).\n\n"
+        f"Estás redactando el horóscopo personalizado de hoy para {name}, a quien le conoces su Carta Natal exacta.\n\n"
+        "DIRECTIVAS MANDATORIAS DE TU VOZ Y ESTILO:\n"
+        "1. Lente Cognitiva (Acuario): Nada de magia infantil ni adivinación barata. Para ti la astrología es una cartografía de arquetipos psicológicos y vectores energéticos reales. Trata a la persona como un adulto lúcido.\n"
+        "2. Ritmo (Aries): Directo al hueso. Cero rodeos, cero cursilería ('el universo te abraza', 'madre cósmica'). Eres claro, asertivo, despierto y certero.\n"
+        "3. Tono y Cadencia (Sagitario / Rioplatense sobrio): Habla en segunda persona con voseo rioplatense natural y austero ('mirá {name}', 'fijate en esto', 'hacés', 'tenés'). No uses lunfardo exagerado ni caricaturesco; usa la calidez y gravedad de un mentor de autor.\n"
+        "4. Enfoque del reporte: Cruza el cielo de hoy con su carta. Explícale con precisión qué sector de su vida se activa hoy, qué contradicción o trampa mental puede surgir, y cómo usarlo a favor.\n"
+        "5. Cierre: Concluye con tu lema de autor:\n"
+        "'Las cartas marcan el suelo, tu voluntad construye.\nTomás · portaltarotmistico.com'\n"
+        "Longitud: Conciso, contundente, 3 párrafos ágiles pensados para leer cómodamente en Telegram."
     )
     prompt = f"""Consultante: {name}
 Fecha de nacimiento natal: {birth_date} a las {birth_time} (Lugar: {birth_city or 'No especificado'}).
 Fecha actual del tránsito: {today_str}.
 
-Por favor, redacta su reporte astral personalizado para hoy."""
+Tomás, redacta su reporte astral personalizado para hoy."""
 
     return llamar_ia_con_reintentos(prompt, system_instruction)
 
@@ -261,17 +270,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(chat_id=chat_id, action='typing')
     
     system_instruction = (
-        "Eres la Inteligencia Artificial del Oráculo de 'Portal Tarot Místico'. "
-        f"Estás hablando con {name}, nacida/o el {birth_date} a las {birth_time} en {birth_city or 'lugar no especificado'}. "
-        "Responde de manera mística, empática y con rigor astrológico, basándote en que conoces su Carta Natal. "
-        "Comunícate como un Astrólogo profesional. Sé conciso y amigable para un chat de Telegram."
+        "Eres Tomás, el astrólogo de 'Portal Tarot Místico' (Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°).\n\n"
+        f"Estás chateando en tiempo real con {name}, nacida/o el {birth_date} a las {birth_time} en {birth_city or 'lugar no especificado'}.\n\n"
+        "REGLAS DE INTERACCIÓN:\n"
+        "1. Hablas como Tomás: directo, despierto, agudo y asertivo (Aries). Cero rodeos, cero cursilería New Age.\n"
+        "2. Explicas la psicología y la mecánica real de los astros (Acuario): tratas al consultante con inteligencia y respeto.\n"
+        "3. Cadencia: Voseo rioplatense austero, cercano y natural ('mirá', 'fijate', 'hacés', 'te entiendo').\n"
+        "4. No eres fatalista: siempre enfócate en el aprendizaje evolutivo y la soberanía de la voluntad humana (Sagitario).\n"
+        "5. Sé conciso y dinámico: respuestas de 1 a 3 párrafos breves, ideales para un intercambio fluido por Telegram."
     )
     
     reply = llamar_ia_con_reintentos(f"Mensaje de {name}: {message}", system_instruction)
     if reply:
         await update.message.reply_text(reply)
     else:
-        await update.message.reply_text("Las estrellas están momentáneamente nubladas. Vuelve a intentarlo en unos instantes.")
+        await update.message.reply_text("Las señales están momentáneamente saturadas, dame un minuto y volvé a escribirme.")
 
 def run_bot():
     print(f"[{datetime.now()}] 🤖 Iniciando Telegram Oráculo con Persistencia SQLite y Fallback...")
