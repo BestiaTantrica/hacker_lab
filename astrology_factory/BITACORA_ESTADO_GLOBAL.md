@@ -66,8 +66,10 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **Capítulo 7 (100% Clímax)**: La Gran Oposición Eje 3-9 Sol/Mercurio vs Saturno/Plutón (4 keyframes + 1 video).
   - **CARTA NATAL DE TOMÁS 100% COMPLETADA EN BÓVEDA**: 66 imágenes curadas + 16 videos cinemáticos continuos de metamorfosis (160+ segundos continuos de metraje vertical 9:16).
 - [x] **Robustez Total del Bot y Canal de Telegram (Producción OCI-2)**:
-  - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 6 API keys del `.env` y fallback entre modelos (`gemini-2.5-flash`, `3.8-flash`, `3.6-flash`).
-  - **Botón Inline de Personalización**: Cada reporte diario en el canal público ahora incluye el botón con deep-link `[ 🔮 Solicitar mi Horóscopo Personalizado ]` hacia `https://t.me/PortalTarotBot?start=horoscopo_hoy`.
+  - **Resolución de caída intermitente**: `daily_channel_job.py` refactorizado con 3 ciclos de reintento, rotación automática entre 10 API keys del `.env` y fallback entre modelos (`gemini-3.8-flash`, `3.6-flash`).
+  - **Integración Nativa con Swiss Ephemeris (`clima_astral_engine.py`)**: Eliminada la "ceguera astronómica" de la IA. El sistema calcula en vivo la posición exacta de los 10 planetas, fase lunar (grados y arquetipo) y aspectos mayores con orbe estricto antes de redactar.
+  - **Reforma Editorial de Autor (Cero Coaching de Peluquería)**: Erradicado el formato de autoayuda imperativa ("Auditá tus acuerdos", "no seas cobarde"). El reporte diario ahora es pedagógico, cartográfico y lúcido: 1) Mapa celeste real, 2) Mecánica y enseñanza de arquetipos, 3) Clima colectivo social, 4) Brújula del día.
+  - **Horóscopo Personalizado con Casas Reales (`telegram_manager.py`)**: El botón interactivo `[ 🔮 Solicitar mi Horóscopo Personalizado ]` y el comando `/hoy` calculan la Carta Natal exacta del usuario (casas Placidus) y cruzan qué casas y planetas natales están siendo activados por los tránsitos del día con Swiss Ephemeris.
   - **Persistencia en SQLite**: Migrada la tabla `subscribers` con `telegram_id` y `telegram_username` permanentes (se eliminó la dependencia volátil de memoria RAM).
   - **Tolerancia a fallos y entrega diferida**: Creada la tabla `pending_telegram_requests` y el worker `retry_telegram_requests.py` (ejecutado cada 10 min en cron de OCI) para agendar y despachar automáticamente lecturas si la IA experimenta saturación temporal.
   - Servicio `telegrambot.service` actualizado y verificado en ejecución en OCI.

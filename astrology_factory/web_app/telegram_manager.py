@@ -25,6 +25,11 @@ if not TOKEN:
     print("❌ Error: Falta TELEGRAM_BOT_TOKEN en .env")
     sys.exit(1)
 
+# Asegurar que el laboratorio esté en sys.path para imports de astrology_factory
+FACTORY_ROOT = os.path.dirname(BASE_DIR)
+if FACTORY_ROOT not in sys.path:
+    sys.path.insert(0, FACTORY_ROOT)
+
 MODEL_CANDIDATES = [
     "gemini-3.8-flash",
     "gemini-3.6-flash"
@@ -32,10 +37,17 @@ MODEL_CANDIDATES = [
 
 def obtener_api_keys():
     keys = []
-    for var_name in ["GEMINI_API_KEY", "GEMINI_API_KEY_5", "GEMINI_API_KEY_6", "GEMINI_API_KEY_7", "GEMINI_API_KEY_TEXT", "GEMINI_API_KEY_WEB"]:
+    for var_name in [
+        "GEMINI_API_KEY", "GEMINI_API_KEY_TEXT", "GEMINI_API_KEY_WEB",
+        "GEMINI_API_KEY_5", "GEMINI_API_KEY_6", "GEMINI_API_KEY_7",
+        "GEMINI_API_KEY_8", "GEMINI_API_KEY_9", "GEMINI_API_KEY_10"
+    ]:
         val = os.getenv(var_name)
         if val and val not in keys:
             keys.append(val)
+    for k, v in os.environ.items():
+        if k.startswith("GEMINI_API_KEY") and v and v not in keys:
+            keys.append(v)
     return keys
 
 def get_user_by_telegram_id(chat_id):
@@ -88,7 +100,7 @@ def llamar_ia_con_reintentos(prompt, system_instruction=None):
         for model_name in MODEL_CANDIDATES:
             try:
                 client = genai.Client(api_key=api_key)
-                config = types.GenerateContentConfig(temperature=0.7)
+                config = types.GenerateContentConfig(temperature=0.6)
                 if system_instruction:
                     config.system_instruction = system_instruction
 
@@ -105,24 +117,27 @@ def llamar_ia_con_reintentos(prompt, system_instruction=None):
     return None
 
 def generar_horoscopo_personalizado_texto(name, birth_date, birth_time, birth_city=""):
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    from astrology_factory.astrology_engine.clima_astral_engine import calcular_transitos_personales
+    datos_calculados = calcular_transitos_personales(name, birth_date, birth_time, birth_city)
+
     system_instruction = (
         "Eres Tomás, el astrólogo titular y creador de 'Portal Tarot Místico' (Sol y Mercurio en conjunción exacta en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10).\n\n"
-        f"Estás redactando el horóscopo personalizado de hoy para {name}, a quien le conoces su Carta Natal exacta.\n\n"
-        "DIRECTIVAS MANDATORIAS DE TU VOZ Y ESTILO:\n"
-        "1. Lente Cognitiva (Acuario): Nada de magia infantil ni adivinación barata. Para ti la astrología es una cartografía de arquetipos psicológicos y vectores energéticos reales. Trata a la persona como un adulto lúcido.\n"
-        "2. Ritmo (Aries): Directo al hueso. Cero rodeos, cero cursilería ('el universo te abraza', 'madre cósmica'). Eres claro, asertivo, despierto y certero.\n"
-        "3. Tono y Cadencia (Sagitario / Rioplatense sobrio): Habla en segunda persona con voseo rioplatense natural y austero ('mirá {name}', 'fijate en esto', 'hacés', 'tenés'). No uses lunfardo exagerado ni caricaturesco; usa la calidez y gravedad de un mentor de autor.\n"
-        "4. Enfoque del reporte: Cruza el cielo de hoy con su carta. Explícale con precisión qué sector de su vida se activa hoy, qué contradicción o trampa mental puede surgir, y cómo usarlo a favor.\n"
-        "5. Cierre: Concluye con tu lema de autor:\n"
-        "'Las cartas marcan el suelo, tu voluntad construye.\nTomás · portaltarotmistico.com'\n"
-        "Longitud: Conciso, contundente, 3 párrafos ágiles pensados para leer cómodamente en Telegram."
+        f"Estás redactando el horóscopo personalizado de hoy para {name}, fundamentado estrictamente en los cálculos astronómicos reales de Swiss Ephemeris que recibes.\n\n"
+        "DIRECTIVAS DE TU VOZ Y ENFOQUE:\n"
+        "1. Adulto a adulto (Lente Acuario): Cero adivinación mágica, fatalismo o conjeturas de horóscopo barato. La astrología es cartografía psicológica y sincrónica. Explícale con lucidez qué sectores de su vida (casas) y qué dinámicas internas se activan hoy.\n"
+        "2. Directo y certero (Aries): Directo al hueso, sin rodeos ni cursilería New Age. Sé asertivo, claro y empoderador.\n"
+        "3. Cercanía y Gravedad (Luna en Sagitario / Rioplatense sobrio): Habla en segunda persona con voseo rioplatense natural y respetuoso ('mirá {name}', 'fijate', 'tenés', 'hacés'). Nada de caricaturas.\n"
+        "4. Precisión Técnica Traducida: Menciona los tránsitos y casas clave involucrados, traduciendo esa matemática celeste a situaciones concretas y de consciencia práctica.\n"
+        "5. Cierre obligatorio:\n"
+        "Las cartas marcan el suelo, tu voluntad construye.\n"
+        "Tomás · portaltarotmistico.com\n\n"
+        "Longitud: Conciso, contundente, 3 o 4 párrafos ágiles pensados para leer cómodamente en Telegram."
     )
-    prompt = f"""Consultante: {name}
-Fecha de nacimiento natal: {birth_date} a las {birth_time} (Lugar: {birth_city or 'No especificado'}).
-Fecha actual del tránsito: {today_str}.
+    prompt = f"""Tomás, acá tenés los cálculos astronómicos exactos de la Carta Natal y los tránsitos de hoy calculados con Swiss Ephemeris:
 
-Tomás, redacta su reporte astral personalizado para hoy."""
+{datos_calculados}
+
+Redactá el horóscopo personalizado de hoy para {name}."""
 
     return llamar_ia_con_reintentos(prompt, system_instruction)
 
