@@ -41,7 +41,14 @@ def obtener_api_keys():
     return keys
 
 def generar_reporte_con_reintentos():
-    from astrology_factory.astrology_engine.clima_astral_engine import obtener_resumen_cielo_hoy
+    try:
+        from astrology_factory.astrology_engine.clima_astral_engine import obtener_resumen_cielo_hoy
+    except ImportError:
+        try:
+            from astrology_engine.clima_astral_engine import obtener_resumen_cielo_hoy
+        except ImportError:
+            from clima_astral_engine import obtener_resumen_cielo_hoy
+
     cielo_datos = obtener_resumen_cielo_hoy()
 
     system_instruction = (

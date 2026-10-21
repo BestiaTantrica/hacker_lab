@@ -117,7 +117,14 @@ def llamar_ia_con_reintentos(prompt, system_instruction=None):
     return None
 
 def generar_horoscopo_personalizado_texto(name, birth_date, birth_time, birth_city=""):
-    from astrology_factory.astrology_engine.clima_astral_engine import calcular_transitos_personales
+    try:
+        from astrology_factory.astrology_engine.clima_astral_engine import calcular_transitos_personales
+    except ImportError:
+        try:
+            from astrology_engine.clima_astral_engine import calcular_transitos_personales
+        except ImportError:
+            from clima_astral_engine import calcular_transitos_personales
+
     datos_calculados = calcular_transitos_personales(name, birth_date, birth_time, birth_city)
 
     system_instruction = (
