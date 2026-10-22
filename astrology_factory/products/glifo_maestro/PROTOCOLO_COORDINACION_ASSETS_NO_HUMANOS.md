@@ -38,19 +38,43 @@ Base principal:
 
 ---
 
-## 3. ESTÁNDARES TÉCNICOS PARA EL HILO DE SÍMBOLOS
+## 3. GUÍA Y DIRECTIVAS ESPECÍFICAS PARA CHATGPT (DALL-E 3)
 
-1. **Formato:** Archivos `.webp` de alta resolución (mínimo `768x1344` para vertical, o `1024x1024` para sellos/glifos circulares).
-2. **Nomenclatura Estricta:** 
-   - Minúsculas y guiones bajos (`snake_case`).
-   - Cero espacios, cero mayúsculas, cero tildes.
-   - Nombres auto-descriptivos: `[categoria]_[arquetipo]_[material/accion].webp`
-3. **Evitar la Trampa de Tokens de FLUX:**
-   - En FLUX no existe negative prompt. Describir **solo lo que sí existe** en positivo.
-   - Para fondos limpios sin elementos flotantes parásitos: *"isolated on a solid flat pitch-black background (#000000), dramatic studio lighting, macro photography of forged metal / carved stone"*.
-4. **Registro:** Cada vez que el hilo hermano guarde un asset en el Vault, debe registrar el nombre, seed y prompt en la documentación técnica para mantener la paridad con este hilo.
+Dado que este frente se trabajará con **ChatGPT (DALL-E 3)**, se deben tener en cuenta las particularidades de cómo DALL-E interpreta y reescribe los prompts:
+
+### A. Cómo evitar que DALL-E meta personas o manos:
+DALL-E 3 tiende a dibujar manos sosteniendo el objeto si no se le frena en seco. Indicale a ChatGPT:
+> *"Genera la imagen con DALL-E 3 como un objeto o símbolo puramente aislado. NO debe haber personas, manos, rostros ni siluetas humanas. Es un macro de geometría sagrada / sigilo / orbe flotando en el centro sobre fondo negro puro."*
+> En inglés para el prompt interno de DALL-E: *"A pure isolated metaphysical symbol centered against a solid pitch-black background (#000000). Strictly non-human, geometric, and macro-focused. Completely devoid of human figures, hands, or silhouettes."*
+
+### B. Formatos nativos de DALL-E 3:
+- **Para Glifos, Sigilos y Sellos Circulares:** Pedir formato cuadrado (`1024x1024` / `1:1`). Son ideales para recortar o usar como iconos y elementos centrales.
+- **Para Cartas, Orbes y Fondos Verticales:** Pedir formato vertical (`1024x1792` / vertical `9:16`).
+
+### C. Coherencia de Materiales con el Estilo Roberto Ferri:
+Para que los dibujos de ChatGPT armonicen a la perfección con los cuerpos al óleo de Roberto Ferri generados en el hilo principal, pedile a ChatGPT que use materiales alquímicos nobles:
+- **Sol:** Oro antiguo bruñido con pátina y filigrana solar (*burnished antique gold, warm amber glow*).
+- **Luna:** Plata selenita pulida, marfil tallado y nácar líquido (*polished selenite silver, mother-of-pearl sheen*).
+- **Mercurio:** Bronce oscuro finamente torneado y filamentos de azogue (*slender oxidized bronze, liquid quicksilver mercury*).
+- **Venus:** Cobre forjado rosado, esmeralda cruda y terciopelo musgo (*hand-forged rose copper, raw emerald crystal*).
+- **Marte:** Hierro oscuro forjado al rojo con ascuas sutiles (*forged black iron, red-hot steel edge, glowing embers*).
 
 ---
 
-## 4. INTEGRACIÓN FINAL
-En la interfaz de la aplicación, cada Arquetipo somático producido por este hilo (ej. *Venus Anadyómene* o *Marte Primal*) se ensamblará en capas con el glifo/sigilo inorgánico producido por el hilo hermano, creando una tarjeta astrológica rica y multidimensional.
+## 4. CÓMO GUARDAR LOS ARCHIVOS DE CHATGPT EN EL VAULT
+
+Las imágenes generadas y descargadas desde ChatGPT deben guardarse o convertirse a `.webp` (o `.png`) en las carpetas correspondientes del Vault:
+
+- **Sigilos y Geometría Sagrada:**
+  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/09_Geometria_Sagrada/`
+- **Glifos Zodiacales:**
+  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/01_Signos_Zodiacales/`
+- **Planetas / Orbes Celestes (Sin personas):**
+  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/02_Planetas/`
+
+**Nombres de archivo:** `sigilo_marte_hierro.webp`, `glifo_sol_oro.webp`, etc. (minúsculas, `snake_case`).
+
+---
+
+## 5. INTEGRACIÓN FINAL
+En la aplicación de *Astrology Factory*, cada carta o pantalla combinará la **figura humana de Roberto Ferri** (de este hilo) con el **sigilo/glifo alquímico de ChatGPT** (del hilo hermano), logrando una estética cohesiva y de primer nivel.
