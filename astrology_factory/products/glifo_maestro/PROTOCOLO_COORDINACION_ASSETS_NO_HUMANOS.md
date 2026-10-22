@@ -1,80 +1,62 @@
 # 📜 PROTOCOLO DE COORDINACIÓN INTER-HILOS · ASTROLOGY FACTORY
-*Sincronización de Producción Visual: Hilo Somático (Humanos) vs. Hilo Simbólico (No Humanos)*
+*Sincronización de Producción Visual: Hilo Somático (Humanos) vs. Hilo Simbólico ChatGPT (No Humanos)*
 *Referencia de Sesión Activa: `17a47ed4-ed1e-4d1b-9cca-183b7c204cbe`*
 *Fecha de Emisión: 21 de Octubre, 2026*
 
 ---
 
-## 1. DIVISIÓN DE ROLES EN EQUIPO
-
-Para evitar duplicación de esfuerzos, colisiones en el Vault y asegurar coherencia estética en el producto final (*El Glifo Maestro* y la app de *Astrology Factory*), el trabajo se divide en dos frentes complementarios:
-
-| Frente de Trabajo | Hilo Responsable | Alcance del Contenido | Estética y Reglas |
-| :--- | :--- | :--- | :--- |
-| **A. Alfabeto Somático (Figuras)** | **Hilo Actual** (`17a47ed4-...`) | Arquetipos planetarios y zodiacales representados por **figuras humanas** (Roberto Ferri, desnudo académico sacro, acciones somáticas primarias). | Formato vertical `9:16`, fondo betún negro azabache (`#000000`), claroscuro tenebrista, óleo sobre lino crudo. |
-| **B. Alfabeto Inorgánico (Símbolos)** | **Tu Hilo Hermano (No Humanos)** | **Cero figuras humanas**. Glifos astrológicos, sigilos, sellos herméticos, geometría sagrada, orbes celestes puros, talismanes y objetos arquetípicos. | Coherencia con la paleta de materiales (oro bruñido, plata selenita, bronce oscuro, hierro forjado, obsidiana). Fondo `#000000` o transparente. |
+> [!CRITICAL]
+> **REGLA DE ORO DE ALMACENAMIENTO (CERO MEZCLA CON DESCARGAS VIEJAS):**
+> **TODO LO QUE GENERAMOS EN ESTA FASE ENTRA EXCLUSIVAMENTE DENTRO DE LA CARPETA `Glifo_Maestro/`.**
+> **ESTÁ ESTRICTAMENTE PROHIBIDO guardar en las carpetas viejas de la raíz (`02_Planetas/`, `01_Signos_Zodiacales/`, etc.), porque son descargas históricas pasadas de la app y mezclarlas arruina la auditoría de activos.**
 
 ---
 
-## 2. DÓNDE Y CÓMO GUARDAR LOS ASSETS NO HUMANOS
+## 1. RUTA RAÍZ ABSOLUTA DEL GLIFO MAESTRO
 
-El agente del otro hilo debe depositar todas las imágenes terminadas en las rutas canónicas del **Vault de Contingencia**:
+Toda imagen que descargues de ChatGPT / DALL-E 3 debe ir adentro de:
+```text
+/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/Glifo_Maestro/
+```
 
-### Rutas Absolutas en el Vault:
-Base principal:
-`/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/`
+### Estructura Interna por Categoría en `Glifo_Maestro/`:
 
-1. **Glifos Geométricos, Sigilos y Sellos Herméticos:**
-   `.../Assets_Auditados/Imagenes/09_Geometria_Sagrada/`
-   *Ejemplo: `sigilo_marte_hierro_forjado.webp`, `glifo_venus_cobre_alquimico.webp`*
-2. **Símbolos y Glifos de los 12 Signos Zodiacales:**
-   `.../Assets_Auditados/Imagenes/01_Signos_Zodiacales/`
-   *Ejemplo: `glifo_aries_fuego_primordial.webp`, `glifo_tauro_tierra_solida.webp`*
-3. **Planetas Celestes / Orbes Cósmicos (Sin figuras):**
-   `.../Assets_Auditados/Imagenes/02_Planetas/`
-   *Ejemplo: `orbe_marte_roca_carmesí.webp`, `orbe_saturno_anillos_plata.webp`*
-4. **Cartas, Fondos y Texturas Sagradas:**
-   `.../Assets_Auditados/Imagenes/15_Astrologia_Cartas/` o `.../13_Abstracto_Fluidos/`
+#### A. Símbolos, Sigilos y Orbes de los Astros Personales:
+Se guardan directamente **dentro de la carpeta del astro correspondiente** para que convivan la figura humana y sus símbolos:
+- **Sol:** `.../Glifo_Maestro/01_Astros_Personales_y_ASC/01_Sol/` (ej: `glifo_sol_oro_bruñido.webp`, `orbe_sol_plasma_puro.webp`)
+- **Luna:** `.../Glifo_Maestro/01_Astros_Personales_y_ASC/02_Luna/` (ej: `glifo_luna_plata_selenita.webp`, `sigilo_luna_cálicie.webp`)
+- **Mercurio:** `.../Glifo_Maestro/01_Astros_Personales_y_ASC/03_Mercurio/` (ej: `glifo_mercurio_bronce.webp`, `caduceo_sigilo_azogue.webp`)
+- **Venus:** `.../Glifo_Maestro/01_Astros_Personales_y_ASC/04_Venus/` (ej: `glifo_venus_cobre_alquimico.webp`, `sello_venus_esmeralda.webp`)
+- **Marte:** `.../Glifo_Maestro/01_Astros_Personales_y_ASC/05_Marte/` (ej: `glifo_marte_hierro_forjado.webp`, `sigilo_marte_brasa.webp`)
 
----
+#### B. Si son Signos Zodiacales del Glifo Maestro (sin personas):
+- `.../Glifo_Maestro/02_Signos_Zodiacales_Simbolos/`
+*(Ejemplo: `glifo_aries_fuego.webp`, `glifo_tauro_tierra.webp`)*
 
-## 3. GUÍA Y DIRECTIVAS ESPECÍFICAS PARA CHATGPT (DALL-E 3)
-
-Dado que este frente se trabajará con **ChatGPT (DALL-E 3)**, se deben tener en cuenta las particularidades de cómo DALL-E interpreta y reescribe los prompts:
-
-### A. Cómo evitar que DALL-E meta personas o manos:
-DALL-E 3 tiende a dibujar manos sosteniendo el objeto si no se le frena en seco. Indicale a ChatGPT:
-> *"Genera la imagen con DALL-E 3 como un objeto o símbolo puramente aislado. NO debe haber personas, manos, rostros ni siluetas humanas. Es un macro de geometría sagrada / sigilo / orbe flotando en el centro sobre fondo negro puro."*
-> En inglés para el prompt interno de DALL-E: *"A pure isolated metaphysical symbol centered against a solid pitch-black background (#000000). Strictly non-human, geometric, and macro-focused. Completely devoid of human figures, hands, or silhouettes."*
-
-### B. Formatos nativos de DALL-E 3:
-- **Para Glifos, Sigilos y Sellos Circulares:** Pedir formato cuadrado (`1024x1024` / `1:1`). Son ideales para recortar o usar como iconos y elementos centrales.
-- **Para Cartas, Orbes y Fondos Verticales:** Pedir formato vertical (`1024x1792` / vertical `9:16`).
-
-### C. Coherencia de Materiales con el Estilo Roberto Ferri:
-Para que los dibujos de ChatGPT armonicen a la perfección con los cuerpos al óleo de Roberto Ferri generados en el hilo principal, pedile a ChatGPT que use materiales alquímicos nobles:
-- **Sol:** Oro antiguo bruñido con pátina y filigrana solar (*burnished antique gold, warm amber glow*).
-- **Luna:** Plata selenita pulida, marfil tallado y nácar líquido (*polished selenite silver, mother-of-pearl sheen*).
-- **Mercurio:** Bronce oscuro finamente torneado y filamentos de azogue (*slender oxidized bronze, liquid quicksilver mercury*).
-- **Venus:** Cobre forjado rosado, esmeralda cruda y terciopelo musgo (*hand-forged rose copper, raw emerald crystal*).
-- **Marte:** Hierro oscuro forjado al rojo con ascuas sutiles (*forged black iron, red-hot steel edge, glowing embers*).
+#### C. Si son Sigilos Abstractos, Sellos Herméticos o Geometría Sagrada general:
+- `.../Glifo_Maestro/03_Geometria_y_Sigilos/`
 
 ---
 
-## 4. CÓMO GUARDAR LOS ARCHIVOS DE CHATGPT EN EL VAULT
+## 2. DIRECTIVAS ESPECÍFICAS PARA TRABAJAR CON CHATGPT (DALL-E 3)
 
-Las imágenes generadas y descargadas desde ChatGPT deben guardarse o convertirse a `.webp` (o `.png`) en las carpetas correspondientes del Vault:
+### A. Cero Figuras Humanas ni Manos:
+DALL-E 3 suele dibujar manos sosteniendo el amuleto o la piedra si no se le frena. El prompt que le des a ChatGPT debe exigir:
+> *"Genera un plano macro y centrado de este glifo/símbolo alquímico puro flotando en el vacío. NO DEBE HABER PERSONAS, MANOS, ROSTROS NI SILUETAS HUMANAS. Fondo 100% negro azabache (#000000) sólido de estudio."*
 
-- **Sigilos y Geometría Sagrada:**
-  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/09_Geometria_Sagrada/`
-- **Glifos Zodiacales:**
-  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/01_Signos_Zodiacales/`
-- **Planetas / Orbes Celestes (Sin personas):**
-  `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/02_Planetas/`
+### B. Formatos de DALL-E 3:
+- **Glifos y Sellos Circulares (Icons/Overlays):** Pedir formato cuadrado (`1024x1024` / `1:1`).
+- **Composiciones de fondo / Cartas completas:** Pedir formato vertical (`1024x1792` / vertical).
 
-**Nombres de archivo:** `sigilo_marte_hierro.webp`, `glifo_sol_oro.webp`, etc. (minúsculas, `snake_case`).
+### C. Paleta de Materiales Alquímicos Nobles (Coherencia con Roberto Ferri):
+Para que ensamble a la perfección con el tenebrismo de Roberto Ferri de las figuras humanas:
+- **Sol:** Oro viejo bruñido con pátina y filigrana solar (*burnished antique gold, warm amber glow*).
+- **Luna:** Plata selenita pulida, marfil tallado y nácar (*polished selenite silver, mother-of-pearl sheen*).
+- **Mercurio:** Bronce oscuro finamente torneado y mercurio líquido (*slender oxidized bronze, liquid quicksilver*).
+- **Venus:** Cobre forjado rosado, esmeralda cruda y oro rosa (*hand-forged rose copper, raw emerald crystal*).
+- **Marte:** Hierro oscuro forjado al rojo vivo con ascuas sutiles (*forged black iron, red-hot steel edge, glowing embers*).
 
 ---
 
-## 5. INTEGRACIÓN FINAL
-En la aplicación de *Astrology Factory*, cada carta o pantalla combinará la **figura humana de Roberto Ferri** (de este hilo) con el **sigilo/glifo alquímico de ChatGPT** (del hilo hermano), logrando una estética cohesiva y de primer nivel.
+## 3. INTEGRACIÓN EN LA APP
+En *Astrology Factory*, la figura humana de Roberto Ferri (producida en el hilo principal) y el símbolo inorgánico de ChatGPT (producido en este hilo) se montarán en capas, perteneciendo ambos a la misma suite canónica: **`Glifo_Maestro/`**.
