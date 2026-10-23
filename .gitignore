@@ -77,3 +77,7 @@ astrology_factory/**/temp_clips/
 proyectos_congelados/
 historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
 *.onnx
+
+# Symlink a proyecto independiente EcoMarvex
+ecomarvex
+
