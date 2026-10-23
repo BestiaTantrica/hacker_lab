@@ -102,6 +102,8 @@ def init_db():
         "gemini_api_key": os.getenv("GEMINI_API_KEY", ""),
         "gemini_api_key_backup": "",
         "dropsheable_api_token": "",
+        "dropsheable_api_key": "",
+        "dropsheable_api_secret": "",
         "whatsapp_auto_reply": "1"
     }
     

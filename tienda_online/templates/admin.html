@@ -307,24 +307,51 @@
             </button>
           </div>
 
-          <!-- Herramienta 2: Asistente WhatsApp -->
-          <div class="card" style="display:flex; flex-direction:column; gap:14px;">
-            <h3 style="color:#16a34a;"><i class="fa-brands fa-whatsapp"></i> 2. Auto-Respuesta Inteligente de WhatsApp</h3>
-            <p class="card-hint">Pega aquí lo que te preguntó el cliente en WhatsApp y la IA te redactará la respuesta perfecta con tono argentino, datos bancarios y envíos.</p>
+          <!-- Herramienta 2: Conexión 24/7 WhatsApp & Auto-Respuesta -->
+          <div class="card" style="display:flex; flex-direction:column; gap:14px; border:2px solid #86efac; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="color:#15803d; margin:0;"><i class="fa-brands fa-whatsapp"></i> 2. WhatsApp Automático 24/7 (Sin Copiar y Pegar)</h3>
+              <span id="waConnectionBadge" class="status-pill" style="background:#fef3c7; color:#b45309; font-size:0.75rem;">
+                <i class="fa-solid fa-spinner fa-spin"></i> Verificando conexión...
+              </span>
+            </div>
+            <p class="card-hint" style="color:#166534;">
+              Vincula tu WhatsApp una sola vez con código QR. Tu servidor responderá automáticamente a tus clientes en 3 a 5 segundos con simulación de tipeo humano, datos de transferencia y catálogo.
+            </p>
 
-            <div class="form-group">
-              <label>Mensaje o Duda del Cliente</label>
-              <textarea id="aiWaCustomerMessage" rows="3" placeholder="Ej: Hola! ¿Tienen stock de los auriculares? ¿Hacen envíos a Rosario y cuánto sale?"></textarea>
+            <div style="background:white; border:1px solid #bbf7d0; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.85rem; font-weight:700; color:#14532d;">Auto-Respuesta con IA:</span>
+                <label class="switch" style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" id="waAutoReplyToggle" checked onchange="toggleWaAutoReply(this.checked)">
+                  <span style="font-size:0.82rem; font-weight:600; color:#15803d;">Activa</span>
+                </label>
+              </div>
+              <p style="font-size:0.78rem; color:#475569; margin:0;">
+                Delay humanizado: 3.5s - 5.5s antes de enviar · Reconoce productos, stock y tu Alias <code>vida.rucula</code>.
+              </p>
             </div>
 
-            <div class="form-group">
-              <label>Producto relacionado (Opcional)</label>
-              <input type="text" id="aiWaProductTitle" placeholder="Ej: Auriculares Inalámbricos Pro">
+            <div style="display:flex; gap:10px;">
+              <button class="btn-primary" onclick="openWhatsAppQrModal()" style="background:#16a34a; flex:1;">
+                <i class="fa-solid fa-qrcode"></i> Vincular mi WhatsApp (Escanear QR)
+              </button>
+              <button class="btn-secondary" onclick="checkWhatsAppStatus()" title="Actualizar estado">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
             </div>
 
-            <button class="btn-primary" onclick="triggerAiWhatsAppReply()" style="background:#16a34a; width:100%;">
-              <i class="fa-brands fa-whatsapp"></i> Redactar Respuesta WhatsApp
-            </button>
+            <!-- Colapsable para pruebas manuales si lo desea -->
+            <details style="margin-top:4px; font-size:0.85rem; color:#475569;">
+              <summary style="cursor:pointer; font-weight:600; color:#15803d;">🛠️ Probar un borrador manual (Opcional)</summary>
+              <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                <textarea id="aiWaCustomerMessage" rows="2" placeholder="Ej: Hola! ¿Hacen envíos a Rosario y cuánto sale?"></textarea>
+                <input type="text" id="aiWaProductTitle" placeholder="Producto opcional (ej: Auriculares Pro)">
+                <button class="btn-sm-action" onclick="triggerAiWhatsAppReply()" style="background:#16a34a; color:white; padding:6px 12px; border-radius:6px; align-self:flex-start;">
+                  <i class="fa-solid fa-play"></i> Probar Respuesta
+                </button>
+              </div>
+            </details>
           </div>
 
           <!-- Herramienta 3: Asesor Estratégico Dropsheable -->
@@ -404,17 +431,38 @@
         </div>
 
         <div class="settings-grid">
-          <div class="card settings-card">
-            <h3><i class="fa-solid fa-key"></i> Conexión API Dropsheable</h3>
-            <p class="card-hint">Si tienes una cuenta de vendedor en Dropsheable, puedes ingresar tu API Token o clave de integración para sincronizar productos directamente.</p>
-            <div class="form-group">
-              <label>Dropsheable API Token / Credencial</label>
-              <input type="text" id="cfgDropsheableToken" placeholder="Ingresa tu token de Dropsheable (opcional)">
+          <div class="card settings-card" style="border: 2px solid #bae6fd; background: #ffffff;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="color:#0284c7; margin:0;"><i class="fa-solid fa-key"></i> Credenciales de Integración Dropsheable</h3>
+              <span id="dropsheableStatusBadge" class="status-pill" style="background:#e0f2fe; color:#0369a1; font-size:0.75rem;">
+                <i class="fa-solid fa-link"></i> API Conectada
+              </span>
             </div>
-            <div style="margin-top:10px;">
+            <p class="card-hint">
+              Ingresa tus credenciales oficiales obtenidas desde tu cuenta de vendedor en Dropsheable Argentina.
+            </p>
+            
+            <div class="form-group" style="margin-top:10px;">
+              <label>API Key (ak_...)</label>
+              <input type="text" id="cfgDropsheableKey" placeholder="ak_xxxxxxxxxxxxxxxxxxxxxxxx">
+            </div>
+            
+            <div class="form-group">
+              <label>API Secret (sk_...)</label>
+              <input type="password" id="cfgDropsheableSecret" placeholder="sk_xxxxxxxxxxxxxxxxxxxxxxxx">
+            </div>
+
+            <div style="margin-top:14px; display:flex; gap:10px; align-items:center;">
+              <button class="btn-primary" onclick="saveDropsheableCredentials()" style="background:#0284c7; flex:1;">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Credenciales Dropsheable
+              </button>
               <a href="https://dropsheable.com.ar" target="_blank" class="btn-secondary" style="display:inline-flex; align-items:center; gap:6px;">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Portal Dropsheable
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Portal Dropsheable
               </a>
+            </div>
+
+            <div id="dropsheableSaveFeedback" style="display:none; margin-top:12px; padding:10px 14px; background:#dcfce7; border:1px solid #86efac; border-radius:6px; color:#166534; font-size:0.85rem;">
+              <i class="fa-solid fa-circle-check"></i> ¡Credenciales de Dropsheable guardadas y activadas con éxito!
             </div>
           </div>
 
@@ -588,6 +636,45 @@
     </div>
   </div>
 
-  <script src="/static/js/admin.js?v=6"></script>
+  <!-- Modal Vinculación WhatsApp 24/7 (QR Code) -->
+  <div id="whatsappQrModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px; text-align:center;">
+      <div class="modal-header">
+        <h3 style="color:#15803d; margin:0;"><i class="fa-brands fa-whatsapp"></i> Vincular tu WhatsApp</h3>
+        <button class="close-modal-btn" onclick="closeWhatsAppQrModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div style="padding: 16px 8px;">
+        <p style="font-size:0.92rem; color:#334155; margin-bottom:16px;">
+          Escanea este código QR desde tu teléfono para que el servidor de EcoMarvex responda automáticamente a tus clientes día y noche.
+        </p>
+
+        <div id="waQrContainer" style="background:#f8fafc; border:2px dashed #bbf7d0; border-radius:12px; padding:20px; display:inline-block; margin-bottom:16px; min-width:240px; min-height:240px; display:flex; align-items:center; justify-content:center;">
+          <div id="waQrLoading">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; color:#16a34a; margin-bottom:8px;"></i>
+            <p style="font-size:0.85rem; color:#64748b; margin:0;">Generando código QR seguro...</p>
+          </div>
+          <img id="waQrImage" src="" alt="WhatsApp QR" style="display:none; max-width:220px; width:100%; border-radius:8px;">
+        </div>
+
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; text-align:left; font-size:0.85rem; color:#166534; line-height:1.5;">
+          <strong>📱 ¿Cómo escanearlo?</strong><br>
+          1. Abre WhatsApp en tu celular.<br>
+          2. Toca los <strong>3 puntos</strong> (o Configuración en iPhone).<br>
+          3. Elige <strong>Dispositivos vinculados</strong> ➔ <strong>Vincular un dispositivo</strong>.<br>
+          4. Apunta la cámara a este código QR. ¡Y listo!
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button type="button" class="btn-secondary" onclick="closeWhatsAppQrModal()">Cerrar</button>
+        <button type="button" class="btn-primary" onclick="requestNewQrCode()" style="background:#16a34a;">
+          <i class="fa-solid fa-arrows-rotate"></i> Regenerar QR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js?v=7"></script>
 </body>
 </html>

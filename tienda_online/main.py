@@ -496,3 +496,31 @@ async def admin_dropsheable_analyze(payload: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==========================================
+# GESTIÓN DE BOT WHATSAPP WEB (BAILEYS BRIDGE)
+# ==========================================
+@app.get("/api/admin/whatsapp/status")
+async def admin_whatsapp_status():
+    try:
+        r = requests.get("http://127.0.0.1:3001/status", timeout=2.0)
+        return r.json()
+    except Exception:
+        return {"connected": False, "has_qr": False, "phone": None, "detail": "Servicio de WhatsApp en espera"}
+
+@app.get("/api/admin/whatsapp/qr")
+async def admin_whatsapp_qr():
+    try:
+        r = requests.get("http://127.0.0.1:3001/qr", timeout=3.0)
+        return r.json()
+    except Exception:
+        return {"connected": False, "qr": None, "detail": "Generando QR en el servidor..."}
+
+@app.post("/api/admin/whatsapp/disconnect")
+async def admin_whatsapp_disconnect():
+    try:
+        r = requests.post("http://127.0.0.1:3001/disconnect", timeout=3.0)
+        return r.json()
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+

@@ -18,6 +18,7 @@ echo "============================================================"
 chmod 600 "$LLAVE"
 
 rsync -avz --exclude 'venv' --exclude '__pycache__' --exclude 'data/*.db' \
+  --exclude 'whatsapp_bridge/node_modules' --exclude 'whatsapp_bridge/auth_info' \
   -e "ssh -i $LLAVE -o StrictHostKeyChecking=no" \
   "$LOCAL_DIR/" "${OCI1_USER}@${OCI1_IP}:${REMOTE_DIR}/"
 
@@ -42,6 +43,16 @@ echo "Instalando paquetes en venv..."
 # Inicializar BD con datos demo si no existe
 ./venv/bin/python database.py
 
+# Dependencias de WhatsApp Bot Bridge
+if [ -d "whatsapp_bridge" ]; then
+    cd whatsapp_bridge
+    if [ ! -d "node_modules" ]; then
+        echo "Instalando dependencias de WhatsApp Bot..."
+        npm install --production
+    fi
+    cd ..
+fi
+
 # 3. Configurar Servicio Systemd para la Tienda
 sudo tee /etc/systemd/system/tienda.service > /dev/null << 'SERVICE'
 [Unit]
@@ -59,9 +70,29 @@ RestartSec=5
 WantedBy=multi-user.target
 SERVICE
 
+# 3.1 Configurar Servicio Systemd para WhatsApp Bot
+sudo tee /etc/systemd/system/whatsapp-bot.service > /dev/null << 'SERVICE'
+[Unit]
+Description=WhatsApp Bot 24/7 Bridge para EcoMarvex
+After=network.target tienda.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/tienda_online/whatsapp_bridge
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now tienda
 sudo systemctl restart tienda
+sudo systemctl enable --now whatsapp-bot
+sudo systemctl restart whatsapp-bot
 
 # 4. Configurar Nginx Reverse Proxy (con soporte SSL LetsEncrypt si existe)
 if sudo test -d "/etc/letsencrypt/live/ecomarvex.com"; then

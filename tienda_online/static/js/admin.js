@@ -342,9 +342,16 @@ async function loadSettings() {
     if (document.getElementById('cfgGeminiKeyBackup')) {
       document.getElementById('cfgGeminiKeyBackup').value = s.gemini_api_key_backup || '';
     }
-    if (document.getElementById('cfgDropsheableToken')) {
-      document.getElementById('cfgDropsheableToken').value = s.dropsheable_api_token || '';
+    if (document.getElementById('cfgDropsheableKey')) {
+      document.getElementById('cfgDropsheableKey').value = s.dropsheable_api_key || s.dropsheable_api_token || '';
     }
+    if (document.getElementById('cfgDropsheableSecret')) {
+      document.getElementById('cfgDropsheableSecret').value = s.dropsheable_api_secret || '';
+    }
+    if (document.getElementById('waAutoReplyToggle')) {
+      document.getElementById('waAutoReplyToggle').checked = s.whatsapp_auto_reply !== '0';
+    }
+    checkWhatsAppStatus();
   } catch (e) {
     console.error("Error cargando configuración:", e);
   }
@@ -367,7 +374,9 @@ async function saveSettings() {
     shipping_policy_text: document.getElementById('cfgShippingPolicy').value,
     gemini_api_key: document.getElementById('cfgGeminiKey').value,
     gemini_api_key_backup: document.getElementById('cfgGeminiKeyBackup') ? document.getElementById('cfgGeminiKeyBackup').value : '',
-    dropsheable_api_token: document.getElementById('cfgDropsheableToken') ? document.getElementById('cfgDropsheableToken').value : ''
+    dropsheable_api_key: document.getElementById('cfgDropsheableKey') ? document.getElementById('cfgDropsheableKey').value : '',
+    dropsheable_api_secret: document.getElementById('cfgDropsheableSecret') ? document.getElementById('cfgDropsheableSecret').value : '',
+    dropsheable_api_token: document.getElementById('cfgDropsheableKey') ? document.getElementById('cfgDropsheableKey').value : ''
   };
 
   try {
@@ -586,5 +595,148 @@ function copyDropsheableAnalysis() {
     alert("Copia manualmente el texto.");
   });
 }
+
+// GUARDAR CREDENCIALES DROPSHEABLE
+async function saveDropsheableCredentials() {
+  const apiKey = document.getElementById('cfgDropsheableKey') ? document.getElementById('cfgDropsheableKey').value.trim() : '';
+  const apiSecret = document.getElementById('cfgDropsheableSecret') ? document.getElementById('cfgDropsheableSecret').value.trim() : '';
+
+  if (!apiKey || !apiSecret) {
+    alert("Por favor completa tanto la API Key como el API Secret de Dropsheable.");
+    return;
+  }
+
+  const payload = {
+    dropsheable_api_key: apiKey,
+    dropsheable_api_secret: apiSecret,
+    dropsheable_api_token: apiKey
+  };
+
+  try {
+    const res = await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const fb = document.getElementById('dropsheableSaveFeedback');
+      if (fb) {
+        fb.style.display = 'block';
+        setTimeout(() => fb.style.display = 'none', 6000);
+      }
+      const badge = document.getElementById('dropsheableStatusBadge');
+      if (badge) {
+        badge.style.background = '#dcfce7';
+        badge.style.color = '#15803d';
+        badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Credenciales Guardadas';
+      }
+      alert("✅ ¡Credenciales de Dropsheable guardadas y activadas con éxito!");
+    } else {
+      alert("Error al guardar credenciales en el servidor.");
+    }
+  } catch (err) {
+    alert("Error de conexión al guardar credenciales de Dropsheable.");
+  }
+}
+
+// GESTIÓN WHATSAPP BOT 24/7 (BAILEYS QR)
+let waPollInterval = null;
+
+async function checkWhatsAppStatus() {
+  const badge = document.getElementById('waConnectionBadge');
+  if (!badge) return;
+
+  try {
+    const res = await fetch('/api/admin/whatsapp/status');
+    const data = await res.json();
+
+    if (data.connected) {
+      badge.style.background = '#dcfce7';
+      badge.style.color = '#15803d';
+      badge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Conectado: ${data.phone || 'Activo'}`;
+      if (waPollInterval) {
+        clearInterval(waPollInterval);
+        waPollInterval = null;
+      }
+    } else if (data.has_qr) {
+      badge.style.background = '#fef3c7';
+      badge.style.color = '#b45309';
+      badge.innerHTML = '<i class="fa-solid fa-qrcode"></i> Esperando Escaneo QR';
+    } else {
+      badge.style.background = '#fee2e2';
+      badge.style.color = '#b91c1c';
+      badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Desconectado';
+    }
+  } catch (e) {
+    badge.style.background = '#f1f5f9';
+    badge.style.color = '#64748b';
+    badge.innerHTML = '<i class="fa-solid fa-signal"></i> Servicio en espera';
+  }
+}
+
+async function openWhatsAppQrModal() {
+  document.getElementById('whatsappQrModal').classList.add('open');
+  await requestNewQrCode();
+  
+  // Polling para detectar cuando el usuario escanea el QR
+  if (waPollInterval) clearInterval(waPollInterval);
+  waPollInterval = setInterval(async () => {
+    try {
+      const res = await fetch('/api/admin/whatsapp/status');
+      const data = await res.json();
+      if (data.connected) {
+        clearInterval(waPollInterval);
+        waPollInterval = null;
+        closeWhatsAppQrModal();
+        checkWhatsAppStatus();
+        alert("🎉 ¡WhatsApp vinculado con éxito! Tu bot responderá automáticamente 24/7.");
+      }
+    } catch (e) {}
+  }, 3000);
+}
+
+function closeWhatsAppQrModal() {
+  document.getElementById('whatsappQrModal').classList.remove('open');
+  if (waPollInterval) {
+    clearInterval(waPollInterval);
+    waPollInterval = null;
+  }
+}
+
+async function requestNewQrCode() {
+  const loading = document.getElementById('waQrLoading');
+  const img = document.getElementById('waQrImage');
+  loading.style.display = 'block';
+  img.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/admin/whatsapp/qr');
+    const data = await res.json();
+    if (data.qr) {
+      img.src = data.qr;
+      loading.style.display = 'none';
+      img.style.display = 'block';
+    } else if (data.connected) {
+      loading.innerHTML = '<p style="color:#15803d; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ¡Tu WhatsApp ya está conectado!</p>';
+    } else {
+      loading.innerHTML = `<p style="color:#b91c1c;">${data.detail || 'Iniciando servicio de WhatsApp... reintenta en unos segundos.'}</p>`;
+    }
+  } catch (err) {
+    loading.innerHTML = '<p style="color:#b91c1c;">Error conectando con el servicio de WhatsApp.</p>';
+  }
+}
+
+async function toggleWaAutoReply(active) {
+  try {
+    await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ whatsapp_auto_reply: active ? '1' : '0' })
+    });
+  } catch (e) {
+    console.error("Error toggling auto-reply", e);
+  }
+}
+
 
 
