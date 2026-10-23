@@ -63,7 +63,39 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now tienda
 sudo systemctl restart tienda
 
-# 4. Configurar Nginx Reverse Proxy
+# 4. Configurar Nginx Reverse Proxy (con soporte SSL LetsEncrypt si existe)
+if [ -d "/etc/letsencrypt/live/ecomarvex.com" ]; then
+sudo tee /etc/nginx/sites-available/tienda > /dev/null << 'NGINX'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name ecomarvex.com www.ecomarvex.com _;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server;
+    server_name ecomarvex.com www.ecomarvex.com;
+
+    ssl_certificate /etc/letsencrypt/live/ecomarvex.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ecomarvex.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    client_max_body_size 20M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+NGINX
+else
 sudo tee /etc/nginx/sites-available/tienda > /dev/null << 'NGINX'
 server {
     listen 80 default_server;
@@ -81,6 +113,7 @@ server {
     }
 }
 NGINX
+fi
 
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo ln -sf /etc/nginx/sites-available/tienda /etc/nginx/sites-enabled/tienda
