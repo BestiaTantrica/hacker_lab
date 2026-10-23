@@ -141,8 +141,8 @@ async def create_checkout(data: CheckoutRequest):
         raise HTTPException(status_code=400, detail="El carrito está vacío o los productos no existen.")
         
     flat_rate = float(settings.get("shipping_flat_rate", 0))
-    free_min = float(settings.get("free_shipping_min", 999999))
-    shipping_cost = 0.0 if subtotal >= free_min else flat_rate
+    free_min = float(settings.get("free_shipping_min", 0))
+    shipping_cost = 0.0 if (free_min > 0 and subtotal >= free_min) else flat_rate
     total = subtotal + shipping_cost
     
     order_code = f"PED-{uuid.uuid4().hex[:6].upper()}"
@@ -407,3 +407,56 @@ async def admin_save_settings(payload: dict):
     for k, v in payload.items():
         update_setting(k, str(v))
     return {"success": True}
+
+@app.post("/api/admin/generate-content")
+async def admin_generate_content(payload: dict):
+    product_id = payload.get("product_id")
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM products WHERE id=?", (product_id,))
+    prod = c.fetchone()
+    settings = get_settings()
+    conn.close()
+    
+    if not prod:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+        
+    api_key = settings.get("gemini_api_key", "").strip() or os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="Por favor configura tu Gemini API Key en Configuración de Negocio.")
+    
+    prompt = f"""
+Eres el estratega de marketing digital y viral de "EcoMarvex" (tienda online argentina en ecomarvex.com).
+Tu tarea es armar el paquete de contenido para redes sociales para vender el siguiente producto:
+
+- Producto: {prod['title']}
+- Categoría: {prod['category']}
+- Precio de venta al público: ${prod['sale_price']:,.0f} ARS
+- Descripción: {prod['description']}
+
+Genera una respuesta en formato JSON con la siguiente estructura exacta:
+{{
+  "tiktok_hook": "Frase impactante de 3 segundos para captar la atención en TikTok o Instagram Reel",
+  "tiktok_script": "Guión rápido de 30-45 segundos explicando qué mostrar y decir (paso a paso)",
+  "instagram_caption": "Texto completo para el post de Instagram con emojis, beneficios del producto y llamada a comprar en ecomarvex.com (con cuotas y envíos a todo el país)",
+  "hashtags": "Lista de 8-10 hashtags virales (#EcoMarvex, #DropshippingArgentina, #Ofertas, etc.)",
+  "selling_points": ["Beneficio clave 1", "Beneficio clave 2", "Beneficio clave 3"]
+}}
+Solo devuelve el JSON puro, sin bloques markdown de código ni texto adicional.
+"""
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={api_key}"
+        res = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=15)
+        if res.status_code == 200:
+            raw_text = res.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+            if raw_text.startswith("```"):
+                raw_text = raw_text.split("\n", 1)[1]
+            if raw_text.endswith("```"):
+                raw_text = raw_text.rsplit("\n", 1)[0]
+            clean_json = json.loads(raw_text.strip())
+            return clean_json
+        else:
+            raise HTTPException(status_code=500, detail=f"Error de Gemini API: {res.text}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generando contenido: {str(e)}")
+

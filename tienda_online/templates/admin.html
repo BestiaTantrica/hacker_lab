@@ -230,14 +230,29 @@
 
           <!-- Envíos -->
           <div class="card settings-card">
-            <h3><i class="fa-solid fa-truck"></i> Políticas de Envío</h3>
+            <h3><i class="fa-solid fa-truck"></i> Políticas de Envío (Dropsheable)</h3>
+            <p class="card-hint">Recuerda que Dropsheable cobra el flete del correo. No ofrezcas envío gratis sin contemplar el costo en el precio.</p>
             <div class="form-group">
-              <label>Costo de Envío Fijo ($)</label>
+              <label>Costo de Envío Fijo ($) - (Pon 0 si es a convenir con el cliente)</label>
               <input type="number" id="cfgShippingFlat" value="0">
             </div>
             <div class="form-group">
-              <label>Envío Gratis a partir de ($)</label>
-              <input type="number" id="cfgShippingFreeMin" value="25000">
+              <label>Envío Gratis únicamente si la compra supera ($) - (Pon 0 para desactivar)</label>
+              <input type="number" id="cfgShippingFreeMin" value="0">
+            </div>
+            <div class="form-group">
+              <label>Mensaje de Envío para el Cliente</label>
+              <input type="text" id="cfgShippingPolicy" placeholder="Envío a convenir según localidad (Andreani / Correo Argentino)">
+            </div>
+          </div>
+
+          <!-- Inteligencia Artificial -->
+          <div class="card settings-card">
+            <h3><i class="fa-solid fa-brain"></i> Inteligencia Artificial (Gemini)</h3>
+            <p class="card-hint">Clave API para generar contenido viral, guiones de TikTok y copys para Instagram.</p>
+            <div class="form-group">
+              <label>Gemini API Key</label>
+              <input type="password" id="cfgGeminiKey" placeholder="AQ.Ab8RN...">
             </div>
           </div>
         </div>
@@ -247,6 +262,50 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Modal Contenido IA (Viral Social Media) -->
+  <div id="aiModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="aiModalTitle"><i class="fa-solid fa-wand-magic-sparkles" style="color:#8b5cf6;"></i> Generador de Publicaciones IA</h3>
+        <button class="close-modal-btn" onclick="closeAiModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div id="aiLoading" style="text-align:center; padding: 40px 20px; display:none;">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2.5rem; color:#8b5cf6; margin-bottom:12px;"></i>
+        <p style="font-weight:600;">La IA está analizando el producto y diseñando tu campaña viral...</p>
+      </div>
+
+      <div id="aiResults" style="display:none; flex-direction:column; gap:16px;">
+        <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; padding:14px;">
+          <h4 style="color:#6d28d9; margin-bottom:6px;"><i class="fa-brands fa-tiktok"></i> Gancho (Hook) para TikTok / Reels:</h4>
+          <p id="aiHook" style="font-weight:700; font-size:1.05rem; color:#1e1b4b;"></p>
+        </div>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
+          <h4 style="color:#0284c7; margin-bottom:6px;"><i class="fa-solid fa-video"></i> Guión de Video paso a paso:</h4>
+          <p id="aiScript" style="white-space:pre-wrap; font-size:0.9rem; line-height:1.5;"></p>
+        </div>
+
+        <div style="background:#fdf2f8; border:1px solid #fbcfe8; border-radius:8px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <h4 style="color:#db2777;"><i class="fa-brands fa-instagram"></i> Texto para el Post de Instagram:</h4>
+            <button class="btn-sm-action" onclick="copyInstagramCopy()"><i class="fa-solid fa-copy"></i> Copiar</button>
+          </div>
+          <p id="aiCaption" style="white-space:pre-wrap; font-size:0.88rem; line-height:1.4; color:#334155;"></p>
+        </div>
+
+        <div style="background:#f1f5f9; border-radius:8px; padding:12px;">
+          <h4 style="font-size:0.85rem; color:#64748b; margin-bottom:4px;">Hashtags virales:</h4>
+          <p id="aiHashtags" style="font-size:0.82rem; color:#0284c7;"></p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeAiModal()">Cerrar</button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal Producto (Crear / Editar) -->

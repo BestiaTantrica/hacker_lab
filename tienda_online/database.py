@@ -71,19 +71,21 @@ def init_db():
     
     # Valores por defecto de configuración si no existen
     defaults = {
-        "store_name": "Tienda Online Argentina",
-        "store_description": "Envíos a todo el país. Los mejores productos al mejor precio.",
+        "store_name": "EcoMarvex",
+        "store_description": "Tu tienda online de confianza. Envíos directos a todo el país.",
         "admin_pin": "1234",
         "whatsapp_phone": "5491100000000",
         "mp_public_key": "",
         "mp_access_token": "",
-        "bank_cbu": "0000003100010000000000",
-        "bank_alias": "TIENDA.PAGO.ARG",
-        "bank_holder": "Nombre Titular",
+        "bank_cbu": "",
+        "bank_alias": "",
+        "bank_holder": "",
         "bank_name": "Mercado Pago / Banco",
         "shipping_flat_rate": "0",
-        "free_shipping_min": "25000",
-        "currency_symbol": "$"
+        "free_shipping_min": "0",
+        "shipping_policy_text": "Envío a convenir / a cargo del comprador (Andreani o Correo Argentino a domicilio o sucursal)",
+        "currency_symbol": "$",
+        "gemini_api_key": os.getenv("GEMINI_API_KEY", "")
     }
     
     for k, v in defaults.items():

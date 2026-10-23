@@ -200,8 +200,9 @@ async function loadProducts() {
           <td class="text-green">+$${profit.toLocaleString('es-AR')} (${margin}%)</td>
           <td>${p.stock}</td>
           <td>
-            <button class="btn-sm-action" onclick='editProduct(${JSON.stringify(p)})'><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-sm-action" onclick="deleteProduct(${p.id})" style="color:red;"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-sm-action" onclick="openAiGenerator(${p.id}, '${p.title.replace(/'/g, "\\'")}')" style="color:#8b5cf6;" title="Generar Publicación Viral con IA"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+            <button class="btn-sm-action" onclick='editProduct(${JSON.stringify(p)})' title="Editar"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn-sm-action" onclick="deleteProduct(${p.id})" style="color:red;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
           </td>
         </tr>
       `;
@@ -317,7 +318,9 @@ async function loadSettings() {
     document.getElementById('cfgBankAlias').value = s.bank_alias || '';
     document.getElementById('cfgBankCbu').value = s.bank_cbu || '';
     document.getElementById('cfgShippingFlat').value = s.shipping_flat_rate || 0;
-    document.getElementById('cfgShippingFreeMin').value = s.free_shipping_min || 25000;
+    document.getElementById('cfgShippingFreeMin').value = s.free_shipping_min || 0;
+    document.getElementById('cfgShippingPolicy').value = s.shipping_policy_text || '';
+    document.getElementById('cfgGeminiKey').value = s.gemini_api_key || '';
   } catch (e) {
     console.error("Error cargando configuración:", e);
   }
@@ -336,7 +339,9 @@ async function saveSettings() {
     bank_alias: document.getElementById('cfgBankAlias').value,
     bank_cbu: document.getElementById('cfgBankCbu').value,
     shipping_flat_rate: document.getElementById('cfgShippingFlat').value,
-    free_shipping_min: document.getElementById('cfgShippingFreeMin').value
+    free_shipping_min: document.getElementById('cfgShippingFreeMin').value,
+    shipping_policy_text: document.getElementById('cfgShippingPolicy').value,
+    gemini_api_key: document.getElementById('cfgGeminiKey').value
   };
 
   try {
@@ -354,3 +359,48 @@ async function saveSettings() {
     alert("Error de conexión");
   }
 }
+
+// GENERADOR DE CONTENIDO VIRAL CON IA (GEMINI)
+let currentAiCaption = '';
+
+async function openAiGenerator(productId, productTitle) {
+  document.getElementById('aiModalTitle').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles" style="color:#8b5cf6;"></i> Publicación IA: ${productTitle}`;
+  document.getElementById('aiLoading').style.display = 'block';
+  document.getElementById('aiResults').style.display = 'none';
+  document.getElementById('aiModal').classList.add('open');
+
+  try {
+    const res = await fetch('/api/admin/generate-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_id: productId })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Error generando contenido');
+
+    document.getElementById('aiHook').innerText = data.tiktok_hook || '-';
+    document.getElementById('aiScript').innerText = data.tiktok_script || '-';
+    document.getElementById('aiCaption').innerText = data.instagram_caption || '-';
+    document.getElementById('aiHashtags').innerText = data.hashtags || '-';
+    currentAiCaption = (data.instagram_caption || '') + '\n\n' + (data.hashtags || '');
+
+    document.getElementById('aiLoading').style.display = 'none';
+    document.getElementById('aiResults').style.display = 'flex';
+  } catch (err) {
+    document.getElementById('aiLoading').innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation" style="font-size:2rem; margin-bottom:10px;"></i><p><strong>Error al generar contenido:</strong> ${err.message}</p></div>`;
+  }
+}
+
+function closeAiModal() {
+  document.getElementById('aiModal').classList.remove('open');
+}
+
+function copyInstagramCopy() {
+  if (!currentAiCaption) return;
+  navigator.clipboard.writeText(currentAiCaption).then(() => {
+    alert("¡Texto copiado al portapapeles! Listo para pegar en Instagram / TikTok.");
+  }).catch(() => {
+    alert("Copia manualmente el texto seleccionado.");
+  });
+}
+
