@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Tienda Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Login Modal Overlay (si no está autenticado) -->
+  <div id="loginModal" class="login-overlay">
+    <div class="login-card">
+      <div class="login-icon"><i class="fa-solid fa-user-shield"></i></div>
+      <h2>Acceso Administrador</h2>
+      <p>Ingresa el PIN de seguridad para gestionar la tienda.</p>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <input type="password" id="adminPinInput" placeholder="PIN de Seguridad (Default: 1234)" autofocus required>
+        </div>
+        <button type="submit" class="btn-primary w-full">Ingresar al Panel</button>
+      </form>
+      <div id="loginError" class="login-error"></div>
+    </div>
+  </div>
+
+  <!-- Admin Main Layout -->
+  <div id="adminApp" class="admin-layout" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-store"></i>
+        <span>Admin Tienda</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="switchTab('dashboard')">
+          <i class="fa-solid fa-chart-line"></i> Dashboard
+        </button>
+        <button class="nav-item" onclick="switchTab('orders')">
+          <i class="fa-solid fa-boxes-stacked"></i> Pedidos
+          <span id="badgePendingOrders" class="nav-badge">0</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('products')">
+          <i class="fa-solid fa-tags"></i> Productos & Costos
+        </button>
+        <button class="nav-item" onclick="switchTab('settings')">
+          <i class="fa-solid fa-sliders"></i> Configuración & Pagos
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/" target="_blank" class="view-store-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Tienda</a>
+        <button onclick="logout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-nav">
+        <h1 id="pageTitle">Resumen General</h1>
+        <div class="admin-user-info">
+          <span><i class="fa-solid fa-circle-user"></i> Administrador</span>
+        </div>
+      </header>
+
+      <!-- TAB: DASHBOARD -->
+      <section id="tabDashboard" class="tab-pane active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon bg-blue"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Ventas Cobradas</span>
+              <h2 id="statRevenue">$0</h2>
+            </div>
+          </div>
+          <div class="stat-card highlight">
+            <div class="stat-icon bg-green"><i class="fa-solid fa-chart-pie"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Ganancia Neta Estimada</span>
+              <h2 id="statProfit">$0</h2>
+              <span class="stat-sub">Margen directo de reventa</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-orange"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Pedidos Pendientes</span>
+              <h2 id="statPending">0</h2>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-purple"><i class="fa-solid fa-box-open"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Pedidos</span>
+              <h2 id="statTotalOrders">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions-card">
+          <h3><i class="fa-solid fa-bolt"></i> Acciones Rápidas</h3>
+          <div class="action-buttons">
+            <button class="btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Agregar Nuevo Producto</button>
+            <button class="btn-secondary" onclick="switchTab('orders')"><i class="fa-solid fa-list-check"></i> Revisar Pedidos</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: PEDIDOS -->
+      <section id="tabOrders" class="tab-pane">
+        <div class="section-header">
+          <h2>Gestión de Pedidos</h2>
+          <button class="btn-secondary" onclick="loadOrders()"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+        </div>
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Cliente & Contacto</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Ganancia</th>
+                <th>Estado Pedido</th>
+                <th>Seguimiento</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: PRODUCTOS -->
+      <section id="tabProducts" class="tab-pane">
+        <div class="section-header">
+          <h2>Catálogo de Productos & Margen Dropshipping</h2>
+          <button class="btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Nuevo Producto</button>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Título</th>
+                <th>Categoría</th>
+                <th>Costo Proveedor</th>
+                <th>Precio Venta</th>
+                <th>Ganancia / Ud</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: CONFIGURACIÓN -->
+      <section id="tabSettings" class="tab-pane">
+        <div class="section-header">
+          <h2>Configuración del Negocio</h2>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Datos de la Tienda -->
+          <div class="card settings-card">
+            <h3><i class="fa-solid fa-store"></i> Identidad de la Tienda</h3>
+            <div class="form-group">
+              <label>Nombre de la Tienda</label>
+              <input type="text" id="cfgStoreName">
+            </div>
+            <div class="form-group">
+              <label>Descripción / Eslogan</label>
+              <input type="text" id="cfgStoreDesc">
+            </div>
+            <div class="form-group">
+              <label>WhatsApp de Contacto (con código de país, ej: 5491112345678)</label>
+              <input type="text" id="cfgWhatsapp">
+            </div>
+            <div class="form-group">
+              <label>PIN de Acceso al Panel</label>
+              <input type="password" id="cfgAdminPin">
+            </div>
+          </div>
+
+          <!-- Pasarela Mercado Pago -->
+          <div class="card settings-card">
+            <h3><i class="fa-solid fa-credit-card"></i> Mercado Pago (Cobros Automáticos)</h3>
+            <p class="card-hint">Obtén tus credenciales desde tu cuenta de Mercado Pago Developers.</p>
+            <div class="form-group">
+              <label>Access Token (Producción)</label>
+              <input type="password" id="cfgMpToken" placeholder="APP_USR-...">
+            </div>
+            <div class="form-group">
+              <label>Public Key (Producción)</label>
+              <input type="text" id="cfgMpKey" placeholder="APP_USR-...">
+            </div>
+          </div>
+
+          <!-- Transferencia Bancaria -->
+          <div class="card settings-card">
+            <h3><i class="fa-solid fa-building-columns"></i> Cobros por Transferencia</h3>
+            <div class="form-group">
+              <label>Banco / Billetera Virtual</label>
+              <input type="text" id="cfgBankName" placeholder="Ej: Mercado Pago / Santander">
+            </div>
+            <div class="form-group">
+              <label>Titular de la Cuenta</label>
+              <input type="text" id="cfgBankHolder" placeholder="Ej: Juan Pérez">
+            </div>
+            <div class="form-group">
+              <label>Alias</label>
+              <input type="text" id="cfgBankAlias" placeholder="Ej: TIENDA.DROPSHIP.ARG">
+            </div>
+            <div class="form-group">
+              <label>CBU / CVU</label>
+              <input type="text" id="cfgBankCbu" placeholder="0000003100010000000000">
+            </div>
+          </div>
+
+          <!-- Envíos -->
+          <div class="card settings-card">
+            <h3><i class="fa-solid fa-truck"></i> Políticas de Envío</h3>
+            <div class="form-group">
+              <label>Costo de Envío Fijo ($)</label>
+              <input type="number" id="cfgShippingFlat" value="0">
+            </div>
+            <div class="form-group">
+              <label>Envío Gratis a partir de ($)</label>
+              <input type="number" id="cfgShippingFreeMin" value="25000">
+            </div>
+          </div>
+        </div>
+
+        <div class="save-settings-bar">
+          <button class="btn-primary" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Producto (Crear / Editar) -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Nuevo Producto</h3>
+        <button class="close-modal-btn" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <input type="hidden" id="prodEditId">
+        
+        <div class="form-group">
+          <label>Título del Producto *</label>
+          <input type="text" id="prodTitle" required placeholder="Ej: Smartwatch Deportivo Ultra Fit">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categoría</label>
+            <input type="text" id="prodCategory" placeholder="Ej: Tecnología, Hogar, Moda">
+          </div>
+          <div class="form-group">
+            <label>Stock Disponible</label>
+            <input type="number" id="prodStock" value="10" min="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>URL de la Imagen</label>
+          <input type="url" id="prodImageUrl" placeholder="https://ejemplo.com/foto.jpg">
+        </div>
+
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="prodDescription" rows="3" placeholder="Detalles, características principales y especificaciones..."></textarea>
+        </div>
+
+        <!-- Calculadora de Margen de Dropshipping -->
+        <div class="profit-calculator-box">
+          <h4><i class="fa-solid fa-calculator"></i> Calculadora de Margen Dropshipping</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Costo Proveedor Dropsheable ($) *</label>
+              <input type="number" id="prodCostPrice" step="100" value="0" oninput="calcProfit()" required>
+            </div>
+            <div class="form-group">
+              <label>Precio de Venta al Público ($) *</label>
+              <input type="number" id="prodSalePrice" step="100" value="0" oninput="calcProfit()" required>
+            </div>
+            <div class="form-group">
+              <label>Precio Tachado / Oferta ($)</label>
+              <input type="number" id="prodDiscountPrice" step="100" value="0">
+            </div>
+          </div>
+
+          <div class="profit-result-banner">
+            <div>Ganancia por unidad: <strong id="calcProfitAmount" class="text-green">$0</strong></div>
+            <div>Margen de beneficio: <strong id="calcProfitMargin" class="text-green">0%</strong></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>SKU Dropsheable (Código de referencia)</label>
+            <input type="text" id="prodSupplierSku" placeholder="Ej: DROP-1234">
+          </div>
+          <div class="form-group">
+            <label>Enlace al Proveedor (Dropsheable)</label>
+            <input type="url" id="prodSupplierUrl" placeholder="https://dropsheable.com/producto/1234">
+          </div>
+        </div>
+
+        <div class="form-row check-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="prodFeatured">
+            <span>⭐ Producto Destacado</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="prodActive" checked>
+            <span>Activo en Tienda</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

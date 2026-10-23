@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ settings.store_name }} | Tienda Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <span><i class="fa-solid fa-truck-fast"></i> Envíos a todo el país • Pagos seguros con Mercado Pago</span>
+      <a href="https://wa.me/{{ settings.whatsapp_phone }}" target="_blank" class="top-whatsapp"><i class="fa-brands fa-whatsapp"></i> Atención por WhatsApp</a>
+    </div>
+  </div>
+
+  <!-- Header / Navbar -->
+  <header class="header">
+    <div class="container navbar">
+      <div class="brand">
+        <a href="/" class="logo">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span>{{ settings.store_name }}</span>
+        </a>
+      </div>
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Buscar productos...">
+      </div>
+
+      <div class="nav-actions">
+        <button id="cartBtn" class="cart-btn" aria-label="Ver Carrito">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span class="cart-label">Carrito</span>
+          <span id="cartCount" class="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-text">
+        <span class="hero-tag">🔥 Novedades Exclusivas</span>
+        <h1>Productos seleccionados para tu día a día</h1>
+        <p>{{ settings.store_description }}</p>
+        <div class="hero-features">
+          <div class="feat-item"><i class="fa-solid fa-shield-check"></i> Compra 100% Segura</div>
+          <div class="feat-item"><i class="fa-solid fa-credit-card"></i> Cuotas y Transferencia</div>
+          <div class="feat-item"><i class="fa-solid fa-rotate-left"></i> Garantía de Entrega</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías -->
+  <section class="container categories-bar">
+    <button class="cat-pill active" onclick="filterCategory('Todos')">Todos los productos</button>
+    {% for cat in categories %}
+      <button class="cat-pill" onclick="filterCategory('{{ cat }}')">{{ cat }}</button>
+    {% endfor %}
+  </section>
+
+  <!-- Catálogo de Productos -->
+  <main class="container catalog-section">
+    <div id="productsGrid" class="products-grid">
+      {% for p in products %}
+      <div class="product-card" data-category="{{ p.category }}" data-title="{{ p.title|lower }}">
+        <div class="card-img-wrap">
+          {% if p.image_url %}
+            <img src="{{ p.image_url }}" alt="{{ p.title }}" loading="lazy">
+          {% else %}
+            <div class="img-placeholder"><i class="fa-solid fa-image"></i></div>
+          {% endif %}
+          <span class="badge-cat">{{ p.category }}</span>
+          {% if p.featured %}
+            <span class="badge-featured">⭐ Destacado</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ p.title }}</h3>
+          <p class="card-desc">{{ p.description }}</p>
+          <div class="card-pricing">
+            {% if p.discount_price > p.sale_price %}
+              <span class="old-price">${{ "{:,.0f}".format(p.discount_price) }}</span>
+            {% endif %}
+            <span class="main-price">${{ "{:,.0f}".format(p.sale_price) }}</span>
+          </div>
+          <div class="card-footer">
+            <span class="stock-info"><i class="fa-solid fa-circle-check"></i> Stock disponible</span>
+            <button class="add-to-cart-btn" onclick="addToCart({{ p.id }}, '{{ p.title|replace("'", "\\'") }}', {{ p.sale_price }}, '{{ p.image_url }}')">
+              <i class="fa-solid fa-plus"></i> Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <!-- Cart Drawer (Off-canvas) -->
+  <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="cart-header">
+      <h3><i class="fa-solid fa-cart-shopping"></i> Tu Carrito</h3>
+      <button class="close-cart-btn" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div id="cartItemsList" class="cart-items-list">
+      <!-- Items renderizados dinámicamente con JS -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-summary">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">$0</span>
+        </div>
+        <div class="summary-line shipping-line">
+          <span>Envío</span>
+          <span id="cartShipping">A calcular</span>
+        </div>
+        <div class="summary-line total-line">
+          <span>Total Final</span>
+          <span id="cartTotal">$0</span>
+        </div>
+      </div>
+      <button id="checkoutBtn" class="checkout-btn" onclick="openCheckoutModal()" disabled>
+        Iniciar Compra <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Finalizar Compra</h3>
+        <button class="close-modal-btn" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="checkoutForm" onsubmit="submitOrder(event)">
+        <div class="form-section">
+          <h4><i class="fa-solid fa-user"></i> Datos de Contacto</h4>
+          <div class="form-group">
+            <label>Nombre y Apellido *</label>
+            <input type="text" id="custName" required placeholder="Ej: Juan Pérez">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>WhatsApp / Teléfono *</label>
+              <input type="tel" id="custPhone" required placeholder="Ej: 11 1234 5678">
+            </div>
+            <div class="form-group">
+              <label>Email (Opcional)</label>
+              <input type="email" id="custEmail" placeholder="juan@ejemplo.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4><i class="fa-solid fa-location-dot"></i> Domicilio de Envío</h4>
+          <div class="form-group">
+            <label>Calle y Número *</label>
+            <input type="text" id="custAddress" required placeholder="Ej: Av. San Martín 1234, Dpto 2B">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ciudad / Localidad *</label>
+              <input type="text" id="custCity" required placeholder="Ej: Morón">
+            </div>
+            <div class="form-group">
+              <label>Provincia *</label>
+              <input type="text" id="custProvince" required placeholder="Ej: Buenos Aires">
+            </div>
+            <div class="form-group">
+              <label>Código Postal</label>
+              <input type="text" id="custZip" placeholder="Ej: 1708">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4><i class="fa-solid fa-wallet"></i> Medio de Pago</h4>
+          <div class="payment-options">
+            <label class="pay-option">
+              <input type="radio" name="payMethod" value="mercadopago" checked>
+              <div class="pay-card">
+                <i class="fa-solid fa-credit-card"></i>
+                <div>
+                  <strong>Mercado Pago</strong>
+                  <span>Tarjeta Débito, Crédito, Cuotas o Dinero en Cuenta</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="pay-option">
+              <input type="radio" name="payMethod" value="transferencia">
+              <div class="pay-card">
+                <i class="fa-solid fa-building-columns"></i>
+                <div>
+                  <strong>Transferencia Bancaria</strong>
+                  <span>Pagá directo con Alias / CBU</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="pay-option">
+              <input type="radio" name="payMethod" value="whatsapp">
+              <div class="pay-card">
+                <i class="fa-brands fa-whatsapp"></i>
+                <div>
+                  <strong>Coordinar por WhatsApp</strong>
+                  <span>Hacé tu pedido y te contactamos para acordar</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notas adicionales / Comentarios</label>
+          <textarea id="orderNotes" rows="2" placeholder="Indicaciones para la entrega o despacho..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <div class="total-badge">Total a Pagar: <strong id="modalTotal">$0</strong></div>
+          <button type="submit" id="submitOrderBtn" class="confirm-order-btn">
+            Confirmar y Pagar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div id="successModal" class="modal-overlay">
+    <div class="modal-content success-content">
+      <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <h2 id="successTitle">¡Pedido Recibido!</h2>
+      <p id="successMessage">Tu orden ha sido registrada con éxito.</p>
+      <div class="order-code-box">
+        Código de Orden: <strong id="successCode">PED-XXXX</strong>
+      </div>
+      <div id="successAction" class="success-actions"></div>
+      <button class="btn-secondary" onclick="closeSuccessModal()">Volver a la tienda</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-col">
+        <h3>{{ settings.store_name }}</h3>
+        <p>{{ settings.store_description }}</p>
+      </div>
+      <div class="footer-col">
+        <h4>Seguridad y Envíos</h4>
+        <p><i class="fa-solid fa-truck"></i> Despachos por Correo Argentino / Andreani</p>
+        <p><i class="fa-solid fa-lock"></i> Pagos encriptados punto a punto</p>
+      </div>
+      <div class="footer-col">
+        <h4>Acceso</h4>
+        <a href="/admin" class="admin-link"><i class="fa-solid fa-lock"></i> Panel Administrador</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 {{ settings.store_name }}. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/store.js"></script>
+</body>
+</html>
