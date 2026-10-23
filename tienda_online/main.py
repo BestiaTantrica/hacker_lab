@@ -455,3 +455,17 @@ async def admin_ai_advisor(payload: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/admin/dropsheable/analyze")
+async def admin_dropsheable_analyze(payload: dict):
+    mode = payload.get("mode", "producto").strip()
+    query = payload.get("query", "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Ingresa el producto o proveedor que deseas analizar.")
+        
+    settings = get_settings()
+    try:
+        from ai_service import analyze_dropsheable_query
+        return analyze_dropsheable_query(mode, query, settings)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

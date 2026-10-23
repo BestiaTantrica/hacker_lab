@@ -371,6 +371,38 @@
           </div>
         </div>
 
+        <!-- Buscador Inteligente de Productos y Proveedores Dropsheable -->
+        <div class="card" style="margin-bottom:24px;">
+          <h3 style="color:#0284c7; margin-bottom:6px;"><i class="fa-solid fa-magnifying-glass-chart"></i> Buscador & Analizador de Proveedores y Productos</h3>
+          <p class="card-hint">Usa la IA para buscar qué tipo de proveedores tienen un producto en Dropsheable, o evaluar si un proveedor/categoría te conviene por márgenes y costos de envío en Argentina.</p>
+          
+          <div style="display:flex; gap:16px; margin: 12px 0;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:6px; font-weight:600; font-size:0.9rem;">
+              <input type="radio" name="dropsheableMode" value="producto" checked>
+              <span>Buscar Proveedores por Producto</span>
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:6px; font-weight:600; font-size:0.9rem;">
+              <input type="radio" name="dropsheableMode" value="proveedor">
+              <span>Evaluar Proveedor o Nicho</span>
+            </label>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="dropsheableQueryInput" placeholder="Ej: Auriculares Bluetooth, Soportes de Celular, Freidoras sin aceite..." style="flex:1;">
+            <button class="btn-primary" onclick="triggerDropsheableAnalysis()" style="background:#0284c7; white-space:nowrap;">
+              <i class="fa-solid fa-magnifying-glass"></i> Analizar en Dropsheable
+            </button>
+          </div>
+
+          <div id="dropsheableResultCard" style="display:none; margin-top:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h4 style="color:#0369a1;"><i class="fa-solid fa-chart-line"></i> Análisis de Abastecimiento & Márgenes:</h4>
+              <button class="btn-sm-action" onclick="copyDropsheableAnalysis()"><i class="fa-solid fa-copy"></i> Copiar</button>
+            </div>
+            <div id="dropsheableResultBody" style="white-space:pre-wrap; line-height:1.6; font-size:0.92rem; color:#334155;"></div>
+          </div>
+        </div>
+
         <div class="settings-grid">
           <div class="card settings-card">
             <h3><i class="fa-solid fa-key"></i> Conexión API Dropsheable</h3>
@@ -535,6 +567,6 @@
     </div>
   </div>
 
-  <script src="/static/js/admin.js?v=5"></script>
+  <script src="/static/js/admin.js?v=6"></script>
 </body>
 </html>

@@ -535,4 +535,46 @@ function copyAssistantResult() {
   });
 }
 
+// ANALIZADOR INTELIGENTE DROPSHEABLE
+let currentDropsheableAnalysisText = '';
+
+async function triggerDropsheableAnalysis() {
+  const query = document.getElementById('dropsheableQueryInput').value.trim();
+  const mode = document.querySelector('input[name="dropsheableMode"]:checked')?.value || 'producto';
+
+  if (!query) {
+    alert("Por favor ingresa un producto o proveedor para analizar.");
+    return;
+  }
+
+  const resultCard = document.getElementById('dropsheableResultCard');
+  const resultBody = document.getElementById('dropsheableResultBody');
+  resultCard.style.display = 'block';
+  resultBody.innerHTML = '<div style="text-align:center; padding:15px; color:#0284c7;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:1.8rem; margin-bottom:8px;"></i><p>Analizando catálogo de Dropsheable, fletes y márgenes...</p></div>';
+
+  try {
+    const res = await fetch('/api/admin/dropsheable/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode, query })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Error en el análisis');
+
+    currentDropsheableAnalysisText = data.analysis;
+    resultBody.innerText = data.analysis;
+  } catch (err) {
+    resultBody.innerHTML = `<p style="color:red;"><i class="fa-solid fa-triangle-exclamation"></i> ${err.message}</p>`;
+  }
+}
+
+function copyDropsheableAnalysis() {
+  if (!currentDropsheableAnalysisText) return;
+  navigator.clipboard.writeText(currentDropsheableAnalysisText).then(() => {
+    alert("¡Análisis copiado al portapapeles!");
+  }).catch(() => {
+    alert("Copia manualmente el texto.");
+  });
+}
+
 

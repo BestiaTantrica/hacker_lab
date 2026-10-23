@@ -157,3 +157,29 @@ Devuelve una respuesta estructurada, fácil de leer, con viñetas y consejos con
 """
     advice, model_used = execute_gemini_cascade(prompt, settings, is_json=False)
     return {"advice": advice, "model_used": model_used}
+
+def analyze_dropsheable_query(mode: str, query: str, settings: Dict[str, Any]) -> Dict[str, Any]:
+    """Analyzes products, suppliers, shipping, and margins for Dropsheable Argentina."""
+    prompt = f"""
+Eres el director de abastecimiento y compras mayoristas para la tienda EcoMarvex (ecomarvex.com), experto absoluto en Dropsheable Argentina (dropsheable.com.ar).
+
+Modo de consulta: {mode} (buscar proveedores para un producto / evaluar proveedor o categoría)
+Consulta del usuario: "{query}"
+
+Tu objetivo es darle una respuesta técnica, comercial y operativa precisa para el mercado argentino:
+1. **Análisis de Costos y Márgenes:**
+   - Precio de costo mayorista típico en Dropsheable vs. precio de reventa competitivo en Argentina (Mercado Libre y tiendas online).
+   - Margen bruto y neto recomendado (teniendo en cuenta comisiones de pasarela de pago ~6% y logística).
+2. **Impacto de la Logística y Envíos (¡Clave!):**
+   - Dónde suelen estar radicados estos proveedores (CABA, GBA, interior).
+   - Peso/volumen estimado del paquete y costo aproximado de flete con Andreani / Correo Argentino ($5.500 - $9.000 ARS).
+   - Regla de oro: ¿Conviene vender este producto solo o en combo para absorber el flete?
+3. **Criterios para elegir al Proveedor en Dropsheable:**
+   - ¿Qué mirar en la ficha del proveedor en dropsheable.com.ar? (Stock mínimo recomendado >20 unidades para evitar quiebres, tiempo de despacho <24-48hs, packaging neutro sin marcas ajenas).
+4. **Plan de Acción para Cargar en EcoMarvex:**
+   - Recomendación de título vendedor, categoría y público objetivo.
+
+Devuelve una respuesta estructurada con títulos claros, viñetas y tono argentino profesional.
+"""
+    advice, model_used = execute_gemini_cascade(prompt, settings, is_json=False)
+    return {"analysis": advice, "model_used": model_used}
