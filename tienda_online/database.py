@@ -29,11 +29,25 @@ def init_db():
         stock INTEGER DEFAULT 10,
         supplier_sku TEXT,
         supplier_url TEXT,
+        supplier_name TEXT DEFAULT 'Dropsheable Mayorista',
+        shipping_origin TEXT DEFAULT 'CABA / GBA',
+        dispatch_time TEXT DEFAULT '24-48 hs hábiles',
         featured INTEGER DEFAULT 0,
         active INTEGER DEFAULT 1,
         created_at TEXT
     )
     """)
+    
+    # Migraciones seguras para productos
+    for col, col_def in [
+        ("supplier_name", "TEXT DEFAULT 'Dropsheable Mayorista'"),
+        ("shipping_origin", "TEXT DEFAULT 'CABA / GBA'"),
+        ("dispatch_time", "TEXT DEFAULT '24-48 hs hábiles'")
+    ]:
+        try:
+            c.execute(f"ALTER TABLE products ADD COLUMN {col} {col_def}")
+        except Exception:
+            pass
     
     # Tabla de Pedidos
     c.execute("""

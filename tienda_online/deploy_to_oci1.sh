@@ -64,7 +64,7 @@ sudo systemctl enable --now tienda
 sudo systemctl restart tienda
 
 # 4. Configurar Nginx Reverse Proxy (con soporte SSL LetsEncrypt si existe)
-if [ -d "/etc/letsencrypt/live/ecomarvex.com" ]; then
+if sudo test -d "/etc/letsencrypt/live/ecomarvex.com"; then
 sudo tee /etc/nginx/sites-available/tienda > /dev/null << 'NGINX'
 server {
     listen 80 default_server;

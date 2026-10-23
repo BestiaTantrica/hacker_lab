@@ -19,12 +19,14 @@ function updateCartBadge() {
   if (badge) badge.innerText = count;
 }
 
-function addToCart(id, title, price, image) {
+function addToCart(id, title, price, image, origin = 'CABA / GBA', supplier = 'Dropsheable Mayorista') {
   const existing = cart.find(item => item.id === id);
   if (existing) {
     existing.quantity += 1;
+    if (!existing.origin) existing.origin = origin;
+    if (!existing.supplier) existing.supplier = supplier;
   } else {
-    cart.push({ id, title, price, image, quantity: 1 });
+    cart.push({ id, title, price, image, origin, supplier, quantity: 1 });
   }
   saveCart();
   
@@ -65,13 +67,16 @@ function toggleCart() {
 
 function renderCartDrawer() {
   const list = document.getElementById('cartItemsList');
+  const alertEl = document.getElementById('cartLogisticsAlert');
   const subtotalEl = document.getElementById('cartSubtotal');
+  const shippingEl = document.getElementById('cartShipping');
   const totalEl = document.getElementById('cartTotal');
   const checkoutBtn = document.getElementById('checkoutBtn');
   
   if (!list) return;
 
   if (cart.length === 0) {
+    if (alertEl) alertEl.innerHTML = '';
     list.innerHTML = `
       <div class="cart-empty">
         <i class="fa-solid fa-basket-shopping"></i>
@@ -79,6 +84,7 @@ function renderCartDrawer() {
       </div>
     `;
     subtotalEl.innerText = '$0';
+    if (shippingEl) shippingEl.innerText = '$0';
     totalEl.innerText = '$0';
     checkoutBtn.disabled = true;
     return;
@@ -88,12 +94,14 @@ function renderCartDrawer() {
   list.innerHTML = cart.map(item => {
     const lineTotal = item.price * item.quantity;
     subtotal += lineTotal;
+    const itemOrigin = item.origin || 'CABA / GBA';
     return `
       <div class="cart-item">
         <img src="${item.image || 'https://via.placeholder.com/60'}" class="cart-item-img" alt="${item.title}">
         <div class="cart-item-info">
           <div class="cart-item-title">${item.title}</div>
           <div class="cart-item-price">$${item.price.toLocaleString('es-AR')}</div>
+          <small style="font-size:0.72rem; color:#64748b;"><i class="fa-solid fa-location-dot"></i> ${itemOrigin}</small>
         </div>
         <div class="cart-item-qty">
           <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
@@ -105,8 +113,57 @@ function renderCartDrawer() {
     `;
   }).join('');
 
+  // Análisis Logístico de Orígenes de Envío
+  const cfg = window.STORE_CONFIG || { shippingFlatRate: 0, freeShippingMin: 0 };
+  const origins = [...new Set(cart.map(i => i.origin || 'CABA / GBA'))];
+  const packageCount = origins.length;
+
+  if (alertEl) {
+    if (packageCount === 1) {
+      alertEl.innerHTML = `
+        <div class="logistics-box unified">
+          <i class="fa-solid fa-boxes-packing"></i>
+          <div>
+            <strong>¡Envío Unificado! (1 solo flete)</strong>
+            <p>Todos tus productos salen del depósito <strong>${origins[0]}</strong> en un único paquete.</p>
+          </div>
+        </div>
+      `;
+    } else {
+      alertEl.innerHTML = `
+        <div class="logistics-box multi">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <div>
+            <strong>Despacho Multi-Depósito (${packageCount} bultos)</strong>
+            <p>Tus productos provienen de orígenes distintos: <strong>${origins.join(', ')}</strong>. Se despacharán en paquetes separados.</p>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Cálculo automático de costo de envío
+  let shippingCost = 0;
+  if (cfg.shippingFlatRate > 0) {
+    if (cfg.freeShippingMin > 0 && subtotal >= (cfg.freeShippingMin * packageCount)) {
+      shippingCost = 0;
+    } else {
+      shippingCost = cfg.shippingFlatRate * packageCount;
+    }
+  }
+
   subtotalEl.innerText = `$${subtotal.toLocaleString('es-AR')}`;
-  totalEl.innerText = `$${subtotal.toLocaleString('es-AR')}`;
+  
+  if (shippingEl) {
+    if (shippingCost === 0) {
+      shippingEl.innerHTML = `<span style="color:#10b981; font-weight:700;">¡Bonificado!</span>`;
+    } else {
+      shippingEl.innerHTML = `$${shippingCost.toLocaleString('es-AR')} <small style="color:#64748b">(${packageCount} paquete${packageCount > 1 ? 's' : ''})</small>`;
+    }
+  }
+
+  const finalTotal = subtotal + shippingCost;
+  totalEl.innerText = `$${finalTotal.toLocaleString('es-AR')}`;
   checkoutBtn.disabled = false;
 }
 
@@ -143,12 +200,32 @@ function setupSearch() {
   });
 }
 
-// Checkout Modal
 function openCheckoutModal() {
   if (cart.length === 0) return;
   toggleCart(); // Cierra el drawer
   const subtotal = cart.reduce((acc, it) => acc + (it.price * it.quantity), 0);
-  document.getElementById('modalTotal').innerText = `$${subtotal.toLocaleString('es-AR')}`;
+  const cfg = window.STORE_CONFIG || { shippingFlatRate: 0, freeShippingMin: 0 };
+  const origins = [...new Set(cart.map(i => i.origin || 'CABA / GBA'))];
+  const packageCount = origins.length;
+
+  let shippingCost = 0;
+  if (cfg.shippingFlatRate > 0) {
+    if (cfg.freeShippingMin > 0 && subtotal >= (cfg.freeShippingMin * packageCount)) {
+      shippingCost = 0;
+    } else {
+      shippingCost = cfg.shippingFlatRate * packageCount;
+    }
+  }
+
+  const finalTotal = subtotal + shippingCost;
+  const modalTotalEl = document.getElementById('modalTotal');
+  if (modalTotalEl) {
+    if (shippingCost > 0) {
+      modalTotalEl.innerHTML = `$${finalTotal.toLocaleString('es-AR')} <span style="font-size:0.78rem; font-weight:500; color:#64748b;">(Subtotal: $${subtotal.toLocaleString('es-AR')} + Envío ${packageCount > 1 ? `[${packageCount} paquetes]` : ''}: $${shippingCost.toLocaleString('es-AR')})</span>`;
+    } else {
+      modalTotalEl.innerHTML = `$${finalTotal.toLocaleString('es-AR')} <span style="font-size:0.78rem; font-weight:600; color:#10b981;">(¡Envío Bonificado!)</span>`;
+    }
+  }
   document.getElementById('checkoutModal').classList.add('open');
 }
 

@@ -200,6 +200,7 @@ async function loadProducts() {
           <td>
             <strong>${p.title}</strong><br>
             <span style="font-size:0.75rem; color:#64748b;">SKU: ${p.supplier_sku || 'N/A'}</span>
+            <span style="font-size:0.75rem; color:#0369a1; margin-left:6px;"><i class="fa-solid fa-location-dot"></i> ${p.shipping_origin || 'CABA / GBA'}</span>
             ${p.supplier_url ? `<a href="${p.supplier_url}" target="_blank" style="font-size:0.75rem; margin-left:6px; color:#0284c7;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Dropsheable</a>` : ''}
           </td>
           <td><span class="status-pill" style="background:#e2e8f0; color:#334155;">${p.category}</span></td>
@@ -233,6 +234,9 @@ function calcProfit() {
 function openProductModal() {
   document.getElementById('prodEditId').value = '';
   document.getElementById('productForm').reset();
+  document.getElementById('prodSupplierName').value = 'Dropsheable Mayorista';
+  document.getElementById('prodShippingOrigin').value = 'CABA / GBA';
+  document.getElementById('prodDispatchTime').value = '24-48 hs hábiles';
   document.getElementById('productModalTitle').innerText = 'Nuevo Producto';
   calcProfit();
   document.getElementById('productModal').classList.add('open');
@@ -250,6 +254,9 @@ function editProduct(p) {
   document.getElementById('prodDiscountPrice').value = p.discount_price || 0;
   document.getElementById('prodSupplierSku').value = p.supplier_sku || '';
   document.getElementById('prodSupplierUrl').value = p.supplier_url || '';
+  document.getElementById('prodSupplierName').value = p.supplier_name || 'Dropsheable Mayorista';
+  document.getElementById('prodShippingOrigin').value = p.shipping_origin || 'CABA / GBA';
+  document.getElementById('prodDispatchTime').value = p.dispatch_time || '24-48 hs hábiles';
   document.getElementById('prodFeatured').checked = p.featured === 1;
   document.getElementById('prodActive').checked = p.active === 1;
 
@@ -276,6 +283,9 @@ async function saveProduct(e) {
     discount_price: parseFloat(document.getElementById('prodDiscountPrice').value) || 0,
     supplier_sku: document.getElementById('prodSupplierSku').value,
     supplier_url: document.getElementById('prodSupplierUrl').value,
+    supplier_name: document.getElementById('prodSupplierName').value || 'Dropsheable Mayorista',
+    shipping_origin: document.getElementById('prodShippingOrigin').value || 'CABA / GBA',
+    dispatch_time: document.getElementById('prodDispatchTime').value || '24-48 hs hábiles',
     featured: document.getElementById('prodFeatured').checked ? 1 : 0,
     active: document.getElementById('prodActive').checked ? 1 : 0
   };

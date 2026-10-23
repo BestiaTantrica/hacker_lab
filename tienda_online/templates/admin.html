@@ -548,6 +548,27 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre del Proveedor (Dropsheable)</label>
+            <input type="text" id="prodSupplierName" placeholder="Ej: Mayorista Central GBA" value="Dropsheable Mayorista">
+          </div>
+          <div class="form-group">
+            <label>Zona Logística / Depósito</label>
+            <select id="prodShippingOrigin">
+              <option value="CABA / GBA">CABA / Gran Buenos Aires</option>
+              <option value="Córdoba">Córdoba Capital</option>
+              <option value="Rosario / Santa Fe">Rosario / Santa Fe</option>
+              <option value="Mendoza">Mendoza</option>
+              <option value="Otra Zona">Otra Zona</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tiempo de Despacho</label>
+            <input type="text" id="prodDispatchTime" value="24-48 hs hábiles">
+          </div>
+        </div>
+
         <div class="form-row check-row">
           <label class="checkbox-label">
             <input type="checkbox" id="prodFeatured">

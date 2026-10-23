@@ -63,6 +63,9 @@ class ProductCreateUpdate(BaseModel):
     stock: int = 10
     supplier_sku: Optional[str] = ""
     supplier_url: Optional[str] = ""
+    supplier_name: Optional[str] = "Dropsheable Mayorista"
+    shipping_origin: Optional[str] = "CABA / GBA"
+    dispatch_time: Optional[str] = "24-48 hs hábiles"
     featured: int = 0
     active: int = 1
 
@@ -112,8 +115,13 @@ async def create_checkout(data: CheckoutRequest):
     subtotal = 0.0
     estimated_profit = 0.0
     
+    origins = set()
     for item in data.items:
-        c.execute("SELECT id, title, sale_price, cost_price, image_url, supplier_sku FROM products WHERE id=? AND active=1", (item.product_id,))
+        c.execute("""
+        SELECT id, title, sale_price, cost_price, image_url, supplier_sku,
+               supplier_name, shipping_origin, dispatch_time
+        FROM products WHERE id=? AND active=1
+        """, (item.product_id,))
         prod = c.fetchone()
         if not prod:
             continue
@@ -121,6 +129,9 @@ async def create_checkout(data: CheckoutRequest):
         line_total = prod["sale_price"] * item.quantity
         line_cost = prod["cost_price"] * item.quantity
         line_profit = line_total - line_cost
+        
+        origin = prod["shipping_origin"] or "CABA / GBA"
+        origins.add(origin)
         
         subtotal += line_total
         estimated_profit += line_profit
@@ -133,6 +144,9 @@ async def create_checkout(data: CheckoutRequest):
             "quantity": item.quantity,
             "line_total": line_total,
             "supplier_sku": prod["supplier_sku"],
+            "supplier_name": prod["supplier_name"] or "Dropsheable Mayorista",
+            "shipping_origin": origin,
+            "dispatch_time": prod["dispatch_time"] or "24-48 hs hábiles",
             "image_url": prod["image_url"]
         })
         
@@ -142,7 +156,16 @@ async def create_checkout(data: CheckoutRequest):
         
     flat_rate = float(settings.get("shipping_flat_rate", 0))
     free_min = float(settings.get("free_shipping_min", 0))
-    shipping_cost = 0.0 if (free_min > 0 and subtotal >= free_min) else flat_rate
+    package_count = max(1, len(origins))
+    
+    if flat_rate > 0:
+        if free_min > 0 and subtotal >= (free_min * package_count):
+            shipping_cost = 0.0
+        else:
+            shipping_cost = flat_rate * package_count
+    else:
+        shipping_cost = 0.0
+        
     total = subtotal + shipping_cost
     
     order_code = f"PED-{uuid.uuid4().hex[:6].upper()}"
@@ -314,12 +337,14 @@ async def admin_create_product(prod: ProductCreateUpdate):
     c.execute("""
     INSERT INTO products (
         title, description, category, image_url, cost_price, sale_price,
-        discount_price, stock, supplier_sku, supplier_url, featured, active, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        discount_price, stock, supplier_sku, supplier_url, supplier_name,
+        shipping_origin, dispatch_time, featured, active, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         prod.title, prod.description, prod.category, prod.image_url,
         prod.cost_price, prod.sale_price, prod.discount_price, prod.stock,
-        prod.supplier_sku, prod.supplier_url, prod.featured, prod.active, now_str
+        prod.supplier_sku, prod.supplier_url, prod.supplier_name,
+        prod.shipping_origin, prod.dispatch_time, prod.featured, prod.active, now_str
     ))
     conn.commit()
     prod_id = c.lastrowid
@@ -333,12 +358,14 @@ async def admin_update_product(prod_id: int, prod: ProductCreateUpdate):
     c.execute("""
     UPDATE products SET
         title=?, description=?, category=?, image_url=?, cost_price=?, sale_price=?,
-        discount_price=?, stock=?, supplier_sku=?, supplier_url=?, featured=?, active=?
+        discount_price=?, stock=?, supplier_sku=?, supplier_url=?, supplier_name=?,
+        shipping_origin=?, dispatch_time=?, featured=?, active=?
     WHERE id=?
     """, (
         prod.title, prod.description, prod.category, prod.image_url,
         prod.cost_price, prod.sale_price, prod.discount_price, prod.stock,
-        prod.supplier_sku, prod.supplier_url, prod.featured, prod.active, prod_id
+        prod.supplier_sku, prod.supplier_url, prod.supplier_name,
+        prod.shipping_origin, prod.dispatch_time, prod.featured, prod.active, prod_id
     ))
     conn.commit()
     conn.close()

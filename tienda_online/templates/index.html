@@ -88,6 +88,10 @@
         <div class="card-body">
           <h3 class="card-title">{{ p.title }}</h3>
           <p class="card-desc">{{ p.description }}</p>
+          <div class="product-logistics-tag">
+            <span class="origin-tag"><i class="fa-solid fa-location-dot"></i> {{ p.shipping_origin or 'CABA / GBA' }}</span>
+            <span class="dispatch-tag"><i class="fa-solid fa-clock"></i> {{ p.dispatch_time or '24-48 hs' }}</span>
+          </div>
           <div class="card-pricing">
             {% if p.discount_price > p.sale_price %}
               <span class="old-price">${{ "{:,.0f}".format(p.discount_price) }}</span>
@@ -96,7 +100,7 @@
           </div>
           <div class="card-footer">
             <span class="stock-info"><i class="fa-solid fa-circle-check"></i> Stock disponible</span>
-            <button class="add-to-cart-btn" onclick="addToCart({{ p.id }}, '{{ p.title|replace("'", "\\'") }}', {{ p.sale_price }}, '{{ p.image_url }}')">
+            <button class="add-to-cart-btn" onclick="addToCart({{ p.id }}, '{{ p.title|replace("'", "\\'") }}', {{ p.sale_price }}, '{{ p.image_url }}', '{{ p.shipping_origin or "CABA / GBA" }}', '{{ p.supplier_name or "Dropsheable Mayorista" }}')">
               <i class="fa-solid fa-plus"></i> Agregar
             </button>
           </div>
@@ -113,6 +117,8 @@
       <h3><i class="fa-solid fa-cart-shopping"></i> Tu Carrito</h3>
       <button class="close-cart-btn" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
     </div>
+
+    <div id="cartLogisticsAlert" class="cart-logistics-alert"></div>
 
     <div id="cartItemsList" class="cart-items-list">
       <!-- Items renderizados dinámicamente con JS -->
@@ -275,8 +281,14 @@
     <div class="footer-bottom">
       <p>&copy; 2026 {{ settings.store_name }}. Todos los derechos reservados.</p>
     </div>
-  </footer>
-
+  <script>
+    window.STORE_CONFIG = {
+      storeName: {{ settings.store_name|tojson }},
+      shippingFlatRate: {{ (settings.shipping_flat_rate or 0)|float }},
+      freeShippingMin: {{ (settings.free_shipping_min or 0)|float }},
+      shippingPolicyText: {{ (settings.shipping_policy_text or '')|tojson }}
+    };
+  </script>
   <script src="/static/js/store.js"></script>
 </body>
 </html>
