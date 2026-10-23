@@ -61,6 +61,14 @@ function switchTab(tab) {
     document.getElementById('tabProducts').classList.add('active');
     document.getElementById('pageTitle').innerText = 'Catálogo de Productos';
     loadProducts();
+  } else if (tab === 'ai_assistant') {
+    document.getElementById('tabAiAssistant').classList.add('active');
+    document.getElementById('pageTitle').innerText = 'Asistente & Marketing IA';
+    loadAiProductsDropdown();
+  } else if (tab === 'dropsheable') {
+    document.getElementById('tabDropsheable').classList.add('active');
+    document.getElementById('pageTitle').innerText = 'Centro de Proveedores Dropsheable';
+    loadSettings();
   } else if (tab === 'settings') {
     document.getElementById('tabSettings').classList.add('active');
     document.getElementById('pageTitle').innerText = 'Configuración del Negocio';
@@ -321,6 +329,12 @@ async function loadSettings() {
     document.getElementById('cfgShippingFreeMin').value = s.free_shipping_min || 0;
     document.getElementById('cfgShippingPolicy').value = s.shipping_policy_text || '';
     document.getElementById('cfgGeminiKey').value = s.gemini_api_key || '';
+    if (document.getElementById('cfgGeminiKeyBackup')) {
+      document.getElementById('cfgGeminiKeyBackup').value = s.gemini_api_key_backup || '';
+    }
+    if (document.getElementById('cfgDropsheableToken')) {
+      document.getElementById('cfgDropsheableToken').value = s.dropsheable_api_token || '';
+    }
   } catch (e) {
     console.error("Error cargando configuración:", e);
   }
@@ -341,7 +355,9 @@ async function saveSettings() {
     shipping_flat_rate: document.getElementById('cfgShippingFlat').value,
     free_shipping_min: document.getElementById('cfgShippingFreeMin').value,
     shipping_policy_text: document.getElementById('cfgShippingPolicy').value,
-    gemini_api_key: document.getElementById('cfgGeminiKey').value
+    gemini_api_key: document.getElementById('cfgGeminiKey').value,
+    gemini_api_key_backup: document.getElementById('cfgGeminiKeyBackup') ? document.getElementById('cfgGeminiKeyBackup').value : '',
+    dropsheable_api_token: document.getElementById('cfgDropsheableToken') ? document.getElementById('cfgDropsheableToken').value : ''
   };
 
   try {
@@ -403,4 +419,120 @@ function copyInstagramCopy() {
     alert("Copia manualmente el texto seleccionado.");
   });
 }
+
+// ASISTENTE & MARKETING IA (TAB DEDICADA)
+let allProductsCache = [];
+let currentAssistantText = '';
+
+async function loadAiProductsDropdown() {
+  const select = document.getElementById('aiSocialProductSelect');
+  if (!select) return;
+  select.innerHTML = '<option value="">Cargando productos...</option>';
+
+  try {
+    const res = await fetch('/api/admin/products');
+    allProductsCache = await res.json();
+
+    if (allProductsCache.length === 0) {
+      select.innerHTML = '<option value="">No hay productos cargados aún</option>';
+      return;
+    }
+
+    select.innerHTML = allProductsCache.map(p => 
+      `<option value="${p.id}">${p.title} - $${p.sale_price.toLocaleString('es-AR')}</option>`
+    ).join('');
+  } catch (e) {
+    select.innerHTML = '<option value="">Error cargando productos</option>';
+  }
+}
+
+function triggerAiSocialFromTab() {
+  const select = document.getElementById('aiSocialProductSelect');
+  const prodId = select ? select.value : '';
+  if (!prodId) {
+    alert("Selecciona un producto del menú desplegable.");
+    return;
+  }
+  const prod = allProductsCache.find(p => p.id == prodId);
+  const title = prod ? prod.title : 'Producto';
+  openAiGenerator(prodId, title);
+}
+
+async function triggerAiWhatsAppReply() {
+  const msg = document.getElementById('aiWaCustomerMessage').value.trim();
+  const prodTitle = document.getElementById('aiWaProductTitle').value.trim();
+  if (!msg) {
+    alert("Por favor ingresa la pregunta que te hizo el cliente.");
+    return;
+  }
+
+  showAssistantResult("Generando respuesta para WhatsApp con IA...", "Cargando...", true);
+
+  try {
+    const res = await fetch('/api/admin/ai/whatsapp-reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer_message: msg, product_title: prodTitle })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Error generando respuesta');
+
+    showAssistantResult(data.reply, `Modelo utilizado: ${data.model_used}`);
+  } catch (err) {
+    showAssistantResult(`Error: ${err.message}`, "Error", false);
+  }
+}
+
+async function triggerAiAdvisor() {
+  const q = document.getElementById('aiAdvisorQuestion').value.trim();
+  if (!q) {
+    alert("Por favor escribe tu consulta para el asesor de Dropshipping.");
+    return;
+  }
+
+  showAssistantResult("Consultando al Asesor Estratégico...", "Pensando...", true);
+
+  try {
+    const res = await fetch('/api/admin/ai/advisor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Error en la consulta');
+
+    showAssistantResult(data.advice, `Modelo utilizado: ${data.model_used}`);
+  } catch (err) {
+    showAssistantResult(`Error: ${err.message}`, "Error", false);
+  }
+}
+
+function showAssistantResult(text, badgeText, isLoading = false) {
+  const card = document.getElementById('aiAssistantResultCard');
+  const body = document.getElementById('aiAssistantResultBody');
+  const badge = document.getElementById('aiModelBadge');
+  if (!card || !body) return;
+
+  currentAssistantText = text;
+  badge.innerText = badgeText;
+  
+  if (isLoading) {
+    body.innerHTML = `<div style="text-align:center; padding:20px; color:#6366f1;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; margin-bottom:10px;"></i><p>${text}</p></div>`;
+  } else {
+    body.innerText = text;
+  }
+
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyAssistantResult() {
+  if (!currentAssistantText) return;
+  navigator.clipboard.writeText(currentAssistantText).then(() => {
+    alert("¡Copiado al portapapeles con éxito!");
+  }).catch(() => {
+    alert("Copia manualmente el texto.");
+  });
+}
+
 

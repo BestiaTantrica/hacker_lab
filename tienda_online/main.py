@@ -408,6 +408,10 @@ async def admin_save_settings(payload: dict):
         update_setting(k, str(v))
     return {"success": True}
 
+from ai_service import (
+    generate_social_content, generate_whatsapp_reply, ask_dropshipping_advisor
+)
+
 @app.post("/api/admin/generate-content")
 async def admin_generate_content(payload: dict):
     product_id = payload.get("product_id")
@@ -421,42 +425,33 @@ async def admin_generate_content(payload: dict):
     if not prod:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
         
-    api_key = settings.get("gemini_api_key", "").strip() or os.getenv("GEMINI_API_KEY", "")
-    if not api_key:
-        raise HTTPException(status_code=400, detail="Por favor configura tu Gemini API Key en Configuración de Negocio.")
-    
-    prompt = f"""
-Eres el estratega de marketing digital y viral de "EcoMarvex" (tienda online argentina en ecomarvex.com).
-Tu tarea es armar el paquete de contenido para redes sociales para vender el siguiente producto:
-
-- Producto: {prod['title']}
-- Categoría: {prod['category']}
-- Precio de venta al público: ${prod['sale_price']:,.0f} ARS
-- Descripción: {prod['description']}
-
-Genera una respuesta en formato JSON con la siguiente estructura exacta:
-{{
-  "tiktok_hook": "Frase impactante de 3 segundos para captar la atención en TikTok o Instagram Reel",
-  "tiktok_script": "Guión rápido de 30-45 segundos explicando qué mostrar y decir (paso a paso)",
-  "instagram_caption": "Texto completo para el post de Instagram con emojis, beneficios del producto y llamada a comprar en ecomarvex.com (con cuotas y envíos a todo el país)",
-  "hashtags": "Lista de 8-10 hashtags virales (#EcoMarvex, #DropshippingArgentina, #Ofertas, etc.)",
-  "selling_points": ["Beneficio clave 1", "Beneficio clave 2", "Beneficio clave 3"]
-}}
-Solo devuelve el JSON puro, sin bloques markdown de código ni texto adicional.
-"""
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={api_key}"
-        res = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=15)
-        if res.status_code == 200:
-            raw_text = res.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-            if raw_text.startswith("```"):
-                raw_text = raw_text.split("\n", 1)[1]
-            if raw_text.endswith("```"):
-                raw_text = raw_text.rsplit("\n", 1)[0]
-            clean_json = json.loads(raw_text.strip())
-            return clean_json
-        else:
-            raise HTTPException(status_code=500, detail=f"Error de Gemini API: {res.text}")
+        return generate_social_content(dict(prod), settings)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generando contenido: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/ai/whatsapp-reply")
+async def admin_ai_whatsapp(payload: dict):
+    message = payload.get("customer_message", "").strip()
+    product_title = payload.get("product_title", "").strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="El mensaje del cliente no puede estar vacío.")
+    
+    settings = get_settings()
+    try:
+        return generate_whatsapp_reply(message, product_title, settings)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/ai/advisor")
+async def admin_ai_advisor(payload: dict):
+    question = payload.get("question", "").strip()
+    if not question:
+        raise HTTPException(status_code=400, detail="La consulta no puede estar vacía.")
+        
+    settings = get_settings()
+    try:
+        return ask_dropshipping_advisor(question, settings)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

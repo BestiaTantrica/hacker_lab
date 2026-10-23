@@ -85,7 +85,10 @@ def init_db():
         "free_shipping_min": "0",
         "shipping_policy_text": "Envío a convenir / a cargo del comprador (Andreani o Correo Argentino a domicilio o sucursal)",
         "currency_symbol": "$",
-        "gemini_api_key": os.getenv("GEMINI_API_KEY", "")
+        "gemini_api_key": os.getenv("GEMINI_API_KEY", ""),
+        "gemini_api_key_backup": "",
+        "dropsheable_api_token": "",
+        "whatsapp_auto_reply": "1"
     }
     
     for k, v in defaults.items():
