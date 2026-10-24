@@ -299,6 +299,66 @@ GEOMETRIA_CATALOG = {
             "LIGHTING: Piercing diagonal shaft of warm amber chiaroscuro light crossing the chart surface, surrounded by 85% pitch-black bitumen void (#000000). "
             "Heavy impasto, cracked oil glaze on linen canvas, authentic Roberto Ferri, 8k"
         )
+    },
+    "elemento_01_fuego_tetraedro": {
+        "folder": "03_Geometria_y_Sigilos/03_Elementos_y_Solidos_Platonicos",
+        "width": 1024, "height": 1024, "seed": 3001,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred geometric study of the Fire Element as the Platonic Tetrahedron, strictly no human figures, completely pure fine art. "
+            "A regular tetrahedron forged of glowing red-hot gold and hammered brass levitating over a dark stone altar. "
+            "Inside the translucent geometric facets burns a living sacred flame of golden-orange plasma, casting intense amber reflections "
+            "onto cold dark basalt flagstones. LIGHTING: Concentrated firelight chiaroscuro against 90% absolute pitch-black bitumen oil void (#000000). "
+            "Heavy impasto, cracked oil glaze on linen canvas, authentic Roberto Ferri museum masterpiece, 8k"
+        )
+    },
+    "elemento_02_tierra_cubo": {
+        "folder": "03_Geometria_y_Sigilos/03_Elementos_y_Solidos_Platonicos",
+        "width": 1024, "height": 1024, "seed": 3002,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred geometric study of the Earth Element as the Platonic Hexahedron (Cube), strictly no human figures, completely pure fine art. "
+            "A colossal monolithic cube carved of polished dark green serpentine stone and veins of raw malachite, resting firmly upon ancient bedrock. "
+            "Fine alchemical fissures run through the edges with roots of fossilized stone and gold leaf creeping into the cracks. "
+            "LIGHTING: Deep directional amber-gold raking light carving the cubic facets against 90% flat pitch-black bitumen darkness (#000000). "
+            "Tactile raw oil on rough linen canvas, heavy impasto, authentic Roberto Ferri, 8k"
+        )
+    },
+    "elemento_03_aire_octaedro": {
+        "folder": "03_Geometria_y_Sigilos/03_Elementos_y_Solidos_Platonicos",
+        "width": 1024, "height": 1024, "seed": 3003,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred geometric study of the Air Element as the Platonic Octahedron, strictly no human figures, completely pure fine art. "
+            "An elegant eight-sided regular octahedron crafted of slender oxidized platinum filigree and transparent blue-sapphire crystal "
+            "hovering effortlessly in the void. Inside the facets swirls a luminous vapor of silver wind and morning mist. "
+            "LIGHTING: Ethereal silver-white and cyan rim lighting tracing the platinum edges against 90% absolute pitch-black bitumen darkness (#000000). "
+            "Heavy impasto, authentic Roberto Ferri, 8k"
+        )
+    },
+    "elemento_04_agua_icosaedro": {
+        "folder": "03_Geometria_y_Sigilos/03_Elementos_y_Solidos_Platonicos",
+        "width": 1024, "height": 1024, "seed": 3004,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred geometric study of the Water Element as the Platonic Icosahedron, strictly no human figures, completely pure fine art. "
+            "A twenty-faceted regular icosahedron sculpted of pale translucent moon-selenita stone and mother-of-pearl. "
+            "Across its gleaming facets cling glistening dew drops and ribbons of still, mirror-dark water that drip slowly into the void. "
+            "LIGHTING: Cold lunar-silver chiaroscuro with liquid caustic reflections against 90% flat pitch-black bitumen oil darkness (#000000). "
+            "Tactile raw oil on rough linen canvas, heavy impasto, 8k"
+        )
+    },
+    "elemento_05_eter_dodecaedro": {
+        "folder": "03_Geometria_y_Sigilos/03_Elementos_y_Solidos_Platonicos",
+        "width": 1024, "height": 1024, "seed": 3005,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred geometric study of the Quintessence / Aether Element as the Platonic Dodecahedron, strictly no human figures, completely pure fine art. "
+            "A twelve-sided regular dodecahedron forged of pure rock crystal and celestial gold filigree. "
+            "Trapped within the crystalline dodecahedron is a miniature glowing stellar nebula with spinning cosmic dust and golden star points. "
+            "LIGHTING: Spectacular cosmic chiaroscuro radiating outward from the dodecahedron against 90% absolute pitch-black bitumen void (#000000). "
+            "Heavy impasto, authentic Roberto Ferri museum masterpiece, 8k"
+        )
     }
 }
 
@@ -309,14 +369,39 @@ def convert_to_webp(src_file, dst_file):
     ]
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-def run_batch(catalog, token):
+def get_tokens_pool():
+    tokens = []
+    # Prioridad: HF_TOKEN_1 a HF_TOKEN_6, luego HF_TOKEN
+    for i in range(1, 7):
+        t = os.getenv(f"HF_TOKEN_{i}")
+        if t and t not in tokens:
+            tokens.append(t)
+    main_t = os.getenv("HF_TOKEN")
+    if main_t and main_t not in tokens:
+        tokens.append(main_t)
+    return tokens
+
+def run_batch(catalog):
     try:
         from gradio_client import Client
     except ImportError:
         print("❌ Error: gradio_client no está instalado en este entorno.")
         return
 
-    client = Client("black-forest-labs/FLUX.1-dev", hf_token=token)
+    tokens = get_tokens_pool()
+    if not tokens:
+        print("❌ Error: No se encontraron tokens HF_TOKEN en el entorno.")
+        return
+
+    token_idx = 0
+    client = None
+
+    def get_client(idx):
+        t = tokens[idx % len(tokens)]
+        print(f"🔑 Conectando con token #{idx % len(tokens) + 1} ({t[:10]}...)...")
+        return Client("black-forest-labs/FLUX.1-dev", token=t)
+
+    client = get_client(token_idx)
 
     for name, item in catalog.items():
         dst_folder = VAULT_BASE / item["folder"]
@@ -328,33 +413,46 @@ def run_batch(catalog, token):
             continue
 
         print(f"\n🎨 Generando {name} (FLUX.1-dev)...")
-        try:
-            result = client.predict(
-                prompt=item["prompt"],
-                seed=item["seed"],
-                randomize_seed=False,
-                width=item["width"],
-                height=item["height"],
-                guidance_scale=3.5,
-                num_inference_steps=28,
-                api_name="/infer"
-            )
-            raw_img = Path(result[0])
-            print(f"  ✓ Imagen generada: {raw_img}")
-            convert_to_webp(raw_img, final_webp)
-            print(f"  ✅ WebP guardado con éxito: {final_webp} ({final_webp.stat().st_size // 1024} KB)")
-        except Exception as e:
-            print(f"  ❌ Error generando {name}: {e}")
+        success = False
+        attempts = 0
+
+        while not success and attempts < len(tokens):
+            try:
+                result = client.predict(
+                    prompt=item["prompt"],
+                    seed=item["seed"],
+                    randomize_seed=False,
+                    width=item["width"],
+                    height=item["height"],
+                    guidance_scale=3.5,
+                    num_inference_steps=28,
+                    api_name="/infer"
+                )
+                raw_img = Path(result[0])
+                print(f"  ✓ Imagen generada: {raw_img}")
+                convert_to_webp(raw_img, final_webp)
+                print(f"  ✅ WebP guardado con éxito: {final_webp} ({final_webp.stat().st_size // 1024} KB)")
+                success = True
+            except Exception as e:
+                err_str = str(e)
+                print(f"  ⚠️ Error con token actual: {err_str}")
+                if "ZeroGPU runs limit" in err_str or "exceeded" in err_str.lower():
+                    token_idx += 1
+                    attempts += 1
+                    if attempts < len(tokens):
+                        print(f"  🔄 Rotando a token #{token_idx % len(tokens) + 1}...")
+                        client = get_client(token_idx)
+                    else:
+                        print("  ❌ Todos los tokens han agotado su cuota de ZeroGPU.")
+                else:
+                    print(f"  ❌ Error irrecuperable en {name}: {e}")
+                    break
 
 def main():
     parser = argparse.ArgumentParser(description="Generador automatizado de Casas y Geometría Sagrada.")
     parser.add_argument("--block", choices=["casas", "geometria", "all"], default="all")
     parser.add_argument("--dry-run", action="store_true", help="Solo imprimir inventario y prompts")
     args = parser.parse_args()
-
-    token = os.getenv("HF_TOKEN_6") or os.getenv("HF_TOKEN")
-    if not token and not args.dry_run:
-        print("⚠️ Advertencia: No se encontró HF_TOKEN_6 ni HF_TOKEN en el entorno.")
 
     selected_catalog = {}
     if args.block in ["casas", "all"]:
@@ -368,7 +466,7 @@ def main():
             print(f" - [{k}] -> {v['folder']}/{k}.webp")
         return
 
-    run_batch(selected_catalog, token)
+    run_batch(selected_catalog)
 
 if __name__ == "__main__":
     main()
