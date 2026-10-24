@@ -60,3 +60,26 @@ Para que ensamble a la perfección con el tenebrismo de Roberto Ferri de las fig
 
 ## 3. INTEGRACIÓN EN LA APP
 En *Astrology Factory*, la figura humana de Roberto Ferri (producida en el hilo principal) y el símbolo inorgánico de ChatGPT (producido en este hilo) se montarán en capas, perteneciendo ambos a la misma suite canónica: **`Glifo_Maestro/`**.
+
+---
+
+## 4. REGISTRO DE AUDITORÍA Y CERTIFICACIÓN DE ACTIVOS
+
+### Bloque 02: Signos Zodiacales (COMPLETADO AL 100% · 23-OCT-2026)
+- **Ruta:** `/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/Imagenes/Glifo_Maestro/02_Signos_Zodiacales_Simbolos/`
+- **Total:** 84 activos WebP en producción (12 Glifos 1:1 + 72 Paisajes Macrocósmicos 9:16).
+- **Desglose por Signo:**
+  - `01_Aries`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `02_Tauro`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `03_Geminis`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `04_Cancer`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `05_Leo`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `06_Virgo`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `07_Libra`: 1 Glifo + 6 Paisajes (7 WebPs) *(+5 arquitecturas en descartes resguardadas como reserva para Casa 7)*
+  - `08_Escorpio`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `09_Sagitario`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `10_Capricornio`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `11_Acuario`: 1 Glifo + 6 Paisajes (7 WebPs)
+  - `12_Piscis`: 1 Glifo + 6 Paisajes (7 WebPs)
+- **Respaldo:** Todos los archivos fuente PNG originales están archivados dentro de cada subcarpeta `descartes_exploratorios/`.
+
