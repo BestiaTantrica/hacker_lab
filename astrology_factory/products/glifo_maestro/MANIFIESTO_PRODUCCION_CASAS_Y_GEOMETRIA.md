@@ -234,11 +234,33 @@ masterpiece classical oil painting by Roberto Ferri, vertical 9:16 composition. 
 
 ---
 
+### Subcarpeta 4: Sellos Herméticos y Cuadrantes (`04_Sellos_Hermeticos_y_Cuadrantes`)
+
+1. **Cuadrante 1 (Casas 1-3 · Emergencia del Yo):** `cuadrante_01_emergencia_yo.webp`
+   * *Disco de basalto negro con el sector inferior izquierdo en relieve de oro radiante y rayos ámbar.*
+2. **Cuadrante 2 (Casas 4-6 · Intimidad y Origen):** `cuadrante_02_intimidad_origen.webp`
+   * *Disco de pizarra oscura con el sector inferior derecho iluminado por cobre, fuego de raíz y sigilos de Cáncer, Leo y Virgo.*
+3. **Cuadrante 3 (Casas 7-9 · Encuentro con el Otro):** `cuadrante_03_encuentro_social.webp`
+   * *Disco de roca volcánica con el sector superior derecho en filigrana de bronce y luz de crepúsculo violeta.*
+4. **Cuadrante 4 (Casas 10-12 · Destino y Trascendencia):** `cuadrante_04_destino_universal.webp`
+   * *Disco de basalto con el sector superior izquierdo en platino y pan de oro bajo haz cenital perpendicular.*
+5. **Hemisferio Diurno / Sur (Casas 7-12 · Mundo Visible):** `hemisferio_diurno_sur_visible.webp`
+   * *La mitad superior de la rueda astrológica resplandeciendo en luz solar de oro blanco sobre las sombras inferiores.*
+6. **Hemisferio Nocturno / Norte (Casas 1-6 · Mundo Privado):** `hemisferio_nocturno_norte_privado.webp`
+   * *La mitad inferior de la rueda astrológica resplandeciendo en luz lunar y ámbar subterránea mientras el cielo superior calla.*
+7. **Sello Hermético de la Tabla Esmeralda (As Above, So Below):** `sello_hermetico_tabla_esmeralda.webp`
+   * *Ouroboros de bronce alrededor de los triángulos sagrados entrelazados en roca de esmeralda y pizarra.*
+8. **La Gran Cruz Cardinal (El Eje del Mundo):** `cruz_cardinal_eje_del_mundo.webp`
+   * *Intersección monumental del Horizonte (ASC-DSC) y Meridiano (MC-IC) con orbe de fuego alquímico en el cruce.*
+
+---
+
 # PARTE 3: SCRIPT DE AUTOMATIZACIÓN
 
-Archivo listo para ejecución automatizada en lote:
-`scripts/generar_casas_y_geometria.py`
+Archivo de ejecución automatizada por lotes:
+`products/glifo_maestro/generar_casas_y_geometria.py`
 
-* Soporta cuota ZeroGPU de Hugging Face (`HF_TOKEN_6` o `HF_TOKEN`) o fallback nativo con `generate_image`.
+* Soporta rotación automática en el pool de tokens ZeroGPU (`HF_TOKEN_1` a `HF_TOKEN_6`).
 * Convierte automáticamente vía `/usr/bin/ffmpeg` a `.webp` de calidad 95.
-* Deposita directamente los archivos en sus carpetas respectivas del Vault de MediaContingencia.
+* Deposita directamente los archivos en sus carpetas respectivas del Vault de MediaContingencia sin descargas manuales.
+
