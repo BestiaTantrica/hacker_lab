@@ -362,6 +362,113 @@ GEOMETRIA_CATALOG = {
     }
 }
 
+SELLOS_CATALOG = {
+    "cuadrante_01_emergencia_yo": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4001,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the First Quadrant of the Natal Chart (Houses 1, 2, 3: The Emergence of the Self), "
+            "strictly no human figures, completely pure fine art. A monumental circular slab of black polished basalt divided "
+            "into four quadrants by fine chiseled lines. The lower-left quadrant (Houses 1 to 3) is carved in raised relief "
+            "and ablaze with radiant molten antique gold leaf and luminous amber rays bursting outward, while the remaining three "
+            "quadrants rest in deep dark stone shadow. Ancient Latin epigraphy chiseled along the arc. "
+            "LIGHTING: Intense warm golden chiaroscuro focused exclusively on the first quadrant, emerging from 90% pitch-black "
+            "bitumen oil void (#000000). Heavy impasto, cracked glaze on linen canvas, authentic Roberto Ferri, 8k"
+        )
+    },
+    "cuadrante_02_intimidad_origen": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4002,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the Second Quadrant of the Natal Chart (Houses 4, 5, 6: The Sanctuary of Origin and Inner Creation), "
+            "strictly no human figures, completely pure fine art. A monumental circular disc of dark grey slate divided into four quadrants. "
+            "The lower-right quadrant (Houses 4 to 6) glows with rich copper, warm rose-amber light, and subterranean root veins "
+            "radiating warm ember light, while the other three quadrants dissolve into quiet dark stone. Delicate alchemical sigils of "
+            "Cancer, Leo, and Virgo chiseled into the glowing sector. LIGHTING: Deep low-key chiaroscuro with warm subterranean firelight "
+            "on the second quadrant against 90% absolute pitch-black bitumen darkness (#000000). Heavy impasto, authentic Roberto Ferri, 8k"
+        )
+    },
+    "cuadrante_03_encuentro_social": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4003,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the Third Quadrant of the Natal Chart (Houses 7, 8, 9: The Encounter with the Other and Social Horizon), "
+            "strictly no human figures, completely pure fine art. A monumental circular stone disc of black volcanic basalt. "
+            "The upper-right quadrant (Houses 7 to 9) is sculpted in exquisite filigree of burnished bronze and twilight-violet light, "
+            "reflecting a glowing horizon of sunset and distant stars, while the remaining sectors remain in deep shadow. "
+            "LIGHTING: Dramatic twilight chiaroscuro with rose-gold and amethyst rays illuminating the third quadrant against 90% "
+            "pitch-black bitumen oil darkness (#000000). Tactile raw oil on rough linen canvas, heavy impasto, 8k"
+        )
+    },
+    "cuadrante_04_destino_universal": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4004,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the Fourth Quadrant of the Natal Chart (Houses 10, 11, 12: Universal Destiny, Zenith, and Transcendence), "
+            "strictly no human figures, completely pure fine art. A monumental circular disc of polished black basalt. "
+            "The upper-left quadrant (Houses 10 to 12) is rendered in raised relief of pure white platinum and radiant gold leaf, struck "
+            "by a brilliant vertical beam of zenith light, while the other three sectors dissolve into the dark void. "
+            "LIGHTING: Spectacular perpendicular zenith chiaroscuro cutting the fourth quadrant against 90% flat pitch-black bitumen void (#000000). "
+            "Heavy impasto brushstrokes, cracked glaze on linen, authentic Roberto Ferri, 8k"
+        )
+    },
+    "hemisferio_diurno_sur_visible": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4005,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the Upper Diurnal Hemisphere (Houses 7 through 12: The Visible World and Public Sky), "
+            "strictly no human figures, completely pure fine art. An archaic astrological wheel carved in dark stone divided horizontally "
+            "by the great Axis of the Horizon. The entire upper half (Southern Hemisphere) is illuminated by a radiant golden solar aura, "
+            "with its houses and constellation symbols gleaming in molten gold leaf, while the entire lower half rests in complete pitch-black "
+            "subterranean shadow. LIGHTING: Powerful high-contrast chiaroscuro dividing the upper light from lower darkness against 90% "
+            "pitch-black bitumen void (#000000). Tactile oil on rough linen, heavy impasto, 8k"
+        )
+    },
+    "hemisferio_nocturno_norte_privado": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4006,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred astrological study of the Lower Nocturnal Hemisphere (Houses 1 through 6: The Unconscious, Private Sanctuary, and Incubation), "
+            "strictly no human figures, completely pure fine art. An archaic astrological wheel carved in dark stone divided horizontally by the Horizon. "
+            "The entire lower half (Northern Hemisphere) is aglow with mystical moonlit silver, deep amber embers, and subterranean living water reflections, "
+            "while the upper half vanishes into cold impenetrable black night. LIGHTING: Subterranean chiaroscuro glowing upward from the lower half "
+            "against 90% absolute pitch-black bitumen oil void (#000000). Heavy impasto, cracked oil glaze on linen, 8k"
+        )
+    },
+    "sello_hermetico_tabla_esmeralda": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4007,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred esoteric study of the Great Hermetic Seal of the Emerald Tablet (As Above, So Below), strictly no human figures, "
+            "completely pure fine art. A monumental seal carved into a slab of raw crystalline green emerald and black slate. "
+            "At the center, the Ouroboros serpent of antique dark bronze bites its tail in a perfect circle, enclosing two interlocking "
+            "sacred triangles of gold and silver forming the Hexagram of Macrocosm and Microcosm. Faint archaic Latin inscriptions: "
+            "'QUOD EST SUPERIUS EST SICUT QUOD EST INFERIUS' chiseled with gold leaf. LIGHTING: Mysterious directional emerald-green and "
+            "warm golden chiaroscuro against 90% flat pitch-black bitumen darkness (#000000). Heavy impasto, authentic Roberto Ferri, 8k"
+        )
+    },
+    "cruz_cardinal_eje_del_mundo": {
+        "folder": "03_Geometria_y_Sigilos/04_Sellos_Hermeticos_y_Cuadrantes",
+        "width": 1024, "height": 1024, "seed": 4008,
+        "prompt": (
+            "masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. "
+            "Sacred architectural study of the Great Cardinal Cross (The World Axis: Horizon ASC-DSC and Meridian MC-IC), "
+            "strictly no human figures, completely pure fine art. Two massive intersecting stone beams of rough black basalt and forged iron "
+            "forming an immense four-pointed cosmic cross levitating over flagstones. At the four cardinal tips gleam the archaic symbols: "
+            "Ascendant (Dawn Gold), Midheaven (Zenith Platinum), Descendant (Dusk Bronze), Imum Coeli (Nocturnal Silver). At the central intersection "
+            "glows a concentrated orb of living alchemical fire. LIGHTING: Spectacular four-way directional chiaroscuro cutting through "
+            "90% absolute pitch-black bitumen darkness (#000000). Heavy impasto brushstrokes, authentic Roberto Ferri museum masterpiece, 8k"
+        )
+    }
+}
+
 def convert_to_webp(src_file, dst_file):
     cmd = [
         "/usr/bin/ffmpeg", "-y", "-i", str(src_file),
@@ -449,8 +556,8 @@ def run_batch(catalog):
                     break
 
 def main():
-    parser = argparse.ArgumentParser(description="Generador automatizado de Casas y Geometría Sagrada.")
-    parser.add_argument("--block", choices=["casas", "geometria", "all"], default="all")
+    parser = argparse.ArgumentParser(description="Generador automatizado de Casas, Geometría y Sellos Sagrados.")
+    parser.add_argument("--block", choices=["casas", "geometria", "sellos", "all"], default="all")
     parser.add_argument("--dry-run", action="store_true", help="Solo imprimir inventario y prompts")
     args = parser.parse_args()
 
@@ -459,6 +566,8 @@ def main():
         selected_catalog.update(CASAS_CATALOG)
     if args.block in ["geometria", "all"]:
         selected_catalog.update(GEOMETRIA_CATALOG)
+    if args.block in ["sellos", "all"]:
+        selected_catalog.update(SELLOS_CATALOG)
 
     if args.dry_run:
         print(f"📋 DRY-RUN: {len(selected_catalog)} activos listados:")
