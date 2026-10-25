@@ -255,12 +255,43 @@ masterpiece classical oil painting by Roberto Ferri, vertical 9:16 composition. 
 
 ---
 
-# PARTE 3: SCRIPT DE AUTOMATIZACIÓN
+# PARTE 3: PARIDAD DUAL DE LAS 12 CASAS (v1 ARQUITECTURA + v2 ALTAR/RELICARIO)
 
-Archivo de ejecución automatizada por lotes:
-`products/glifo_maestro/generar_casas_y_geometria.py`
+Todas las 12 Casas Astrológicas cuentan con paridad dual completa en resolución `9:16`:
+* **Enfoque A (v1):** Templo monumental ciclópeo estilo Piranesi / Roberto Ferri.
+* **Enfoque B (v2):** Altar interior, relicario sagrado y detalle íntimo en primer plano con iluminación tenebrista extrema.
 
-* Soporta rotación automática en el pool de tokens ZeroGPU (`HF_TOKEN_1` a `HF_TOKEN_6`).
-* Convierte automáticamente vía `/usr/bin/ffmpeg` a `.webp` de calidad 95.
-* Deposita directamente los archivos en sus carpetas respectivas del Vault de MediaContingencia sin descargas manuales.
+1. **Casa 1:** `casa_01_templo_umbral_aurora.webp` + `casa_01_v2_altar_relicario_aurora.webp`
+2. **Casa 2:** `casa_02_boveda_recursos_oro.webp` + `casa_02_v2_arca_balanza_subterranea.webp`
+3. **Casa 3:** `casa_03_galeria_pergaminos_puentes.webp` + `casa_03_v2_relicario_pergaminos_mercurio.webp`
+4. **Casa 4:** `casa_04_santuario_fuego_ancestral.webp` + `casa_04_v2_fuego_cripta_honda.webp`
+5. **Casa 5:** `casa_05_teatro_altar_fuego_creativo.webp` + `casa_05_v2_corona_oro_teatro.webp`
+6. **Casa 6:** `casa_06_taller_alquimista_botanica.webp` + `casa_06_v2_alambique_botanica_sagrada.webp`
+7. **Casa 7:** `casa_07_templo_alianzas_espejos.webp` + `casa_07_v2_espejo_pacto_crepusculo.webp` (+ 5 reservas de columnatas)
+8. **Casa 8:** `casa_08_cripta_transmutacion_crisol.webp` + `casa_08_v2_crisol_transmutacion_renacimiento.webp`
+9. **Casa 9:** `casa_09_observatorio_armilar_cumbre.webp` + `casa_09_v2_astrolabio_brujula_navegacion.webp`
+10. **Casa 10:** `casa_10_ciudadela_trono_cenit.webp` + `casa_10_v2_columna_trono_obelisco.webp`
+11. **Casa 11:** `casa_11_agora_mecanismo_cosmico.webp` + `casa_11_v2_orbe_constelaciones_alianza.webp`
+12. **Casa 12:** `casa_12_santuario_niebla_aguas_silencio.webp` + `casa_12_v2_velo_oceano_niebla_eterna.webp`
+
+---
+
+# PARTE 4: PUNTOS KÁRMICOS Y ASPECTOS MAYORES CONSOLIDADOS
+
+1. **Puntos Kármicos Integrados (`03_Puntos_Karmicos_y_Sanacion`):**
+   * `01_Quiron/`: 6 acciones somáticas puras.
+   * `02_Lilith/`: 6 acciones somáticas puras.
+   * `03_Nodo_Norte/`: `nodo_norte_cabeza_dragon.webp` (El Vórtice del Destino y Llamado Futuro).
+   * `04_Nodo_Sur/`: `nodo_sur_cola_dragon.webp` (El Pozo Ancestral y Memorias del Linaje).
+   * `05_Rueda_de_la_Fortuna/`: `rueda_fortuna_pars_fortunae.webp` (La Rueda de la Providencia y Dicha Terrenal).
+
+2. **Aspectos Mayores Adicionales (`01_Aspectos_Astrologicos`):**
+   * `aspecto_07_gran_trigono_real_oro.webp` (Triángulo áureo equilátero de armonía cósmica).
+   * `aspecto_08_gran_cruz_cosmica_oro_basalto.webp` (Cruz cósmica de basalto, tensión y transmutación).
+
+---
+
+# INVENTARIO CONSOLIDADO DEL VAULT
+* **Total Activos Auditados:** **336 archivos `.webp`** calidad 95 con fondos `#000000` y estética Roberto Ferri.
+
 
