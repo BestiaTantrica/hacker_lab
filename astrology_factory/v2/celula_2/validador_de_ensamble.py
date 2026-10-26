@@ -69,7 +69,7 @@ def guardar_lista_validada(lista: dict) -> Path:
 
 # ── ffprobe ───────────────────────────────────────────────────────────────────
 
-FORMATOS_IMG = {".jpg", ".jpeg", ".png"}
+FORMATOS_IMG = {".jpg", ".jpeg", ".png", ".webp"}
 
 def _es_imagen(path: Path) -> bool:
     return path.suffix.lower() in FORMATOS_IMG

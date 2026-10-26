@@ -42,7 +42,7 @@ FACTORY_ROOT        = CONTENT_FACTORY_DIR.parent
 ADN_PATH            = FACTORY_ROOT / "contexto_astrologico.json"
 PALETTES_PATH       = CONTENT_FACTORY_DIR / "astrology_palettes.json"
 
-FORMATOS_IMG = {".jpg", ".jpeg", ".png"}
+FORMATOS_IMG = {".jpg", ".jpeg", ".png", ".webp"}
 
 # ── Parámetros del Builder (no son rutas; las rutas viven en el ADN) ─────────
 XFADE_DUR_DEFAULT = 0.40   # se sobreescribe con ADN["render"]["xfade_duracion_s"] si existe
@@ -337,6 +337,11 @@ def construir_comando(slots: list[dict], audio: Path, ass: Path | None, salida: 
             cmd += ["-stream_loop", "-1", "-t", f"{largo:.4f}", "-i", s["archivo"]]
     cmd += ["-i", str(audio)]
 
+    watermark_path = Path("/home/LAB/astrology_factory/products/revolucion_solar/visor_cinematico/watermark_reloj_badge.png")
+    usar_wm = watermark_path.is_file()
+    if usar_wm:
+        cmd += ["-i", str(watermark_path)]
+
     partes = []
     for i, (s, largo) in enumerate(zip(slots, largos)):
         partes.append(_cadena_imagen(i, s, largo, cfg, grading) if s["es_imagen"]
@@ -351,6 +356,11 @@ def construir_comando(slots: list[dict], audio: Path, ass: Path | None, salida: 
             f":duration={xfade:.4f}:offset={acumulado:.4f}{salida_k}"
         )
         previo = salida_k
+
+    if usar_wm:
+        idx_wm = n + 1
+        partes.append(f"[{idx_wm}:v]scale=180:180,format=rgba[wm];{previo}[wm]overlay=W-w-40:60[v_wm]")
+        previo = "[v_wm]"
 
     if ass is not None:
         partes.append(f"{previo}ass='{_escape_filter(str(ass))}',format=yuv420p[vout]")

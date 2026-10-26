@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Glifo Maestro — Reloj Astrológico en Tiempo Real Pro</title>
+  <link rel="stylesheet" href="/static/css/reloj_styles.css">
+</head>
+<body>
+  <div id="reloj-container">
+    <!-- Video de Fondo Dinámico (Selector A/B) -->
+    <video id="video-bg" loop muted playsinline>
+      <source src="videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4" type="video/mp4">
+    </video>
+
+    <!-- Canvas Principal del Reloj Cósmico -->
+    <canvas id="reloj-canvas"></canvas>
+
+    <!-- HUD Superior: Marca, Reloj Digital y Acciones -->
+    <header class="top-hud">
+      <div class="brand-section">
+        <div class="brand-glyph">☉</div>
+        <div>
+          <div class="brand-title">EL GLIFO MAESTRO</div>
+          <div class="brand-subtitle">Reloj Cósmico en Tiempo Real</div>
+        </div>
+      </div>
+
+      <div class="clock-display">
+        <div class="clock-time" id="hud-time">--:--:--</div>
+        <div class="clock-date" id="hud-date">Cargando fecha sideral...</div>
+        <div class="clock-location" id="hud-location">📍 Detectando ubicación...</div>
+      </div>
+
+      <div class="top-actions">
+        <button class="hud-btn highlight" id="btn-record-watermark" title="Captura un bucle de 5 segundos con el reloj girando para incrustar en videos">
+          <span>🎬</span> Sello / Watermark (5s)
+        </button>
+        <button class="hud-btn" id="btn-fullscreen" title="Pantalla Completa (Modo Wallpaper)">
+          <span>⛶</span> Wallpaper
+        </button>
+        <a href="/" class="hud-btn" style="text-decoration: none;" title="Volver al Portal">
+          <span>🏠</span> Portal
+        </a>
+      </div>
+    </header>
+
+    <!-- Barra de Estado Astrológico (Efemérides en Vivo) -->
+    <div class="astrological-status-bar">
+      <div class="status-item" id="hud-asc">🌅 <strong>ASC:</strong> Calculando...</div>
+      <div class="status-item" id="hud-mc">👑 <strong>MC:</strong> Calculando...</div>
+      <div class="status-item" id="hud-moon">🌙 Luna: Calculando...</div>
+      <div class="status-item" id="hud-transit">⚡ <strong>Tránsito:</strong> Analizando orbes...</div>
+    </div>
+
+    <!-- Dock Inferior: Selector A/B de Fondo, Tiempo y Velocidad -->
+    <footer class="control-dock">
+      <!-- Selector A/B de Fondo -->
+      <div class="dock-group">
+        <span class="dock-label">Fondo:</span>
+        <button class="bg-toggle-btn active" data-bg="negro" title="Tenebrismo Puro Roberto Ferri (#000000)">
+          ⬛ Ferri Puro
+        </button>
+        <button class="bg-toggle-btn" data-bg="galaxia" title="Galaxia Espacio Profundo">
+          🌌 Galaxia
+        </button>
+        <button class="bg-toggle-btn" data-bg="estrellas" title="Vuelo de Estrellas Etéreas">
+          ✨ Estrellas
+        </button>
+      </div>
+
+      <div class="slider-container" id="bg-slider-wrapper" style="opacity: 0.3;" title="Opacidad del Video de Fondo">
+        <span style="font-size: 10px; color: #94a3b8;">Opacidad:</span>
+        <input type="range" id="bg-opacity-slider" min="0.05" max="0.85" step="0.05" value="0.35">
+        <span id="bg-opacity-label" style="font-size: 10px; color: #f6c445; min-width: 26px;">35%</span>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Controles de Tiempo -->
+      <div class="dock-group">
+        <button class="hud-btn active" id="btn-play-pause">
+          <span>⏸</span> Pausar
+        </button>
+        <button class="hud-btn" id="btn-now" title="Volver a la hora exacta actual">
+          <span>⏱</span> Ahora
+        </button>
+        <button class="bg-toggle-btn" id="btn-time-minus-1h" title="Retroceder 1 hora">-1h</button>
+        <button class="bg-toggle-btn" id="btn-time-plus-1h" title="Avanzar 1 hora">+1h</button>
+        <button class="bg-toggle-btn" id="btn-time-minus-1d" title="Retroceder 1 día">-1d</button>
+        <button class="bg-toggle-btn" id="btn-time-plus-1d" title="Avanzar 1 día">+1d</button>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Multiplicador de Velocidad -->
+      <div class="dock-group">
+        <span class="dock-label">Velocidad:</span>
+        <button class="bg-toggle-btn speed-btn active" data-speed="1">1x</button>
+        <button class="bg-toggle-btn speed-btn" data-speed="60">60x</button>
+        <button class="bg-toggle-btn speed-btn" data-speed="3600">3600x</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/js/reloj_engine.js"></script>
+</body>
+</html>

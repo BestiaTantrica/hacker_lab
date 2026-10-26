@@ -65,7 +65,7 @@ TEMP_DIR         = Path(PATHS["temp"])
 ELEMENTO_ADN     = ADN.get("arquetipos", {}).get("elemento", "")
 
 FORMATOS_VIDEO = {".mp4", ".mov", ".avi", ".mkv", ".webm"}
-FORMATOS_IMG   = {".jpg", ".jpeg", ".png"}
+FORMATOS_IMG   = {".jpg", ".jpeg", ".png", ".webp"}
 _VALIDOS_ADN   = {f".{e.lower().lstrip('.')}" for e in ADN.get("validaciones", {}).get("formatos_validos", [])}
 FORMATOS_ACEPTADOS = (FORMATOS_VIDEO | FORMATOS_IMG) & _VALIDOS_ADN if _VALIDOS_ADN else (FORMATOS_VIDEO | FORMATOS_IMG)
 MIN_SIZE_BYTES = int(ADN.get("validaciones", {}).get("min_size_bytes", 0))
@@ -76,6 +76,10 @@ BLOQUEADOS = {
     "familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños", "pareja",
     "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child", "persona",
     "hombre", "mujer", "gente", "people", "man", "woman", "person",
+}
+BLOQUEADOS_REDES = {
+    "desnudo", "desnuda", "nude", "nudity", "torso_desnudo", "cuerpo_desnudo",
+    "anatomia_expuesta", "genital", "pezon", "pezones", "sensual", "erotico", "erotica"
 }
 PALABRAS_ICONICAS = (
     "tarot", "carta", "simbolo", "dios", "persona", "planeta",
@@ -174,6 +178,7 @@ def cargar_catalogo_desde_db() -> dict:
             "stats_uso":        stats_uso,
             # cachés de scoring (prefijo _ → nunca se envían a Gemini ni al JSON)
             "_bloqueado":       bool(_tokens(haystack) & BLOQUEADOS),
+            "_bloqueado_redes": bool(_tokens(haystack) & BLOQUEADOS_REDES),
             "_iconica":         any(w in haystack for w in PALABRAS_ICONICAS),
             "_haystack":        haystack,
         }
@@ -198,6 +203,10 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list)
 
     # Estética: bloquea personas/familia/etc.
     if meta["_bloqueado"]:
+        score -= 999.0
+
+    # Moderación de seguridad para TikTok y YouTube (cero desnudos en redes)
+    if meta.get("_bloqueado_redes", False):
         score -= 999.0
 
     # Bonus semántico del Director de Arte (etiquetas de la DB vs emoción/texto de la toma)
@@ -327,8 +336,9 @@ def construir_entrada_corte(toma: dict, cortes: list, protagonista_id, cat: dict
         cortes[0]["archivo"] if cortes else None
     )
     p = Path(archivo) if archivo else None
+    num_t = toma.get("num") or toma.get("num_toma", 1)
     return {
-        "num_toma":           toma["num"],
+        "num_toma":           num_t,
         "rol":                toma.get("rol", ""),
         "inicio_ms":          toma["inicio_ms"],
         "fin_ms":             toma["fin_ms"],
@@ -358,7 +368,8 @@ def run_nodriza():
     tomas = enriquecer_tomas(timeline.get("tomas", []))
     log("🎬 Director de Arte activado: emociones y transiciones asignadas", MAGENTA)
     for t in tomas:
-        log(f"   Toma {t['num']} | {t.get('rol','?')} → emoción: {t['emocion']} | transición: {t['transicion_entrada']}", GRIS)
+        num_toma = t.get("num") or t.get("num_toma", "?")
+        log(f"   Toma {num_toma} | {t.get('rol','?')} → emoción: {t['emocion']} | transición: {t['transicion_entrada']}", GRIS)
 
     cat = cargar_catalogo_desde_db()
     gancho_id = elegir_asset_gancho(cat)
@@ -376,17 +387,18 @@ def run_nodriza():
 
     ultimos_usados: list = []
     for toma_idx, toma in enumerate(tomas):
+        num_t = toma.get("num") or toma.get("num_toma", toma_idx + 1)
         cortes, protagonista = planificar_cortes_de_toma(
             toma, toma_idx, len(tomas), cat, ultimos_usados, gancho_id, gemini_clients
         )
         if not cortes:
-            err(f"Toma {toma['num']} no pudo ser asignada.")
+            err(f"Toma {num_t} no pudo ser asignada.")
             lista_de_corte["asignaciones"].append(construir_entrada_corte(toma, [], None, cat))
             continue
 
-        info(f"Toma {toma['num']} ({toma['duracion_s']}s) → {len(cortes)} cortes.")
+        info(f"Toma {num_t} ({toma['duracion_s']}s) → {len(cortes)} cortes.")
         for c in cortes:
-            ok(f"Toma {toma['num']} → Corte {c['orden']}: {c['nombre']} [{c['tipo']}, {c['duracion_s']}s]")
+            ok(f"Toma {num_t} → Corte {c['orden']}: {c['nombre']} [{c['tipo']}, {c['duracion_s']}s]")
         lista_de_corte["asignaciones"].append(construir_entrada_corte(toma, cortes, protagonista, cat))
 
     # Persistir uso en SQLite (idempotente: limpia el evento actual antes de re-registrar)

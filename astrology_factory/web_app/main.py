@@ -85,6 +85,10 @@ async def read_index(request: Request):
 async def read_terms(request: Request):
     return templates.TemplateResponse(request=request, name="terms.html")
 
+@app.get("/reloj", response_class=HTMLResponse)
+async def read_reloj(request: Request):
+    return templates.TemplateResponse(request=request, name="reloj.html")
+
 @app.get("/privacy", response_class=HTMLResponse)
 async def read_privacy(request: Request):
     return templates.TemplateResponse(request=request, name="privacy.html")
