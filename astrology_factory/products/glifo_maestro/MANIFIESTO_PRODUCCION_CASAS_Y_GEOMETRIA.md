@@ -219,79 +219,119 @@ masterpiece classical oil painting by Roberto Ferri, vertical 9:16 composition. 
 
 ---
 
-### Subcarpeta 3: Sólidos Platónicos y 4 Elementos (`03_Elementos_y_Solidos_Platonicos`)
+### Subcarpeta 3: Sólidos Platónicos y 5 Elementos (`03_Elementos_y_Solidos_Platonicos` · 20 WebPs)
 
-1. **Fuego · Tetraedro:** `elemento_01_fuego_tetraedro.webp`
-   * *Tetraedro regular de oro rojo forjado con llamas vivas contenidas en su núcleo geométrico.*
-2. **Tierra · Hexaedro / Cubo:** `elemento_02_tierra_cubo.webp`
-   * *Cubo perfecto de basalto oscuro y vetas de malaquita con un brote de roca fósil en su cúspide.*
-3. **Aire · Octaedro:** `elemento_03_aire_octaedro.webp`
-   * *Octaedro flotante de platino y zafiro translúcido con brisa luminosa atrapada en su cristal.*
-4. **Agua · Icosaedro:** `elemento_04_agua_icosaedro.webp`
-   * *Icosaedro de selenita y nácar con gotas de agua primordial suspendidas en sus 20 facetas.*
-5. **Éter / Quintaesencia · Dodecaedro:** `elemento_05_eter_dodecaedro.webp`
-   * *Dodecaedro de cristal de roca puro con filigrana de oro estelar y una nebulosa interior.*
+Cada uno de los 5 Elementos cuenta con 4 variables canónicas (`9:16`):
+* **`v1` · Sólido Platónico levitando en el Vacío.**
+* **`v2` · Altar y Relicario Íntimo del Elemento.**
+* **`v3` · Escultura Clásica de Mármol Sacro personificando la Potencia Elemental.**
+* **`v4` · Portal y Paisaje Arquitectónico Tenebrista.**
+
+1. **Fuego (Tetraedro):**
+   * `elemento_01_fuego_tetraedro.webp`
+   * `elemento_01_fuego_v2_altar_llamas_vivas.webp`
+   * `elemento_01_fuego_v3_escultura_vulcano.webp`
+   * `elemento_01_fuego_v4_portal_sol_cenital.webp`
+2. **Tierra (Hexaedro / Cubo):**
+   * `elemento_02_tierra_cubo.webp`
+   * `elemento_02_tierra_v2_relicario_mineral_malaquita.webp`
+   * `elemento_02_tierra_v3_escultura_gaia_madre.webp`
+   * `elemento_02_tierra_v4_cripta_megalitica_basalto.webp`
+3. **Aire (Octaedro):**
+   * `elemento_03_aire_octaedro.webp`
+   * `elemento_03_aire_v2_astrolabio_eolico.webp`
+   * `elemento_03_aire_v3_escultura_zefiro_viento.webp`
+   * `elemento_03_aire_v4_columnata_abierta_noche.webp`
+4. **Agua (Icosaedro):**
+   * `elemento_04_agua_icosaedro.webp`
+   * `elemento_04_agua_v2_caliz_selenita_perla.webp`
+   * `elemento_04_agua_v3_escultura_nayade_durmiente.webp`
+   * `elemento_04_agua_v4_santuario_gruta_marina.webp`
+5. **Éter / Quintaesencia (Dodecaedro):**
+   * `elemento_05_eter_dodecaedro.webp`
+   * `elemento_05_eter_v2_esfera_armilar_cristal_oro.webp`
+   * `elemento_05_eter_v3_escultura_urania_celeste.webp`
+   * `elemento_05_eter_v4_observatorio_rotondo_vacio.webp`
 
 ---
 
-### Subcarpeta 4: Sellos Herméticos y Cuadrantes (`04_Sellos_Hermeticos_y_Cuadrantes`)
+### Subcarpeta 4: Sellos Herméticos y Cuadrantes (`04_Sellos_Hermeticos_y_Cuadrantes` · 8 WebPs)
 
 1. **Cuadrante 1 (Casas 1-3 · Emergencia del Yo):** `cuadrante_01_emergencia_yo.webp`
-   * *Disco de basalto negro con el sector inferior izquierdo en relieve de oro radiante y rayos ámbar.*
 2. **Cuadrante 2 (Casas 4-6 · Intimidad y Origen):** `cuadrante_02_intimidad_origen.webp`
-   * *Disco de pizarra oscura con el sector inferior derecho iluminado por cobre, fuego de raíz y sigilos de Cáncer, Leo y Virgo.*
 3. **Cuadrante 3 (Casas 7-9 · Encuentro con el Otro):** `cuadrante_03_encuentro_social.webp`
-   * *Disco de roca volcánica con el sector superior derecho en filigrana de bronce y luz de crepúsculo violeta.*
 4. **Cuadrante 4 (Casas 10-12 · Destino y Trascendencia):** `cuadrante_04_destino_universal.webp`
-   * *Disco de basalto con el sector superior izquierdo en platino y pan de oro bajo haz cenital perpendicular.*
 5. **Hemisferio Diurno / Sur (Casas 7-12 · Mundo Visible):** `hemisferio_diurno_sur_visible.webp`
-   * *La mitad superior de la rueda astrológica resplandeciendo en luz solar de oro blanco sobre las sombras inferiores.*
 6. **Hemisferio Nocturno / Norte (Casas 1-6 · Mundo Privado):** `hemisferio_nocturno_norte_privado.webp`
-   * *La mitad inferior de la rueda astrológica resplandeciendo en luz lunar y ámbar subterránea mientras el cielo superior calla.*
 7. **Sello Hermético de la Tabla Esmeralda (As Above, So Below):** `sello_hermetico_tabla_esmeralda.webp`
-   * *Ouroboros de bronce alrededor de los triángulos sagrados entrelazados en roca de esmeralda y pizarra.*
 8. **La Gran Cruz Cardinal (El Eje del Mundo):** `cruz_cardinal_eje_del_mundo.webp`
-   * *Intersección monumental del Horizonte (ASC-DSC) y Meridiano (MC-IC) con orbe de fuego alquímico en el cruce.*
 
 ---
 
-# PARTE 3: PARIDAD DUAL DE LAS 12 CASAS (v1 ARQUITECTURA + v2 ALTAR/RELICARIO)
+# PARTE 3: PARIDAD SEXTUPLE DE LAS 12 CASAS ASTROLÓGICAS (72 ACTIVOS CANÓNICOS)
 
-Todas las 12 Casas Astrológicas cuentan con paridad dual completa en resolución `9:16`:
-* **Enfoque A (v1):** Templo monumental ciclópeo estilo Piranesi / Roberto Ferri.
-* **Enfoque B (v2):** Altar interior, relicario sagrado y detalle íntimo en primer plano con iluminación tenebrista extrema.
+Todas las 12 Casas Astrológicas cuentan con su suite completa de 6 variables en resolución vertical `9:16`:
+* **`v1` · Templo Monumental Ciclópeo** *(Arquitectura de sillería Piranesi/Ferri)*.
+* **`v2` · Altar y Relicario Íntimo** *(Detalle sagrado en primer plano)*.
+* **`v3` · Reliquia y Materia Alquímica** *(Materia física arquetípica en suspensión)*.
+* **`v4` · Portal y Umbral Ciclópeo** *(Marco arquitectónico abierto al abismo cósmico)*.
+* **`v5` · Escultura Clásica de Mármol Sacro** *(Personificación escultórica grecorromana tenebrista)*.
+* **`v6` · Sigilo Cósmico de Oro en el Vacío** *(Geometría sagrada flotando en tinieblas puras)*.
 
-1. **Casa 1:** `casa_01_templo_umbral_aurora.webp` + `casa_01_v2_altar_relicario_aurora.webp`
-2. **Casa 2:** `casa_02_boveda_recursos_oro.webp` + `casa_02_v2_arca_balanza_subterranea.webp`
-3. **Casa 3:** `casa_03_galeria_pergaminos_puentes.webp` + `casa_03_v2_relicario_pergaminos_mercurio.webp`
-4. **Casa 4:** `casa_04_santuario_fuego_ancestral.webp` + `casa_04_v2_fuego_cripta_honda.webp`
-5. **Casa 5:** `casa_05_teatro_altar_fuego_creativo.webp` + `casa_05_v2_corona_oro_teatro.webp`
-6. **Casa 6:** `casa_06_taller_alquimista_botanica.webp` + `casa_06_v2_alambique_botanica_sagrada.webp`
-7. **Casa 7:** `casa_07_templo_alianzas_espejos.webp` + `casa_07_v2_espejo_pacto_crepusculo.webp` (+ 5 reservas de columnatas)
-8. **Casa 8:** `casa_08_cripta_transmutacion_crisol.webp` + `casa_08_v2_crisol_transmutacion_renacimiento.webp`
-9. **Casa 9:** `casa_09_observatorio_armilar_cumbre.webp` + `casa_09_v2_astrolabio_brujula_navegacion.webp`
-10. **Casa 10:** `casa_10_ciudadela_trono_cenit.webp` + `casa_10_v2_columna_trono_obelisco.webp`
-11. **Casa 11:** `casa_11_agora_mecanismo_cosmico.webp` + `casa_11_v2_orbe_constelaciones_alianza.webp`
-12. **Casa 12:** `casa_12_santuario_niebla_aguas_silencio.webp` + `casa_12_v2_velo_oceano_niebla_eterna.webp`
+*(Las 12 casas de Casa 1 a Casa 12 cuentan con `v1` a `v6` estrictamente auditadas en `04_Casas_Astrologicas/`). En Casa 7, 5 columnatas de prueba previas se conservan en `descartes_exploratorios/`.*
 
 ---
 
-# PARTE 4: PUNTOS KÁRMICOS Y ASPECTOS MAYORES CONSOLIDADOS
+# PARTE 4: ÁNGULOS CARDINALES (24 ACTIVOS CANÓNICOS)
 
-1. **Puntos Kármicos Integrados (`03_Puntos_Karmicos_y_Sanacion`):**
-   * `01_Quiron/`: 6 acciones somáticas puras.
-   * `02_Lilith/`: 6 acciones somáticas puras.
-   * `03_Nodo_Norte/`: `nodo_norte_cabeza_dragon.webp` (El Vórtice del Destino y Llamado Futuro).
-   * `04_Nodo_Sur/`: `nodo_sur_cola_dragon.webp` (El Pozo Ancestral y Memorias del Linaje).
-   * `05_Rueda_de_la_Fortuna/`: `rueda_fortuna_pars_fortunae.webp` (La Rueda de la Providencia y Dicha Terrenal).
-
-2. **Aspectos Mayores Adicionales (`01_Aspectos_Astrologicos`):**
-   * `aspecto_07_gran_trigono_real_oro.webp` (Triángulo áureo equilátero de armonía cósmica).
-   * `aspecto_08_gran_cruz_cosmica_oro_basalto.webp` (Cruz cósmica de basalto, tensión y transmutación).
+Los 4 Ángulos del Cielo cuentan con 6 variables canónicas cada uno en `05_Angulos_Cardinales/`:
+* **01 Ascendente (ASC):** `asc_v1` a `asc_v6` *(Umbral del Amanecer, Máscara del Ego, Brote Alquímico)*.
+* **02 Descendente (DSC):** `dsc_v1` a `dsc_v6` *(El Espejo Sagrado, Crepúsculo, Pacto Oculto)*.
+* **03 Medio Cielo (MC):** `mc_v1` a `mc_v6` *(Cénit de Obsidiana, Trono Solar, Obelisco del Destino)*.
+* **04 Fondo Cielo (IC):** `ic_v1` a `ic_v6` *(Cripta Raíz, Fuego de Hogar Subterráneo, Pozo Ancestral)*.
 
 ---
 
-# INVENTARIO CONSOLIDADO DEL VAULT
-* **Total Activos Auditados:** **336 archivos `.webp`** calidad 95 con fondos `#000000` y estética Roberto Ferri.
+# PARTE 5: PUNTOS KÁRMICOS Y SANACIÓN (34 ACTIVOS CANÓNICOS)
+
+Ubicados en `03_Puntos_Karmicos_y_Sanacion/`:
+* **01 Quirón (8 activos):** `glifo` (1:1) + `orbe` (9:16) + 6 somáticas de sanación (`quiron_v1` a `quiron_v6`).
+* **02 Lilith (8 activos):** `glifo` (1:1) + `orbe` (9:16) + 6 somáticas de soberanía salvaje (`lilith_v1` a `lilith_v6`).
+* **03 Nodo Norte (6 activos):** `cabeza_dragon` (v1) + `v2_caliz_futuro` + `v3_escalinata_cenit` + `v4_escultura_guardian` + `v5_portal_dragon` + `v6_sigilo_oro`.
+* **04 Nodo Sur (6 activos):** `cola_dragon` (v1) + `v2_espejo_vidas_pasadas` + `v3_cripta_ancestral` + `v4_escultura_sueno_linaje` + `v5_urna_cenizas` + `v6_sigilo_bronce`.
+* **05 Rueda de la Fortuna (6 activos):** `pars_fortunae` (v1) + `v2_vortice_cornucopia` + `v3_mecanismo_reloj_azar` + `v4_escultura_fortuna` + `v5_balanza_destino` + `v6_sigilo_malaquita_oro`.
+
+---
+
+# PARTE 6: PLANETAS SOCIALES Y TRANSPERSONALES CONSOLIDADOS (40 ACTIVOS)
+
+Ubicados en `02_Planetas_Sociales_y_Transpersonales/`, cada planeta cuenta con su suite canónica de **8 activos**:
+* 1 Glifo Sagrado en Oro/Metal Alquímico (`1:1`).
+* 1 Orbe Planetario de Atmósfera y Textura Clásica (`9:16`).
+* 6 Variables Somáticas Figurativas al óleo estilo Roberto Ferri (`v1` a `v6`).
+
+1. **Júpiter:** Glifo + Orbe + 6 somáticas (`jupiter_v1` a `jupiter_v6`).
+2. **Saturno:** Glifo + Orbe + 6 somáticas (`saturno_v1` a `saturno_v6`).
+3. **Urano:** Glifo + Orbe + 6 somáticas (`urano_v1` a `urano_v6`).
+4. **Neptuno:** Glifo + Orbe + 6 somáticas (`neptuno_v1` a `neptuno_v6`).
+5. **Plutón:** Glifo + Orbe + 6 somáticas (`pluton_v1` a `pluton_v6`).
+
+---
+
+# INVENTARIO CONSOLIDADO AUDITADO DEL VAULT
+
+* **01 Astros Personales y ASC:** 113 activos `.webp`
+* **02 Planetas Sociales y Transpersonales:** 40 activos `.webp`
+* **02 Signos Zodiacales y Símbolos:** 91 activos `.webp`
+* **03 Geometría y Sigilos:** 50 activos `.webp`
+  * *Aspectos Astrológicos:* 20 activos (6 aspectos x 3 variables + Gran Trígono y Gran Cruz).
+  * *Elementos y Sólidos Platónicos:* 20 activos (5 elementos x 4 variables).
+  * *Sellos Herméticos y Cuadrantes:* 8 activos.
+  * *Mandalas y Rueda:* 2 activos.
+* **03 Puntos Kármicos y Sanación:** 34 activos `.webp`
+* **04 Casas Astrológicas:** 77 activos `.webp` (72 canónicos + 5 reservas)
+* **05 Ángulos Cardinales:** 24 activos `.webp`
+-------------------------------------------------------------
+* **TOTAL GENERAL AUDITADO:** **429 activos `.webp`** canónicos con fondos `#000000`, textura al óleo de Roberto Ferri y compresión libwebp calidad 95.
 
 
