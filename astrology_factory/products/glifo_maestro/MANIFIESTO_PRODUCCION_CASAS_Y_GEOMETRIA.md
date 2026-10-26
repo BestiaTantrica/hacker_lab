@@ -201,21 +201,18 @@ masterpiece classical oil painting by Roberto Ferri, vertical 9:16 composition. 
 
 ---
 
-### Subcarpeta 2: Mandalas y Rueda Zodiacal (`02_Mandalas_y_Rueda_Zodiacal`)
+### Subcarpeta 2: Mandalas y Rueda Zodiacal (`02_Mandalas_y_Rueda_Zodiacal` · 5 WebPs)
 
-1. **La Rueda del Zodíaco Monumental (Arquetipo Completo)**
-   * Archivo: `mandala_01_rueda_zodiacal_oro_basalto.webp`
-   * Prompt:
-   ```text
-   masterpiece classical oil painting by Roberto Ferri, 1:1 square composition. Sacred monumental mandala study of the Astrological Zodiac Wheel, strictly no human figures, completely pure fine art. A massive circular disc of mirror-polished black basalt carved with twelve precise triangular segments. Inlaid into the stone are deep relief glyphs of the 12 zodiac signs crafted of molten antique gold leaf and aged silver with delicate natural fissures. The central hub features the four cardinal points (ASC, IC, DSC, MC) joined by an alchemical cross. LIGHTING: Low-angle dramatic golden raking light revealing the chiseled stone relief and glittering gold leaf against 90% flat pitch-black bitumen oil darkness (#000000). Tactile raw oil on rough linen canvas, heavy impasto, authentic museum masterpiece, 8k
-   ```
-
-2. **La Carta Natal en Vacío (Mapa de Sillería Cósmica)**
-   * Archivo: `mandala_02_carta_natal_vacia.webp`
-   * Prompt:
-   ```text
-   masterpiece classical oil painting by Roberto Ferri, vertical 9:16 composition. Sacred cartographic study of the Empty Natal Chart Matrix, strictly no human figures, completely pure fine art. An archaic cosmological map engraved onto a slab of dark grey slate stone. The twelve curved astrological houses are chiseled in deep sunken relief, with circular rings indicating planetary orbits and concentric degree rings etched in fine pale gold dust. The four angles (Ascendant, Descendant, Midheaven, Imum Coeli) stand out as raised ridges of burnished bronze. LIGHTING: Piercing diagonal shaft of warm amber chiaroscuro light crossing the chart surface, surrounded by 85% pitch-black bitumen void (#000000). Heavy impasto, cracked oil glaze on linen canvas, authentic Roberto Ferri, 8k
-   ```
+1. **La Rueda del Zodíaco Monumental (Arquetipo Completo):**
+   * Archivo: `mandala_01_rueda_zodiacal_oro_basalto.webp` (1:1)
+2. **La Carta Natal en Vacío (Mapa de Sillería Cósmica):**
+   * Archivo: `mandala_02_carta_natal_vacia.webp` (9:16)
+3. **El Septenario Caldeo Alquímico (Las 7 Esferas Planetarias Concéntricas):**
+   * Archivo: `mandala_03_septenario_caldeo_alquimico.webp` (1:1)
+4. **La Carta Natal Completa con Aspectos y Casas:**
+   * Archivo: `mandala_04_carta_natal_con_aspectos_y_casas.webp` (9:16)
+5. **El Reloj Astronómico y Astrolabio Eterno (Tiempo Celeste en Vivo):**
+   * Archivo: `mandala_05_reloj_astronomico_astrolabio_eterno.webp` (9:16)
 
 ---
 
@@ -323,15 +320,15 @@ Ubicados en `02_Planetas_Sociales_y_Transpersonales/`, cada planeta cuenta con s
 * **01 Astros Personales y ASC:** 113 activos `.webp`
 * **02 Planetas Sociales y Transpersonales:** 40 activos `.webp`
 * **02 Signos Zodiacales y Símbolos:** 91 activos `.webp`
-* **03 Geometría y Sigilos:** 50 activos `.webp`
+* **03 Geometría y Sigilos:** 53 activos `.webp`
   * *Aspectos Astrológicos:* 20 activos (6 aspectos x 3 variables + Gran Trígono y Gran Cruz).
   * *Elementos y Sólidos Platónicos:* 20 activos (5 elementos x 4 variables).
   * *Sellos Herméticos y Cuadrantes:* 8 activos.
-  * *Mandalas y Rueda:* 2 activos.
+  * *Mandalas y Rueda Zodiacal:* 5 activos canónicos.
 * **03 Puntos Kármicos y Sanación:** 34 activos `.webp`
 * **04 Casas Astrológicas:** 77 activos `.webp` (72 canónicos + 5 reservas)
 * **05 Ángulos Cardinales:** 24 activos `.webp`
 -------------------------------------------------------------
-* **TOTAL GENERAL AUDITADO:** **429 activos `.webp`** canónicos con fondos `#000000`, textura al óleo de Roberto Ferri y compresión libwebp calidad 95.
+* **TOTAL GENERAL AUDITADO:** **432 activos `.webp`** canónicos con fondos `#000000`, textura al óleo de Roberto Ferri y compresión libwebp calidad 95.
 
 
