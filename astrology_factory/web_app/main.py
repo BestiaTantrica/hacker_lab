@@ -309,6 +309,15 @@ async def tiktok_callback(code: str = None, state: str = None, error: str = None
                     refresh_token=excluded.refresh_token,
                     updated_at=CURRENT_TIMESTAMP
             ''', (open_id, access_token, refresh_token))
+            conn.commit()
+
+        # Sincronizar también con el archivo JSON de Célula 4
+        token_file = Path(PROJECT_DIR) / "v2" / "celula_4" / "tiktok_token.json"
+        token_file.parent.mkdir(parents=True, exist_ok=True)
+        import json, time
+        json_resp["expires_at"] = time.time() + json_resp.get("expires_in", 86400) - 300
+        with open(token_file, "w", encoding="utf-8") as f:
+            json.dump(json_resp, f, indent=4)
     except Exception as e:
         return HTMLResponse(f"<h1>Error guardando en BD:</h1><p>{str(e)}</p>")
         
@@ -318,7 +327,7 @@ async def tiktok_callback(code: str = None, state: str = None, error: str = None
             <p>El Access Token de TikTok ha sido guardado. Tus células ya pueden publicar videos.</p>
             
             <div style="margin-top: 30px; padding: 20px; border: 1px solid #333; border-radius: 10px; text-align: center;">
-                <h3 style="color:#ccc;">(Para Revisión de TikTok)</h3>
+                <h3 style="color:#ccc;">(Para Revisión / Producción de TikTok)</h3>
                 <p style="color:#888; font-size: 14px;">Prueba el flujo End-to-End de subida de video (Content Posting API)</p>
                 <form action="/api/tiktok/test_upload" method="post">
                     <button type="submit" style="background-color: #ff0050; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold;">Subir Video de Prueba a TikTok</button>
@@ -329,101 +338,43 @@ async def tiktok_callback(code: str = None, state: str = None, error: str = None
         </div>
     ''')
 
-import math
-import requests
-
 @app.post("/api/tiktok/test_upload")
 async def test_upload_tiktok():
-    # Endpoint de prueba para cumplir con el review End-to-End de TikTok
+    # Endpoint de prueba usando el motor robusto de Célula 4
     try:
-        with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
-            cursor = conn.cursor()
-            # Obtenemos el token más reciente guardado
-            cursor.execute("SELECT access_token FROM tiktok_auth ORDER BY updated_at DESC LIMIT 1")
-            row = cursor.fetchone()
-            
-        if not row:
-            return HTMLResponse("<h1>Error:</h1><p>No hay tokens guardados en la BD. Autoriza primero.</p>")
-            
-        access_token = row[0]
+        import sys
+        celula_path = os.path.join(PROJECT_DIR, "v2", "celula_4")
+        if celula_path not in sys.path:
+            sys.path.insert(0, celula_path)
+        from publicador_tiktok_api import upload_video
         
         # Ruta de un video de prueba en el servidor
         video_path = Path(PROJECT_DIR) / "test_blend.mp4"
         if not video_path.exists():
             return HTMLResponse(f"<h1>Error:</h1><p>No se encontró el video de prueba {video_path}</p>")
             
-        file_size = video_path.stat().st_size
-        chunk_size = 20 * 1024 * 1024 
-        if file_size < chunk_size:
-            chunk_size = file_size
-            total_chunk_count = 1
+        privacy = os.environ.get("TIKTOK_PRIVACY_LEVEL", "PUBLIC_TO_EVERYONE")
+        ok = upload_video(
+            video_path=str(video_path),
+            description="Portal Tarot Místico - Test de Producción #astrologia #transitos",
+            privacy_level=privacy
+        )
+        
+        if ok:
+            return HTMLResponse(f'''
+                <div style="background-color: #0d0d0d; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <h1 style="color:#00f2fe;">¡Video Subido y Confirmado con Éxito! 🚀</h1>
+                    <p>El video fue transmitido y verificado en TikTok con privacidad: <b>{privacy}</b>.</p>
+                    <a href="/" style="color: #00f2fe; margin-top: 20px;">Volver al inicio</a>
+                </div>
+            ''')
         else:
-            total_chunk_count = math.floor(file_size / chunk_size)
-            
-        init_url = "https://open.tiktokapis.com/v2/post/publish/video/init/"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json; charset=UTF-8"
-        }
-        
-        payload = {
-            "post_info": {
-                "title": "Astrology Factory - Test Video #TikTokDev",
-                "privacy_level": "SELF_ONLY", # Sube en privado para la prueba
-                "disable_duet": False,
-                "disable_comment": False,
-                "disable_stitch": False
-            },
-            "source_info": {
-                "source": "FILE_UPLOAD",
-                "video_size": file_size,
-                "chunk_size": chunk_size,
-                "total_chunk_count": total_chunk_count
-            }
-        }
-        
-        # Init upload
-        response = requests.post(init_url, headers=headers, json=payload)
-        if response.status_code != 200:
-            return HTMLResponse(f"<h1>Error API Init:</h1><p>{response.text}</p>")
-            
-        res_data = response.json()
-        if res_data.get("error", {}).get("code", "ok") != "ok":
-            return HTMLResponse(f"<h1>Error API TikTok:</h1><p>{res_data}</p>")
-            
-        upload_url = res_data.get("data", {}).get("upload_url")
-        if not upload_url:
-            return HTMLResponse(f"<h1>Error URL:</h1><p>{res_data}</p>")
-            
-        # Upload chunk
-        with open(video_path, "rb") as f:
-            for i in range(total_chunk_count):
-                start_byte = i * chunk_size
-                if i == total_chunk_count - 1:
-                    chunk_data = f.read()
-                    end_byte = file_size - 1
-                else:
-                    chunk_data = f.read(chunk_size)
-                    end_byte = start_byte + chunk_size - 1
-                    
-                put_headers = {
-                    "Content-Type": "video/mp4",
-                    "Content-Range": f"bytes {start_byte}-{end_byte}/{file_size}",
-                    "Content-Length": str(len(chunk_data))
-                }
-                
-                upload_res = requests.put(upload_url, headers=put_headers, data=chunk_data)
-                if upload_res.status_code not in [200, 201]:
-                    return HTMLResponse(f"<h1>Error Chunk:</h1><p>{upload_res.text}</p>")
-                    
-        return HTMLResponse('''
-            <div style="background-color: #0d0d0d; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <h1 style="color:#00f2fe;">¡Video Subido con Éxito! 🚀</h1>
-                <p>El video de prueba fue enviado a TikTok mediante la Content Posting API.</p>
-                <p>Puedes revisar tu app de TikTok (se subió en modo Privado).</p>
-                <a href="/" style="color: #00f2fe; margin-top: 20px;">Volver al inicio</a>
-            </div>
-        ''')
-        
+            return HTMLResponse('''
+                <div style="background-color: #0d0d0d; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <h1 style="color:#ff0050;">Error en la Publicación</h1>
+                    <p>TikTok rechazó la subida o falló la verificación. Revisa la consola o los logs del servidor.</p>
+                    <a href="/" style="color: #00f2fe; margin-top: 20px;">Volver al inicio</a>
+                </div>
+            ''')
     except Exception as e:
         return HTMLResponse(f"<h1>Error Interno:</h1><p>{str(e)}</p>")

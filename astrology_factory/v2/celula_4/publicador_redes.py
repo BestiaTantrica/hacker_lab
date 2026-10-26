@@ -132,19 +132,20 @@ def main():
     # ==========================================
     # Lógica para TikTok (API Oficial V2 + Fallback)
     # ==========================================
-    log("\n📢 CÉLULA 4.3 — Publicador TikTok", MAGENTA)
+    log("\n📢 CÉLULA 4.3 — Publicador TikTok (Producción)", MAGENTA)
     
     subido_tiktok = False
     token_path = Path(__file__).parent / "tiktok_token.json"
     if token_path.exists() and upload_video_tiktok:
-        log("🔑 Intentando subida por API Oficial (Sandbox)...", CYAN)
+        log("🔑 Publicando por API Oficial V2 (Direct Post)...", CYAN)
         try:
             tiktok_desc = f"{titulo}\n\n{hashtags}"
-            subido_tiktok = upload_video_tiktok(str(video_path), description=tiktok_desc)
+            privacy = os.environ.get("TIKTOK_PRIVACY_LEVEL", "PUBLIC_TO_EVERYONE")
+            subido_tiktok = upload_video_tiktok(str(video_path), description=tiktok_desc, privacy_level=privacy)
             if subido_tiktok:
-                log(f"✅ ¡Video subido a TikTok con éxito (Vía API Oficial)!", VERDE)
+                log(f"✅ ¡Video publicado en TikTok con éxito! (Modo: {privacy})", VERDE)
             else:
-                log(f"⚠️ Falló la subida por API. La app puede estar en Sandbox y requerir cuenta privada.", AMARILLO)
+                log(f"⚠️ La API de TikTok no pudo completar la publicación.", AMARILLO)
         except Exception as e:
             log(f"❌ Error al subir por API TikTok: {e}", ROJO)
     
