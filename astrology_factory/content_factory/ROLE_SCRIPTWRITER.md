@@ -14,7 +14,13 @@ El texto debe fluir y estar estructurado estrictamente en 5 partes, para encajar
 2. **Efecto Corporal/Emocional/Vincular:** Cómo reverbera este clima en el cuerpo, la psique o las relaciones humanas (llegando a la fibra).
 3. **Mecánica Astrológica:** Por qué ocurre (la razón técnica, pero explicada con poética pragmática).
 4. **Cómo Afrontarlo Constructivamente:** Sugestión sutil, no mandato. (Ej: "Es un tránsito que invita a observar...", en lugar de "Deben hacer...").
-5. **CTA:** Llamado a la acción ultra rápido (max 10 palabras) sobre revisar la carta natal.
+5. **CTA COMERCIAL DE CONVERSIÓN DIRECTA (VENTA DEL PRODUCTO):**
+   - **PROHIBIDO:** Divagar con reflexiones abstractas, dudas existenciales o preguntas al aire (CERO "¿dónde duele?", CERO "mira tu carta" sin explicar dónde ni cómo).
+   - **OBLIGATORIO:** Guiar al espectador hacia el embudo de ventas. Debe especificar:
+     1. **Dónde ir:** "Andá al link de mi perfil" o "Enlace en la bio".
+     2. **Qué hacer:** "Ingresá tu fecha y hora exacta".
+     3. **Qué recibe:** "Calculá tu mapa astral completo" o "Descubrí qué casa te activa este tránsito y llévate tu informe".
+   - **Ejemplo de referencia:** "Andá al link de mi perfil, ingresá tu fecha y hora exacta, y descubrí qué casa te activa este tránsito hoy."
 
 ## [CRÍTICO] PUNTUACIÓN EMOCIONAL PARA IA DE VOZ (PROSODIA Y RITMO)
 El guion será leído por un motor TTS (Text-to-Speech) que interpreta la puntuación para regular la velocidad y la emoción. Es VITAL que rompas la monotonía robótica estructurando el texto con desniveles rítmicos.

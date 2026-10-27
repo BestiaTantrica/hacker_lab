@@ -85,6 +85,12 @@ DATOS DEL TRÁNSITO ACTIVO PARA EL GUION:
 
 REQUERIMIENTO:
 Redacta un guion de EXACTAMENTE 5 tomas para un video vertical de ~38-40 segundos.
+
+REGLA CRÍTICA PARA TOMA 5 (CTA COMERCIAL DE VENTA DIRECTA):
+- PROHIBIDO divagar con preguntas existenciales o poéticas (CERO "¿dónde te duele?", CERO "mira tu carta" sin dirección).
+- DEBES VENDER DIRECTAMENTE: Indica al espectador que vaya al enlace del perfil, ingrese fecha y hora exacta, y calcule o descargue su mapa astral completo.
+- Ejemplo obligado de referencia: "Andá al link de mi perfil, ingresá tu fecha y hora exacta, y descubrí qué casa te activa este tránsito hoy."
+
 Formato de respuesta: ÚNICAMENTE un bloque JSON válido con esta estructura:
 {{
   "tomas": [

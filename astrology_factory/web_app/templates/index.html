@@ -3,212 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Mapa Astral | Astrología de Precisión</title>
+    <title>El Glifo Maestro | Astrología de Precisión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
-    <link rel="stylesheet" href="/static/css/index.css?v=3">
+    <link rel="stylesheet" href="/static/css/index.css?v=5">
 </head>
 <body>
+    <!-- Fondo Cinemático Cósmico Vivo (Tenebrismo Espacial Roberto Ferri) -->
     <div class="ambient-background">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
+        <canvas id="bg-live-canvas"></canvas>
     </div>
 
     <main class="container">
-        <section class="hero">
-            <div class="logo-container" style="margin-bottom: 1.5rem;">
-                <img src="/static/img/app_icon.png" alt="Portal Tarot Místico" style="width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 0 30px rgba(233, 69, 96, 0.6), 0 0 15px rgba(240, 201, 135, 0.4); border: 2px solid rgba(240, 201, 135, 0.5); object-fit: cover;">
+        <!-- Barra de Estado Superior -->
+        <header class="top-nav">
+            <div class="brand-pill">
+                <span>☉</span> PORTAL TAROT MÍSTICO
             </div>
-            <h1>Descubre el mapa de<br>tu universo interior</h1>
-            <p>Descubre el guion oculto de tu vida. Astrología profunda, sin filtros y brutalmente honesta. Recibe tu mapa astral hiper-personalizado directo en tu correo.</p>
-            <div style="margin-top: 1.2rem;">
-                <a href="/reloj" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(246, 196, 69, 0.15); border: 1.5px solid rgba(246, 196, 69, 0.4); color: #f6c445; padding: 10px 22px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 600; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: all 0.3s ease;">
-                    <span style="font-size: 1.15rem;">⏱</span> Ver Reloj Cósmico en Tiempo Real
+            <div class="live-transit-chip">
+                <span class="live-pulse"></span>
+                <span id="nav-transit-text">Tránsitos en Tiempo Real Activos</span>
+            </div>
+            <a href="/reloj" target="_blank" class="btn-secondary-dark" style="padding: 7px 16px; font-size: 0.8rem;">
+                <span>⛶</span> Modo Wallpaper 4K
+            </a>
+        </header>
+
+        <!-- Hero Inmersivo Central (Limpio y de Alto Impacto) -->
+        <section class="hero">
+            <img src="/static/img/app_icon.png" alt="Portal Tarot Místico" class="hero-logo">
+            <h1>El Mapa de tu<br><span>Universo Interior</span></h1>
+            <p>Astrología de precisión matemática, profunda y brutalmente honesta. El guion de tu vida interpretado por el Glifo Maestro, sin falsas promesas ni lugares comunes.</p>
+            
+            <div class="hero-actions">
+                <a href="#natal-section" class="btn-primary-gold" id="btn-scroll-natal">
+                    <span>✦</span> Descubrir Mi Carta Natal
+                </a>
+                <a href="#wallpaper-section" class="btn-secondary-dark">
+                    <span>⏱</span> Reloj Cósmico Live Wallpaper
                 </a>
             </div>
         </section>
 
-        <section class="subscription-panel glassmorphism">
-            <h2>Únete a la Constelación</h2>
-            <form id="subscribeForm" class="elegant-form">
-                <div class="input-group">
-                    <label for="name">Nombre</label>
-                    <input type="text" id="name" name="name" required placeholder="Ej. Camila">
+        <!-- SECCIÓN 1: FORMULARIO PROGRESIVO EN 2 PASOS (ZERO FRICCIÓN) -->
+        <section class="glassmorphism" id="natal-section">
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-step-1">
+                    <span class="dot-circle">1</span>
+                    <span>Tu Identidad</span>
                 </div>
-                
-                <div class="input-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                <div style="width: 30px; height: 1px; background: rgba(255,255,255,0.15);"></div>
+                <div class="step-dot" id="dot-step-2">
+                    <span class="dot-circle">2</span>
+                    <span>Coordenadas Celestes</span>
                 </div>
-
-                <div class="row">
-                    <div class="input-group half">
-                        <label for="birth_date">Fecha de Nacimiento</label>
-                        <input type="date" id="birth_date" name="birth_date" required>
-                    </div>
-                    <div class="input-group half">
-                        <label for="birth_time">Hora (Aprox)</label>
-                        <input type="time" id="birth_time" name="birth_time" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="birth_city">Ciudad de Nacimiento</label>
-                    <input type="text" id="birth_city" name="birth_city" required placeholder="Ej. Buenos Aires, Argentina">
-                </div>
-
-                <button type="submit" class="primary-btn">
-                    <span class="btn-text">Generar mi Carta</span>
-                    <div class="loader hidden"></div>
-                </button>
-            </form>
-            <div id="formMessage" class="message hidden"></div>
-            
-            <div id="personalResponse" class="hidden" style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; text-align: left; line-height: 1.6; border: 1px solid rgba(255,255,255,0.1);">
-                <!-- Aquí se inyectará el HTML generado por la IA -->
             </div>
 
-            <!-- Interfaz de Chat Integrada -->
-            <div id="chatContainer" class="hidden" style="margin-top: 1.5rem; background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(240, 201, 135, 0.3); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 10px;">
-                <h3 style="color: #f0c987; margin: 0; font-size: 1.1rem; text-align: left;">Chatea con el Oráculo</h3>
-                <div id="chatHistory" style="height: 200px; overflow-y: auto; text-align: left; font-size: 0.9rem; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 4px; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="color: #4a90e2;"><strong>Oráculo:</strong> Hola. Siento tu energía. ¿Qué preguntas tienes sobre tu carta astral?</div>
+            <form id="subscribeForm">
+                <!-- PASO 1: NOMBRE Y CORREO -->
+                <div class="form-step active" id="form-step-1">
+                    <h2 style="font-family: 'Cinzel', serif; font-size: 1.4rem; color: #fff; margin-bottom: 0.5rem; text-align: center;">¿A quién le habla el oráculo?</h2>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center;">Recibirás la síntesis de tu mapa y tu reporte hiper-personalizado directo en tu bandeja.</p>
+                    
+                    <div class="input-group">
+                        <label for="name">Nombre o Apodo</label>
+                        <input type="text" id="name" name="name" required placeholder="Ej. Camila">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                    </div>
+
+                    <button type="button" class="btn-primary-gold" id="btn-next-step" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                        Continuar a Coordenadas Celestes ➔
+                    </button>
+                </div>
+
+                <!-- PASO 2: COORDENADAS ESPACIO-TEMPORALES -->
+                <div class="form-step" id="form-step-2">
+                    <h2 style="font-family: 'Cinzel', serif; font-size: 1.4rem; color: #fff; margin-bottom: 0.5rem; text-align: center;">Tus Coordenadas en el Tiempo</h2>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center;">Para calcular el Ascendente exacto y las 12 casas según las efemérides planetarias.</p>
+
+                    <div class="row">
+                        <div class="input-group half">
+                            <label for="birth_date">Fecha de Nacimiento</label>
+                            <input type="date" id="birth_date" name="birth_date" required>
+                        </div>
+                        <div class="input-group half">
+                            <label for="birth_time">Hora (Lo más exacta posible)</label>
+                            <input type="time" id="birth_time" name="birth_time" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="birth_city">Ciudad y País de Nacimiento</label>
+                        <input type="text" id="birth_city" name="birth_city" required placeholder="Ej. Buenos Aires, Argentina">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 1rem;">
+                        <button type="button" class="btn-secondary-dark" id="btn-prev-step" style="flex: 1; justify-content: center;">
+                            ◀ Volver
+                        </button>
+                        <button type="submit" class="btn-primary-gold" id="btn-submit-form" style="flex: 2; justify-content: center;">
+                            <span class="btn-text">⚡ Forjar Mi Carta Astral</span>
+                            <div class="loader hidden"></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="formMessage" class="hidden" style="margin-top: 1.5rem; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
+            
+            <!-- Respuesta Personalizada de la IA -->
+            <div id="personalResponse" class="hidden" style="margin-top: 2rem; padding: 1.8rem; background: rgba(5, 8, 18, 0.85); border-radius: 12px; text-align: left; line-height: 1.7; border: 1px solid rgba(246, 196, 69, 0.35); font-size: 0.95rem;">
+                <!-- Contenido inyectado dinámicamente -->
+            </div>
+
+            <!-- Interfaz de Chat con el Oráculo -->
+            <div id="chatContainer" class="hidden">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="color: var(--gold-primary); font-family: 'Cinzel', serif; margin: 0; font-size: 1.1rem;">Chatea con el Oráculo en Vivo</h3>
+                    <span style="font-size: 0.75rem; color: #10b981;">● En línea</span>
+                </div>
+                <div id="chatHistory">
+                    <div style="color: #38bdf8;"><strong>Oráculo:</strong> He calculado tu mandala natal. ¿Qué aspecto o casa deseas profundizar?</div>
                 </div>
                 <form id="chatForm" style="display: flex; gap: 10px;">
-                    <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." required style="flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff;">
-                    <button type="submit" class="primary-btn" style="padding: 10px 15px; font-size: 0.9rem;">Enviar</button>
-                </form>
-            </div>
-            
-            <div class="social-links" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 15px; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
-                <p style="font-size: 1.1rem; color: #f0c987; font-weight: 600;">¿Quieres seguir descubriendo tu universo?</p>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                    <a href="https://t.me/PortalTarotBot" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #0088cc, #005580); border: 1px solid #00aaff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
-                        Habla con el Oráculo en Telegram
-                    </a>
-                    <a href="https://www.youtube.com/@portaltarotmistico" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #cc0000, #800000); border: 1px solid #ff3333; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
-                        Suscríbete en YouTube
-                    </a>
-                    <a href="https://www.tiktok.com/@portaltarotmistico" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #000000, #222222); border: 1px solid #00f2fe; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem;">
-                        Síguenos en TikTok
-                    </a>
-                </div>
-            </div>
-            
-            <div class="donation-section" style="margin-top: 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
-                
-                <!-- Sección de Venta de Videos Oculta Temporalmente -->
-                <!--
-                <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #f0c987;">Productos Premium (Formatos en Video)</p>
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                    <button class="primary-btn" style="background: linear-gradient(135deg, #1e3c72, #2a5298); border: 1px solid #4a90e2; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🎬 Video Carta Natal ($10 USD)</button>
-                    <button class="primary-btn" style="background: linear-gradient(135deg, #870000, #190a05); border: 1px solid #d4145a; padding: 10px 15px; font-size: 0.9rem;" onclick="alert('Funcionalidad de pago PayPal en desarrollo...')">🔥 Video Revolución Solar ($10 USD)</button>
-                </div>
-                -->
-
-            <div class="donation-section" style="margin-top: 2.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 2rem;">
-                <p style="font-size: 1.25rem; font-weight: 700; color: #f0c987; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Apoya el Oráculo Libre y Accede a tus Informes</p>
-                <p style="font-size: 0.9rem; color: #cbd5e1; max-width: 520px; margin: 0 auto 1.5rem auto; line-height: 1.5;">Elige el medio de pago más seguro y cómodo para ti. Tu contribución sostiene los servidores, las efemérides y la biblioteca del Glifo Maestro.</p>
-
-                <!-- BANNER DESTACADO: 15% OFF POR TRANSFERENCIA DIRECTA -->
-                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(246, 196, 69, 0.12)); border: 1.5px solid rgba(16, 185, 129, 0.5); border-radius: 12px; padding: 18px 20px; margin-bottom: 1.8rem; text-align: left; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                        <div>
-                            <span style="background: #10b981; color: #022c22; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">🏷️ Ahorro Directo</span>
-                            <h4 style="color: #ffffff; margin: 8px 0 4px 0; font-size: 1.15rem; font-weight: 700;">15% OFF con Transferencia Bancaria Directa</h4>
-                            <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Sin comisiones de intermediarios. Envía tu aporte o pago directo con tu comprobante.</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                            <div>
-                                <span style="font-size: 0.75rem; color: #aaa; display: block;">Alias Mercado Pago:</span>
-                                <span id="mpAlias" style="color: #4CAF50; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;">vida.rucula</span>
-                            </div>
-                            <button type="button" onclick="navigator.clipboard.writeText('vida.rucula'); this.innerText='¡Copiado!'; setTimeout(() => this.innerText='Copiar', 2000)" style="background: #10b981; border: none; color: #000; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">Copiar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PASARELA MERCADO PAGO (TARJETAS, DÉBITO, CUOTAS, QR) -->
-                <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(240, 201, 135, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 1.8rem; backdrop-filter: blur(10px);">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-                        <span style="font-size: 1.3rem;">💳</span>
-                        <h4 style="color: #f0c987; margin: 0; font-size: 1.1rem; font-weight: 600;">Paga con Confianza vía Mercado Pago</h4>
-                    </div>
-                    <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 14px;">Tarjetas de Crédito en cuotas, Débito, Dinero en cuenta y Código QR oficial.</p>
-
-                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                        <button type="button" onclick="document.getElementById('mpModal').classList.remove('hidden')" class="primary-btn" style="background: linear-gradient(135deg, #009ee3, #007eb5); border: 1px solid #00c3ff; padding: 12px 24px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0, 158, 227, 0.4);">
-                            <span>📱</span> Pagar con Mercado Pago / QR
-                        </button>
-                        <a href="https://www.paypal.com/paypalme/impresiones3dxyz" target="_blank" class="primary-btn" style="background: linear-gradient(135deg, #003087, #0079C1); border: 1px solid #009cde; text-decoration: none; padding: 12px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
-                            <span>🌐</span> PayPal (Internacional / USD)
-                        </a>
-                    </div>
-
-                    <!-- Insignias de Medios de Pago -->
-                    <div style="margin-top: 14px; font-size: 0.75rem; color: #718096; display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
-                        <span>✓ Visa / Mastercard / Cabal</span>
-                        <span>✓ Débito en el acto</span>
-                        <span>✓ Cuotas disponibles</span>
-                        <span>✓ Protección de Compra</span>
-                    </div>
-                </div>
-
-                <!-- MODAL INTERACTIVO DE PAGO MERCADO PAGO -->
-                <div id="mpModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center;">
-                    <div style="background: #0f172a; border: 1.5px solid #009ee3; border-radius: 14px; padding: 25px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); position: relative;">
-                        <button type="button" onclick="document.getElementById('mpModal').classList.add('hidden')" style="position: absolute; top: 12px; right: 15px; background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer;">&times;</button>
-                        <h3 style="color: #009ee3; margin-top: 5px; font-size: 1.25rem;">Mercado Pago Checkout</h3>
-                        <p style="font-size: 0.85rem; color: #ccc; margin-top: 6px;">Escanea el código QR desde tu app de Mercado Pago o transfiere directo con el alias:</p>
-
-                        <!-- QR Oficial Simulado / Placeholder Visual de Alta Confianza -->
-                        <div style="background: #ffffff; padding: 12px; border-radius: 10px; display: inline-block; margin: 15px auto;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=vida.rucula" alt="QR Mercado Pago vida.rucula" style="width: 170px; height: 170px; display: block;">
-                        </div>
-
-                        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 10px;">
-                            <span style="font-size: 0.8rem; color: #aaa;">Alias de cobro directo:</span>
-                            <div style="color: #10b981; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; margin-top: 3px;">vida.rucula</div>
-                        </div>
-
-                        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 14px;">Al transferir, tu solicitud se activa automáticamente con la constelación. ¡Gracias por tu confianza!</p>
-                        <button type="button" onclick="document.getElementById('mpModal').classList.add('hidden')" style="margin-top: 10px; background: #334155; border: none; color: #fff; padding: 8px 18px; border-radius: 6px; cursor: pointer;">Cerrar</button>
-                    </div>
-                </div>
-
-                <hr style="border:none; border-top: 1px dashed rgba(255,255,255,0.1); margin: 20px 0;">
-                <p style="font-size: 0.8rem; color: #aaa;">¿Te equivocaste de hora al registrarte?</p>
-                <button onclick="document.getElementById('rectifyForm').classList.toggle('hidden')" style="background: none; border: 1px solid #555; color: #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px;">Rectificar Horario (Gratis)</button>
-                
-                <form id="rectifyForm" class="elegant-form hidden" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
-                    <div class="input-group">
-                        <label for="rectify_email">Email registrado</label>
-                        <input type="email" id="rectify_email" name="email" required placeholder="tu@correo.com">
-                    </div>
-                    <div class="input-group">
-                        <label for="rectify_time">Hora Correcta</label>
-                        <input type="time" id="rectify_time" name="new_time" required>
-                    </div>
-                    <button type="submit" class="primary-btn" style="padding: 8px; font-size: 0.9rem;">Actualizar Hora</button>
-                    <div id="rectifyMessage" class="message hidden" style="margin-top: 10px;"></div>
+                    <input type="text" id="chatInput" placeholder="Haz tu pregunta al oráculo..." required style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #000; color: #fff; font-size: 0.95rem;">
+                    <button type="submit" class="btn-primary-gold" style="padding: 10px 20px; font-size: 0.9rem;">Preguntar</button>
                 </form>
             </div>
         </section>
 
-        <footer style="margin-top: 3rem; text-align: center; font-size: 0.8rem; color: #666;">
-            <p>&copy; 2026 Portal Tarot Místico. Todos los derechos reservados.</p>
-            <p style="margin-top: 5px;">
-                <a href="/terms" style="color: #888; text-decoration: none; margin: 0 10px;">Términos y Condiciones</a> | 
-                <a href="/privacy" style="color: #888; text-decoration: none; margin: 0 10px;">Política de Privacidad</a>
+        <!-- SECCIÓN 2: SHOWCASE DEL RELOJ CÓSMICO / LIVE WALLPAPER 4K -->
+        <section class="wallpaper-showcase" id="wallpaper-section">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(246, 196, 69, 0.15); border: 1px solid rgba(246, 196, 69, 0.35); padding: 5px 16px; border-radius: 20px; font-size: 0.8rem; color: var(--gold-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                <span>⏱ Producto Exclusivo</span> Live Wallpaper Interactivo 4K
+            </div>
+            <h2 style="font-family: 'Cinzel', serif; font-size: 1.8rem; color: #fff; margin-bottom: 0.6rem;">El Reloj Astrológico Universal</h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; max-width: 620px; margin: 0 auto; line-height: 1.6;">
+                Un astrolabio mecánico en tiempo real que calcula la hora local y sideral, con el Ascendente exacto y los planetas transitando las 12 casas sobre tu ciudad.
             </p>
-        </footer>
+
+            <!-- Preview Interactivo en Vivo -->
+            <div class="wallpaper-preview-frame">
+                <iframe src="/reloj" style="width: 100%; height: 100%; border: none;" title="Reloj Cósmico en Tiempo Real"></iframe>
+            </div>
+
+            <!-- Compatibilidad y Descarga -->
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.85rem; color: #94a3b8;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="color: var(--cyan-accent);">💻</span> Windows (Lively Wallpaper / Wallpaper Engine)
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="color: var(--gold-primary);">📱</span> Celular & Tablet (PWA Pantalla Completa)
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="color: #10b981;">⚡</span> Efemérides Autónomas en JS sin caídas
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <a href="/reloj" target="_blank" class="btn-primary-gold">
+                    <span>⛶</span> Abrir en Pantalla Completa (Modo Wallpaper)
+                </a>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: PASARELA DE PAGOS & CONFIANZA (15% OFF + MERCADO PAGO) -->
+        <section class="payment-card">
+            <h3 style="font-family: 'Cinzel', serif; font-size: 1.4rem; color: #fff; margin-bottom: 0.5rem;">Adquiere tu Informe Completo o Apoya el Oráculo</h3>
+            <p style="color: #94a3b8; font-size: 0.9rem; max-width: 540px; margin: 0 auto 1.5rem auto; line-height: 1.5;">Tu aporte sostiene los servidores, las efemérides astronómicas y la generación profunda de informes.</p>
+
+            <!-- BANNER DESTACADO 15% OFF TRANSFERENCIA DIRECTA -->
+            <div class="transfer-banner">
+                <div>
+                    <span style="background: var(--emerald-save); color: #022c22; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">🏷️ Ahorro Directo</span>
+                    <h4 style="color: #ffffff; margin: 8px 0 4px 0; font-size: 1.15rem; font-weight: 700;">15% OFF por Transferencia Bancaria Directa</h4>
+                    <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Sin comisiones. Envía tu aporte y accede a tu informe prioritario.</p>
+                </div>
+                <div class="alias-box">
+                    <div>
+                        <span style="font-size: 0.7rem; color: #aaa; display: block;">Alias Mercado Pago:</span>
+                        <span class="alias-text">vida.rucula</span>
+                    </div>
+                    <button type="button" class="btn-copy" id="btn-copy-alias">Copiar</button>
+                </div>
+            </div>
+
+            <!-- PASARELA MERCADO PAGO (TARJETAS EN CUOTAS / QR) -->
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px;">
+                    <span style="font-size: 1.25rem;">💳</span>
+                    <h4 style="color: var(--text-gold); margin: 0; font-size: 1.05rem; font-weight: 600;">Mercado Pago (Cuotas, Débito o Dinero en Cuenta)</h4>
+                </div>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.2rem;">Aceptamos todas las tarjetas con la seguridad y respaldo de Mercado Pago.</p>
+                
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" id="btn-open-mp" class="btn-primary-gold" style="padding: 10px 22px; font-size: 0.9rem;">
+                        <span>🔒</span> Pagar con Mercado Pago / QR
+                    </button>
+                    <a href="https://paypal.me/portaltarotmistico" target="_blank" class="btn-secondary-dark" style="padding: 10px 20px; font-size: 0.9rem;">
+                        <span>🌐</span> PayPal ($10 USD)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Redes Oficiales -->
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="https://t.me/PortalTarotBot" target="_blank" class="btn-secondary-dark" style="padding: 8px 16px; font-size: 0.85rem; border-color: rgba(56, 189, 248, 0.4);">
+                    <span>✈️</span> Oráculo en Telegram
+                </a>
+                <a href="https://www.youtube.com/@portaltarotmistico" target="_blank" class="btn-secondary-dark" style="padding: 8px 16px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4);">
+                    <span>▶</span> YouTube
+                </a>
+                <a href="https://www.tiktok.com/@portaltarotmistico" target="_blank" class="btn-secondary-dark" style="padding: 8px 16px; font-size: 0.85rem; border-color: rgba(6, 182, 212, 0.4);">
+                    <span>✦</span> TikTok Oficial
+                </a>
+            </div>
+        </section>
     </main>
 
-    <script src="/static/js/app.js?v=3"></script>
+    <!-- Modal Mercado Pago QR -->
+    <div id="mpModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div style="background: #0d1326; border: 1.5px solid var(--border-gold); border-radius: 16px; padding: 28px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h4 style="font-family: 'Cinzel', serif; color: var(--gold-primary); margin: 0; font-size: 1.2rem;">Pago Seguro Mercado Pago</h4>
+                <button type="button" id="btn-close-mp" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 18px;">Escanea el código QR desde tu app de Mercado Pago o transfiere al alias oficial:</p>
+            <div style="background: #ffffff; padding: 14px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
+                <img src="/static/img/qr_mercadopago.png" alt="QR Mercado Pago" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=mercadopago://alias=vida.rucula'" style="width: 170px; height: 170px; display: block;">
+            </div>
+            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                <span style="font-size: 0.8rem; color: #888; display: block;">Alias Directo:</span>
+                <span style="font-size: 1.15rem; font-weight: 700; color: #10b981;">vida.rucula</span>
+            </div>
+            <button type="button" id="btn-done-mp" class="btn-primary-gold" style="width: 100%; justify-content: center;">
+                Hecho / Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Script de Lógica Frontend & Fondo Animado -->
+    <script>
+        // ── Fondo de Polvo Estelar Hipnótico en Canvas ────────────────────────
+        (function() {
+            const canvas = document.getElementById('bg-live-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, stars = [];
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                stars = [];
+                for (let i = 0; i < 90; i++) {
+                    stars.push({
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        size: Math.random() * 1.6 + 0.3,
+                        alpha: Math.random() * 0.7 + 0.2,
+                        speed: Math.random() * 0.3 + 0.05
+                    });
+                }
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function anim() {
+                ctx.clearRect(0, 0, w, h);
+                for (const s of stars) {
+                    s.y -= s.speed;
+                    if (s.y < 0) s.y = h;
+                    ctx.fillStyle = `rgba(246, 196, 69, ${s.alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(anim);
+            }
+            anim();
+        })();
+
+        // ── Formulario Progresivo en 2 Pasos ──────────────────────────────────
+        const step1 = document.getElementById('form-step-1');
+        const step2 = document.getElementById('form-step-2');
+        const dot1 = document.getElementById('dot-step-1');
+        const dot2 = document.getElementById('dot-step-2');
+        const btnNext = document.getElementById('btn-next-step');
+        const btnPrev = document.getElementById('btn-prev-step');
+
+        btnNext.addEventListener('click', () => {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            if (!name || !email) {
+                alert('Por favor, ingresa tu nombre y un correo válido para continuar.');
+                return;
+            }
+            step1.classList.remove('active');
+            step2.classList.add('active');
+            dot1.classList.remove('active');
+            dot2.classList.add('active');
+        });
+
+        btnPrev.addEventListener('click', () => {
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            dot2.classList.remove('active');
+            dot1.classList.add('active');
+        });
+
+        // Copiar Alias con feedback táctil
+        const btnCopy = document.getElementById('btn-copy-alias');
+        if (btnCopy) {
+            btnCopy.addEventListener('click', () => {
+                navigator.clipboard.writeText('vida.rucula');
+                btnCopy.innerText = '¡Copiado!';
+                setTimeout(() => btnCopy.innerText = 'Copiar', 2500);
+            });
+        }
+
+        // Modal Mercado Pago
+        const modal = document.getElementById('mpModal');
+        const btnOpenMP = document.getElementById('btn-open-mp');
+        const btnCloseMP = document.getElementById('btn-close-mp');
+        const btnDoneMP = document.getElementById('btn-done-mp');
+
+        if (btnOpenMP && modal) {
+            btnOpenMP.addEventListener('click', () => modal.classList.remove('hidden'));
+            btnCloseMP.addEventListener('click', () => modal.classList.add('hidden'));
+            btnDoneMP.addEventListener('click', () => modal.classList.add('hidden'));
+        }
+
+        // Envío AJAX del formulario natal
+        const form = document.getElementById('subscribeForm');
+        const formMsg = document.getElementById('formMessage');
+        const personalResp = document.getElementById('personalResponse');
+        const chatCont = document.getElementById('chatContainer');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSubmit = document.getElementById('btn-submit-form');
+            btnSubmit.disabled = true;
+            btnSubmit.querySelector('.btn-text').innerText = 'Calculando Carta...';
+
+            const formData = new FormData(form);
+            try {
+                const res = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    formMsg.className = '';
+                    formMsg.style.background = 'rgba(16, 185, 129, 0.2)';
+                    formMsg.style.color = '#10b981';
+                    formMsg.style.border = '1px solid #10b981';
+                    formMsg.innerText = data.message || '¡Carta generada con éxito!';
+
+                    if (data.analysis) {
+                        personalResp.innerHTML = data.analysis;
+                        personalResp.classList.remove('hidden');
+                        chatCont.classList.remove('hidden');
+                        personalResp.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    formMsg.className = '';
+                    formMsg.style.background = 'rgba(239, 68, 68, 0.2)';
+                    formMsg.style.color = '#ef4444';
+                    formMsg.innerText = data.detail || 'Ocurrió un error. Intenta nuevamente.';
+                }
+            } catch (err) {
+                formMsg.className = '';
+                formMsg.style.background = 'rgba(239, 68, 68, 0.2)';
+                formMsg.style.color = '#ef4444';
+                formMsg.innerText = 'Error de conexión con el servidor.';
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.querySelector('.btn-text').innerText = '⚡ Forjar Mi Carta Astral';
+            }
+        });
+
+        // Chat con el Oráculo
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatHistory = document.getElementById('chatHistory');
+
+        if (chatForm) {
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const q = chatInput.value.trim();
+                if (!q) return;
+
+                const userMsg = document.createElement('div');
+                userMsg.style.color = '#cbd5e1';
+                userMsg.innerHTML = `<strong>Tú:</strong> ${q}`;
+                chatHistory.appendChild(userMsg);
+                chatInput.value = '';
+
+                const botMsg = document.createElement('div');
+                botMsg.style.color = '#38bdf8';
+                botMsg.innerHTML = `<strong>Oráculo:</strong> <em>Sintonizando...</em>`;
+                chatHistory.appendChild(botMsg);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                try {
+                    const email = document.getElementById('email').value.trim();
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question: q, email: email })
+                    });
+                    const data = await res.json();
+                    botMsg.innerHTML = `<strong>Oráculo:</strong> ${data.reply || 'El velo cósmico permanece en silencio.'}`;
+                } catch (e) {
+                    botMsg.innerHTML = `<strong>Oráculo:</strong> No logré sintonizar la respuesta. Intenta de nuevo.`;
+                }
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            });
+        }
+    </script>
 </body>
 </html>

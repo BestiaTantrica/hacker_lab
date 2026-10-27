@@ -2,20 +2,25 @@ from fastapi import FastAPI, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import sys
 import sqlite3
 import os
-from google import genai
-from dotenv import load_dotenv
-from email_dispatcher import send_email_with_audio
-
-import urllib.parse
-import httpx
 from pathlib import Path
 
 # Rutas absolutas y relativas al proyecto
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+from dotenv import load_dotenv
 load_dotenv(os.path.join(PROJECT_DIR, ".env"))
+
+from google import genai
+try:
+    from email_dispatcher import send_email_with_audio
+except ImportError:
+    from web_app.email_dispatcher import send_email_with_audio
 
 app = FastAPI(title="Astrology Factory Web")
 
@@ -70,7 +75,11 @@ async def startup_event():
     conn.commit()
     conn.close()
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+VIDEOS_FONDO_DIR = "/home/tomas2/MediaContingencia/Privada/Astrology_Vault/Assets_Auditados/videos de espacio para fondo"
+if os.path.isdir(VIDEOS_FONDO_DIR):
+    app.mount("/videos_fondo", StaticFiles(directory=VIDEOS_FONDO_DIR), name="videos_fondo")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR, follow_symlink=True), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 @app.get("/favicon.ico", include_in_schema=False)

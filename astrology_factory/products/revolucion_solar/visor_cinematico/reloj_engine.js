@@ -50,6 +50,23 @@ const ASPECT_COLORS = {
   'Quincuncio': '#a855f7'
 };
 
+const CASA_SIGNIFICADOS = {
+  1: "Casa I (Ascendente): Identidad, presencia física, impulso vital y máscara exterior.",
+  2: "Casa II: Recursos propios, economía personal, valores y seguridad material.",
+  3: "Casa III: Mente concreta, comunicación inmediata, hermanos y entorno cercano.",
+  4: "Casa IV (Fondo de Cielo): Raíces, hogar, linaje familiar y mundo íntimo subterráneo.",
+  5: "Casa V: Creatividad pura, pasiones, autoexpresión, romances e hijos.",
+  6: "Casa VI: Salud somática, disciplina cotidiana, trabajo y orden del cuerpo.",
+  7: "Casa VII (Descendente): El espejo del otro, compromisos, socios y vínculos contractuales.",
+  8: "Casa VIII: Transformación radical, sexualidad alquímica, crisis y recursos compartidos.",
+  9: "Casa IX: Filosofía, viajes lejanos, cosmovisión superior y búsqueda de sentido.",
+  10: "Casa X (Medio Cielo): Vocación, destino público, reputación y maestría en el mundo.",
+  11: "Casa XI: Redes humanas, proyectos colectivos, ideales comunitarios y futuro.",
+  12: "Casa XII: Inconsciente colectivo, lo no resuelto, retiro espiritual y disolución del ego."
+};
+
+const ROMAN_HOURS = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+
 // Parámetros orbitales keplerianos (J2000)
 const KEPLER = {
   Mercurio: { a: 0.38709927, e: 0.20563593, I: 7.004979, L: 252.25032350, longPeri: 77.45779628, longNode: 48.33076593,
@@ -126,6 +143,19 @@ class RelojAstrologicoEngine {
     this.mediaRecorder = null;
     this.recordedChunks = [];
     this.isRecording = false;
+
+    // Tooltip y Estado de Interacción (Hover / Click / Auto-Hide)
+    this.tooltip = document.getElementById('reloj-tooltip');
+    this.hoveredItem = null;
+    this.inactivityTimer = null;
+    this.uiHiddenPinned = false;
+
+    // Detectar Modo Wallpaper por URL (?mode=wallpaper)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'wallpaper' || urlParams.get('clean') === '1') {
+      this.uiHiddenPinned = true;
+      this.container?.classList.add('clean-wallpaper');
+    }
 
     // Inicializaciones
     this.initCanvasSize();
@@ -299,6 +329,207 @@ class RelojAstrologicoEngine {
         this.toggleRecordWatermark(btnRecord);
       });
     }
+
+    // ── Interacción con Puntero / Touch (Hit Testing & Tooltips) ──────────
+    this.canvas.addEventListener('mousemove', (e) => this.handlePointerMove(e));
+    this.canvas.addEventListener('mouseleave', () => this.hideTooltip());
+    this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+    this.canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        this.handlePointerMove(e.touches[0]);
+      }
+    }, { passive: true });
+
+    // ── Auto-Hide de Interfaz tras 3.5 segundos de inactividad ───────────
+    window.addEventListener('mousemove', () => this.resetInactivityTimer());
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') {
+        this.toggleUIVisibility();
+      } else {
+        this.resetInactivityTimer();
+      }
+    });
+
+    // Botón Ocultar UI (H)
+    const btnToggleUI = document.getElementById('btn-toggle-ui');
+    if (btnToggleUI) {
+      btnToggleUI.addEventListener('click', () => {
+        this.toggleUIVisibility();
+      });
+    }
+
+    // Doble clic en canvas para alternar UI
+    this.canvas.addEventListener('dblclick', () => {
+      this.toggleUIVisibility();
+    });
+
+    this.resetInactivityTimer();
+  }
+
+  // ── Gestión de Inactividad y Modo Inmersivo (Wallpaper Puro) ───────────────
+  resetInactivityTimer() {
+    if (this.uiHiddenPinned) return; // Si fue fijado manualmente, se respeta
+
+    this.container?.classList.remove('ui-hidden');
+
+    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
+    this.inactivityTimer = setTimeout(() => {
+      this.container?.classList.add('ui-hidden');
+    }, 3800);
+  }
+
+  toggleUIVisibility() {
+    this.uiHiddenPinned = !this.uiHiddenPinned;
+    this.container?.classList.toggle('ui-hidden', this.uiHiddenPinned);
+    const btn = document.getElementById('btn-toggle-ui');
+    if (btn) {
+      btn.innerHTML = this.uiHiddenPinned ? '<span>👁‍🗨</span> Mostrar UI (H)' : '<span>👁</span> Ocultar UI (H)';
+      btn.classList.toggle('active', this.uiHiddenPinned);
+    }
+  }
+
+  // ── Hit-Testing & Tooltips Interactivos de Astros y Casas ─────────────────
+  handlePointerMove(e) {
+    this.resetInactivityTimer();
+
+    const rect = this.canvas.getBoundingClientRect();
+    const cx = this.width / 2;
+    const cy = this.height / 2;
+    const scale = Math.min(this.width, this.height) / 960;
+
+    const mouseX = (e.clientX - rect.left - cx) / scale;
+    const mouseY = (e.clientY - rect.top - cy) / scale;
+
+    let hit = null;
+
+    // 1. Detectar Planetas (Radio 24px)
+    const planetArray = Object.values(this.calculated.planets);
+    for (const p of planetArray) {
+      const a = this.coordToAngle(p.grado_absoluto);
+      const px = Math.cos(a) * this.radii.planets;
+      const py = Math.sin(a) * this.radii.planets;
+      const dist = Math.hypot(mouseX - px, mouseY - py);
+      if (dist < 26) {
+        hit = { tipo: 'planeta', data: p };
+        break;
+      }
+    }
+
+    // 2. Si no es planeta, detectar si está sobre un Signo Zodiacal
+    if (!hit) {
+      const distC = Math.hypot(mouseX, mouseY);
+      if (distC >= this.radii.zodiacInner && distC <= this.radii.zodiacOuter) {
+        let angle = Math.atan2(mouseY, mouseX);
+        let relDeg = ((Math.PI - angle) * 180 / Math.PI) % 360;
+        if (relDeg < 0) relDeg += 360;
+        let eclipticDeg = (relDeg + this.calculated.asc) % 360;
+        let signIdx = Math.floor(eclipticDeg / 30);
+        let signDeg = Math.floor(eclipticDeg % 30);
+        if (ZODIAC_SIGNS[signIdx]) {
+          hit = { tipo: 'signo', data: ZODIAC_SIGNS[signIdx], grado: signDeg };
+        }
+      }
+    }
+
+    // 3. Si no es signo, detectar Casa Astrológica
+    if (!hit) {
+      const distC = Math.hypot(mouseX, mouseY);
+      if (distC >= this.radii.housesInner && distC <= this.radii.housesOuter) {
+        let angle = Math.atan2(mouseY, mouseX);
+        let relDeg = ((Math.PI - angle) * 180 / Math.PI) % 360;
+        if (relDeg < 0) relDeg += 360;
+        let houseNum = Math.floor(relDeg / 30) + 1;
+        if (houseNum >= 1 && houseNum <= 12) {
+          hit = { tipo: 'casa', num: houseNum };
+        }
+      }
+    }
+
+    this.hoveredItem = hit;
+    this.canvas.style.cursor = hit ? 'pointer' : 'default';
+
+    if (hit) {
+      this.showTooltip(hit, e.clientX, e.clientY);
+    } else {
+      this.hideTooltip();
+    }
+  }
+
+  handleCanvasClick(e) {
+    if (this.hoveredItem) {
+      // Bloquear selección o emitir feedback sonoro/visual
+      const p = this.hoveredItem.data;
+      if (this.hoveredItem.tipo === 'planeta') {
+        console.log(`[Glifo Maestro] Astro Seleccionado: ${p.nombre} en ${p.signo} ${p.grado}°${p.minutos}' (Casa ${p.casa})`);
+      }
+    }
+  }
+
+  showTooltip(hit, clientX, clientY) {
+    if (!this.tooltip) return;
+
+    if (hit.tipo === 'planeta') {
+      const p = hit.data;
+      const glyph = GLYPHS[p.nombre] || '★';
+      const casaDesc = CASA_SIGNIFICADOS[p.casa] || `Casa ${p.casa}`;
+
+      // Filtrar aspectos que involucren a este astro
+      const planetAspects = this.calculated.aspects.filter(a => a.p1 === p.nombre || a.p2 === p.nombre);
+      let aspectsHtml = '';
+      if (planetAspects.length > 0) {
+        aspectsHtml = '<div class="tooltip-aspects"><strong>Aspectos Sagrados Activos:</strong><br>' +
+          planetAspects.slice(0, 3).map(a => {
+            const otro = a.p1 === p.nombre ? a.p2 : a.p1;
+            return `<span style="color:${a.color}">⚡ ${a.tipo} con ${GLYPHS[otro]||''} ${otro} (orbe ${a.orbe.toFixed(1)}°)</span>`;
+          }).join('<br>') + '</div>';
+      }
+
+      this.tooltip.innerHTML = `
+        <div class="tooltip-title">
+          <span style="font-size: 18px; color:${p.color};">${glyph}</span>
+          ${p.nombre} en ${p.signo_simbolo} ${p.signo}
+        </div>
+        <div class="tooltip-detail">
+          <strong>Posición Eclíptica:</strong> ${p.grado}° ${p.minutos}'<br>
+          <strong>Emplazamiento:</strong> ${casaDesc}
+        </div>
+        ${aspectsHtml}
+      `;
+    } else if (hit.tipo === 'signo') {
+      const s = hit.data;
+      this.tooltip.innerHTML = `
+        <div class="tooltip-title">
+          <span style="font-size: 18px; color:${s.color};">${s.simbolo}</span>
+          Signo de ${s.nombre} (${hit.grado}°)
+        </div>
+        <div class="tooltip-detail">
+          <strong>Elemento:</strong> ${s.elemento}<br>
+          <strong>Planeta Regente:</strong> ${s.regente}
+        </div>
+      `;
+    } else if (hit.tipo === 'casa') {
+      const casaDesc = CASA_SIGNIFICADOS[hit.num] || `Casa ${hit.num}`;
+      const partes = casaDesc.split(':');
+      this.tooltip.innerHTML = `
+        <div class="tooltip-title">🏛️ ${partes[0]}</div>
+        <div class="tooltip-detail">${partes[1] || ''}</div>
+      `;
+    }
+
+    // Posicionamiento que nunca se desborda de pantalla
+    const pad = 16;
+    let left = clientX + pad;
+    let top = clientY + pad;
+    if (left + 300 > window.innerWidth) left = clientX - 300;
+    if (top + 180 > window.innerHeight) top = clientY - 180;
+
+    this.tooltip.style.left = `${left}px`;
+    this.tooltip.style.top = `${top}px`;
+    this.tooltip.classList.add('visible');
+  }
+
+  hideTooltip() {
+    if (this.tooltip) this.tooltip.classList.remove('visible');
   }
 
   cambiarFondo(bgType) {
@@ -312,9 +543,9 @@ class RelojAstrologicoEngine {
       this.videoBg.style.display = 'block';
       if (sliderWrapper) sliderWrapper.style.opacity = '1.0';
       if (bgType === 'galaxia') {
-        this.videoBg.src = "videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4";
+        this.videoBg.src = "/videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4";
       } else if (bgType === 'estrellas') {
-        this.videoBg.src = "videos_fondo/07_espacio_galaxias_stars_ethereal_glowing_pex_v_35115646.mp4";
+        this.videoBg.src = "/videos_fondo/07_espacio_galaxias_stars_ethereal_glowing_pex_v_35115646.mp4";
       }
       this.videoBg.play().catch(() => {});
     }
@@ -699,30 +930,74 @@ class RelojAstrologicoEngine {
     const r = this.radii.dialBoundary;
     ctx.save();
 
-    // Viñeta y halo de fondo
-    const grad = ctx.createRadialGradient(0, 0, this.radii.core, 0, 0, r + 40);
-    grad.addColorStop(0, 'rgba(5, 7, 15, 0.4)');
-    grad.addColorStop(0.8, 'rgba(3, 4, 10, 0.85)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+    // 1. Viñeta profunda tenebrista (Efecto cuenco cóncavo de astrolabio)
+    const grad = ctx.createRadialGradient(0, 0, this.radii.core * 0.8, 0, 0, r + 50);
+    grad.addColorStop(0, 'rgba(5, 7, 16, 0.25)');
+    grad.addColorStop(0.65, 'rgba(4, 6, 14, 0.75)');
+    grad.addColorStop(0.9, 'rgba(2, 3, 7, 0.95)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 1.0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(0, 0, r + 40, 0, Math.PI * 2);
+    ctx.arc(0, 0, r + 50, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bordes dorados finos
-    ctx.strokeStyle = 'rgba(246, 196, 69, 0.35)';
+    // 2. Anillo de Bronce y Oro Envejecido (Bisel Horológico Astrolabio)
+    const rOuterBezel = r + 26;
+    const bezelGrad = ctx.createRadialGradient(0, 0, r - 4, 0, 0, rOuterBezel);
+    bezelGrad.addColorStop(0, '#1c1305');
+    bezelGrad.addColorStop(0.3, '#78550f');
+    bezelGrad.addColorStop(0.65, '#d4af37');
+    bezelGrad.addColorStop(0.85, '#fff3b0');
+    bezelGrad.addColorStop(1, '#2c1e09');
+
+    ctx.strokeStyle = bezelGrad;
+    ctx.lineWidth = 15;
+    ctx.beginPath();
+    ctx.arc(0, 0, r + 11, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 3. Biseles tallados dorados
+    ctx.strokeStyle = 'rgba(246, 196, 69, 0.85)';
     ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(0, 0, rOuterBezel, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(246, 196, 69, 0.5)';
+    ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(246, 196, 69, 0.15)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
-    ctx.stroke();
+    // 4. Rueda Horaria del Reloj Antiguo (24 Números Romanos grabados como el Reloj de Praga)
+    ctx.font = '700 8.5px "Cinzel", serif';
+    ctx.fillStyle = '#f6c445';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const rRoman = r + 11;
+    for (let h = 0; h < 24; h++) {
+      // Ángulo de la hora: 0h en el cenit (Medio Cielo) = -Math.PI/2
+      const ang = -Math.PI / 2 + (h * (Math.PI * 2 / 24));
+      const rom = ROMAN_HOURS[h % ROMAN_HOURS.length];
 
-    // Marcas de los 360 grados en el aro exterior
+      ctx.save();
+      ctx.translate(Math.cos(ang) * rRoman, Math.sin(ang) * rRoman);
+      ctx.rotate(ang + Math.PI / 2);
+      ctx.fillText(rom, 0, 0);
+      ctx.restore();
+
+      // Muesca exterior
+      const tickR1 = r + 19;
+      const tickR2 = r + 24;
+      ctx.strokeStyle = (h % 3 === 0) ? 'rgba(246, 196, 69, 0.9)' : 'rgba(246, 196, 69, 0.4)';
+      ctx.lineWidth = (h % 3 === 0) ? 1.5 : 0.8;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(ang) * tickR1, Math.sin(ang) * tickR1);
+      ctx.lineTo(Math.cos(ang) * tickR2, Math.sin(ang) * tickR2);
+      ctx.stroke();
+    }
+
+    // 5. Marcas de los 360 grados en el aro interior
     for (let deg = 0; deg < 360; deg++) {
       const rad = this.coordToAngle(deg);
       const isFive = deg % 5 === 0;
@@ -732,7 +1007,7 @@ class RelojAstrologicoEngine {
       const r1 = this.radii.degreeRing;
       const r2 = r1 - len;
 
-      ctx.strokeStyle = isTen ? 'rgba(246, 196, 69, 0.7)' : (isFive ? 'rgba(246, 196, 69, 0.4)' : 'rgba(255, 255, 255, 0.15)');
+      ctx.strokeStyle = isTen ? 'rgba(246, 196, 69, 0.8)' : (isFive ? 'rgba(246, 196, 69, 0.45)' : 'rgba(255, 255, 255, 0.15)');
       ctx.lineWidth = isTen ? 1.2 : 0.7;
       ctx.beginPath();
       ctx.moveTo(Math.cos(rad) * r1, Math.sin(rad) * r1);
@@ -911,11 +1186,21 @@ class RelojAstrologicoEngine {
       const x2 = Math.cos(a2) * r;
       const y2 = Math.sin(a2) * r;
 
+      const isHighlight = this.hoveredItem && this.hoveredItem.tipo === 'planeta' &&
+                          (this.hoveredItem.data.nombre === asp.p1 || this.hoveredItem.data.nombre === asp.p2);
+
       // Intensidad de la línea inversamente proporcional al orbe
-      const alpha = Math.max(0.15, 0.85 - (asp.orbe / 7.0));
+      const baseAlpha = Math.max(0.2, 0.85 - (asp.orbe / 7.0));
       ctx.strokeStyle = asp.color;
-      ctx.globalAlpha = alpha;
-      ctx.lineWidth = (asp.tipo === 'Conjunción' || asp.tipo === 'Oposición' || asp.tipo === 'Cuadratura') ? 1.8 : 1.2;
+      ctx.globalAlpha = isHighlight ? 1.0 : (this.hoveredItem ? 0.15 : baseAlpha);
+      ctx.lineWidth = isHighlight ? 3.0 : ((asp.tipo === 'Conjunción' || asp.tipo === 'Oposición' || asp.tipo === 'Cuadratura') ? 1.8 : 1.2);
+
+      if (isHighlight) {
+        ctx.shadowColor = asp.color;
+        ctx.shadowBlur = 12;
+      } else {
+        ctx.shadowBlur = 0;
+      }
 
       ctx.beginPath();
       ctx.moveTo(x1, y1);
@@ -924,6 +1209,7 @@ class RelojAstrologicoEngine {
     }
 
     ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
     ctx.restore();
   }
 
@@ -939,7 +1225,7 @@ class RelojAstrologicoEngine {
       const py = Math.sin(a) * rPlanets;
 
       // Aguja indicadora que va desde el círculo de aspectos hacia el astro
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
       ctx.lineWidth = 0.8;
       ctx.beginPath();
       ctx.moveTo(Math.cos(a) * this.radii.aspects, Math.sin(a) * this.radii.aspects);
@@ -952,35 +1238,88 @@ class RelojAstrologicoEngine {
       ctx.arc(Math.cos(a) * this.radii.zodiacInner, Math.sin(a) * this.radii.zodiacInner, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cápsula del astro (Aura circular)
-      const grad = ctx.createRadialGradient(px, py, 4, px, py, 22);
-      grad.addColorStop(0, p.color);
-      grad.addColorStop(0.3, 'rgba(15, 23, 42, 0.95)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0.6)');
+      const isHovered = (this.hoveredItem && this.hoveredItem.tipo === 'planeta' && this.hoveredItem.data.nombre === p.nombre);
 
-      ctx.fillStyle = grad;
+      // RETÍCULA DE BLOQUEO / HOVER ÁUREA PULSANTE
+      if (isHovered) {
+        ctx.save();
+        const pulse = 1.0 + Math.sin(performance.now() * 0.006) * 0.12;
+        ctx.strokeStyle = '#f6c445';
+        ctx.lineWidth = 1.8;
+        ctx.shadowColor = 'rgba(246, 196, 69, 0.9)';
+        ctx.shadowBlur = 15;
+
+        // Círculo exterior retícula
+        ctx.beginPath();
+        ctx.arc(px, py, 26 * pulse, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 4 Muescas tipo mira telescópica
+        const tLen = 6;
+        const rT = 26 * pulse;
+        for (let i = 0; i < 4; i++) {
+          const tAng = (i * Math.PI / 2) + (performance.now() * 0.001);
+          ctx.beginPath();
+          ctx.moveTo(px + Math.cos(tAng) * (rT - tLen), py + Math.sin(tAng) * (rT - tLen));
+          ctx.lineTo(px + Math.cos(tAng) * (rT + tLen), py + Math.sin(tAng) * (rT + tLen));
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // ── RENDERIZADO 3D TENEBRISTA DEL ORBE PLANETARIO ──────────────────────
+      ctx.save();
+      // 1. Sombra arrojada de profundidad
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetX = 3;
+      ctx.shadowOffsetY = 5;
+
+      // 2. Corona Atmosférica exterior
+      const haloGrad = ctx.createRadialGradient(px, py, 14, px, py, isHovered ? 32 : 24);
+      haloGrad.addColorStop(0, p.color);
+      haloGrad.addColorStop(0.4, p.color + '44');
+      haloGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = haloGrad;
       ctx.beginPath();
-      ctx.arc(px, py, 18, 0, Math.PI * 2);
+      ctx.arc(px, py, isHovered ? 32 : 24, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.strokeStyle = p.color;
-      ctx.lineWidth = 1.4;
+      // 3. Esfera Metálica Sólida (Iluminada desde arriba a la izquierda: 3D Lit Sphere)
+      const sphereGrad = ctx.createRadialGradient(px - 5, py - 5, 2, px, py, 17);
+      sphereGrad.addColorStop(0, '#ffffff'); // Brillo especular
+      sphereGrad.addColorStop(0.25, p.color); // Color vivo del astro
+      sphereGrad.addColorStop(0.7, '#1e2029'); // Penumbra tenebrista
+      sphereGrad.addColorStop(1, '#05060a'); // Sombra de oclusión
+
+      ctx.fillStyle = sphereGrad;
+      ctx.beginPath();
+      ctx.arc(px, py, 16, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Borde tallado metálico
+      ctx.strokeStyle = isHovered ? '#ffffff' : p.color;
+      ctx.lineWidth = isHovered ? 2.0 : 1.2;
       ctx.beginPath();
       ctx.arc(px, py, 16, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.restore();
 
-      // Glifo del Planeta
+      // 4. Glifo del Planeta
       const glyph = GLYPHS[p.nombre] || '✦';
       ctx.fillStyle = '#ffffff';
-      ctx.font = '700 17px "Outfit", sans-serif';
+      ctx.font = '800 16px "Outfit", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(glyph, px, py - 1);
+      ctx.shadowColor = '#000000';
+      ctx.shadowBlur = 4;
+      ctx.fillText(glyph, px, py - 0.5);
+      ctx.shadowBlur = 0;
 
-      // Etiqueta legible (Nombre + Grado)
-      ctx.fillStyle = '#f1f5f9';
-      ctx.font = '600 9px "Outfit", sans-serif';
-      const labelY = py > 0 ? py + 23 : py - 23;
+      // 5. Etiqueta nítida (Nombre + Grado)
+      ctx.fillStyle = isHovered ? '#f6c445' : '#f1f5f9';
+      ctx.font = isHovered ? '700 10.5px "Outfit", sans-serif' : '600 9px "Outfit", sans-serif';
+      const labelY = py > 0 ? py + 24 : py - 24;
       ctx.fillText(`${p.nombre.slice(0, 3)} ${p.grado}°`, px, labelY);
     }
 

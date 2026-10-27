@@ -20,6 +20,21 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 *Responsabilidad: Creación de nuevas células, ajuste de estéticas (ej. Fusionador Visual), lógicas de negocio inmediatas.*
 
 **Estado / Decisiones Actuales:**
+- [x] **Ecosistema Web Tenebrista & Reloj Astrológico en Tiempo Real (`web_app/`)**:
+  - **Rediseño Completo a Tenebrismo Oscuro (`#030408`)**: Se eliminó el fondo blanco/pastel antiguo; la web entera ahora corre sobre lienzo cósmico oscuro con partículas estelares sutiles en Canvas.
+  - **Embudo de Conversión Progresivo en 2 Pasos**: Formulario dividido en Paso 1 (Identidad: Nombre + Email) y Paso 2 (Coordenadas: Fecha + Hora + Ciudad) para eliminar agobio de leads.
+  - **Pasarela de Confianza Integrada**: Banner 15% OFF Transferencia Directa (`vida.rucula`) con copiado en 1 clic + pasarela Mercado Pago (cuotas, débito, QR) y PayPal internacional ($10 USD).
+  - **Reloj Astrológico Universal Pro (`reloj_engine.js`)**:
+    * Bisel horológico exterior de bronce con 24 Números Romanos (I a XII) estilo Astrolabio de Praga.
+    * Orbes planetarios en 3D con iluminación especular, volumen metálico y penumbra tenebrista.
+    * Hit-testing interactivo en hover/touch: retícula áurea telescópica y tooltips de cristal oscuro con datos reales (grado, casa, significados y aspectos activos).
+    * Modo Wallpaper puro con auto-desvanecimiento tras 3.8s de inactividad, tecla `H` de inmersión y parámetro URL `?mode=wallpaper`.
+  - **Video Diario & Cierre Comercial (`ensamblar_video_diario.py`)**: Guión con Gemini Flash Lite y regla sagrada en `ROLE_SCRIPTWRITER.md` para Toma 5 con CTA de venta directa a la bio/web.
+- [ ] **Roadmap Pendiente para Próxima Sesión (Observaciones de Tomás)**:
+  - [ ] **Evolución del Reloj Antiguo (Mecánica Analógica)**: Incorporar manecillas/agujas mecánicas de época (Sol / Luna / Tiempo) para que la lectura horaria analógica sea protagonista y relegar el reloj digital.
+  - [ ] **Ergonomía de Textos e Inspector**: Asegurar que los tooltips y rótulos no tapen el orbe ni las líneas de aspectos (reubicación lateral / inspector HUD exterior).
+  - [ ] **Definición de las 12 Casas**: Mayor contraste visual, trazos y nitidez en las cúspides de casas sobre el fondo animado.
+  - [ ] **Sincronización a Producción OCI-2**: Empujar cambios auditados a `portaltarotmistico.com` vía rsync/ssh.
 - [x] Limpieza de basura técnica V1 y deprecación de la Célula 3 (Mover scripts a `archived_legacy`).
 - [x] Producto 1 (Carta Astral Premium): Arquitectura de aislamiento completada en `products/carta_natal/`.
 - [x] Producto 2 (Revolución Solar en Video + Carta Astral): Pipeline integral completado en `products/revolucion_solar/`:

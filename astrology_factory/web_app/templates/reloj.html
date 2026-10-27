@@ -10,14 +10,17 @@
   <div id="reloj-container">
     <!-- Video de Fondo Dinámico (Selector A/B) -->
     <video id="video-bg" loop muted playsinline>
-      <source src="videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4" type="video/mp4">
+      <source src="/videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4" type="video/mp4">
     </video>
 
     <!-- Canvas Principal del Reloj Cósmico -->
     <canvas id="reloj-canvas"></canvas>
 
+    <!-- Tooltip Interactivo para Astros, Casas y Signos -->
+    <div id="reloj-tooltip"></div>
+
     <!-- HUD Superior: Marca, Reloj Digital y Acciones -->
-    <header class="top-hud">
+    <header class="top-hud auto-fade">
       <div class="brand-section">
         <div class="brand-glyph">☉</div>
         <div>
@@ -33,6 +36,9 @@
       </div>
 
       <div class="top-actions">
+        <button class="hud-btn" id="btn-toggle-ui" title="Modo Inmersivo Puro (Ocultar Interfaz / Presiona 'H')">
+          <span>👁</span> Ocultar UI (H)
+        </button>
         <button class="hud-btn highlight" id="btn-record-watermark" title="Captura un bucle de 5 segundos con el reloj girando para incrustar en videos">
           <span>🎬</span> Sello / Watermark (5s)
         </button>
@@ -46,7 +52,7 @@
     </header>
 
     <!-- Barra de Estado Astrológico (Efemérides en Vivo) -->
-    <div class="astrological-status-bar">
+    <div class="astrological-status-bar auto-fade">
       <div class="status-item" id="hud-asc">🌅 <strong>ASC:</strong> Calculando...</div>
       <div class="status-item" id="hud-mc">👑 <strong>MC:</strong> Calculando...</div>
       <div class="status-item" id="hud-moon">🌙 Luna: Calculando...</div>
@@ -54,7 +60,7 @@
     </div>
 
     <!-- Dock Inferior: Selector A/B de Fondo, Tiempo y Velocidad -->
-    <footer class="control-dock">
+    <footer class="control-dock auto-fade">
       <!-- Selector A/B de Fondo -->
       <div class="dock-group">
         <span class="dock-label">Fondo:</span>
