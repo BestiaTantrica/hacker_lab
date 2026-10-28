@@ -285,9 +285,26 @@ Arquetipo social activo: {term.get('arquetipo_social', '')}
         except Exception as e:
             warn(f"No se pudo cargar termometro_actual.json: {e}")
 
+    # Cargar Guiones Canónicos de Oro (Estándar Claude Pro)
+    ejemplos_oro_path = FACTORY_ROOT / "v2" / "celula_1" / "ejemplos_oro_diarios.json"
+    ejemplos_oro_str = ""
+    if ejemplos_oro_path.exists():
+        try:
+            with open(ejemplos_oro_path, "r", encoding="utf-8") as f:
+                oro_data = json.load(f)
+                ejemplos_oro_str = "\n=== GUIONES DE ORO CANÓNICOS (ESTÁNDAR DE AUTOR A IMITAR) ===\n"
+                ejemplos_oro_str += "Debes imitar con máxima fidelidad la métrica, concisión, ritmo (~85-95 palabras en total), tensión psicológica y tono tenebrista de estos ejemplos:\n"
+                for g in oro_data.get("guiones", []):
+                    ejemplos_oro_str += f"\n[MODELO CANÓNICO: {g['titulo']} - {g['transito']}]\n"
+                    for t in g.get("tomas", []):
+                        ejemplos_oro_str += f"  Toma {t['num']} ({t['duracion_segundos']}s): \"{t['locucion']}\"\n"
+        except Exception as e:
+            warn(f"No se pudieron cargar ejemplos de oro: {e}")
+
     prompt = f"""
 {role_text}
 {termometro_str}
+{ejemplos_oro_str}
 
 === ADN DEL VIDEO ===
 Evento: {produccion['evento_titulo']}

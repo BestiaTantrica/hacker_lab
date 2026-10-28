@@ -1,0 +1,185 @@
+{
+  "serie": "Guiones de Oro Canónicos - El Glifo Maestro",
+  "formato": "vertical 9:16, 40 segundos, 7 tomas",
+  "metadatos": {
+    "autor": "Claude Pro (Auditoría Rigurosa)",
+    "estilo": "Roberto Ferri / Caravaggio / Psicología Arquetípica Junguiana",
+    "locucion_ritmo": "85-95 palabras, 40 segundos netos, pausas 0.3s"
+  },
+  "guiones": [
+    {
+      "id": "ORO_1",
+      "titulo": "Tensión y Fuego",
+      "tipo_arquetipo": "fuego_choque_dinamico",
+      "transito": "Oposición Marte en Cáncer - Plutón en Capricornio",
+      "geometria_astral": "180 grados (Oposición)",
+      "tomas": [
+        {
+          "num": 1,
+          "duracion_segundos": 5,
+          "locucion": "Esa rabia que tragaste en silencio no desapareció. Se mudó adentro.",
+          "direccion_arte_visual": "Primer plano de un rostro masculino de perfil, mitad en sombra absoluta, mandíbula tensa. Luz de vela rasante desde la izquierda, piel con brillo húmedo, fondo negro profundo. Claroscuro Caravaggio.",
+          "arquetipo_clave": "La rabia contenida"
+        },
+        {
+          "num": 2,
+          "duracion_segundos": 6,
+          "locucion": "Marte en Cáncer se opone a Plutón en Capricornio: el instinto choca contra el poder.",
+          "direccion_arte_visual": "Dos figuras enfrentadas en la penumbra. Una, de piel pálida, con paño rojo sangre. La otra, cubierta de ceniza, en un trono de roca oscura. Brasas flotando entre ambas. Estilo Roberto Ferri.",
+          "arquetipo_clave": "Instinto contra poder"
+        },
+        {
+          "num": 3,
+          "duracion_segundos": 6,
+          "locucion": "Mandíbula apretada, pulso en el cuello, y una discusión ganada de antemano con alguien ausente.",
+          "direccion_arte_visual": "Detalle de un cuello con la vena marcada y un puño cerrado de nudillos blancos. Luz cálida ámbar contra fondo carbón, textura de óleo craquelado.",
+          "arquetipo_clave": "El cuerpo que arde"
+        },
+        {
+          "num": 4,
+          "duracion_segundos": 6,
+          "locucion": "La trampa es el rencor frío: castigás con silencio y lo bautizás control.",
+          "direccion_arte_visual": "Figura de espaldas, sentada ante una mesa vacía, con una daga apoyada sin usar. Un rostro de mujer observa desde la oscuridad del fondo. Sombras densas, un único filo de luz sobre el metal.",
+          "arquetipo_clave": "El castigo silencioso"
+        },
+        {
+          "num": 5,
+          "duracion_segundos": 6,
+          "locucion": "Integrar es nombrar lo que te duele antes de que mande, y elegir cuándo actuar.",
+          "direccion_arte_visual": "Una mano abierta sostiene una brasa sin quemarse. La luz dorada asciende por el antebrazo y revela el rostro apenas, sereno. Fondo negro absoluto.",
+          "arquetipo_clave": "Dominio del fuego"
+        },
+        {
+          "num": 6,
+          "duracion_segundos": 6,
+          "locucion": "¿Qué poder defendés con tanta furia: el tuyo, o el que te prestaron?",
+          "direccion_arte_visual": "Rostro frontal con los ojos fijos en cámara. Mitad iluminado con rojo cálido, mitad hundido en negro. Un espejo oscuro y agrietado sostenido a un costado.",
+          "arquetipo_clave": "El espejo del poder"
+        },
+        {
+          "num": 7,
+          "duracion_segundos": 5,
+          "locucion": "Tu carta natal muestra dónde pelea tu Marte. Entrá al canal de Telegram.",
+          "direccion_arte_visual": "Glifo dorado de Marte brillando tenuemente sobre una piedra negra. Humo lento ascendiendo. Cierre con viñeta oscura y espacio libre para el texto del canal.",
+          "arquetipo_clave": "El umbral"
+        }
+      ]
+    },
+    {
+      "id": "ORO_2",
+      "titulo": "Marea Psicológica y Agua",
+      "tipo_arquetipo": "agua_marea_emocional",
+      "transito": "Conjunción Luna - Neptuno en Piscis",
+      "geometria_astral": "0 grados (Conjunción)",
+      "tomas": [
+        {
+          "num": 1,
+          "duracion_segundos": 5,
+          "locucion": "Hoy no sabés si estás triste o si absorbiste la tristeza ajena.",
+          "direccion_arte_visual": "Rostro femenino semihundido en agua negra, ojos abiertos, cabello flotando. Luz lunar fría y azulada desde arriba. Superficie con reflejos tenues, estilo Ferri.",
+          "arquetipo_clave": "La esponja emocional"
+        },
+        {
+          "num": 2,
+          "duracion_segundos": 6,
+          "locucion": "La Luna conjunta a Neptuno en Piscis: el reflejo emocional pierde sus bordes por unas horas.",
+          "direccion_arte_visual": "Disco lunar pálido que se funde con una masa de niebla marina, sobre un mar de óleo oscuro. Dos círculos superpuestos, apenas dorados. Atmósfera barroca.",
+          "arquetipo_clave": "Disolución de límites"
+        },
+        {
+          "num": 3,
+          "duracion_segundos": 6,
+          "locucion": "Niebla en el pecho, sueño espeso, ojos húmedos sin motivo, y una ternura que desborda.",
+          "direccion_arte_visual": "Figura recostada entre sábanas oscuras, una mano sobre el esternón. Luz azul grisácea, lágrima brillante en la mejilla. Textura de óleo y sombras suaves.",
+          "arquetipo_clave": "La sensibilidad sin filtro"
+        },
+        {
+          "num": 4,
+          "duracion_segundos": 6,
+          "locucion": "La trampa es la fuga: anestesiarte, idealizar a alguien, o hundirte en un dolor ajeno.",
+          "direccion_arte_visual": "Una copa volcada y una figura que se aleja hacia una orilla borrosa. Otra silueta se desvanece entre la bruma. Verdes y negros profundos con un solo destello plateado.",
+          "arquetipo_clave": "La evasión"
+        },
+        {
+          "num": 5,
+          "duracion_segundos": 6,
+          "locucion": "Integrar es darle forma: escribir, caminar, dormir, y dejar las decisiones grandes para cuando baje la marea.",
+          "direccion_arte_visual": "Mano que traza una línea con tinta sobre papel oscuro, con una vela al costado. Luz dorada contenida, rostro apenas visible. El agua del fondo se aquieta.",
+          "arquetipo_clave": "La marea con cauce"
+        },
+        {
+          "num": 6,
+          "duracion_segundos": 6,
+          "locucion": "¿Cuánto de lo que sentís hoy es tuyo, y cuánto es contagio?",
+          "direccion_arte_visual": "Rostro frontal medio sumergido, con el reflejo del agua dividiendo la imagen en dos. Una mitad nítida y la otra difusa. Luz lunar sobre la frente.",
+          "arquetipo_clave": "El reflejo"
+        },
+        {
+          "num": 7,
+          "duracion_segundos": 5,
+          "locucion": "Para ver dónde cae Neptuno en tu carta, el mapa te espera en Telegram.",
+          "direccion_arte_visual": "Glifo de Neptuno en plata sobre agua oscura quieta. Ondas concéntricas muy lentas, viñeta negra y espacio libre para el texto.",
+          "arquetipo_clave": "La orilla"
+        }
+      ]
+    },
+    {
+      "id": "ORO_3",
+      "titulo": "Estructura y Límite de Tierra",
+      "tipo_arquetipo": "tierra_limite_estructura",
+      "transito": "Trígono Mercurio en Virgo - Saturno en Capricornio",
+      "geometria_astral": "120 grados (Trígono)",
+      "tomas": [
+        {
+          "num": 1,
+          "duracion_segundos": 5,
+          "locucion": "Tu mente por fin hace silencio, y lo que dice es incómodamente claro.",
+          "direccion_arte_visual": "Rostro de anciano o escriba con la mirada baja sobre un manuscrito. Luz de vela precisa sobre los dedos y el papel, fondo marrón negruzco. Claroscuro tipo Caravaggio.",
+          "arquetipo_clave": "La claridad severa"
+        },
+        {
+          "num": 2,
+          "duracion_segundos": 6,
+          "locucion": "Mercurio en Virgo forma trígono con Saturno en Capricornio: dos signos de tierra, ciento veinte grados de fluidez.",
+          "direccion_arte_visual": "Un compás y un reloj de arena sobre una mesa de piedra. Un triángulo luminoso apenas sugerido en el aire. Ocres, sombras densas y destellos de bronce.",
+          "arquetipo_clave": "Rigor que fluye"
+        },
+        {
+          "num": 3,
+          "duracion_segundos": 6,
+          "locucion": "Se siente como una lista que por fin cierra: espalda erguida, escritorio en orden, deudas a la vista.",
+          "direccion_arte_visual": "Manos ordenando papeles y llaves bajo una lámpara de aceite. Postura recta, hombros firmes. Luz cálida cayendo en cono sobre fondo oscuro.",
+          "arquetipo_clave": "El cuerpo ordenado"
+        },
+        {
+          "num": 4,
+          "duracion_segundos": 6,
+          "locucion": "La sombra es el perfeccionismo: corregir al otro, postergar lo imperfecto, confundir rigor con dureza.",
+          "direccion_arte_visual": "Figura de rostro tenso tachando un texto con pluma. Un segundo personaje, en penumbra, baja la mirada. Contraste agudo, luz rasante verdosa.",
+          "arquetipo_clave": "El juez interno"
+        },
+        {
+          "num": 5,
+          "duracion_segundos": 6,
+          "locucion": "Integrar es elegir una sola cosa verificable, hacerla completa, y aceptar que el límite también es forma.",
+          "direccion_arte_visual": "Una mano apoya una piedra pulida sobre una pila ordenada. Luz dorada lateral sobre el rostro sereno. Atmósfera de taller antiguo, óleo denso.",
+          "arquetipo_clave": "La obra acabada"
+        },
+        {
+          "num": 6,
+          "duracion_segundos": 6,
+          "locucion": "¿Qué estructura sostenés por costumbre, y cuál sostendrías aunque nadie la viera?",
+          "direccion_arte_visual": "Rostro frontal ante una puerta de piedra entreabierta, con luz fría al otro lado. La mitad del rostro se pierde en la sombra, la mirada va directo a cámara.",
+          "arquetipo_clave": "El pacto con uno mismo"
+        },
+        {
+          "num": 7,
+          "duracion_segundos": 5,
+          "locucion": "Tu mapa personal ordena lo que hoy se siente caos. Te espera en Telegram.",
+          "direccion_arte_visual": "Glifo de Saturno en bronce sobre piedra negra, con un reloj de arena inmóvil. Viñeta oscura y espacio libre para el texto del canal.",
+          "arquetipo_clave": "El tiempo como maestro"
+        }
+      ]
+    }
+  ]
+}
