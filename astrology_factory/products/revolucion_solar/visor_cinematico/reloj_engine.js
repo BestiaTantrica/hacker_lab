@@ -150,9 +150,24 @@ class RelojAstrologicoEngine {
       moonPhase: { name: "", frac: 0.5, illumination: "50%" }
     };
 
-    // Efecto partículas de polvo estelar cósmico tenebrista (3 capas de profundidad)
+    // Mecánica Horológica y Destellos de Vuelta (Escapement Chime System)
+    this.horology = {
+      lastSec: -1,
+      lastMin: -1,
+      lastHour: -1,
+      flashes: {
+        secRing: 0,     // Destello radiante en carril de segundos al dar la vuelta
+        minMarker: 0,   // Destello de avance en la gema/prisma de minutos
+        minRing: 0,     // Destello en carril de minutos al completar los 60 min
+        hourMarker: 0,  // Destello de avance en el medallón de horas
+        dayPulse: 0     // Destello cósmico simultáneo en todos los carriles al completar el día
+      }
+    };
+
+    // Polvo estelar cósmico tenebrista: 220 partículas en 3 capas de profundidad
+    // REGLA FUNDAMENTAL: Orbitan y gravitan EXCLUSIVAMENTE POR FUERA del perímetro del orbe (>555px)
     this.particles = [];
-    this.initParticles(160);
+    this.initParticles(220);
 
     // Grabador de video para Watermark
     this.mediaRecorder = null;
@@ -182,41 +197,47 @@ class RelojAstrologicoEngine {
     requestAnimationFrame(this.animate);
   }
 
-  initParticles(count) {
+  // ── Partículas Estelares Cósmicas (Exclusivamente Exteriores: Radio 555px a 1300px) ──
+  initParticles(count = 220) {
     this.particles = [];
+    const minOrbitRadius = 555; // Asegura que NUNCA atraviesen el orbe ni toquen los números romanos (534px)
+    const maxOrbitRadius = 1350;
+
     for (let i = 0; i < count; i++) {
       const typeRand = Math.random();
       let type = 'nebula';
-      let size = Math.random() * 1.5 + 0.4;
-      let alpha = Math.random() * 0.35 + 0.05;
-      let speed = (Math.random() * 0.12 + 0.03);
+      let size = Math.random() * 1.6 + 0.4;
+      let alpha = Math.random() * 0.4 + 0.08;
+      let angularSpeed = (Math.random() * 0.0016 + 0.0003) * (Math.random() > 0.45 ? 1 : -1);
       let color = 'rgba(246, 196, 69,';
 
-      if (typeRand > 0.78) {
-        // Capa 3: Chispa alquímica ámbar veloz
+      if (typeRand > 0.75) {
+        // Capa 3: Chispa alquímica ámbar veloz con difracción
         type = 'sparkle';
-        size = Math.random() * 2.2 + 0.8;
-        alpha = Math.random() * 0.7 + 0.25;
-        speed = (Math.random() * 0.28 + 0.08);
+        size = Math.random() * 2.5 + 0.9;
+        alpha = Math.random() * 0.75 + 0.25;
+        angularSpeed = (Math.random() * 0.0035 + 0.0008) * (Math.random() > 0.45 ? 1 : -1);
         color = Math.random() > 0.5 ? 'rgba(249, 115, 22,' : 'rgba(246, 196, 69,';
-      } else if (typeRand > 0.45) {
+      } else if (typeRand > 0.4) {
         // Capa 2: Estrella guía blanca/oro con centelleo
         type = 'star';
-        size = Math.random() * 1.9 + 0.6;
-        alpha = Math.random() * 0.6 + 0.2;
-        speed = (Math.random() * 0.08 + 0.02);
+        size = Math.random() * 2.0 + 0.7;
+        alpha = Math.random() * 0.65 + 0.2;
+        angularSpeed = (Math.random() * 0.0012 + 0.0002) * (Math.random() > 0.45 ? 1 : -1);
         color = 'rgba(255, 255, 255,';
       }
 
+      const r = minOrbitRadius + Math.random() * (maxOrbitRadius - minOrbitRadius);
+      const theta = Math.random() * Math.PI * 2;
+
       this.particles.push({
-        x: (Math.random() - 0.5) * 1600,
-        y: (Math.random() - 0.5) * 1600,
+        r,
+        theta,
+        radialDrift: (Math.random() - 0.5) * 0.15,
+        angularSpeed,
         type,
         size,
         baseAlpha: alpha,
-        alpha,
-        speed: speed * (Math.random() > 0.45 ? 1 : -1),
-        driftX: (Math.random() - 0.5) * 0.06,
         phase: Math.random() * Math.PI * 2,
         color
       });
@@ -991,6 +1012,47 @@ class RelojAstrologicoEngine {
       this.calculateAll();
     }
 
+    // ── Detección Horológica de Vueltas Completas (Escapement Chimes & Flashes) ──
+    const d = this.timeState.currentDate;
+    const curSec = d.getSeconds();
+    const curMin = d.getMinutes();
+    const curHour = d.getHours();
+
+    if (this.horology.lastSec !== -1 && curSec !== this.horology.lastSec) {
+      // Si el segundero completó la vuelta completa (pasó por el segundo 0)
+      if (curSec === 0) {
+        this.horology.flashes.secRing = 1.0;     // Destello radiante en el carril de segundos
+        this.horology.flashes.minMarker = 1.0;   // Destello de avance en la gema de minutos
+      }
+    }
+
+    if (this.horology.lastMin !== -1 && curMin !== this.horology.lastMin) {
+      // Si el minutero completó la vuelta de 60 minutos (pasó por el minuto 0)
+      if (curMin === 0) {
+        this.horology.flashes.minRing = 1.0;     // Destello expansivo en carril de minutos
+        this.horology.flashes.hourMarker = 1.0;  // Destello de avance en el medallón de horas
+      }
+    }
+
+    if (this.horology.lastHour !== -1 && curHour !== this.horology.lastHour) {
+      // Si se completó el ciclo diario de 24 horas (paso a las 00:00 h)
+      if (curHour === 0) {
+        this.horology.flashes.dayPulse = 1.0;    // ¡TODOS los carriles destellan al unísono!
+      }
+    }
+
+    this.horology.lastSec = curSec;
+    this.horology.lastMin = curMin;
+    this.horology.lastHour = curHour;
+
+    // Decaimiento exponencial orgánico de los destellos (~600ms de fulgor)
+    const decay = (deltaMs || 16) * 0.0016;
+    if (this.horology.flashes.secRing > 0) this.horology.flashes.secRing = Math.max(0, this.horology.flashes.secRing - decay * 1.6);
+    if (this.horology.flashes.minMarker > 0) this.horology.flashes.minMarker = Math.max(0, this.horology.flashes.minMarker - decay * 1.3);
+    if (this.horology.flashes.minRing > 0) this.horology.flashes.minRing = Math.max(0, this.horology.flashes.minRing - decay);
+    if (this.horology.flashes.hourMarker > 0) this.horology.flashes.hourMarker = Math.max(0, this.horology.flashes.hourMarker - decay * 0.9);
+    if (this.horology.flashes.dayPulse > 0) this.horology.flashes.dayPulse = Math.max(0, this.horology.flashes.dayPulse - decay * 0.5);
+
     this.render();
     requestAnimationFrame(this.animate);
   }
@@ -1012,10 +1074,10 @@ class RelojAstrologicoEngine {
     ctx.translate(cx + this.camera.panX, cy + this.camera.panY);
     ctx.scale(currentScale, currentScale);
 
-    // 1. Partículas cósmicas tenebristas en 3 capas de profundidad
+    // 1. Partículas cósmicas tenebristas en 3 capas de profundidad (Exclusivamente Exteriores >555px)
     this.renderParticles(ctx, performance.now());
 
-    // 2. Hilos / Rayos Etéreos por debajo de todo (conectan el centro antiguo con los marcadores exteriores)
+    // 2. Hilos / Rayos Etéreos por debajo de todo (conectan el centro sagrado con los marcadores exteriores)
     this.renderTimeRaysUnderlay(ctx);
 
     // 3. Bisel tenebrista y aro de protección del astrolabio
@@ -1045,45 +1107,56 @@ class RelojAstrologicoEngine {
     ctx.restore();
   }
 
-  // ── Polvo Cósmico y Viaje Estelar Tenebrista (3 Capas) ─────────────────────
+  // ── Polvo Cósmico y Viaje Estelar Tenebrista (3 Capas Orbitales 100% Exteriores) ──
   renderParticles(ctx, now = performance.now()) {
     ctx.save();
+    const minR = 555; // Perímetro seguro: NUNCA ingresa al orbe astrológico
+    const maxR = 1350;
+
     for (const p of this.particles) {
-      p.y += p.speed;
-      p.x += p.driftX;
-      if (p.y > 750) p.y = -750;
-      if (p.y < -750) p.y = 750;
-      if (p.x > 750) p.x = -750;
-      if (p.x < -750) p.x = 750;
+      p.theta += p.angularSpeed;
+      p.r += p.radialDrift;
+
+      // Rebote suave en los límites exteriores
+      if (p.r < minR) {
+        p.r = minR;
+        p.radialDrift = Math.abs(p.radialDrift);
+      } else if (p.r > maxR) {
+        p.r = maxR;
+        p.radialDrift = -Math.abs(p.radialDrift);
+      }
+
+      const px = Math.cos(p.theta) * p.r;
+      const py = Math.sin(p.theta) * p.r;
 
       let alpha = p.baseAlpha;
       if (p.type === 'star') {
-        alpha = p.baseAlpha * (0.65 + 0.35 * Math.sin(now * 0.0025 + p.phase));
+        alpha = p.baseAlpha * (0.65 + 0.35 * Math.sin(now * 0.0028 + p.phase));
       } else if (p.type === 'sparkle') {
-        alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(now * 0.005 + p.phase));
+        alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(now * 0.006 + p.phase));
       }
 
       ctx.fillStyle = `${p.color} ${alpha})`;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.arc(px, py, p.size, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cruz de difracción óptica para estrellas más intensas
-      if (p.type === 'sparkle' && p.size > 1.8) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.45})`;
+      // Cruz de difracción óptica para estrellas y chispas destacadas
+      if (p.type === 'sparkle' && p.size > 1.6) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.55})`;
         ctx.lineWidth = 0.6;
         ctx.beginPath();
-        ctx.moveTo(p.x - 3.5, p.y);
-        ctx.lineTo(p.x + 3.5, p.y);
-        ctx.moveTo(p.x, p.y - 3.5);
-        ctx.lineTo(p.x, p.y + 3.5);
+        ctx.moveTo(px - 4, py);
+        ctx.lineTo(px + 4, py);
+        ctx.moveTo(px, py - 4);
+        ctx.lineTo(px, py + 4);
         ctx.stroke();
       }
     }
     ctx.restore();
   }
 
-  // ── Rayos Etéreos que conectan el Centro Alquímico con los Carriles Exteriores ──
+  // ── Rayos Sagrados que conectan el Centro Alquímico con los Carriles Exteriores ──
   renderTimeRaysUnderlay(ctx) {
     const d = this.timeState.currentDate;
     const ms = d.getMilliseconds();
@@ -1101,37 +1174,43 @@ class RelojAstrologicoEngine {
 
     ctx.save();
 
-    // 1. Rayo de Horas: Bronce sagrado etéreo
+    // 1. Rayo de Horas: Bronce sagrado notorio con fulgor alquímico
     const gradH = ctx.createLinearGradient(0, 0, Math.cos(angH) * rH, Math.sin(angH) * rH);
-    gradH.addColorStop(0, 'rgba(212, 175, 55, 0.02)');
-    gradH.addColorStop(0.5, 'rgba(212, 175, 55, 0.08)');
-    gradH.addColorStop(1, 'rgba(246, 196, 69, 0.45)');
+    gradH.addColorStop(0, 'rgba(212, 175, 55, 0.15)');
+    gradH.addColorStop(0.5, 'rgba(212, 175, 55, 0.35)');
+    gradH.addColorStop(1, 'rgba(246, 196, 69, 0.85)');
     ctx.strokeStyle = gradH;
-    ctx.lineWidth = 1.0;
+    ctx.shadowColor = 'rgba(246, 196, 69, 0.4)';
+    ctx.shadowBlur = 6;
+    ctx.lineWidth = 1.8;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(Math.cos(angH) * rH, Math.sin(angH) * rH);
     ctx.stroke();
 
-    // 2. Rayo de Minutos: Oro filigrana tenue
+    // 2. Rayo de Minutos: Filigrana de oro viva
     const gradM = ctx.createLinearGradient(0, 0, Math.cos(angM) * rM, Math.sin(angM) * rM);
-    gradM.addColorStop(0, 'rgba(246, 196, 69, 0.02)');
-    gradM.addColorStop(0.6, 'rgba(246, 196, 69, 0.12)');
-    gradM.addColorStop(1, 'rgba(246, 196, 69, 0.55)');
+    gradM.addColorStop(0, 'rgba(246, 196, 69, 0.15)');
+    gradM.addColorStop(0.5, 'rgba(246, 196, 69, 0.40)');
+    gradM.addColorStop(1, 'rgba(254, 240, 138, 0.90)');
     ctx.strokeStyle = gradM;
-    ctx.lineWidth = 1.0;
+    ctx.shadowColor = 'rgba(246, 196, 69, 0.45)';
+    ctx.shadowBlur = 6;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(Math.cos(angM) * rM, Math.sin(angM) * rM);
     ctx.stroke();
 
-    // 3. Rayo de Segundos: Haz áureo cometa
+    // 3. Rayo de Segundos: Haz estelar áureo cometa
     const gradS = ctx.createLinearGradient(0, 0, Math.cos(angS) * rS, Math.sin(angS) * rS);
-    gradS.addColorStop(0, 'rgba(255, 255, 255, 0.02)');
-    gradS.addColorStop(0.7, 'rgba(246, 196, 69, 0.15)');
-    gradS.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+    gradS.addColorStop(0, 'rgba(255, 255, 255, 0.20)');
+    gradS.addColorStop(0.6, 'rgba(246, 196, 69, 0.50)');
+    gradS.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
     ctx.strokeStyle = gradS;
-    ctx.lineWidth = 0.8;
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = 1.3;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(Math.cos(angS) * rS, Math.sin(angS) * rS);
@@ -1140,7 +1219,7 @@ class RelojAstrologicoEngine {
     ctx.restore();
   }
 
-  // ── Los 3 Carriles Exteriores de Horas, Minutos y Segundos (Loading Tenebrista) ──
+  // ── Los 3 Carriles Exteriores de Horas, Minutos y Segundos (Loading Tenebrista & Chimes) ──
   renderOuterTimeTracks(ctx) {
     const d = this.timeState.currentDate;
     const ms = d.getMilliseconds();
@@ -1156,6 +1235,13 @@ class RelojAstrologicoEngine {
     const rH = this.radii.trackHours;
     const rM = this.radii.trackMinutes;
     const rS = this.radii.trackSeconds;
+
+    // Factores de destello horológico
+    const fSecRing = Math.max(this.horology.flashes.secRing, this.horology.flashes.dayPulse);
+    const fMinMarker = this.horology.flashes.minMarker;
+    const fMinRing = Math.max(this.horology.flashes.minRing, this.horology.flashes.dayPulse);
+    const fHourMarker = this.horology.flashes.hourMarker;
+    const fDay = this.horology.flashes.dayPulse;
 
     ctx.save();
 
@@ -1178,6 +1264,19 @@ class RelojAstrologicoEngine {
     ctx.arc(0, 0, rH + 4.5, 0, Math.PI * 2);
     ctx.stroke();
 
+    // Destello en el carril de Horas (al completar el día o pulso de hora)
+    if (fDay > 0) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(254, 240, 138, ${0.85 * fDay})`;
+      ctx.shadowColor = '#f6c445';
+      ctx.shadowBlur = 24 * fDay;
+      ctx.lineWidth = 7.0 + 5.0 * fDay;
+      ctx.beginPath();
+      ctx.arc(0, 0, rH, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // Arco de carga/progreso de Horas
     const gradHourArc = ctx.createLinearGradient(0, -rH, 0, rH);
     gradHourArc.addColorStop(0, '#d4af37');
@@ -1191,33 +1290,60 @@ class RelojAstrologicoEngine {
     ctx.stroke();
     ctx.lineCap = 'butt';
 
-    // Marcador de Hora: Medallón Alquímico de Bronce y Oro
+    // Marcador de Hora: Medallón Alquímico de Bronce y Oro (con destello al avanzar hora)
     const hx = Math.cos(angH) * rH;
     const hy = Math.sin(angH) * rH;
+    const hourScale = 1.0 + 0.65 * fHourMarker;
     ctx.save();
-    ctx.shadowColor = 'rgba(246, 196, 69, 0.9)';
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = '#1c1305';
-    ctx.strokeStyle = '#f6c445';
-    ctx.lineWidth = 1.8;
+    ctx.shadowColor = fHourMarker > 0 ? 'rgba(255, 255, 255, 1.0)' : 'rgba(246, 196, 69, 0.9)';
+    ctx.shadowBlur = 10 + 20 * fHourMarker;
+    ctx.fillStyle = fHourMarker > 0 ? '#451a03' : '#1c1305';
+    ctx.strokeStyle = fHourMarker > 0 ? '#ffffff' : '#f6c445';
+    ctx.lineWidth = 1.8 + 1.2 * fHourMarker;
     ctx.beginPath();
-    ctx.arc(hx, hy, 6.5, 0, Math.PI * 2);
+    ctx.arc(hx, hy, 6.5 * hourScale, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = '#fef08a';
+    ctx.fillStyle = fHourMarker > 0 ? '#ffffff' : '#fef08a';
     ctx.beginPath();
-    ctx.arc(hx, hy, 2.8, 0, Math.PI * 2);
+    ctx.arc(hx, hy, 2.8 * hourScale, 0, Math.PI * 2);
     ctx.fill();
+
+    // Corona de destello solar en el medallón de horas cuando avanza
+    if (fHourMarker > 0) {
+      ctx.strokeStyle = `rgba(254, 240, 138, ${fHourMarker})`;
+      ctx.lineWidth = 1.2;
+      for (let ray = 0; ray < 8; ray++) {
+        const aRay = (ray / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(hx + Math.cos(aRay) * 8 * hourScale, hy + Math.sin(aRay) * 8 * hourScale);
+        ctx.lineTo(hx + Math.cos(aRay) * 14 * hourScale, hy + Math.sin(aRay) * 14 * hourScale);
+        ctx.stroke();
+      }
+    }
     ctx.restore();
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CARRIL 2: MINUTOS (60 Minutos — Barra Áurea Bruñida)
+    // CARRIL 2: MINUTOS (60 Minutos — Barra Áurea Bruñida & Destello de Vuelta)
     // ─────────────────────────────────────────────────────────────────────────
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.16)';
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.arc(0, 0, rM, 0, Math.PI * 2);
     ctx.stroke();
+
+    // Destello de vuelta completa de Minutos (Paso de Hora o Día)
+    if (fMinRing > 0) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(246, 196, 69, ${0.9 * fMinRing})`;
+      ctx.shadowColor = '#f6c445';
+      ctx.shadowBlur = 22 * fMinRing;
+      ctx.lineWidth = 6.0 + 4.5 * fMinRing;
+      ctx.beginPath();
+      ctx.arc(0, 0, rM, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     // Arco de progreso de Minutos
     ctx.strokeStyle = '#f6c445';
@@ -1228,31 +1354,58 @@ class RelojAstrologicoEngine {
     ctx.stroke();
     ctx.lineCap = 'butt';
 
-    // Marcador de Minuto: Prisma / Rombo Alquímico
+    // Marcador de Minuto: Prisma / Rombo Alquímico (con destello de avance al saltar segundo 60)
     const mx = Math.cos(angM) * rM;
     const my = Math.sin(angM) * rM;
+    const minScale = 1.0 + 0.8 * fMinMarker;
     ctx.save();
     ctx.translate(mx, my);
     ctx.rotate(angM + Math.PI / 4);
-    ctx.shadowColor = 'rgba(246, 196, 69, 0.85)';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = '#ffffff';
-    ctx.strokeStyle = '#d97706';
-    ctx.lineWidth = 1.4;
+    ctx.shadowColor = fMinMarker > 0 ? 'rgba(255, 255, 255, 1.0)' : 'rgba(246, 196, 69, 0.85)';
+    ctx.shadowBlur = 8 + 18 * fMinMarker;
+    ctx.fillStyle = fMinMarker > 0 ? '#ffffff' : '#fef08a';
+    ctx.strokeStyle = fMinMarker > 0 ? '#ffffff' : '#d97706';
+    ctx.lineWidth = 1.4 + 1.2 * fMinMarker;
+    const halfPrism = 3.5 * minScale;
     ctx.beginPath();
-    ctx.rect(-3.5, -3.5, 7, 7);
+    ctx.rect(-halfPrism, -halfPrism, halfPrism * 2, halfPrism * 2);
     ctx.fill();
     ctx.stroke();
+
+    // Rayos de destello en cruz en el prisma de minutos al recibir el salto
+    if (fMinMarker > 0) {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${fMinMarker})`;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(-10 * minScale, 0);
+      ctx.lineTo(10 * minScale, 0);
+      ctx.moveTo(0, -10 * minScale);
+      ctx.lineTo(0, 10 * minScale);
+      ctx.stroke();
+    }
     ctx.restore();
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CARRIL 3: SEGUNDOS (60s — Barrido Continuo Fluido y Chispa Ámbar)
+    // CARRIL 3: SEGUNDOS (60s — Barrido Continuo Fluido & Destello al Cumplir Vuelta)
     // ─────────────────────────────────────────────────────────────────────────
     ctx.strokeStyle = 'rgba(246, 196, 69, 0.08)';
     ctx.lineWidth = 3.5;
     ctx.beginPath();
     ctx.arc(0, 0, rS, 0, Math.PI * 2);
     ctx.stroke();
+
+    // Destello de vuelta completa de Segundos (Cada 60 segundos)
+    if (fSecRing > 0) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.95 * fSecRing})`;
+      ctx.shadowColor = '#f6c445';
+      ctx.shadowBlur = 25 * fSecRing;
+      ctx.lineWidth = 3.5 + 4.5 * fSecRing;
+      ctx.beginPath();
+      ctx.arc(0, 0, rS, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     // Estela de Cometa fluida para los segundos (últimos 45 grados de recorrido)
     const tailSpan = Math.PI / 3;
@@ -1292,6 +1445,22 @@ class RelojAstrologicoEngine {
     ctx.lineTo(sx, sy + 5);
     ctx.stroke();
     ctx.restore();
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ONDA EXPANSIVA CÓSMICA CUANDO SE COMPLETA EL DÍA (00:00 h)
+    // ─────────────────────────────────────────────────────────────────────────
+    if (fDay > 0) {
+      ctx.save();
+      const waveRadius = rH + (rS - rH + 60) * (1 - fDay);
+      ctx.strokeStyle = `rgba(254, 240, 138, ${0.9 * fDay})`;
+      ctx.shadowColor = '#f6c445';
+      ctx.shadowBlur = 30 * fDay;
+      ctx.lineWidth = 2.5 + 6.0 * fDay;
+      ctx.beginPath();
+      ctx.arc(0, 0, waveRadius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // ESCALA HORARIA EXTERIOR (24 Números Romanos en el Perímetro Exterior)
@@ -1464,28 +1633,94 @@ class RelojAstrologicoEngine {
     const rNum = (rIn + rOut) / 2;
 
     ctx.save();
+
+    // 1. Aros concéntricos delimitadores del sector de Casas
+    ctx.strokeStyle = 'rgba(246, 196, 69, 0.25)';
+    ctx.lineWidth = 1.0;
+    ctx.beginPath();
+    ctx.arc(0, 0, rIn, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(246, 196, 69, 0.45)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, rOut, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const romanos = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+
+    // 2. Dibujado de gajos y sombreado de Casas
     for (let h = 0; h < 12; h++) {
       const cuspDeg = this.calculated.houses[h];
-      const aCusp = this.coordToAngle(cuspDeg);
       const nextCuspDeg = this.calculated.houses[(h + 1) % 12];
+      const aCusp = this.coordToAngle(cuspDeg);
+      const aNextCusp = this.coordToAngle(nextCuspDeg);
       const aMid = this.coordToAngle((cuspDeg + 15) % 360);
+      const isAngular = (h % 3 === 0); // Casas I, IV, VII, X
 
-      // Cúspide de la casa
-      ctx.strokeStyle = (h % 3 === 0) ? 'rgba(246, 196, 69, 0.5)' : 'rgba(255, 255, 255, 0.12)';
-      ctx.lineWidth = (h % 3 === 0) ? 1.5 : 0.8;
+      // Sombreado de fondo del sector de la casa (tenue tenebrista)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, 0, rOut, aCusp, aNextCusp, true);
+      ctx.arc(0, 0, rIn, aNextCusp, aCusp, false);
+      ctx.closePath();
+      if (isAngular) {
+        ctx.fillStyle = 'rgba(246, 196, 69, 0.045)';
+      } else if (h % 2 === 0) {
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.02)';
+      } else {
+        ctx.fillStyle = 'rgba(8, 12, 22, 0.35)';
+      }
+      ctx.fill();
+      ctx.restore();
+
+      // Cúspide de la casa con filigrana dorada y remates
+      ctx.save();
+      if (isAngular) {
+        ctx.strokeStyle = '#f6c445';
+        ctx.shadowColor = 'rgba(246, 196, 69, 0.6)';
+        ctx.shadowBlur = 6;
+        ctx.lineWidth = 2.0;
+      } else {
+        ctx.strokeStyle = 'rgba(246, 196, 69, 0.35)';
+        ctx.lineWidth = 1.0;
+      }
       ctx.beginPath();
       ctx.moveTo(Math.cos(aCusp) * this.radii.core, Math.sin(aCusp) * this.radii.core);
       ctx.lineTo(Math.cos(aCusp) * rOut, Math.sin(aCusp) * rOut);
       ctx.stroke();
 
-      // Número romano de la Casa
-      const romanos = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-      ctx.fillStyle = (h % 3 === 0) ? '#f6c445' : 'rgba(255, 255, 255, 0.35)';
-      ctx.font = '600 11px "Outfit", sans-serif';
+      // Remate / gema en el borde exterior de la cúspide
+      const dotR = isAngular ? 3.0 : 1.8;
+      ctx.fillStyle = isAngular ? '#fef08a' : '#f6c445';
+      ctx.beginPath();
+      ctx.arc(Math.cos(aCusp) * rOut, Math.sin(aCusp) * rOut, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 3. Medallón y Número Romano de la Casa
+      const nx = Math.cos(aMid) * rNum;
+      const ny = Math.sin(aMid) * rNum;
+
+      ctx.save();
+      // Medallón de fondo para máxima legibilidad
+      ctx.fillStyle = isAngular ? 'rgba(28, 19, 5, 0.75)' : 'rgba(5, 8, 16, 0.65)';
+      ctx.strokeStyle = isAngular ? 'rgba(246, 196, 69, 0.6)' : 'rgba(246, 196, 69, 0.25)';
+      ctx.lineWidth = isAngular ? 1.2 : 0.7;
+      ctx.beginPath();
+      ctx.arc(nx, ny, isAngular ? 11.5 : 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Número romano
+      ctx.fillStyle = isAngular ? '#fef08a' : '#f6c445';
+      ctx.font = isAngular ? '700 10.5px "Cinzel", serif' : '600 9px "Cinzel", serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(romanos[h], Math.cos(aMid) * rNum, Math.sin(aMid) * rNum);
+      ctx.fillText(romanos[h], nx, ny);
+      ctx.restore();
     }
+
     ctx.restore();
   }
 
@@ -1498,6 +1733,8 @@ class RelojAstrologicoEngine {
     const rExt = this.radii.dialBoundary + 15;
 
     ctx.strokeStyle = '#00f2fe';
+    ctx.shadowColor = 'rgba(0, 242, 254, 0.6)';
+    ctx.shadowBlur = 8;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(Math.cos(aAsc) * rExt, Math.sin(aAsc) * rExt);
@@ -1509,7 +1746,7 @@ class RelojAstrologicoEngine {
     const ascX = Math.cos(aAsc) * rExt;
     const ascY = Math.sin(aAsc) * rExt;
     ctx.beginPath();
-    ctx.arc(ascX, ascY, 5, 0, Math.PI * 2);
+    ctx.arc(ascX, ascY, 5.5, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.font = '800 12px "Outfit", sans-serif';
@@ -1525,6 +1762,8 @@ class RelojAstrologicoEngine {
     const aIc = this.coordToAngle(this.calculated.ic);
 
     ctx.strokeStyle = '#f6c445';
+    ctx.shadowColor = 'rgba(246, 196, 69, 0.6)';
+    ctx.shadowBlur = 8;
     ctx.lineWidth = 2.0;
     ctx.beginPath();
     ctx.moveTo(Math.cos(aMc) * rExt, Math.sin(aMc) * rExt);

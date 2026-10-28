@@ -432,3 +432,68 @@ body, html {
     justify-content: center;
   }
 }
+
+/* Pantallas de Laptop con Altura Reducida (Evita cualquier interferencia con el orbe) */
+@media (max-height: 720px) {
+  .corner-hud.top-left {
+    top: 10px;
+    left: 14px;
+    gap: 4px;
+  }
+  .brand-section {
+    padding: 5px 12px;
+  }
+  .brand-title {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .brand-glyph {
+    font-size: 17px;
+  }
+  .location-pill {
+    padding: 3px 10px;
+    font-size: 9.5px;
+  }
+  .corner-hud.top-right {
+    top: 10px;
+    right: 14px;
+    gap: 5px;
+  }
+  .clock-display {
+    padding: 5px 14px;
+  }
+  .clock-time {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+  .clock-date {
+    font-size: 9px;
+  }
+  .hud-btn {
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+  .corner-hud.bottom-left {
+    bottom: 12px;
+    left: 14px;
+    max-width: 260px;
+  }
+  #astro-inspector-hud {
+    padding: 8px 12px;
+  }
+  .inspector-title {
+    font-size: 11.5px;
+  }
+  .inspector-hint {
+    font-size: 9px;
+  }
+  .corner-hud.bottom-right {
+    bottom: 12px;
+    right: 14px;
+    gap: 5px;
+  }
+  .bg-toggle-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
