@@ -21,20 +21,23 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 
 **Estado / Decisiones Actuales:**
 - [x] **Ecosistema Web Tenebrista & Reloj Astrológico en Tiempo Real (`web_app/`)**:
-  - **Rediseño Completo a Tenebrismo Oscuro (`#030408`)**: Se eliminó el fondo blanco/pastel antiguo; la web entera ahora corre sobre lienzo cósmico oscuro con partículas estelares sutiles en Canvas.
-  - **Embudo de Conversión Progresivo en 2 Pasos**: Formulario dividido en Paso 1 (Identidad: Nombre + Email) y Paso 2 (Coordenadas: Fecha + Hora + Ciudad) para eliminar agobio de leads.
-  - **Pasarela de Confianza Integrada**: Banner 15% OFF Transferencia Directa (`vida.rucula`) con copiado en 1 clic + pasarela Mercado Pago (cuotas, débito, QR) y PayPal internacional ($10 USD).
-  - **Reloj Astrológico Universal Pro (`reloj_engine.js`)**:
-    * Bisel horológico exterior de bronce con 24 Números Romanos (I a XII) estilo Astrolabio de Praga.
-    * Orbes planetarios en 3D con iluminación especular, volumen metálico y penumbra tenebrista.
-    * Hit-testing interactivo en hover/touch: retícula áurea telescópica y tooltips de cristal oscuro con datos reales (grado, casa, significados y aspectos activos).
-    * Modo Wallpaper puro con auto-desvanecimiento tras 3.8s de inactividad, tecla `H` de inmersión y parámetro URL `?mode=wallpaper`.
+  - **Rediseño Completo a Tenebrismo Oscuro (`#030408`)**: Se eliminó el fondo blanco/pastel antiguo; la web entera ahora corre sobre lienzo cósmico oscuro con orbe vivo en el fondo.
+  - **Catálogo Oficial Segmentado en 3 Productos**:
+    1. 📜 **Carta Natal Profunda + Oráculo IA** ($4.990 ARS / $10 USD): PDF de 35+ págs + chat interactivo en vivo.
+    2. ⏱ **Reloj Astrológico Vivo 4K Live Wallpaper** ($2.990 ARS / $5 USD): Astrolabio en tiempo real geolocalizado con efemérides autónomas en JS para PC (Windows Lively / Wallpaper Engine) y móvil.
+    3. 🎬 **Revolución Solar Cinemática en Video** ($14.990 ARS / $25 USD): Película oracular de 10-15 min con voz hipnótica y el orbe proyectando los 12 meses de tu año personal.
+    * 👑 **Tríada Sagrada Completa (Combo 3 en 1)**: $16.990 ARS / $29 USD (Ahorro del 30%).
+  - **Flujo de Pago y Entrega Transparente en 3 Pasos (Zero Incertidumbre)**:
+    * Paso 1: Pago por Transferencia Directa con 15% OFF (`vida.rucula`) o Mercado Pago en 1 clic (tarjetas/cuotas).
+    * Paso 2: Botón directo `[ 📲 Enviar Comprobante por WhatsApp ]` con mensaje autocompletado + enlace a Telegram.
+    * Paso 3: Activación y entrega garantizada en 10 minutos al correo y WhatsApp.
+  - **Mecánica Horológica de Escape & Destellos por Vuelta (`reloj_engine.js`)**:
+    * **Partículas Cósmicas Exclusivamente Exteriores**: 220 partículas en 3 capas de profundidad que orbitan únicamente fuera del orbe (`r >= 555px`), sin atravesar jamás el mandala sagrado.
+    * **Rayos Horológicos Notorios**: Hilos sagrados de bronce y oro de 1.8px conectando el centro `⊕` con los carriles exteriores con fulgor translúcido.
+    * **Chimes de Vuelta Completa**: Al segundo 60 el carril de segundos destella y la gema de minutos avanza con un pulso áureo; a los 60 min el carril de minutos pulsa y el medallón de horas emite una corona solar; a las 00:00 h se dispara una onda de choque luminosa por todos los carriles.
+    * **12 Casas Enriquecidas**: Sombreado de sectores y cuadrantes tenebristas, cúspides con oropel y gemas de remate, y medallones con números romanos en tipografía Cinzel.
+    * **Arquitectura de las 4 Esquinas Libres**: Inspector cósmico anclado en esquina inferior izquierda, reloj digital en esquina superior derecha, y responsive adaptado para laptops (`max-height: 720px`).
   - **Video Diario & Cierre Comercial (`ensamblar_video_diario.py`)**: Guión con Gemini Flash Lite y regla sagrada en `ROLE_SCRIPTWRITER.md` para Toma 5 con CTA de venta directa a la bio/web.
-- [ ] **Roadmap Pendiente para Próxima Sesión (Observaciones de Tomás)**:
-  - [ ] **Evolución del Reloj Antiguo (Mecánica Analógica)**: Incorporar manecillas/agujas mecánicas de época (Sol / Luna / Tiempo) para que la lectura horaria analógica sea protagonista y relegar el reloj digital.
-  - [ ] **Ergonomía de Textos e Inspector**: Asegurar que los tooltips y rótulos no tapen el orbe ni las líneas de aspectos (reubicación lateral / inspector HUD exterior).
-  - [ ] **Definición de las 12 Casas**: Mayor contraste visual, trazos y nitidez en las cúspides de casas sobre el fondo animado.
-  - [ ] **Sincronización a Producción OCI-2**: Empujar cambios auditados a `portaltarotmistico.com` vía rsync/ssh.
 - [x] Limpieza de basura técnica V1 y deprecación de la Célula 3 (Mover scripts a `archived_legacy`).
 - [x] Producto 1 (Carta Astral Premium): Arquitectura de aislamiento completada en `products/carta_natal/`.
 - [x] Producto 2 (Revolución Solar en Video + Carta Astral): Pipeline integral completado en `products/revolucion_solar/`:
