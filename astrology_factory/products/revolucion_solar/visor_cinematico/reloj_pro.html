@@ -16,8 +16,11 @@
     <!-- Canvas Principal del Reloj Cósmico -->
     <canvas id="reloj-canvas"></canvas>
 
-    <!-- HUD Superior: Marca, Reloj Digital y Acciones -->
-    <header class="top-hud">
+    <!-- Tooltip Interactivo para Astros, Casas y Signos -->
+    <div id="reloj-tooltip"></div>
+
+    <!-- ── ESQUINA SUPERIOR IZQUIERDA: Marca y Coordenadas ── -->
+    <div class="corner-hud top-left auto-fade">
       <div class="brand-section">
         <div class="brand-glyph">☉</div>
         <div>
@@ -25,60 +28,48 @@
           <div class="brand-subtitle">Reloj Cósmico en Tiempo Real</div>
         </div>
       </div>
+      <div class="location-pill" id="hud-location">
+        📍 Detectando ubicación...
+      </div>
+    </div>
 
+    <!-- ── ESQUINA SUPERIOR DERECHA: Reloj Digital y Acciones ── -->
+    <div class="corner-hud top-right auto-fade">
       <div class="clock-display">
         <div class="clock-time" id="hud-time">--:--:--</div>
         <div class="clock-date" id="hud-date">Cargando fecha sideral...</div>
-        <div class="clock-location" id="hud-location">📍 Detectando ubicación...</div>
       </div>
-
       <div class="top-actions">
-        <button class="hud-btn highlight" id="btn-record-watermark" title="Captura un bucle de 5 segundos con el reloj girando para incrustar en videos">
-          <span>🎬</span> Sello / Watermark (5s)
+        <button class="hud-btn" id="btn-toggle-ui" title="Modo Inmersivo Puro (Presiona 'H')">
+          <span>👁</span> Ocultar UI
+        </button>
+        <button class="hud-btn highlight" id="btn-record-watermark" title="Captura bucle de 5 segundos con el reloj girando para reels o videos">
+          <span>🎬</span> Sello (5s)
         </button>
         <button class="hud-btn" id="btn-fullscreen" title="Pantalla Completa (Modo Wallpaper)">
           <span>⛶</span> Wallpaper
         </button>
-        <a href="index.html" class="hud-btn" style="text-decoration: none;" title="Abrir Navegador Bi-Wheel de Tomás">
-          <span>🌀</span> Bi-Wheel
+        <a href="/" class="hud-btn" style="text-decoration: none;" title="Volver al Portal">
+          <span>🏠</span> Portal
         </a>
       </div>
-    </header>
-
-    <!-- Barra de Estado Astrológico (Efemérides en Vivo) -->
-    <div class="astrological-status-bar">
-      <div class="status-item" id="hud-asc">🌅 <strong>ASC:</strong> Calculando...</div>
-      <div class="status-item" id="hud-mc">👑 <strong>MC:</strong> Calculando...</div>
-      <div class="status-item" id="hud-moon">🌙 Luna: Calculando...</div>
-      <div class="status-item" id="hud-transit">⚡ <strong>Tránsito:</strong> Analizando orbes...</div>
     </div>
 
-    <!-- Dock Inferior: Selector A/B de Fondo, Tiempo y Velocidad -->
-    <footer class="control-dock">
-      <!-- Selector A/B de Fondo -->
-      <div class="dock-group">
-        <span class="dock-label">Fondo:</span>
-        <button class="bg-toggle-btn active" data-bg="negro" title="Tenebrismo Puro Roberto Ferri (#000000)">
-          ⬛ Ferri Puro
-        </button>
-        <button class="bg-toggle-btn" data-bg="galaxia" title="Galaxia Espacio Profundo">
-          🌌 Galaxia
-        </button>
-        <button class="bg-toggle-btn" data-bg="estrellas" title="Vuelo de Estrellas Etéreas">
-          ✨ Estrellas
-        </button>
-      </div>
+    <!-- ── ESQUINA INFERIOR IZQUIERDA: Inspector Astrológico HUD (100% Despejado el Mandala) ── -->
+    <div id="astro-inspector-hud" class="corner-hud bottom-left auto-fade">
+      <!-- Se inyecta dinámicamente desde reloj_engine.js: datos de planetas/casas al hover sin tapar el orbe -->
+      <div class="inspector-badge">🔭 INSPECTOR CÓSMICO</div>
+      <div class="inspector-title" style="color: #f6c445;">Bóveda Celeste en Vivo</div>
+      <div class="inspector-hint">Pasa el cursor sobre un planeta o casa para inspeccionar sin tapar el mandala.</div>
+    </div>
 
-      <div class="slider-container" id="bg-slider-wrapper" style="opacity: 0.3;" title="Opacidad del Video de Fondo">
-        <span style="font-size: 10px; color: #94a3b8;">Opacidad:</span>
-        <input type="range" id="bg-opacity-slider" min="0.05" max="0.85" step="0.05" value="0.35">
-        <span id="bg-opacity-label" style="font-size: 10px; color: #f6c445; min-width: 26px;">35%</span>
-      </div>
-
-      <div class="dock-divider"></div>
-
-      <!-- Controles de Tiempo -->
-      <div class="dock-group">
+    <!-- ── ESQUINA INFERIOR DERECHA: Controles de Tiempo, Fondos y Cámara ── -->
+    <div class="corner-hud bottom-right auto-fade">
+      <!-- Fila 1: Control de Tiempo y Cámara Virtual -->
+      <div class="control-row">
+        <button class="hud-btn" id="btn-reset-zoom" title="Resetear Zoom y Centrar Cámara (Presiona '0' o 'R')">
+          <span>⟲</span> 1.0x
+        </button>
         <button class="hud-btn active" id="btn-play-pause">
           <span>⏸</span> Pausar
         </button>
@@ -91,16 +82,29 @@
         <button class="bg-toggle-btn" id="btn-time-plus-1d" title="Avanzar 1 día">+1d</button>
       </div>
 
-      <div class="dock-divider"></div>
+      <!-- Fila 2: Velocidad y Selector de Fondo A/B -->
+      <div class="control-row">
+        <div class="dock-group">
+          <span class="dock-label">Vel:</span>
+          <button class="bg-toggle-btn speed-btn active" data-speed="1">1x</button>
+          <button class="bg-toggle-btn speed-btn" data-speed="60">60x</button>
+          <button class="bg-toggle-btn speed-btn" data-speed="3600">3600x</button>
+        </div>
 
-      <!-- Multiplicador de Velocidad -->
-      <div class="dock-group">
-        <span class="dock-label">Velocidad:</span>
-        <button class="bg-toggle-btn speed-btn active" data-speed="1">1x</button>
-        <button class="bg-toggle-btn speed-btn" data-speed="60">60x</button>
-        <button class="bg-toggle-btn speed-btn" data-speed="3600">3600x</button>
+        <div class="dock-divider"></div>
+
+        <div class="dock-group">
+          <span class="dock-label">Fondo:</span>
+          <button class="bg-toggle-btn active" data-bg="negro" title="Tenebrismo Puro Roberto Ferri">⬛ Ferri</button>
+          <button class="bg-toggle-btn" data-bg="galaxia" title="Galaxia Espacio Profundo">🌌 Galaxia</button>
+          <button class="bg-toggle-btn" data-bg="estrellas" title="Estrellas Etéreas">✨ Estrellas</button>
+        </div>
+
+        <div class="slider-container" id="bg-slider-wrapper" style="opacity: 0.3;" title="Opacidad del Video">
+          <input type="range" id="bg-opacity-slider" min="0.05" max="0.85" step="0.05" value="0.35">
+        </div>
       </div>
-    </footer>
+    </div>
   </div>
 
   <script src="reloj_engine.js"></script>

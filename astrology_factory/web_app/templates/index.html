@@ -14,9 +14,9 @@
     <link rel="stylesheet" href="/static/css/index.css?v=5">
 </head>
 <body>
-    <!-- Fondo Cinemático Cósmico Vivo (Tenebrismo Espacial Roberto Ferri) -->
-    <div class="ambient-background">
-        <canvas id="bg-live-canvas"></canvas>
+    <!-- Fondo Cinemático Cósmico Vivo (El Reloj / Orbe Alquímico Omnipresente) -->
+    <div class="ambient-background" id="ambient-orbe-wrap">
+        <iframe src="/reloj?mode=wallpaper" id="bg-orbe-iframe" title="Orbe Astrológico Cósmico de Fondo"></iframe>
     </div>
 
     <main class="container">
@@ -429,6 +429,21 @@
                 chatHistory.scrollTop = chatHistory.scrollHeight;
             });
         }
+
+        // Efecto Cámara Cósmica: Alejamiento dinámico del orbe al interactuar o hacer scroll
+        const orbeWrap = document.getElementById('ambient-orbe-wrap');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                orbeWrap?.classList.add('orbe-distant');
+            } else {
+                orbeWrap?.classList.remove('orbe-distant');
+            }
+        });
+
+        // Al abrir modales o interactuar con el formulario, el orbe retrocede sutilmente
+        document.querySelectorAll('input, select, textarea, button').forEach(el => {
+            el.addEventListener('focus', () => orbeWrap?.classList.add('orbe-distant'));
+        });
     </script>
 </body>
 </html>

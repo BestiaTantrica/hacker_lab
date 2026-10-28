@@ -137,3 +137,32 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
    - La cámara viaja fluidamente (zoom cinematográfico continuo) hacia la Casa 9 / Ascendente en Libra SIN borrar el resto de la carta (el mandala completo permanece vivo en el fondo).
 5. **Títulos Flotantes Minimalistas**:
    - Cero carteles gigantescos o parrafadas de informe. Solo badges flotantes elegantes y grandes con fundido suave (`fade-in/out`), sincronizados al relato oral.
+
+---
+
+## 🌟 HITO ALCANZADO (27/10/2026): REDISEÑO TENEBRISTA SACRO DEL RELOJ CÓSMICO & ORBE PERMANENTE
+- [x] **Geocentrismo Alquímico & Centro 100% Despejado**:
+  - Eliminado el disco opaco de 130px que tapaba el cruce de aspectos y confundía el centro con el Sol.
+  - El centro ahora es el **Punto Cero del Observador / La Tierra `⊕`** en radio de 28px, semi-traslúcido y etéreo. El cruce sagrado de las líneas de aspectos euclidianos (trígonos, cuadraturas, oposiciones, sextiles) queda 100% visible y limpio.
+- [x] **3 Carriles Exteriores Horológicos (Horas, Minutos, Segundos)**:
+  - Implementados 3 carriles concéntricos en el perímetro exterior del orbe (`radii.trackHours`, `trackMinutes`, `trackSeconds`):
+    * Carril Horas (24h): Pista de bronce antiguo con arco de carga áureo y medallón alquímico.
+    * Carril Minutos (60m): Pista de plata envejecida y cobre con barra de oro bruñido y prisma romboide.
+    * Carril Segundos (60s): Barrido continuo ultra fluido a 60fps con estela de cometa y chispa ámbar resplandeciente.
+    * Escala horaria exterior grabada con 24 números romanos en Cinzel.
+    * Tres hilos o rayos etéreos tenues que viajan desde el centro por debajo de todo el mandala hacia los tres marcadores de tiempo.
+- [x] **Arquitectura de las 4 Esquinas Libres**:
+  - Mandala 100% libre de tarjetas o tooltips flotantes sobre el centro.
+  - *Top-Left:* Glifo Maestro, Marca y Coordenadas GPS del observador.
+  - *Top-Right:* Reloj Digital Sideral, Fecha y Botones de acción (Inmersivo, Wallpaper, Portal).
+  - *Bottom-Left:* **Astro-Inspector HUD** (tarjeta fija de cristal ahumado sacro que proyecta los datos del astro o casa seleccionada sin tapar el orbe).
+  - *Bottom-Right:* Controles compactos (Play/Pausa, Hora actual, saltos -1h/+1h, velocidad 1x/60x/3600x, selector de fondo y botón `⟲ 1.0x` para reset de cámara).
+- [x] **Cámara Virtual Interactiva (Zoom & Pan en Canvas)**:
+  - Zoom nativo en canvas mediante rueda del ratón (`wheel`) de 0.55x a 4.5x centrado en coordenadas del cursor.
+  - Arrastre y paneo libre con mouse (`mousedown` / `mousemove` / `mouseup`).
+  - Hit-testing transformado matemáticamente para mantener precisión de selección con cualquier nivel de zoom.
+- [x] **Viaje Estelar Cósmico en 3 Capas de Profundidad**:
+  - Sistema de 160 partículas cósmicas: polvo nebular profundo, estrellas guía parpadeantes y chispas ámbar veloces con difracción óptica en cruz.
+- [x] **El Orbe Alquímico como Fondo Omnipresente de la Web (`index.html`)**:
+  - El orbe y reloj cósmico en vivo es ahora el fondo omnipresente en pantalla completa detrás de toda la navegación.
+  - Efecto de cámara cósmica dinámica: al scrollear o enfocar formularios/modales, el orbe retrocede sutilmente (`scale: 0.85; opacity: 0.38; filter: blur(1.5px)`) superponiendo las tarjetas de cristal ahumado sacro sin salirse nunca de la experiencia.
