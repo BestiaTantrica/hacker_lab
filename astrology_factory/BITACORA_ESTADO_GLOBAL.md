@@ -22,15 +22,24 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 **Estado / Decisiones Actuales:**
 - [x] **Ecosistema Web Tenebrista & Reloj Astrológico en Tiempo Real (`web_app/`)**:
   - **Rediseño Completo a Tenebrismo Oscuro (`#030408`)**: Se eliminó el fondo blanco/pastel antiguo; la web entera ahora corre sobre lienzo cósmico oscuro con orbe vivo en el fondo.
-  - **Catálogo Oficial Segmentado en 3 Productos**:
-    1. 📜 **Carta Natal Profunda + Oráculo IA** ($4.990 ARS / $10 USD): PDF de 35+ págs + chat interactivo en vivo.
-    2. ⏱ **Reloj Astrológico Vivo 4K Live Wallpaper** ($2.990 ARS / $5 USD): Astrolabio en tiempo real geolocalizado con efemérides autónomas en JS para PC (Windows Lively / Wallpaper Engine) y móvil.
-    3. 🎬 **Revolución Solar Cinemática en Video** ($14.990 ARS / $25 USD): Película oracular de 10-15 min con voz hipnótica y el orbe proyectando los 12 meses de tu año personal.
-    * 👑 **Tríada Sagrada Completa (Combo 3 en 1)**: $16.990 ARS / $29 USD (Ahorro del 30%).
-  - **Flujo de Pago y Entrega Transparente en 3 Pasos (Zero Incertidumbre)**:
-    * Paso 1: Pago por Transferencia Directa con 15% OFF (`vida.rucula`) o Mercado Pago en 1 clic (tarjetas/cuotas).
-    * Paso 2: Botón directo `[ 📲 Enviar Comprobante por WhatsApp ]` con mensaje autocompletado + enlace a Telegram.
-    * Paso 3: Activación y entrega garantizada en 10 minutos al correo y WhatsApp.
+  - **Catálogo Oficial Segmentado en 3 Productos (Cotización $1.560 ARS = 1 USD)**:
+    1. 📜 **Carta Natal Profunda + Oráculo IA** ($4.990 ARS / ~$3.20 USD | Transf: $4.240 ARS): PDF de 35+ págs + oráculo interactivo.
+    2. ⏱ **Reloj Astrológico Vivo 4K Live Wallpaper** ($2.990 ARS / ~$1.90 USD | Transf: $2.540 ARS): Astrolabio en tiempo real geolocalizado con efemérides autónomas en JS para PC y móvil.
+    3. 🎬 **Revolución Solar Cinemática en Video** ($14.990 ARS / ~$9.60 USD | Transf: $12.740 ARS): Película oracular de 10-15 min con voz hipnótica y el orbe proyectando los 12 meses de tu año personal.
+    * 👑 **Tríada Sagrada Completa (Combo 3 en 1)**: $16.990 ARS / ~$10.90 USD | Transf: $14.440 ARS (Ahorro del 30%).
+  - **Flujo de Pago y Entrega Automatizada 24/7 (Sin Trabajo Manual)**:
+    * Eliminada la promesa de "10 minutos":
+    * **Carta Natal y Reloj Wallpaper**: Activación inmediata y automática 24/7 (0 segundos de espera, validado por Mercado Pago/email).
+    * **Revolución Solar en Video**: Plazo de 24 a 48 hs para renderizado cinematográfico 4K dedicado (percepción de artesanía de alta gama).
+  - **Inyección de Guiones de Oro Canónicos (Claude Pro) en Célula 1 (`v2/celula_1/`)**:
+    * Auditoría geométrica y poética realizada por Claude Pro para los 3 arquetipos canónicos:
+      1. *ORO_1 (Tensión y Fuego)*: Oposición Marte Cáncer - Plutón Capricornio (180°).
+      2. *ORO_2 (Marea Psicológica y Agua)*: Conjunción Luna - Neptuno en Piscis (0°).
+      3. *ORO_3 (Estructura y Límite de Tierra)*: Trígono Mercurio Virgo - Saturno Capricornio (120°).
+    * Archivados en `v2/celula_1/ejemplos_oro_diarios.json` e inyectados como *Few-Shot Learning* en `v2/celula_1/generador_guiones.py`.
+    * Garantía de matemática estricta: Swiss Ephemeris en C (`pyswisseph`) calcula y valida todos los aspectos en producción antes de pasárselos a la IA.
+  - **Planificación Reloj 3D Pro (Esfera Armilar 3D)**:
+    * Se definió arquitectura WebGL / Three.js con materiales PBR (bronce y oro) y cámara 360° libre, ejecutada 100% en el cliente (0% de carga en el servidor Oracle Free Tier). Previsto selector `[ 2D Clásico | 3D Esfera Armilar ]`.
   - **Mecánica Horológica de Escape & Destellos por Vuelta (`reloj_engine.js`)**:
     * **Partículas Cósmicas Exclusivamente Exteriores**: 220 partículas en 3 capas de profundidad que orbitan únicamente fuera del orbe (`r >= 555px`), sin atravesar jamás el mandala sagrado.
     * **Rayos Horológicos Notorios**: Hilos sagrados de bronce y oro de 1.8px conectando el centro `⊕` con los carriles exteriores con fulgor translúcido.
