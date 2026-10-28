@@ -178,3 +178,27 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [x] **El Orbe Alquímico como Fondo Omnipresente de la Web (`index.html`)**:
   - El orbe y reloj cósmico en vivo es ahora el fondo omnipresente en pantalla completa detrás de toda la navegación.
   - Efecto de cámara cósmica dinámica: al scrollear o enfocar formularios/modales, el orbe retrocede sutilmente (`scale: 0.85; opacity: 0.38; filter: blur(1.5px)`) superponiendo las tarjetas de cristal ahumado sacro sin salirse nunca de la experiencia.
+
+---
+
+## 🛡️ PROTOCOLO DE AUDITORÍA PERIÓDICA CON CLAUDE PRO (CALIDAD, SEGURIDAD & MATEMÁTICA)
+*Propósito: Revisiones sistemáticas para blindar la plataforma contra fallos de seguridad, derivas matemáticas o degradación de calidad antes de escalar en producción.*
+
+### 1. Auditoría Matemática de Precisión Astronómica (Swiss Ephemeris vs Kepler)
+- **Situación:** El reloj visual en JS usa aproximaciones keplerianas refinadas (~0.05° a 0.2° de desviación), ideales para 60 FPS en el navegador sin lag.
+- **Misión Claude Pro:** Contrastar periódicamente las salidas de coordenadas del motor JS frente a `pyswisseph` (Swiss Ephemeris oficial de NASA/Astrodienst en Python) y formular tablas de calibración o factores de corrección periódica para garantizar certificación astrológica profesional.
+
+### 2. Auditoría de Seguridad y Resiliencia en Pagos (Mercado Pago & Webhooks)
+- **Situación:** Integrado alias oficial (`vida.rucula`, 15% OFF) y pasarela automática de Mercado Pago para tarjetas y cuotas 24/7.
+- **Misión Claude Pro:** Auditar el endpoint webhook en FastAPI (`web_app/main.py`) verificando:
+  * Validación criptográfica de firmas HMAC (`x-signature` con `x-request-id` y clave secreta de webhook).
+  * Control estricto de idempotencia en SQLite (evitar ataques de repetición o dobles activaciones).
+  * Blindaje contra spoofing y confirmaciones fraudulentas de pago.
+
+### 3. Evolución Gráfica a WebGL / Shaders GLSL (Fase Astrolabio 3D Pro)
+- **Situación:** Motor 2D en Canvas optimizado al máximo nivel vectorial tenebrista.
+- **Misión Claude Pro:** Redacción y optimización de Vertex y Fragment Shaders en GLSL para Three.js:
+  * Materiales PBR metálicos (bronce envejecido, oro bruñido y pátina oscura).
+  * Refracción de lente y profundidad de campo (DoF) cósmica sin penalizar la GPU.
+  * Mantener 60-120 FPS sin consumo de CPU en el servidor ni calentamiento en el cliente.
+
