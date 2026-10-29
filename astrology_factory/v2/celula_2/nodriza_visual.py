@@ -79,7 +79,8 @@ BLOQUEADOS = {
 }
 BLOQUEADOS_REDES = {
     "desnudo", "desnuda", "nude", "nudity", "torso_desnudo", "cuerpo_desnudo",
-    "anatomia_expuesta", "genital", "pezon", "pezones", "sensual", "erotico", "erotica"
+    "anatomia_expuesta", "genital", "pezon", "pezones", "sensual", "erotico", "erotica",
+    "tanga", "calzon", "calzones", "lenceria", "ropa_interior", "descartes", "descartes_exploratorios"
 }
 PALABRAS_ICONICAS = (
     "tarot", "carta", "simbolo", "dios", "persona", "planeta",
@@ -152,6 +153,7 @@ def cargar_catalogo_desde_db() -> dict:
         p = Path(ruta)
         if (p.suffix.lower() not in FORMATOS_ACEPTADOS
                 or p.name.endswith("_frame.jpg")
+                or "descartes_exploratorios" in str(p)
                 or not p.is_file()
                 or (MIN_SIZE_BYTES and p.stat().st_size < MIN_SIZE_BYTES)):
             descartados += 1
