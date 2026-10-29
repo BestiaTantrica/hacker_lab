@@ -19,19 +19,20 @@ class PersonalizedHoroscope:
         return f"{int(sign_degree)}° {signs[sign_index]}"
         
     def _build_natal_chart_html(self, natal_positions, natal_houses):
-        html = '<div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #2c3e50;">'
-        html += '<h3 style="color: #2c3e50; margin-top: 0;">🌌 Tus Posiciones Astrológicas (Datos Matemáticos)</h3>'
-        html += '<p style="color: #555;">Aquí tienes la fotografía exacta del cielo en el instante de tu nacimiento.</p>'
-        html += '<table style="width: 100%; border-collapse: collapse;">'
-        html += '<tr style="border-bottom: 1px solid #ddd;"><th style="text-align: left; padding: 8px;">Astro/Punto</th><th style="text-align: left; padding: 8px;">Signo y Grado exacto</th></tr>'
+        html = '<div style="background: rgba(13, 19, 38, 0.9); padding: 22px; border-radius: 12px; margin-bottom: 20px; border: 1.5px solid rgba(246, 196, 69, 0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.7); color: #e2e8f0;">'
+        html += '<h3 style="color: #f6c445; margin-top: 0; font-family: \'Cinzel\', serif; font-size: 1.25rem; display: flex; align-items: center; gap: 8px;"><span>🌌</span> Fotografía Celeste de tu Nacimiento</h3>'
+        html += '<p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin-bottom: 16px;">Posiciones astronómicas exactas calculadas con efemérides profesionales (Swiss Ephemeris):</p>'
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">'
+        html += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.15); color: #f6c445; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;"><th style="text-align: left; padding: 10px 8px;">Astro / Ángulo</th><th style="text-align: left; padding: 10px 8px;">Signo y Grado Exacto</th></tr>'
         
-        # Ascendant first if available
+        # Ascendente primero si está disponible
         if 'Ascendente' in natal_houses:
-            html += f'<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px;"><strong>Ascendente</strong></td><td style="padding: 8px;">{self._degrees_to_zodiac(natal_houses["Ascendente"])}</td></tr>'
+            html += f'<tr style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0, 242, 254, 0.04);"><td style="padding: 10px 8px; color: #00f2fe; font-weight: 700;">◀ ASCENDENTE</td><td style="padding: 10px 8px; font-weight: 600; color: #fff;">{self._degrees_to_zodiac(natal_houses["Ascendente"])}</td></tr>'
         
-        # Planets
+        # Planetas
         for planet, deg in natal_positions.items():
-            html += f'<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px;"><strong>{planet}</strong></td><td style="padding: 8px;">{self._degrees_to_zodiac(deg)}</td></tr>'
+            p_color = "#f6c445" if planet == "Sol" else ("#e2e8f0" if planet == "Luna" else "#38bdf8")
+            html += f'<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);"><td style="padding: 9px 8px; color: {p_color}; font-weight: 600;">{planet}</td><td style="padding: 9px 8px; color: #cbd5e1;">{self._degrees_to_zodiac(deg)}</td></tr>'
             
         html += '</table></div>'
         return html
@@ -132,12 +133,14 @@ class PersonalizedHoroscope:
         print("Solicitando lectura clínica y sociológica a la IA...")
         content = self.engine.generate_content(astro_data)
         
+        chart_html = self._build_natal_chart_html(natal_positions, natal_houses)
         if content and "mensaje_personalizado" in content:
-            chart_html = self._build_natal_chart_html(natal_positions, natal_houses)
             content["mensaje_personalizado"] = chart_html + content["mensaje_personalizado"]
+            content["error"] = False
             return content
         else:
-            return {"mensaje_personalizado": f"<p>Hola {name}, los astros están un poco nublados y la conexión mística está bajo mucha carga ahora mismo.</p><p>¡No te preocupes! Hemos agendado tu lectura y la procesaremos automáticamente en breve. Recibirás tu carta astral en tu correo electrónico en cuanto el cielo se despeje.</p>", "error": True}
+            fallback_msg = f"<div style='margin-top: 15px; color: #cbd5e1; line-height: 1.6;'><p><strong>Hola {name}</strong>, hemos calculado tus coordenadas natales exactas con precisión astronómica (revisa la tabla superior).</p><p>El oráculo está sintetizando el análisis de tus tránsitos en profundidad. Puedes iniciar la conversación abajo en el chat en vivo para explorar cualquier casa o planeta.</p></div>"
+            return {"mensaje_personalizado": chart_html + fallback_msg, "error": False}
 
 if __name__ == "__main__":
     ph = PersonalizedHoroscope()

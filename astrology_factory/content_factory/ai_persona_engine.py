@@ -2,7 +2,10 @@ import os
 import json
 from google import genai
 from google.genai import types
-from groq import Groq
+try:
+    from groq import Groq
+except ImportError:
+    Groq = None
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 from dotenv import load_dotenv
 
@@ -21,8 +24,11 @@ class AIPersonaEngine:
         else:
             self.gemini_client = None
             
-        if self.groq_api_key:
-            self.groq_client = Groq(api_key=self.groq_api_key)
+        if self.groq_api_key and Groq is not None:
+            try:
+                self.groq_client = Groq(api_key=self.groq_api_key)
+            except Exception:
+                self.groq_client = None
         else:
             self.groq_client = None
             

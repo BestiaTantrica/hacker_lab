@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File
+from fastapi import FastAPI, Request, Form, UploadFile, File, BackgroundTasks
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,6 +12,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
 
 from dotenv import load_dotenv
 load_dotenv(os.path.join(PROJECT_DIR, ".env"))
@@ -32,7 +34,6 @@ else:
     gemini_client = None
 
 # Rutas absolutas y relativas al proyecto
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 DB_DIR = os.path.join(BASE_DIR, "database")
@@ -86,6 +87,10 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 async def favicon():
     return FileResponse(os.path.join(STATIC_DIR, "favicon.ico"))
 
+@app.head("/", include_in_schema=False)
+async def head_index():
+    return HTMLResponse(content="", status_code=200)
+
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
@@ -104,6 +109,7 @@ async def read_privacy(request: Request):
 
 @app.post("/api/subscribe")
 async def subscribe(
+    background_tasks: BackgroundTasks,
     name: str = Form(...),
     email: str = Form(...),
     birth_date: str = Form(...),
@@ -116,6 +122,11 @@ async def subscribe(
             cursor.execute('''
                 INSERT INTO subscribers (name, email, birth_date, birth_time, birth_city)
                 VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(email) DO UPDATE SET
+                    name=excluded.name,
+                    birth_date=excluded.birth_date,
+                    birth_time=excluded.birth_time,
+                    birth_city=excluded.birth_city
             ''', (name, email, birth_date, birth_time, birth_city))
             
             # Caching Predictivo: Agendar descarga de assets pre-compra
@@ -125,22 +136,31 @@ async def subscribe(
                     VALUES (?, ?, ?)
                 ''', (email, 'predictive_cache', 'downloading_assets'))
             except sqlite3.OperationalError:
-                pass # Si la tabla no existe aún por alguna razón
+                pass
 
-        return JSONResponse(content={"status": "success", "message": "¡Suscripción exitosa! Prepárate para descubrir tu universo interior."})
-    except sqlite3.IntegrityError:
-        # El correo ya está registrado, vamos a actualizar sus datos en lugar de rechazarlo
+        # Generar análisis de carta natal en tiempo real
+        analysis_html = None
         try:
-            with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
-                cursor = conn.cursor()
-                cursor.execute('''
-                    UPDATE subscribers 
-                    SET name = ?, birth_date = ?, birth_time = ?, birth_city = ?
-                    WHERE email = ?
-                ''', (name, birth_date, birth_time, birth_city, email))
-            return JSONResponse(content={"status": "success", "message": "¡Bienvenido de vuelta! Tus datos astrales han sido actualizados."})
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+            from content_factory.personalized_horoscope import PersonalizedHoroscope
+            ph = PersonalizedHoroscope()
+            res = ph.generate_for_user(name, birth_date, birth_time)
+            analysis_html = res.get("mensaje_personalizado", "")
+            
+            # Enviar email asíncrono si está configurado
+            if analysis_html and not res.get("error"):
+                try:
+                    email_body = f"<h1>Hola {name}, aquí está tu lectura inicial:</h1><br>" + analysis_html
+                    background_tasks.add_task(send_email_with_audio, email, "Bienvenido al Oráculo - Tu Primera Lectura", email_body)
+                except Exception as email_err:
+                    print("Error agendando email:", email_err)
+        except Exception as e_gen:
+            print("Error generando análisis inicial:", e_gen)
+
+        return JSONResponse(content={
+            "status": "success",
+            "message": "¡Tu carta astral ha sido forjada con precisión astronómica!",
+            "analysis": analysis_html
+        })
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -213,38 +233,64 @@ async def activate_weekly(email: str):
         return HTMLResponse(content=f"<h1>Error activando suscripción:</h1><p>{str(e)}</p>", status_code=500)
 
 @app.post("/api/chat")
-async def chat_with_oracle(
-    email: str = Form(...),
-    message: str = Form(...)
-):
+async def chat_with_oracle(request: Request):
     try:
-        with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT name, birth_date, birth_time FROM subscribers WHERE email = ?", (email,))
-            user = cursor.fetchone()
-        
-        if not user:
-            return JSONResponse(status_code=404, content={"status": "error", "message": "Usuario no encontrado."})
-            
-        name, birth_date, birth_time = user
-        
-        prompt = f"""Eres la Inteligencia Artificial del Oráculo de 'Portal Tarot Místico'. 
-Estás hablando con {name}, quien nació el {birth_date} a las {birth_time}.
-Responde a su siguiente mensaje de manera mística, empática y astrológica, basándote en que conoces sus datos natales. 
-No seas excesivamente largo, responde de forma concisa y amigable como si estuvieran chateando.
+        content_type = request.headers.get("content-type", "")
+        email = None
+        message = None
+        if "application/json" in content_type:
+            body = await request.json()
+            email = body.get("email")
+            message = body.get("question") or body.get("message")
+        else:
+            form = await request.form()
+            email = form.get("email")
+            message = form.get("message") or form.get("question")
+
+        if not message:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "Mensaje requerido."})
+
+        name = "Buscador de Sentido"
+        birth_date = "desconocida"
+        birth_time = "desconocida"
+
+        if email:
+            try:
+                with sqlite3.connect(DB_PATH, timeout=10.0) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT name, birth_date, birth_time FROM subscribers WHERE email = ?", (email,))
+                    user = cursor.fetchone()
+                    if user:
+                        name, birth_date, birth_time = user
+            except Exception as e_db:
+                print("Error consultando usuario en chat:", e_db)
+
+        prompt = f"""Eres el Oráculo Lúcido de 'Portal Tarot Místico' (Astrology Factory).
+Tu estilo es el de un astrólogo clínico y filosófico: lúcido, empático, sin clichés de autoayuda barata ni predicciones de salón.
+Estás dialogando con {name}, cuyos datos natales son: fecha {birth_date}, hora {birth_time}.
+Responde a su inquietud con perspicacia psicológica y geométrica, ayudándolo a entender qué arquetipo o casa está operando.
+Sé conciso (máximo 2 párrafos breves), cálido y revelador.
 
 Mensaje de {name}: {message}
 """
-        
+        reply = None
         if gemini_client:
-            response = gemini_client.models.generate_content(
-                model='gemini-3.6-flash',
-                contents=prompt,
-            )
-            reply = response.text
-        else:
-            reply = "Error: La IA no está configurada."
-        
+            for model_candidate in ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']:
+                try:
+                    response = gemini_client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt,
+                    )
+                    reply = response.text
+                    if reply:
+                        break
+                except Exception as e_gen:
+                    print(f"Error generando chat con {model_candidate}: {e_gen}")
+                    continue
+
+        if not reply:
+            reply = f"El mandala celeste se encuentra en plena marea de mutación, {name}. Cada aspecto que experimentas actúa como un catalizador en tu mapa de vida. Observa la casa donde la tensión se manifiesta: allí reside el punto exacto donde la sombra te pide comprensión antes que reacción."
+
         return JSONResponse(content={"status": "success", "reply": reply})
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
