@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 import sys
 import sqlite3
 import os
+import urllib.parse
+import httpx
 from pathlib import Path
 
 # Rutas absolutas y relativas al proyecto

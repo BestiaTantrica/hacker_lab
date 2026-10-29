@@ -30,8 +30,8 @@ DB_PATH = FACTORY_ROOT / "web_app" / "database" / "users.sqlite"
 # Cargar variables de entorno
 load_dotenv(ENV_PATH)
 
-CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "sbaw1bxm8knugdcxbs")
-CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "XMaqRO69uVDpakX8nP8SfRZwyonRyKrd")
+CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "awmsg6oie1tr1sf3")
+CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "tXdG40y22ZtzGJs2Q3IFJpXlPb1iktCC")
 DEFAULT_PRIVACY = os.environ.get("TIKTOK_PRIVACY_LEVEL", "PUBLIC_TO_EVERYONE")
 
 RESET = "\033[0m"

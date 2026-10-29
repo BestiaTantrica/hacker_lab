@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "descripcion": "Registro Maestro Central de Publicaciones y Enlaces Multicanal",
+    "instruccion": "daily_channel_job.py consulta este archivo por fecha para enlazar el video exacto del día en Telegram y redes"
+  },
+  "publicaciones": {
+    "2026-10-29": {
+      "evento_id": "2026-10-29_Mercurio_Cuadratura_Marte",
+      "titulo": "Mercurio Retrógrado en Escorpio en Cuadratura con Marte en Leo",
+      "youtube_video_id": "yTI2hIFoyT8",
+      "youtube_url": "https://www.youtube.com/watch?v=yTI2hIFoyT8",
+      "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
+      "estado_youtube": "PUBLICADO",
+      "estado_tiktok": "PUBLICADO",
+      "fecha_publicacion": "2026-10-29"
+    },
+    "2026-10-30": {
+      "evento_id": "2026-10-30_Mercurio_Cuadratura_Partil_Marte",
+      "titulo": "Clímax de Tensión: Mercurio Retrógrado en Cuadratura Partil Exacta a Marte",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
+      "estado_youtube": "PENDIENTE_RENDER",
+      "estado_tiktok": "PENDIENTE_RENDER",
+      "fecha_publicacion": "2026-10-30"
+    },
+    "2026-10-31": {
+      "evento_id": "2026-10-31_Samhain_Luna_Trigono_Mercurio",
+      "titulo": "Noche de Samhain: Luna en Cáncer en Trígono con Mercurio Retrógrado en Escorpio",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
+      "estado_youtube": "PENDIENTE_RENDER",
+      "estado_tiktok": "PENDIENTE_RENDER",
+      "fecha_publicacion": "2026-10-31"
+    },
+    "2026-11-01": {
+      "evento_id": "2026-11-01_Luna_Oposicion_Pluton_Cuarto_Menguante",
+      "titulo": "Luna en Leo en Oposición a Plutón en Acuario (Cuarto Menguante)",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
+      "estado_youtube": "PENDIENTE_RENDER",
+      "estado_tiktok": "PENDIENTE_RENDER",
+      "fecha_publicacion": "2026-11-01"
+    }
+  }
+}

@@ -47,11 +47,19 @@ rsync -avz \
     /home/LAB/astrology_factory/content_factory/ \
     ${OCI_USER}@${OCI_IP}:${REMOTE_BASE}/content_factory/
 
-# 3. Reiniciar servicio FastAPI en OCI-2
+# 3. Sincronizar registro maestro de publicaciones
+echo "📦 Sincronizando produccion/registro_publicaciones.json..."
+ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${OCI_USER}@${OCI_IP} "mkdir -p ${REMOTE_BASE}/produccion"
+rsync -avz \
+    -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" \
+    /home/LAB/astrology_factory/produccion/registro_publicaciones.json \
+    ${OCI_USER}@${OCI_IP}:${REMOTE_BASE}/produccion/registro_publicaciones.json
+
+# 4. Reiniciar servicio FastAPI en OCI-2
 echo "🔄 Reiniciando servicio astrology_web en OCI-2..."
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${OCI_USER}@${OCI_IP} "sudo systemctl restart astrology_web && sudo systemctl is-active astrology_web"
 
-# 4. Verificar salud en vivo
+# 5. Verificar salud en vivo
 echo "🔍 Verificando endpoint en vivo..."
 sleep 2
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${OCI_USER}@${OCI_IP} "curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/"

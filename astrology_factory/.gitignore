@@ -9,6 +9,7 @@ env/
 
 # Archivos pesados y generados localmente
 produccion/
+!produccion/registro_publicaciones.json
 ready_for_capcut/
 *.mp3
 *.wav

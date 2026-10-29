@@ -575,6 +575,19 @@ class RelojAstrologicoEngine {
       }
     }
 
+    // 4. Si no es casa, detectar Carriles de Tiempo Exteriores (Horas 472, Minutos 494, Segundos 516)
+    if (!hit) {
+      const distC = Math.hypot(mouseX, mouseY);
+      const dNow = this.timeState.currentDate;
+      if (Math.abs(distC - this.radii.trackHours) <= 10) {
+        hit = { tipo: 'carril_tiempo', carril: 'horas', valor: dNow.getHours(), radio: this.radii.trackHours };
+      } else if (Math.abs(distC - this.radii.trackMinutes) <= 10) {
+        hit = { tipo: 'carril_tiempo', carril: 'minutos', valor: dNow.getMinutes(), radio: this.radii.trackMinutes };
+      } else if (Math.abs(distC - this.radii.trackSeconds) <= 10) {
+        hit = { tipo: 'carril_tiempo', carril: 'segundos', valor: dNow.getSeconds(), radio: this.radii.trackSeconds };
+      }
+    }
+
     this.hoveredItem = hit;
     this.canvas.style.cursor = hit ? 'pointer' : (this.camera.isDragging ? 'grabbing' : 'default');
 
@@ -674,6 +687,26 @@ class RelojAstrologicoEngine {
         <div class="inspector-title">${partes[0]}</div>
         <div class="inspector-meta">
           <div>${partes[1] || ''}</div>
+        </div>
+      `;
+    } else if (hit.tipo === 'carril_tiempo') {
+      const nom = hit.carril.toUpperCase();
+      const valStr = String(hit.valor).padStart(2, '0');
+      let detalle = '';
+      if (hit.carril === 'horas') {
+        detalle = 'Ciclo diario de 24 horas (Aro Interior r=472px). Indica el avance diurno y la posición del Sol respecto al meridiano local.';
+      } else if (hit.carril === 'minutos') {
+        detalle = 'Ciclo de 60 minutos (Aro Intermedio r=494px). Micro-ritmo temporal sincronizado con la rotación celeste.';
+      } else {
+        detalle = 'Ciclo de 60 segundos (Aro Exterior r=516px). Barrido fluido continuo del pulso cósmico en tiempo real.';
+      }
+      hud.innerHTML = `
+        <div class="inspector-badge" style="color:#f6c445; border-color:#f6c445;">⏳ CARRIL CRONOMÉTRICO HUD</div>
+        <div class="inspector-title" style="color: #ffffff;">
+          <strong>${nom}:</strong> <span style="font-family: monospace; font-size: 20px; color: #f6c445;">${valStr}</span>
+        </div>
+        <div class="inspector-meta" style="font-size: 11px; line-height: 1.4; color: #cbd5e1; margin-top: 4px;">
+          <div>${detalle}</div>
         </div>
       `;
     }
@@ -1490,6 +1523,62 @@ class RelojAstrologicoEngine {
       ctx.moveTo(Math.cos(aTick) * tick1, Math.sin(aTick) * tick1);
       ctx.lineTo(Math.cos(aTick) * tick2, Math.sin(aTick) * tick2);
       ctx.stroke();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CÁPSULAS DIGITALES CENITALES HUD (Zenith Digital Readouts)
+    // Aro Interior (rH=472px): Horas (HH)
+    // Aro Intermedio (rM=494px): Minutos (MM)
+    // Aro Exterior (rS=516px): Segundos (SS)
+    // ─────────────────────────────────────────────────────────────────────────
+    const hhStr = String(d.getHours()).padStart(2, '0');
+    const mmStr = String(d.getMinutes()).padStart(2, '0');
+    const ssStr = String(Math.floor(s)).padStart(2, '0');
+
+    const tracksZenith = [
+      { r: rH, text: hhStr, label: 'HORA', carril: 'horas', baseColor: '#f6c445' },
+      { r: rM, text: mmStr, label: 'MIN', carril: 'minutos', baseColor: '#fef08a' },
+      { r: rS, text: ssStr, label: 'SEG', carril: 'segundos', baseColor: '#ffffff' }
+    ];
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (const t of tracksZenith) {
+      const isHovered = (this.hoveredItem && this.hoveredItem.tipo === 'carril_tiempo' && this.hoveredItem.carril === t.carril);
+      const capScale = isHovered ? 1.25 : 1.0;
+      const capW = 28 * capScale;
+      const capH = 15 * capScale;
+      const cyZenith = -t.r;
+
+      ctx.save();
+      ctx.translate(0, cyZenith);
+
+      // Sombra y resplandor
+      ctx.shadowColor = isHovered ? '#ffffff' : t.baseColor;
+      ctx.shadowBlur = isHovered ? 16 : 8;
+
+      // Fondo de la cápsula (Obsidiana cósmica translúcida)
+      ctx.fillStyle = isHovered ? 'rgba(30, 22, 10, 0.95)' : 'rgba(5, 7, 14, 0.88)';
+      ctx.strokeStyle = isHovered ? '#ffffff' : t.baseColor;
+      ctx.lineWidth = isHovered ? 1.6 : 1.0;
+
+      // Dibujar rectángulo redondeado
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(-capW / 2, -capH / 2, capW, capH, 4 * capScale);
+      } else {
+        ctx.rect(-capW / 2, -capH / 2, capW, capH);
+      }
+      ctx.fill();
+      ctx.stroke();
+
+      // Texto Digital
+      ctx.fillStyle = isHovered ? '#ffffff' : t.baseColor;
+      ctx.font = isHovered ? '700 10.5px "Outfit", monospace' : '700 9.5px "Outfit", monospace';
+      ctx.fillText(t.text, 0, 0.5);
+
+      ctx.restore();
     }
 
     ctx.restore();

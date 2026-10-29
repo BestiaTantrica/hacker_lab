@@ -20,20 +20,29 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 *Responsabilidad: Creación de nuevas células, ajuste de estéticas (ej. Fusionador Visual), lógicas de negocio inmediatas.*
 
 **Estado / Decisiones Actuales:**
-- [x] **Video del 29 de Octubre Completado (`FINAL_2026-10-29_Mercurio_Cuadratura_Marte.mp4`)**:
-  - Duración: 27.91s, 1080x1920 (9:16), audio neural argentino con Pad Solfeggio 396Hz y subtítulos ASS sincronizados.
-  - Almacenado en `produccion/semana_29oct_01nov/` y en bóveda `Videos_Finales/Oct_W4/`.
-- [ ] **DIRECCIÓN DE ARTE: RELOJ ASTROLÓGICO EN VIDEOS DIARIOS (PLANIFICADO PARA MAÑANA)**:
-  - **REGLA MANDATORIA**: El reloj astrológico **NO va como marca de agua en la esquina superior**.
-  - El reloj es el activo IP insignia y el producto central que se vende en la web (`portaltarotmistico.com/reloj`).
-  - **Uso Estratégico en Video**:
-    1. Primer fotograma (gancho hipnótico de precisión astronómica en segundo 0).
-    2. Último fotograma (cierre oracular y enlace directo al CTA web).
-    3. Como comodín / amuleto entre cortes con zoom-in / acercamiento dramático a los engranajes o glifos del tránsito del día.
-    4. Fase actual: Reloj 2D de alta resolución. Fase siguiente: Esfera Armilar 3D Three.js.
-- [ ] **AUTOPUBLICACIÓN A REDES SOCIALES (DIAGNÓSTICO Y PLAN DE MAÑANA)**:
-  - **YouTube Shorts**: `v2/celula_4/publicador_redes.py` corregido para soportar privacidad pública (`YOUTUBE_PRIVACY_STATUS=public`). El token actual en `token.json` reportó `invalid_grant` debido a la expiración de 7 días que Google impone en apps de Google Cloud en modo "Testing". Mañana se ejecuta `python v2/celula_4/configurador_oauth.py` para refrescar el permiso o se pasa la app a "En Producción" en Google Cloud Console para tokens perpetuos.
-  - **TikTok**: `publicador_tiktok_api.py` corregido en el cálculo de chunks (ahora envía 1 chunk exacto para archivos <= 64MB). La API Direct Post v2 reportó que la aplicación de desarrollo está en estado "No auditada" (`unaudited_client_can_only_post_to_private_accounts`). El fallback de web automation (`cookies.txt`) encontró cookies de sesión caducadas (redirige a login). Mañana se renueva `cookies.txt` desde el navegador o se aprueba la cuenta de prueba en TikTok Developers.
+- [x] **Video del 29 de Octubre Publicado en Producción**:
+  - **YouTube Shorts**: Publicado en vivo exitosamente: `https://www.youtube.com/watch?v=yTI2hIFoyT8`.
+  - **TikTok**: Publicado en vivo en la cuenta `@portaltarotmistico`.
+  - **Aplicación Direct Post API**: Enviada a revisión final en TikTok Developers.
+- [x] **Telegram Daily Broadcast & Molde de Oro (`daily_channel_job.py`)**:
+  - Incorporada la voz canónica de Tomás (Aries 22°, Acuario 22°, Luna Sagitario 5°), Swiss Ephemeris y botones interactivos multicanal (YouTube Shorts, TikTok, Bot Horóscopo y Web).
+  - Integrado con `produccion/registro_publicaciones.json` para resolver dinámicamente el video exacto del día.
+  - Despacho en vivo probado y verificado en canal `@PortalTarotMistico` (`-1003701234540`).
+- [x] **YouTube Comments Auto-Responder Daemon 24/7 (`web_app/youtube_comments_daemon.py`)**:
+  - Monitoreo y respuesta automática continua con voz de Tomás.
+  - Protocolo anti-haters: Desarme pragmático y quirúrgico con datos de Swiss Ephemeris, cero ofensas (100% seguro ante políticas de YouTube) y preguntas punzantes para generar hilos de debate y disparar el algoritmo.
+  - Filtro estricto anti-scam financiero para proteger la reputación del canal.
+  - Base de datos SQLite `database/youtube_comments.sqlite` con idempotencia estricta.
+- [x] **Reloj Astrológico: HUD Digital Cenital (`web_app/static/js/reloj_engine.js`)**:
+  - Cápsulas numéricas digitales colocadas sobre el cenit (`x = 0, y = -r`) en los 3 aros de tiempo:
+    - Aro Interior (`r = 472px`): Horas (HH)
+    - Aro Intermedio (`r = 494px`): Minutos (MM)
+    - Aro Exterior (`r = 516px`): Segundos (SS)
+  - Hover interactivo con escalado a 1.25x, resplandor dorado e integración al Inspector Cósmico HUD.
+- [x] **Suite de Tests End-to-End (`tests/test_enjambre_completo.py`)**:
+  - Validación automatizada de las 7 células (Swiss Ephemeris, ADN, Audio, Redes, FFmpeg, Telegram y HMAC Mercado Pago). 7 de 7 tests pasando al 100%.
+- [x] **Despliegue a Producción en OCI-2**:
+  - Sincronización exitosa con OCI-2 (`143.47.115.34`), reinicio de servicio `astrology_web` y verificación HTTP 200 en `portaltarotmistico.com`.
 
 ---
 

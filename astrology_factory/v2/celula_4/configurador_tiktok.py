@@ -11,10 +11,14 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-# Credenciales de la App "Astrology Factory" (SANDBOX)
-CLIENT_KEY = "sbaw1bxm8knugdcxbs"
-CLIENT_SECRET = "XMaqRO69uVDpakX8nP8SfRZwyonRyKrd"
-REDIRECT_URI = "https://www.portaltarotmistico.com/oauth/"
+from dotenv import load_dotenv
+
+FACTORY_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(FACTORY_ROOT / ".env")
+
+CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "awmsg6oie1tr1sf3")
+CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "tXdG40y22ZtzGJs2Q3IFJpXlPb1iktCC")
+REDIRECT_URI = os.environ.get("TIKTOK_REDIRECT_URI", "https://www.portaltarotmistico.com/oauth/")
 
 TOKEN_FILE = Path(__file__).parent / "tiktok_token.json"
 RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"; AMARILLO = "\033[93m"

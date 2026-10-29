@@ -16,8 +16,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-# Scopes requeridos para subir videos
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+# Scopes requeridos para subir videos y moderar/responder comentarios 24/7
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl"
+]
 SECRETS_FILE = FACTORY_ROOT / "v2" / "celula_4" / "client_secret.json"
 TOKEN_FILE = FACTORY_ROOT / "v2" / "celula_4" / "token.json"
 
