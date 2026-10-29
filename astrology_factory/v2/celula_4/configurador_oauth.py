@@ -45,11 +45,17 @@ def main():
             
     # Si no hay credenciales o no son válidas
     if not creds or not creds.valid:
+        refreshed = False
         if creds and creds.expired and creds.refresh_token:
-            log("🔄 Refrescando token expirado...", CYAN)
-            creds.refresh(Request())
-        else:
-            log("🌐 Abriendo flujo de autenticación en el navegador...", CYAN)
+            try:
+                log("🔄 Refrescando token expirado...", CYAN)
+                creds.refresh(Request())
+                refreshed = True
+            except Exception as e:
+                log(f"⚠️ El refresh_token ya no es válido ({e}). Iniciando autenticación...", AMARILLO)
+        
+        if not refreshed:
+            log("🌐 Abriendo flujo de autenticación...", CYAN)
             flow = InstalledAppFlow.from_client_secrets_file(str(SECRETS_FILE), SCOPES)
             creds = flow.run_local_server(port=0)
             

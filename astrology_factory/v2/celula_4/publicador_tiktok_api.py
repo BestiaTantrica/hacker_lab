@@ -229,13 +229,14 @@ def upload_video(video_path, description, privacy_level=None):
     # Obtener token garantizado
     access_token = get_valid_access_token()
 
-    # Cálculo de Chunks (20MB)
-    chunk_size = 20 * 1024 * 1024
-    if file_size < chunk_size:
+    # Cálculo de Chunks: Si es menor o igual a 64MB se sube en 1 solo chunk de tamaño exacto
+    MAX_SINGLE_CHUNK = 64 * 1024 * 1024
+    if file_size <= MAX_SINGLE_CHUNK:
         chunk_size = file_size
         total_chunk_count = 1
     else:
-        total_chunk_count = math.floor(file_size / chunk_size)
+        chunk_size = 20 * 1024 * 1024
+        total_chunk_count = math.ceil(file_size / chunk_size)
 
     log(f"\n🚀 Iniciando subida a TikTok API V2: {video_path.name}", MAGENTA)
     log(f"🔒 Nivel de Privacidad: {level}", CYAN)

@@ -20,6 +20,42 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 *Responsabilidad: Creación de nuevas células, ajuste de estéticas (ej. Fusionador Visual), lógicas de negocio inmediatas.*
 
 **Estado / Decisiones Actuales:**
+- [x] **Video del 29 de Octubre Completado (`FINAL_2026-10-29_Mercurio_Cuadratura_Marte.mp4`)**:
+  - Duración: 27.91s, 1080x1920 (9:16), audio neural argentino con Pad Solfeggio 396Hz y subtítulos ASS sincronizados.
+  - Almacenado en `produccion/semana_29oct_01nov/` y en bóveda `Videos_Finales/Oct_W4/`.
+- [ ] **DIRECCIÓN DE ARTE: RELOJ ASTROLÓGICO EN VIDEOS DIARIOS (PLANIFICADO PARA MAÑANA)**:
+  - **REGLA MANDATORIA**: El reloj astrológico **NO va como marca de agua en la esquina superior**.
+  - El reloj es el activo IP insignia y el producto central que se vende en la web (`portaltarotmistico.com/reloj`).
+  - **Uso Estratégico en Video**:
+    1. Primer fotograma (gancho hipnótico de precisión astronómica en segundo 0).
+    2. Último fotograma (cierre oracular y enlace directo al CTA web).
+    3. Como comodín / amuleto entre cortes con zoom-in / acercamiento dramático a los engranajes o glifos del tránsito del día.
+    4. Fase actual: Reloj 2D de alta resolución. Fase siguiente: Esfera Armilar 3D Three.js.
+- [ ] **AUTOPUBLICACIÓN A REDES SOCIALES (DIAGNÓSTICO Y PLAN DE MAÑANA)**:
+  - **YouTube Shorts**: `v2/celula_4/publicador_redes.py` corregido para soportar privacidad pública (`YOUTUBE_PRIVACY_STATUS=public`). El token actual en `token.json` reportó `invalid_grant` debido a la expiración de 7 días que Google impone en apps de Google Cloud en modo "Testing". Mañana se ejecuta `python v2/celula_4/configurador_oauth.py` para refrescar el permiso o se pasa la app a "En Producción" en Google Cloud Console para tokens perpetuos.
+  - **TikTok**: `publicador_tiktok_api.py` corregido en el cálculo de chunks (ahora envía 1 chunk exacto para archivos <= 64MB). La API Direct Post v2 reportó que la aplicación de desarrollo está en estado "No auditada" (`unaudited_client_can_only_post_to_private_accounts`). El fallback de web automation (`cookies.txt`) encontró cookies de sesión caducadas (redirige a login). Mañana se renueva `cookies.txt` desde el navegador o se aprueba la cuenta de prueba en TikTok Developers.
+
+---
+
+## 🏛️ NIVEL 3: ARQUITECTURA Y AUDITORÍA DE PRECISIÓN (IA: Claude Pro / Modelos de Oro)
+*Responsabilidad: Modelos de Oro (Few-Shot), lógica de Cero Error, Webhooks financieros con HMAC y Shaders 3D.*
+
+**Entregables de Claude Pro Recibidos (Listos para integración mañana):**
+1. **Misión 1: Webhook Mercado Pago (`web_app/mercadopago_webhook.py` + `test_mercadopago_webhook.py`)**:
+   - ✅ Validación estricta de firma `x-signature` con HMAC SHA-256 (`id:…;request-id:…;ts:…;`). Rechaza con 401 antes de tocar la DB o la API.
+   - ✅ Fuente de verdad: `GET /v1/payments/{id}` oficial de Mercado Pago (nunca confía en el body entrante).
+   - ✅ Idempotencia con `BEGIN IMMEDIATE` en SQLite por `payment_id`. Reenvíos responden 200 sin reprocesar.
+   - ✅ Generación de tokens de acceso por producto y encolado de tareas para Revolución Solar (`pending_video_tasks` con estado `queued_for_render_48h`).
+   - ✅ Revocación inmediata de tokens en caso de reembolso o contracargo.
+   - ✅ Los 6 tests unitarios pasan al 100%.
+   - 📌 *Pendiente para mañana*: Definir `MERCADOPAGO_WEBHOOK_SECRET` y `MERCADOPAGO_ACCESS_TOKEN` en `.env`, agregar ruta `/acceso/{token}` en FastAPI y conectar el router en `main.py`.
+2. **Misión 2: Esfera Armilar 3D Three.js (`web_app/static/js/esfera_armilar_3d.js`)**:
+   - ✅ Three.js r128+ puro sin dependencias externas pesadas.
+   - ✅ Geometría astronómica: meridiano fijo, horizonte con N/E/S/W, ecuador celeste y eclíptica inclinada a 23.439° con los 12 signos de 30° con glifos y sol.
+   - ✅ Rotación del cielo calculada frame a frame con tiempo sidéreo local y latitud -34.6° (coincidencia con fórmula astronómica a 5 decimales).
+   - ✅ Materiales PBR oro (roughness 0.26, metalness 0.90) y bronce (0.34 / 0.86) con claroscuro procedural.
+   - ✅ Rendimiento: pausa fuera de viewport, DPR limitado, InstancedMesh para marcas, limitador de FPS y selector integrado `[ 2D Clásico | 3D Esfera Armilar ]`.
+   - 📌 *Pendiente para mañana*: Vincular Three.js en `reloj.html`, crear contenedor `#esfera-3d` y probar en vivo en navegador.
 - [x] **Ecosistema Web Tenebrista & Reloj Astrológico en Tiempo Real (`web_app/`)**:
   - **Rediseño Completo a Tenebrismo Oscuro (`#030408`)**: Se eliminó el fondo blanco/pastel antiguo; la web entera ahora corre sobre lienzo cósmico oscuro con orbe vivo en el fondo.
   - **Catálogo Oficial Segmentado en 3 Productos (Cotización $1.560 ARS = 1 USD)**:

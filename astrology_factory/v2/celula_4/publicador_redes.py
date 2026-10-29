@@ -14,6 +14,10 @@ import googleapiclient.errors
 from googleapiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 
+CELL_DIR = Path(__file__).resolve().parent
+if str(CELL_DIR) not in sys.path:
+    sys.path.insert(0, str(CELL_DIR))
+
 try:
     from publicador_tiktok_api import upload_video as upload_video_tiktok
 except ImportError:
@@ -33,27 +37,32 @@ VIDEOS_FINALES = Path(ADN["assets"]["paths"]["videos_finales"])
 TOKEN_FILE = Path(__file__).parent / "token.json"
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
-RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"; MAGENTA = "\033[95m"
+RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"; MAGENTA = "\033[95m"; AMARILLO = "\033[93m"
 
 def log(msg, color=RESET): print(f"{color}{msg}{RESET}")
 
 def get_youtube_client():
     if not TOKEN_FILE.exists():
         log("❌ No se encontró token.json. Ejecuta primero configurador_oauth.py", ROJO)
-        sys.exit(1)
+        return None
         
-    creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
-    if not creds.valid:
-        if creds.expired and creds.refresh_token:
-            from google.auth.transport.requests import Request
-            creds.refresh(Request())
-            with open(TOKEN_FILE, 'w') as token:
-                token.write(creds.to_json())
-        else:
-            log("❌ El token es inválido o ha expirado. Ejecuta configurador_oauth.py nuevamente.", ROJO)
-            sys.exit(1)
-        
-    return googleapiclient.discovery.build("youtube", "v3", credentials=creds)
+    try:
+        creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
+        if not creds.valid:
+            if creds.expired and creds.refresh_token:
+                from google.auth.transport.requests import Request
+                creds.refresh(Request())
+                with open(TOKEN_FILE, 'w') as token:
+                    token.write(creds.to_json())
+            else:
+                log("❌ El token de YouTube es inválido o ha expirado.", ROJO)
+                log("💡 Ejecuta python v2/celula_4/configurador_oauth.py para reautenticar.", AMARILLO)
+                return None
+        return googleapiclient.discovery.build("youtube", "v3", credentials=creds)
+    except Exception as e:
+        log(f"❌ Error al autenticar cliente de YouTube: {e}", ROJO)
+        log("💡 Ejecuta python v2/celula_4/configurador_oauth.py para renovar las credenciales.", AMARILLO)
+        return None
 
 def main():
     log("\n📢 CÉLULA 4.2 — Publicador YouTube (Modo Seguro)", MAGENTA)
@@ -105,29 +114,31 @@ def main():
             "categoryId": "22" # People & Blogs
         },
         "status": {
-            "privacyStatus": "private", # <--- SEGURIDAD ABSOLUTA
+            "privacyStatus": os.environ.get("YOUTUBE_PRIVACY_STATUS", "public"),
             "selfDeclaredMadeForKids": False
         }
     }
     
+    privacy_status = body["status"]["privacyStatus"]
     log(f"🎬 Subiendo: {video_path.name}", CYAN)
-    log("🔒 ESTADO: Privado", CYAN)
+    log(f"🔒 ESTADO: {privacy_status}", CYAN)
     
-    media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True)
-    
-    request = youtube.videos().insert(
-        part="snippet,status",
-        body=body,
-        media_body=media
-    )
-    
-    try:
-        response = request.execute()
-        log(f"✅ ¡Video subido a YouTube con éxito!", VERDE)
-        log(f"🔗 ID del video: {response.get('id')}", VERDE)
-        log(f"👁️ Podés verlo en: https://studio.youtube.com/video/{response.get('id')}/edit", CYAN)
-    except googleapiclient.errors.HttpError as e:
-        log(f"❌ Error de la API de YouTube: {e}", ROJO)
+    if youtube is not None:
+        media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True)
+        request = youtube.videos().insert(
+            part="snippet,status",
+            body=body,
+            media_body=media
+        )
+        try:
+            response = request.execute()
+            log(f"✅ ¡Video subido a YouTube con éxito!", VERDE)
+            log(f"🔗 ID del video: {response.get('id')}", VERDE)
+            log(f"👁️ Podés verlo en: https://studio.youtube.com/video/{response.get('id')}/edit", CYAN)
+        except googleapiclient.errors.HttpError as e:
+            log(f"❌ Error de la API de YouTube: {e}", ROJO)
+    else:
+        log("⚠️ Subida a YouTube omitida debido a credenciales no válidas/expiradas.", AMARILLO)
 
     # ==========================================
     # Lógica para TikTok (API Oficial V2 + Fallback)
