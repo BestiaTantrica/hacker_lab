@@ -123,8 +123,17 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 
 ---
 
-## 🧠 NIVEL 3: ARQUITECTURA PROFUNDA (IA: Claude)
-*Responsabilidad: Resolución de deudas técnicas masivas, problemas de catalogación/curaduría compleja o re-estructuración de la base de datos.*
+## 🧠 NIVEL 3: ARQUITECTURA PROFUNDA & MOLDES DE ORO (IA: Claude Pro)
+*Responsabilidad: Forja exclusiva de MOLDES DE ORO CANÓNICOS (Few-Shot) e INGENIERÍA DE PRECISIÓN MILITAR (Cero Error).*
+
+> **⚠️ LEY SAGRADA DE TOKENS (PROHIBIDO EL DESPERDICIO):**
+> Claude Pro **NO se utiliza para revisar tránsitos diarios ni tareas de rutina** (eso lo resuelve Swiss Ephemeris en C y Gemini Flash a costo cero).
+> Claude Pro se reserva **ÚNICAMENTE** para:
+> 1. **MOLDES DE ORO CANÓNICOS:** Redactar los datasets maestros de Few-Shot (como los 3 guiones de oro en `v2/celula_1/ejemplos_oro_diarios.json` o los guiones maestros de Revolución Solar) para que las IAs de producción los imiten indefinidamente sin degradar calidad.
+> 2. **INGENIERÍA DE PRECISIÓN MILITAR / CERO ERROR:** Desarrollar código crítico donde un error rompe dinero o seguridad:
+>    * Webhook de Mercado Pago en FastAPI (validación criptográfica HMAC SHA-256, idempotencia en SQLite, cero dobles entregas).
+>    * Vertex y Fragment Shaders en GLSL para Three.js (Astrolabio 3D Pro).
+>    * Algoritmos matemáticos analíticos de precisión orbital.
 
 **Deudas Técnicas Pendientes (Handoff preparado):**
 - [x] TAREA 1: Arquitectura de la Base de Datos Visual (SQLite). **[COMPLETADO]**
@@ -132,6 +141,8 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
 - [ ] TAREA 3: Integración de la Célula Acuñadora (Tokenización Web3 / IPFS).
 - [x] TAREA 4 (PREMIUM): Soporte de "Chunking" y creación de `video_maker_premium.py` para videos de 10-15 min sin saturación de memoria. **[COMPLETADO]**
 - [x] TAREA 5 (PREMIUM): Motor de producción narrativa modular en 6 capítulos para Revolución Solar (`generador_guion_rs_produccion.py`). **[COMPLETADO]**
+- [ ] TAREA 6 (PREVISIÓN MILITAR): Webhook Oficial de Mercado Pago con validación HMAC SHA-256 e idempotencia en SQLite (Claude Pro).
+- [ ] TAREA 7 (ALTA GAMA 3D): Shaders GLSL PBR para la Esfera Armilar 3D (Claude Pro).
 
 ---
 

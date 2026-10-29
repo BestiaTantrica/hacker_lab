@@ -1,58 +1,56 @@
-# 🛡️ HANDOFF DE AUDITORÍA NIVEL 3: CLAUDE PRO (PRECISIÓN MATEMÁTICA, TRÁNSITOS & SEGURIDAD)
-*Fecha: 28-29 de Octubre de 2026 | Proyecto: Astrology Factory & El Glifo Maestro*
+# 🛡️ HANDOFF DE NIVEL 3: CLAUDE PRO (PRECISIÓN MILITAR & MOLDES DE ORO)
+*Fecha: Octubre 2026 | Ecosistema: Astrology Factory / El Glifo Maestro*
 
-Eres **Claude**, asumiendo el rol de **IA de NIVEL 3 (Arquitectura Profunda y Calidad Máxima)** en el ecosistema *Astrology Factory*.
-Tu misión en este sprint es auditar y certificar 3 áreas críticas antes de que la producción audiovisual y la monetización escalen a gran volumen:
+Eres **Claude**, la IA de **NIVEL 3 (Arquitectura Sagrada, Precisión Militar y Moldes de Oro)** del ecosistema *Astrology Factory*.
 
----
-
-## 🎯 OBJETIVOS DE LA AUDITORÍA DE CLAUDE PRO
-
-### 1. 🔭 Precisión Matemática: Motor JS del Reloj (`reloj_engine.js`) vs. Swiss Ephemeris (`pyswisseph`)
-**Situación:**
-El astrolabio dinámico en tiempo real (`reloj_engine.js`) corre en el cliente a 60 FPS usando elementos orbitales keplerianos J2000 y aproximaciones trigonométricas de Jean Meeus.
-Acabamos de realizar la telemetría empírica contrastando el motor JS contra `pyswisseph` (Swiss Ephemeris oficial de NASA/Astrodienst en C) para la fecha actual (29 Octubre 2026 02:00 UTC):
-
-| Astro / Ángulo | Swiss Ephemeris (Oficial) | Motor JS (`reloj_engine.js`) | Desviación (Delta) | Evaluación |
-| :--- | :--- | :--- | :--- | :--- |
-| **Sol ☉** | `215.6628°` (Escorpio 5°39') | `215.6662°` (Escorpio 5°40') | **+0.0034°** (<12 arcsec) | 🟢 Precisión Quirúrgica |
-| **Luna ☽** | `75.3057°` (Géminis 15°18') | `75.0469°` (Géminis 15°02') | **-0.2588°** (~15 arcmin) | 🟡 Desviación menor |
-| **Ascendente** | `82.4884°` (Géminis 22°29') | `82.48°` | **<0.01°** | 🟢 Precisión Impecable |
-| **Medio Cielo (MC)**| `9.8412°` (Aries 9°50') | `9.84°` | **<0.01°** | 🟢 Precisión Impecable |
-
-**Preguntas para Claude Pro:**
-1. Para la **Luna**: En `reloj_engine.js` usamos una serie truncada de 11 términos periódicos. ¿Qué 2 o 3 términos adicionales de perturbación solar/eclíptica (de los coeficientes de Brown/Meeus) nos recomiendas incorporar para reducir el error de la Luna por debajo de `0.05°` sin degradar el rendimiento a 60 FPS en el canvas?
-2. Para las **Casas Astrológicas**: El MC y ASC son exactos por trigonometría esférica. Las casas intermedias actualmente se grafican espaciadas a 30° desde el ASC (Equal House). ¿Recomiendas implementar la fórmula analítica en JS de las cúspides intermedias de Placidus o Porfirio, o mantener Equal House geocéntrico con ASC en el horizonte izquierdo?
+> **POLÍTICA INQUEBRANTABLE DE TOKENS:**
+> En este proyecto está estrictamente prohibido usar a Claude para tareas de rutina o revisión de tránsitos cotidianos (eso lo resuelve Swiss Ephemeris en C y Gemini Flash en Nivel 1).
+> Tu tiempo y tokens se reservan **EXCLUSIVAMENTE** para ingeniería donde se exige **CERO ERROR** o para forjar los **MOLDES DE ORO CANÓNICOS** que luego imitan las IAs de producción.
 
 ---
 
-### 2. ⚡ Rigor Astrológico de los Tránsitos Diarios (29 Octubre a 1 Noviembre 2026)
-Hemos calculado las efemérides exactas para la semana en curso:
-* **29 de Octubre:** Mercurio retrógrado en Escorpio (19°) Cuadratura Marte en Leo (17°) (orbe 1.67°) + Sol en Escorpio (6°) Cuadratura Plutón en Acuario (3°).
-* **30 de Octubre:** **Mercurio retrógrado en Escorpio Cuadratura Partil Exacta Marte en Leo (orbe de apenas 0.32°!)** + Sol en Escorpio Trígono Luna en Cáncer (1.08°).
-* **31 de Octubre (Samhain):** Luna en Cáncer (20°) Trígono Mercurio retrógrado en Escorpio (17°) (orbe 3.17°) + Mercurio/Marte en tensión sostenida (1.17°).
-* **1 de Noviembre (Luna Menguante):** Luna en Leo (4°) Oposición Partil Plutón en Acuario (3°) (orbe 1.37°) + Sextil Partil Urano en Géminis (0.15°) + Cuadratura Sol en Escorpio.
+## 🎯 MISIÓN 1 (CERO ERROR): WEBHOOK DE MERCADO PAGO EN FASTAPI CON CRIPTOGRAFÍA HMAC & IDEMPOTENCIA
+En [web_app/main.py](file:///home/LAB/astrology_factory/web_app/main.py) ya tenemos la web tenebrista corriendo en producción en `portaltarotmistico.com` con el catálogo oficial en 3 productos ($1.560 ARS = 1 USD):
+1. **Carta Natal Profunda + Oráculo** ($4.990 ARS)
+2. **Reloj Astrológico 4K Live Wallpaper** ($2.990 ARS)
+3. **Revolución Solar en Video** ($14.990 ARS)
+* **Combo Tríada Sagrada (3 en 1)** ($16.990 ARS)
 
-**Preguntas para Claude Pro:**
-1. ¿El encuadre psicológico y clínico que definimos (evitar la autoayuda barata, enfocar en la tensión entre "la palabra como bisturí / orgullo defensivo" y "el trono personal vs la colmena colectiva") es impecable desde la óptica de la astrología psicológica arquetípica (Greene, Arroyo, Sasportas)?
-2. ¿Hay algún matiz o punto ciego en esta combinación fija (Escorpio, Leo, Acuario) que debamos blindar en los guiones audiovisuales para evitar malas interpretaciones fatalistas en la audiencia?
+### Lo que necesitamos que diseñes con precisión militar:
+El endpoint webhook en FastAPI (`/api/mercadopago/webhook`) que reciba las notificaciones de Mercado Pago y garantice:
+1. **Validación Criptográfica de la Firma HMAC SHA-256:**
+   * Validar el encabezado `x-signature` extrayendo el `ts` y el hash `v1`.
+   * Verificar la firma contra `MERCADOPAGO_WEBHOOK_SECRET` y el ID del recurso para blindar el servidor contra ataques de suplantación (*spoofing*) o confirmaciones de pago falsificadas.
+2. **Idempotencia Estricta en SQLite (Cero Doble Acreditación):**
+   * Control transaccional con tabla `processed_payments` (campos: `payment_id`, `status`, `payer_email`, `product_id`, `created_at`).
+   * Si Mercado Pago reenvía la notificación 3 o 4 veces por política de reintento, el sistema debe responder `HTTP 200 OK` de inmediato sin procesar dos veces el pedido.
+3. **Activación Automática Inmediata (0 Segundos):**
+   * Si el estado es `approved`:
+     - Registrar en la base de datos la compra del usuario.
+     - Generar un token único de acceso seguro para desbloqueo del producto (Carta Natal PDF o Enlace del Reloj Wallpaper).
+     - Para Revolución Solar, dejar la tarea encolada en `pending_video_tasks` con status `queued_for_render_48h`.
+     - Despachar el correo de confirmación con `BackgroundTasks`.
 
 ---
 
-### 3. 🛡️ Auditoría de Seguridad & Embudo de Pagos (`web_app/main.py`)
-En `web_app/main.py`:
-* Se desplegó la pasarela de Mercado Pago con Alias directo (`vida.rucula`, 15% OFF) y botón QR, además de los enlaces de checkout con cuotas automáticas y PayPal.
-* El endpoint `/api/subscribe` procesa los datos natales y responde de forma asíncrona mediante `BackgroundTasks` para entregar la carta natal en milisegundos sin bloquear el servidor.
-* El endpoint `/api/chat` rota entre modelos Flash (`gemini-3.8-flash`, `3.7-flash`, `3.6-flash`, `3.5-flash-lite`) con fallback estricto para evitar errores 500 o caídas de sesión.
+## 🎯 MISIÓN 2 (PRECISIÓN MATEMÁTICA & GLSL): LA ESFERA ARMILAR 3D (THREE.JS)
+Para el producto premium **Reloj Astrológico 3D / Esfera Armilar**, necesitamos que diseñes la arquitectura geométrica y de materiales en Three.js / WebGL para integrarlo como selector `[ 2D Clásico | 3D Esfera Armilar ]` en el canvas:
 
-**Preguntas para Claude Pro:**
-1. ¿Qué mejoras de sanitización, rate limiting por IP (ej. `slowapi`) o validación de inputs recomiendas para blindar `web_app/main.py` contra abusos de bots o spam masivo en producción OCI-2?
-2. Si implementamos el webhook de Mercado Pago para verificación automática 24/7 sin revisión humana de comprobante, ¿cuál es la estructura canónica recomendada para validar la firma `x-signature` (HMAC SHA-256) garantizando estricta idempotencia en SQLite?
+1. **Geometría de los Anillos Sagrados:**
+   * **Anillo Meridiano Exterior:** Radio `R`, fijo, orientado verticalmente.
+   * **Anillo del Horizonte:** Nivelado a la latitud del observador (Buenos Aires `-34.6°`), con los 4 puntos cardinales (`N, S, E, W`).
+   * **Anillo Eclíptico Sagrado:** Inclinado exactamente a `23.439°` (oblicuidad de la eclíptica) respecto al Ecuador celeste, con los 12 sectores zodiacales grabados analíticamente cada 30°.
+   * **Centro `⊕`:** La Tierra como esfera con pátina geocéntrica.
+2. **Material PBR Tenebrista (Estética Roberto Ferri):**
+   * Especificar la configuración de materiales Three.js (`MeshStandardMaterial` o shader personalizado) para lograr:
+     - Bronce antiguo y oro bruñido con rugosidad (`roughness: 0.25-0.35`, `metalness: 0.85-0.90`).
+     - Iluminación dramática claroscuro (luz puntual cálida + luz cenital etérea).
+     - 60-120 FPS sin consumo de CPU en el servidor ni sobrecalentamiento en celulares.
 
 ---
 
-## 📋 FORMATO DE RESPUESTA ESPERADO
-Claude, por favor estructura tu respuesta en 3 secciones ejecutables:
-1. **Solución Matemática para `reloj_engine.js`** (fórmulas y código JS drop-in para calibración de la Luna y casas).
-2. **Dictamen Astrológico de los Tránsitos** (claves narrativas y arquetípicas para los guiones de los 4 días).
-3. **Recomendaciones de Seguridad & Webhook Mercado Pago** (código FastAPI para webhook idempotente con HMAC).
+## 📋 ENTREGA ESPERADA DE CLAUDE PRO
+1. **Archivo completo de integración para FastAPI:**
+   * Código en Python para `web_app/mercadopago_webhook.py` con todas las funciones criptográficas y el modelo de datos SQLite listo para importar en `main.py`.
+2. **Estructura Modular de Three.js para la Esfera Armilar:**
+   * Código en JavaScript (`esfera_armilar_3d.js`) que monte la escena, los anillos concéntricos inclinados matemáticamente a 23.44° y los materiales de bronce/oro sin librerías pesadas externas.

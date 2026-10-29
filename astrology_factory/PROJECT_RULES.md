@@ -42,10 +42,13 @@
 
 ## 3. ESTRUCTURA DE LA NAVE NODRIZA (GOBERNANZA GLOBAL)
 Toda interacción de IAs en este proyecto debe respetar la estructura de 3 niveles coordinada por la Célula Gobernante (`v2/nodriza/gobierno_enjambre.py`):
-- **Nivel 1 (Ejecución):** IAs ligeras (Gemini Flash) y scripts automatizados encargados del trabajo repetitivo (renderización, clasificación masiva).
-- **Nivel 2 (Diseño y Desarrollo):** IAs avanzadas (Antigravity/Pro) junto con el humano, encargadas de definir el "Arte Pícaro", nuevas estéticas y creación de herramientas.
-- **Nivel 3 (Arquitectura):** IAs complejas (Claude) para resolver deudas técnicas profundas y reestructuraciones de bases de datos registradas en el estado global.
-- **Regla:** Ningún agente debe improvisar tareas fuera de su nivel. Toda deuda técnica pesada debe registrarse en la Nodriza en lugar de intentar forzarse.
+- **Nivel 1 (Ejecución):** IAs ligeras (Gemini Flash, edge-tts, scripts Python/FFmpeg) encargadas del trabajo masivo y repetitivo a costo cero.
+- **Nivel 2 (Diseño y Desarrollo):** IAs intermedias/avanzadas (Antigravity IDE / Gemini Pro) junto con el humano, encargadas de orquestar, integrar componentes, auditar entornos y mantener la web y pipelines corriendo.
+- **Nivel 3 (Arquitectura Sagrada & Moldes de Oro - Claude Pro):** 
+  * **PROHIBICIÓN ESTRICTA:** Queda TERMINANTEMENTE PROHIBIDO gastar tokens de Claude Pro en revisar tránsitos diarios, auditar tareas de rutina o tareas que Swiss Ephemeris / Gemini Flash resuelven en Nivel 1.
+  * **ROL EXCLUSIVO DE CLAUDE PRO (CERO TOKENS DESPERDICIADOS):**
+    1. **Forjar MODELOS DE ORO CANÓNICOS (Few-Shot Golden Datasets):** Crear una única vez los moldes maestros perfectos de guiones y narrativas (como los 3 guiones de oro en `ejemplos_oro_diarios.json` o los de Revolución Solar de Tomás/Messi) para que los modelos de producción los imiten indefinidamente.
+    2. **Ingeniería de PRECISIÓN MILITAR / CERO ERROR:** Programar exclusivamente los módulos donde un fallo destruye dinero o seguridad: Webhook criptográfico de Mercado Pago (firmas HMAC SHA-256, idempotencia estricta en SQLite contra dobles cobros o confirmaciones falsas), Shaders GLSL para WebGL 3D (Esfera Armilar) y calibración analítica de alta matemática.
 
 ## 4. ESTÉTICA Y ARTE PÍCARO (FFMPEG)
 - **Arte Mixto y Emocional (Generación Dual):** El contenido debe mezclar imágenes descargadas con generación de IA para lograr un nivel onírico. Toda generación de IA debe cubrir dos vertientes:
@@ -65,8 +68,8 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 ## 6. FLUJO DE TRABAJO MULTI-AGENTE (Gemini + Claude)
 - **Centralización Absoluta:** TODO el código modificado debe respetar las rutas absolutas declaradas en `contexto_astrologico.json`. Prohibido hardcodear rutas temporales del workspace del agente.
 - **División de Tareas (Gemini vs Claude):**
-   - **Gemini (Nivel 2):** Encargado de Auditoría, Planificación (`implementation_plan.md`), revisión de Git, validación del formato narrativo, y preparación del entorno.
-   - **Claude (Nivel 3):** Encargado de la refactorización profunda de código (FFmpeg, Python). Gemini debe preparar un archivo `HANDOFF_CLAUDE.md` con las instrucciones exactas, modularizadas en Hilos 1 y 2, y esperar a que Claude devuelva el código funcional.
+   - **Gemini (Nivel 2):** Encargado de Auditoría, Planificación, revisión de Git, validación del formato narrativo, ejecución de pipelines y preparación del entorno.
+   - **Claude (Nivel 3):** Encargado EXCLUSIVAMENTE de forjar moldes maestros (Guiones de Oro) y código de infraestructura crítica de CERO ERROR (Mercado Pago Webhook, Shaders GLSL 3D). NUNCA para revisión de tránsitos cotidianos.
 
 ## REGLAS DE ARQUITECTURA VISUAL (CÉLULA 2 Y 3)
 1. **Compensación de xfade (tpad)**: En `ensamblador_final.py`, el uso de fundidos (`xfade`) consume tiempo matemático del video. SIEMPRE se debe calcular la diferencia entre el audio y el video final (`dur_faltante`) y aplicar un filtro `tpad=stop_mode=clone` al final del grafo para congelar el último frame y evitar que el video se corte antes que la locución.
