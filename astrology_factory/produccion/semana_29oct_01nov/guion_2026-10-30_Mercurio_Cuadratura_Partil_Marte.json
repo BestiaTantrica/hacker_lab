@@ -1,0 +1,37 @@
+{
+  "titulo": "Clímax de Tensión: Mercurio Retrógrado en Cuadratura Partil Exacta a Marte",
+  "evento_id": "2026-10-30_Mercurio_Cuadratura_Partil_Marte",
+  "fecha": "2026-10-30",
+  "tomas": [
+    {
+      "num": 1,
+      "rol": "gancho",
+      "duracion_s": 7,
+      "texto": "Esa presión metálica en el pecho y el pulso rabioso en la sien no son casualidad, es la neurosis pura."
+    },
+    {
+      "num": 2,
+      "rol": "efecto_sombra",
+      "duracion_s": 8,
+      "texto": "El ego herido defiende su miseria con dientes de fiera mientras la mente rumia veneno acumulado durante meses."
+    },
+    {
+      "num": 3,
+      "rol": "mecanica_astral",
+      "duracion_s": 9,
+      "texto": "Mercurio retrógrado y Marte colisionan en cuadratura exacta; la sombra no pide permiso, exige sangre verbal."
+    },
+    {
+      "num": 4,
+      "rol": "afrontamiento",
+      "duracion_s": 8,
+      "texto": "Sostén la combustión en silencio antes de incendiar tu templo; la verdadera maestría reside en atisbar el abismo."
+    },
+    {
+      "num": 5,
+      "rol": "cta_web",
+      "duracion_s": 7,
+      "texto": "Entra a portaltarotmistico.com con tu fecha y hora exacta para descubrir qué casa astrológica sangra hoy."
+    }
+  ]
+}

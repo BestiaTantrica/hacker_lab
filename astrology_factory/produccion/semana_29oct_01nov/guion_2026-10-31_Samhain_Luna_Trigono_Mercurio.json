@@ -1,0 +1,37 @@
+{
+  "titulo": "Noche de Samhain: Luna en Cáncer en Trígono con Mercurio Retrógrado en Escorpio",
+  "evento_id": "2026-10-31_Samhain_Luna_Trigono_Mercurio",
+  "fecha": "2026-10-31",
+  "tomas": [
+    {
+      "num": 1,
+      "rol": "gancho",
+      "duracion_s": 7,
+      "texto": "Sientes un peso gélido aplastando el esternón, un eco de memorias muertas que se niegan a sepultarse."
+    },
+    {
+      "num": 2,
+      "rol": "efecto_sombra",
+      "duracion_s": 8,
+      "texto": "El ego aterrorizado confunde este sangrado psíquico con locura, huyendo despavorido hacia la amnesia de la superficie."
+    },
+    {
+      "num": 3,
+      "rol": "mecanica_astral",
+      "duracion_s": 9,
+      "texto": "El trigono exacto entre Cáncer y el Mercurio retrógrado en Escorpio disuelve por completo la frontera temporal."
+    },
+    {
+      "num": 4,
+      "rol": "afrontamiento",
+      "duracion_s": 8,
+      "texto": "Soporta el descenso al abismo familiar sin pronunciar una sola palabra de justificación estéril y vana."
+    },
+    {
+      "num": 5,
+      "rol": "cta_web",
+      "duracion_s": 7,
+      "texto": "Entra a portaltarotmistico.com y descubre en qué casa astrológica exacta opera esta cirugía profunda de tu sombra."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "titulo": "Mercurio Retrógrado en Escorpio en Cuadratura con Marte en Leo",
+  "evento_id": "2026-10-29_Mercurio_Cuadratura_Marte",
+  "fecha": "2026-10-29",
+  "tomas": [
+    {
+      "num": 1,
+      "rol": "gancho",
+      "duracion_s": 7,
+      "texto": "Sientes un nudo corrosivo en el pecho y una presión febril martillando tus sienes hoy."
+    },
+    {
+      "num": 2,
+      "rol": "efecto_sombra",
+      "duracion_s": 8,
+      "texto": "El ego herido ruge a la defensiva cuando la mente diseca la podredumbre oculta."
+    },
+    {
+      "num": 3,
+      "rol": "mecanica_astral",
+      "duracion_s": 9,
+      "texto": "Esta cuadratura exacta choca el bisturí escorpiano contra la soberbia ciega del león enfurecido."
+    },
+    {
+      "num": 4,
+      "rol": "afrontamiento",
+      "duracion_s": 8,
+      "texto": "Silencia el veneno en tu lengua y acepta que toda autopsia duele antes de sanar."
+    },
+    {
+      "num": 5,
+      "rol": "cta_web",
+      "duracion_s": 7,
+      "texto": "Entra a portaltarotmistico.com con tus datos natales y descubre qué zona colapsa en tu carta."
+    }
+  ]
+}

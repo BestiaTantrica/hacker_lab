@@ -1,0 +1,37 @@
+{
+  "titulo": "Luna en Leo en Oposición a Plutón en Acuario (Cuarto Menguante)",
+  "evento_id": "2026-11-01_Luna_Oposicion_Pluton_Cuarto_Menguante",
+  "fecha": "2026-11-01",
+  "tomas": [
+    {
+      "num": 1,
+      "rol": "gancho",
+      "duracion_s": 7,
+      "texto": "Un peso asfixiante aplasta el pecho hoy, una náusea seca carcomiendo la falsa seguridad del ego."
+    },
+    {
+      "num": 2,
+      "rol": "efecto_sombra",
+      "duracion_s": 8,
+      "texto": "El orgullo humano patalea, aterrorizado ante el juicio implacable de una masa fría y anónima."
+    },
+    {
+      "num": 3,
+      "rol": "mecanica_astral",
+      "duracion_s": 9,
+      "texto": "La oposición en cuarto menguante amputa el aplauso externo; Plutón devora sin piedad al personaje."
+    },
+    {
+      "num": 4,
+      "rol": "afrontamiento",
+      "duracion_s": 8,
+      "texto": "Abandona el trono de barro. Acepta esta soberanía silenciosa sin incendiar los puentes del pasado."
+    },
+    {
+      "num": 5,
+      "rol": "cta_web",
+      "duracion_s": 7,
+      "texto": "Entra a portaltarotmistico.com con tu hora exacta y descubre qué casa astrológica está desangrándose hoy."
+    }
+  ]
+}
