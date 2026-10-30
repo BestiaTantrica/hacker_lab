@@ -55,8 +55,8 @@ function usarTHREE(lib) {
 const DEG = Math.PI / 180;
 const TAU = Math.PI * 2;
 const OBLIQUIDAD = 23.439 * DEG;           // ε exacta pedida
-const R_CIELO = 0.78;                      // radio de la esfera celeste
-const R_HUSOS = 0.70;
+const R_ZODIACO = 6.30;                    // Radio del cinturón zodiacal exterior que enmarca el cosmos
+const R_HUSOS = 6.10;
 
 const FUENTE_SIMB = '"Noto Sans Symbols","Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","DejaVu Sans",serif';
 const FUENTE_SERIF = '"Cinzel","Cormorant Garamond","Palatino Linotype",Georgia,"Times New Roman",serif';
@@ -391,22 +391,22 @@ const GLSL_RUIDO = /* glsl */`
 
 /* ══════════════════ 3 · CATÁLOGO DE JOYAS (los astros) ══════════════════ */
 
-/*  Planetas reales diferenciados: esferas con texturas, relieves y colores astronómicos */
+/*  Planetas reales con órbitas escaladas: profundidad astronómica 3D real  */
 const ASTROS = {
-  sol:       { nombre: 'Sol', glifo: '☉', r: 0.058, tipo: 'sol', halo: 0xffb830 },
-  luna:      { nombre: 'Luna', glifo: '☽', r: 0.038, geo: 'esfera', color: 0xd6dae0, emis: 0x181e26, rug: 0.60, metal: 0.05, cc: 0.2, borde: 0xd8e4f5, halo: 0xc4d4e8, bump: 0.8 },
-  mercurio:  { nombre: 'Mercurio', glifo: '☿', r: 0.026, geo: 'esfera', color: 0x7e8794, emis: 0x14181f, rug: 0.50, metal: 0.65, cc: 0.2, borde: 0xa8bccf, halo: 0x8494a4, bump: 0.6 },
-  venus:     { nombre: 'Venus', glifo: '♀', r: 0.036, geo: 'esfera', color: 0xe5c98d, emis: 0x362712, rug: 0.25, metal: 0.25, cc: 0.8, borde: 0xffe2a4, halo: 0xffd988 },
-  marte:     { nombre: 'Marte', glifo: '♂', r: 0.033, geo: 'esfera', color: 0xb83a22, emis: 0x481006, rug: 0.45, metal: 0.15, cc: 0.3, borde: 0xff6640, halo: 0xff4828, bump: 0.8 },
-  jupiter:   { nombre: 'Júpiter', glifo: '♃', r: 0.058, geo: 'esfera', bandas: [0xd6a468, 0x824b26, 0xf0dfbc], emis: 0x221308, rug: 0.32, metal: 0.05, cc: 0.5, borde: 0xffc070, halo: 0xffaa50 },
-  saturno:   { nombre: 'Saturno', glifo: '♄', r: 0.046, geo: 'esfera', bandas: [0xd4be88, 0xa38548, 0xfaeec8], emis: 0x1f180a, rug: 0.35, metal: 0.05, cc: 0.5, borde: 0xffdba0, halo: 0xffd27a, anillos: true },
-  urano:     { nombre: 'Urano', glifo: '♅', r: 0.034, geo: 'esfera', color: 0x44bdb6, emis: 0x083836, rug: 0.20, metal: 0.15, cc: 0.7, borde: 0x70fff6, halo: 0x50f0e8 },
-  neptuno:   { nombre: 'Neptuno', glifo: '♆', r: 0.034, geo: 'esfera', color: 0x224ec0, emis: 0x0a1e64, rug: 0.18, metal: 0.20, cc: 0.7, borde: 0x6a96ff, halo: 0x4080ff },
-  pluton:    { nombre: 'Plutón', glifo: '♇', r: 0.024, geo: 'esfera', color: 0x725b7a, emis: 0x201626, rug: 0.55, metal: 0.25, cc: 0.2, borde: 0xb08ec0, halo: 0x9070a8, bump: 0.7 },
-  nodonorte: { nombre: 'Nodo Norte', glifo: '☊', r: 0.020, geo: 'octa', color: 0x1fc87a, emis: 0x064a2c, rug: 0.10, metal: 0.40, cc: 1, borde: 0x40ffa0, halo: 0x30ffa0 },
-  quiron:    { nombre: 'Quirón', glifo: '⚷', r: 0.020, geo: 'octa', color: 0x60b0a8, emis: 0x123a36, rug: 0.15, metal: 0.50, cc: 1, borde: 0x98ffec, halo: 0x78e8dc },
+  luna:      { nombre: 'Luna', glifo: '☽', rOrb: 0.44, r: 0.038, geo: 'esfera', color: 0xd6dae0, emis: 0x181e26, rug: 0.60, metal: 0.05, cc: 0.2, borde: 0xd8e4f5, halo: 0xc4d4e8, bump: 0.8 },
+  nodonorte: { nombre: 'Nodo Norte', glifo: '☊', rOrb: 0.54, r: 0.024, geo: 'octa', color: 0x1fc87a, emis: 0x064a2c, rug: 0.10, metal: 0.40, cc: 1, borde: 0x40ffa0, halo: 0x30ffa0 },
+  mercurio:  { nombre: 'Mercurio', glifo: '☿', rOrb: 0.95, r: 0.034, geo: 'esfera', color: 0x7e8794, emis: 0x14181f, rug: 0.50, metal: 0.65, cc: 0.2, borde: 0xa8bccf, halo: 0x8494a4, bump: 0.6 },
+  venus:     { nombre: 'Venus', glifo: '♀', rOrb: 1.45, r: 0.046, geo: 'esfera', color: 0xe5c98d, emis: 0x362712, rug: 0.25, metal: 0.25, cc: 0.8, borde: 0xffe2a4, halo: 0xffd988 },
+  sol:       { nombre: 'Sol', glifo: '☉', rOrb: 2.05, r: 0.095, tipo: 'sol', halo: 0xffb830 },
+  marte:     { nombre: 'Marte', glifo: '♂', rOrb: 2.70, r: 0.042, geo: 'esfera', color: 0xb83a22, emis: 0x481006, rug: 0.45, metal: 0.15, cc: 0.3, borde: 0xff6640, halo: 0xff4828, bump: 0.8 },
+  quiron:    { nombre: 'Quirón', glifo: '⚷', rOrb: 3.30, r: 0.026, geo: 'octa', color: 0x60b0a8, emis: 0x123a36, rug: 0.15, metal: 0.50, cc: 1, borde: 0x98ffec, halo: 0x78e8dc },
+  jupiter:   { nombre: 'Júpiter', glifo: '♃', rOrb: 3.95, r: 0.088, geo: 'esfera', bandas: [0xd6a468, 0x824b26, 0xf0dfbc], emis: 0x221308, rug: 0.32, metal: 0.05, cc: 0.5, borde: 0xffc070, halo: 0xffaa50 },
+  saturno:   { nombre: 'Saturno', glifo: '♄', rOrb: 4.65, r: 0.072, geo: 'esfera', bandas: [0xd4be88, 0xa38548, 0xfaeec8], emis: 0x1f180a, rug: 0.35, metal: 0.05, cc: 0.5, borde: 0xffdba0, halo: 0xffd27a, anillos: true },
+  urano:     { nombre: 'Urano', glifo: '♅', rOrb: 5.25, r: 0.048, geo: 'esfera', color: 0x44bdb6, emis: 0x083836, rug: 0.20, metal: 0.15, cc: 0.7, borde: 0x70fff6, halo: 0x50f0e8 },
+  neptuno:   { nombre: 'Neptuno', glifo: '♆', rOrb: 5.70, r: 0.048, geo: 'esfera', color: 0x224ec0, emis: 0x0a1e64, rug: 0.18, metal: 0.20, cc: 0.7, borde: 0x6a96ff, halo: 0x4080ff },
+  pluton:    { nombre: 'Plutón', glifo: '♇', rOrb: 6.05, r: 0.028, geo: 'esfera', color: 0x725b7a, emis: 0x201626, rug: 0.55, metal: 0.25, cc: 0.2, borde: 0xb08ec0, halo: 0x9070a8, bump: 0.7 },
 };
-const GENERICO = { nombre: '?', glifo: '✦', r: 0.02, geo: 'octa', color: 0xd0d0d0, emis: 0x303030, rug: 0.2, metal: 0.5, borde: 0xffffff, halo: 0xffffff };
+const GENERICO = { nombre: '?', glifo: '✦', rOrb: 3.0, r: 0.024, geo: 'octa', color: 0xd0d0d0, emis: 0x303030, rug: 0.2, metal: 0.5, borde: 0xffffff, halo: 0xffffff };
 
 /* ═══════════════════════════ 4 · CLASE PRINCIPAL ═══════════════════════════ */
 
@@ -500,7 +500,7 @@ export class EsferaArmilarPro {
     this._crearPolvo();
 
     this._cam = {
-      az: 0.55, el: 0.42, dist: 5.0, tDist: 5.0, vAz: 0, vEl: 0,
+      az: 0.75, el: 0.52, dist: 14.2, tDist: 14.2, vAz: 0, vEl: 0,
       target: new THREE.Vector3(), tTarget: new THREE.Vector3(),
       arrastrando: false, modoPan: false, ultimo: performance.now()
     };
@@ -678,90 +678,37 @@ export class EsferaArmilarPro {
     return m;
   }
 
-  /* ═══════ Horizonte, meridiano, cardinales (marco del observador, fijo) ═══════ */
+  /* ═══════ Horizonte exterior etéreo (despeja el interior para las órbitas 3D) ═══════ */
   _crearMarcosFijos() {
-    const { oro, bronce, bronceOsc } = this.mat, root = this.root;
-
-    // — Horizonte: franja plana de bronce con N · E · S · W y grados (t = azimut CW desde el Norte) —
-    const hor = this._franja({
-      inner: 0.86, outer: 0.96, inicio: Math.PI / 2, dir: -1, emisivo: 0xffb860, intens: 0.85, metal: 0.7, rug: 0.45,
-      dibujar: ({ c, l, W, H, ppu }) => {
-        const gr = c.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#22301f'); gr.addColorStop(1, '#101a14');
-        c.fillStyle = gr; c.fillRect(0, 0, W, H);          // fondo verde-bronce de pátina
-        l.fillStyle = '#000'; l.fillRect(0, 0, W, H);
-        for (let d = 0; d < 360; d += 5) {
-          const x = (d / 360) * W, len = (d % 30 === 0 ? 0.20 : d % 10 === 0 ? 0.13 : 0.08) * H;
-          c.fillStyle = '#d9a21b'; c.fillRect(x - 1.5, H - len, 3, len);
-          l.fillStyle = '#fff'; l.fillRect(x - 1.5, H - len, 3, len);
-        }
-        c.fillStyle = '#d9a21b'; c.fillRect(0, 0, W, 4); l.fillStyle = '#ccc'; l.fillRect(0, 0, W, 4);
-        c.textAlign = l.textAlign = 'center'; c.textBaseline = l.textBaseline = 'middle';
-        const cardinales = [['N', 0, '#ff6a3a'], ['E', 0.25, '#f0c860'], ['S', 0.5, '#f0c860'], ['W', 0.75, '#f0c860']];
-        c.font = l.font = `bold ${Math.round(0.027 * ppu * 1.9)}px ${FUENTE_SERIF}`;
-        for (const [t, u, col] of cardinales) {
-          c.fillStyle = col; l.fillStyle = '#fff';
-          textoWrap(c, t, u * W, H * 0.46, W); textoWrap(l, t, u * W, H * 0.46, W);
-        }
-        c.font = l.font = `${Math.round(0.011 * ppu)}px ${FUENTE_SERIF}`;
-        for (let d = 30; d < 360; d += 30) {
-          if (d % 90 === 0) continue;
-          c.fillStyle = '#c8a050'; l.fillStyle = '#aaa';
-          textoWrap(c, String(d), (d / 360) * W, H * 0.40, W); textoWrap(l, String(d), (d / 360) * W, H * 0.40, W);
-        }
-      },
+    const root = this.root;
+    // Anillo exterior etéreo en el plano horizontal a distancia del zodíaco
+    const gHor = new THREE.BufferGeometry();
+    const pts = [];
+    for (let i = 0; i <= 128; i++) {
+      const a = (i / 128) * TAU;
+      pts.push(new THREE.Vector3(R_ZODIACO * Math.cos(a), 0, -R_ZODIACO * Math.sin(a)));
+    }
+    gHor.setFromPoints(pts);
+    const mHor = new THREE.LineBasicMaterial({
+      color: 0x3d4a40, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false
     });
-    hor.rotation.x = -Math.PI / 2;
-    root.add(hor);
-    this._torus(0.86, 0.008, bronceOsc, root).rotation.x = Math.PI / 2;
-    this._torus(0.96, 0.012, oro, root).rotation.x = Math.PI / 2;
+    const linHor = new THREE.Line(gHor, mHor);
+    root.add(linHor);
+    this._disp.push(gHor, mHor);
 
-    // — Meridiano local: aro de ORO pulido vertical con escala de altura (0° horizonte → 90° cenit) —
-    const mer = this._franja({
-      inner: 0.93, outer: 1.0, inicio: 0, dir: 1, emisivo: 0xffd070, intens: 1.0, metal: 0.9, rug: 0.28,
-      dibujar: ({ c, l, W, H, ppu }) => {
-        const gr = c.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#6b4a14'); gr.addColorStop(1, '#3a2608');
-        c.fillStyle = gr; c.fillRect(0, 0, W, H); l.fillStyle = '#000'; l.fillRect(0, 0, W, H);
-        c.textAlign = l.textAlign = 'center'; c.textBaseline = l.textBaseline = 'middle';
-        c.font = l.font = `${Math.round(0.0125 * ppu)}px ${FUENTE_SERIF}`;
-        for (let a = 0; a < 360; a += 2) {
-          const x = (a / 360) * W, big = a % 10 === 0, mid = a % 5 === 0;
-          const len = (big ? 0.34 : mid ? 0.22 : 0.12) * H;
-          c.fillStyle = '#ffe9a8'; c.fillRect(x - 1.5, H - len, 3, len);
-          l.fillStyle = '#fff'; l.fillRect(x - 1.5, H - len, 3, len);
-        }
-        for (let h = 0; h <= 90; h += 10) {
-          for (const t of (h === 90 ? [0.25] : [h / 360, (180 - h) / 360])) {
-            c.fillStyle = '#fff2c4'; l.fillStyle = '#fff';
-            textoWrap(c, String(h), t * W, H * 0.38, W); textoWrap(l, String(h), t * W, H * 0.38, W);
-          }
-        }
-        c.font = l.font = `bold ${Math.round(0.0125 * ppu)}px ${FUENTE_SERIF}`;
-        c.fillStyle = '#fff2c4'; l.fillStyle = '#fff';
-        c.fillText('NADIR', 0.75 * W, H * 0.4); l.fillText('NADIR', 0.75 * W, H * 0.4);
-      },
-    });
-    mer.rotation.y = Math.PI / 2;
-    root.add(mer);
-    this._torus(1.0, 0.016, oro, root).rotation.y = Math.PI / 2;
-    this._torus(0.93, 0.008, oro, root).rotation.y = Math.PI / 2;
-
-    // — Cenit: zafiro facetado engastado en oro —
-    const zafiro = this._matGema(0x1a46d6, 0x0a2a8a, 0.06);
-    const zen = new THREE.Mesh(new THREE.OctahedronGeometry(0.034, 1), zafiro);
-    zen.position.set(0, 1.0, 0); zen.scale.y = 1.35;
-    root.add(zen);
-    const engaste = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.034, 0.02, 16), oro);
-    engaste.position.set(0, 0.968, 0);
-    root.add(engaste);
-    this._disp.push(zen.geometry, engaste.geometry);
-    const haloZ = this._sprite(this._texHalo, 0x4a7dff, 0.26, 0.9);
-    haloZ.position.copy(zen.position); root.add(haloZ);
-    this._haloZenit = haloZ;
-    // Punta cardinal Norte (rubí) sobre el horizonte
-    const norte = new THREE.Mesh(new THREE.ConeGeometry(0.016, 0.06, 12), this._matGema(0xc0121c, 0x6a0608, 0.1));
-    norte.position.set(0, 0, -0.995); norte.rotation.x = -Math.PI / 2;
-    root.add(norte);
-    this._disp.push(norte.geometry);
+    // 4 Puntos cardinales etéreos en el perímetro exterior
+    const cards = [
+      { t: 'N', a: -Math.PI / 2, c: '#ff7040' },
+      { t: 'E', a: 0, c: '#ffd070' },
+      { t: 'S', a: Math.PI / 2, c: '#ffd070' },
+      { t: 'W', a: Math.PI, c: '#ffd070' }
+    ];
+    for (const cd of cards) {
+      const s = this._etiqueta(cd.t, cd.c, 0.22, { fuente: FUENTE_SERIF, escala: 0.6 });
+      s.position.set(R_ZODIACO * 1.05 * Math.cos(cd.a), 0, R_ZODIACO * 1.05 * Math.sin(cd.a));
+      s.material.opacity = 0.55;
+      root.add(s);
+    }
   }
 
   /** Material de gema (físico, con clearcoat) reutilizable. */
@@ -791,44 +738,14 @@ export class EsferaArmilarPro {
     return this._sprite(map, 0xffffff, escala, 1, false);
   }
 
-  /* ═══════ Cielo: ecuador, eclíptica con zodíaco, husos de casas, joyas, aspectos ═══════ */
+  /* ═══════ Cielo: eclíptica con zodíaco exterior, órbitas, joyas 3D, aspectos ═══════ */
   _crearCielo() {
-    const { oro, bronce } = this.mat, root = this.root;
+    const { oro } = this.mat, root = this.root;
     const cielo = (this.cielo = new THREE.Group());
     cielo.matrixAutoUpdate = false;
     root.add(cielo);
 
-    // Eje polar (local +Y = polo norte celeste) con casquetes
-    const eje = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 2.0, 8), oro);
-    cielo.add(eje);
-    this._disp.push(eje.geometry);
-    for (const sg of [1, -1]) {
-      const cap = new THREE.Mesh(new THREE.ConeGeometry(0.026, 0.07, 12), oro);
-      cap.position.y = sg * 1.02; if (sg < 0) cap.rotation.x = Math.PI;
-      cielo.add(cap); this._disp.push(cap.geometry);
-    }
-
-    // Ecuador celeste: banda de bronce con horas de Ascensión Recta
-    const ecu = this._franja({
-      inner: 0.72, outer: 0.78, inicio: 0, dir: 1, emisivo: 0xffa860, intens: 0.7, metal: 0.8, rug: 0.4,
-      dibujar: ({ c, l, W, H, ppu }) => {
-        c.fillStyle = '#2a190a'; c.fillRect(0, 0, W, H); l.fillStyle = '#000'; l.fillRect(0, 0, W, H);
-        c.textAlign = l.textAlign = 'center'; c.textBaseline = l.textBaseline = 'middle';
-        c.font = l.font = `${Math.round(0.0125 * ppu)}px ${FUENTE_SERIF}`;
-        for (let a = 0; a < 360; a += 5) {
-          const x = (a / 360) * W, big = a % 15 === 0, len = (big ? 0.3 : 0.15) * H;
-          c.fillStyle = '#d98a3a'; c.fillRect(x - 1.5, 0, 3, len); l.fillStyle = '#fff'; l.fillRect(x - 1.5, 0, 3, len);
-          if (big) { c.fillStyle = '#e8b070'; l.fillStyle = '#ddd'; textoWrap(c, (a / 15) + 'h', x, H * 0.62, W); textoWrap(l, (a / 15) + 'h', x, H * 0.62, W); }
-        }
-      },
-    });
-    ecu.rotation.x = -Math.PI / 2;
-    cielo.add(ecu);
-    this._torus(R_CIELO, 0.010, bronce, cielo).rotation.x = Math.PI / 2;
-
-    // Eclíptica inclinada EXACTAMENTE ε = 23.439°: base analítica (sin rotaciones acumuladas).
-    //   e1 = (1,0,0) equinoccio; e2(λ=90°) = (0,sinε,−cosε); polo n = e1×e2.
-    //   Base (e1, n, −e2): un punto de longitud λ queda en (cosλ, 0, −sinλ).
+    // Eclíptica inclinada EXACTAMENTE ε = 23.439°: base analítica
     const eclip = (this.eclip = new THREE.Group());
     const e1 = new THREE.Vector3(1, 0, 0);
     const e2 = new THREE.Vector3(0, Math.sin(OBLIQUIDAD), -Math.cos(OBLIQUIDAD));
@@ -837,31 +754,64 @@ export class EsferaArmilarPro {
     eclip.matrix.makeBasis(e1, nP, e2.clone().negate());
     cielo.add(eclip);
 
+    // Cinturón del Zodíaco exterior: corona celestial que enmarca todo el cosmos
     const zod = this._franja({
-      inner: 0.64, outer: 0.78, inicio: 0, dir: 1, emisivo: 0xffc860, intens: 1.15, metal: 0.78, rug: 0.34, bump: 2.4,
+      inner: 5.95, outer: 6.55, inicio: 0, dir: 1, emisivo: 0xffc860, intens: 1.15, metal: 0.78, rug: 0.34, bump: 2.4,
       dibujar: (g) => this._dibujarZodiaco(g),
     });
     zod.rotation.x = -Math.PI / 2;
     eclip.add(zod);
-    this._torus(R_CIELO, 0.019, this.mat.oro, eclip).rotation.x = Math.PI / 2;
-    this._torus(0.64, 0.008, this.mat.oro, eclip).rotation.x = Math.PI / 2;
+    this._torus(6.55, 0.014, this.mat.oro, eclip).rotation.x = Math.PI / 2;
+    this._torus(5.95, 0.010, this.mat.oro, eclip).rotation.x = Math.PI / 2;
 
-    // Luz del Sol dentro del instrumento
+    // Órbitas astronómicas concéntricas en el plano eclíptico
+    this._crearOrbitas();
+
+    // Luz del Sol dentro del sistema
     eclip.add(this._luzSol);
 
-    // Husos de las 12 casas (lunas esféricas con vértices en los puntos N y S del horizonte)
+    // Husos de las casas (desactivado por defecto)
     this._crearHusos();
 
-    // Marcadores ASC/DSC/MC/IC sobre la eclíptica
+    // Marcadores angulares sobre el cinturón del zodíaco
     this._angulares = ['AC', 'DC', 'MC', 'IC'].map((t) => {
-      const s = this._etiqueta(t, '#ffe08a', 0.1, { fuente: FUENTE_SERIF, escala: 0.46 });
+      const s = this._etiqueta(t, '#ffe08a', 0.22, { fuente: FUENTE_SERIF, escala: 0.55 });
       s.visible = false; eclip.add(s);
       return s;
     });
 
-    // Los astros (joyas 3D) y la red de aspectos
+    // Los astros (joyas 3D a sus distancias reales) y la red de aspectos
     this._crearAstros();
     this._crearAspectos();
+  }
+
+  _crearOrbitas() {
+    const eclip = this.eclip;
+    const gOrbitas = new THREE.Group();
+    eclip.add(gOrbitas);
+
+    for (const [k, def] of Object.entries(ASTROS)) {
+      const r = def.rOrb;
+      if (!r) continue;
+      const pts = [];
+      const segs = 128;
+      for (let i = 0; i <= segs; i++) {
+        const a = (i / segs) * TAU;
+        pts.push(new THREE.Vector3(r * Math.cos(a), 0, -r * Math.sin(a)));
+      }
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const col = def.halo || 0xffd070;
+      const mat = new THREE.LineBasicMaterial({
+        color: col,
+        transparent: true,
+        opacity: k === 'sol' ? 0.38 : (k === 'luna' ? 0.32 : 0.20),
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const linea = new THREE.Line(geo, mat);
+      gOrbitas.add(linea);
+      this._disp.push(geo, mat);
+    }
   }
 
   _dibujarZodiaco({ c, l, W, H, ppu }) {
@@ -1019,6 +969,24 @@ export class EsferaArmilarPro {
     a.badgeColor = colHex;
     a.badgeKey = '';
     this.eclip.add(et);
+
+    // Rayo proyector radial hacia el cinturón exterior del zodíaco
+    const rayPts = new Float32Array(6);
+    const rayGeo = new THREE.BufferGeometry();
+    rayGeo.setAttribute('position', new THREE.BufferAttribute(rayPts, 3));
+    const rayMat = new THREE.LineBasicMaterial({
+      color: new THREE.Color(def.halo || 0xffd070),
+      transparent: true,
+      opacity: 0.24,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const rayLine = new THREE.Line(rayGeo, rayMat);
+    rayLine.frustumCulled = false;
+    rayLine.visible = false;
+    this.eclip.add(rayLine);
+    a.rayoZod = rayLine;
+    this._disp.push(rayGeo, rayMat);
 
     this.eclip.add(g);
     this._astros[clave] = a;
@@ -1317,14 +1285,14 @@ export class EsferaArmilarPro {
       c.ultimo = performance.now();
     }, { passive: false });
     this._on(el, 'dblclick', () => this.resetearCamara());
-    this._zMin = 0.5; this._zMax = 12.0;
+    this._zMin = 0.5; this._zMax = 28.0;
   }
 
   resetearCamara() {
     const c = this._cam;
-    c.vAz = c.vEl = 0; c.tDist = 5.0; c.ultimo = performance.now();
+    c.vAz = c.vEl = 0; c.tDist = 14.2; c.ultimo = performance.now();
     c.tTarget.set(0, 0, 0);
-    this._reset = { az: 0.55, el: 0.42 };
+    this._reset = { az: 0.75, el: 0.52 };
   }
 
   _aplicarCamara(dt) {
@@ -1415,6 +1383,7 @@ export class EsferaArmilarPro {
       a.lonT = mod(lon, 360); a.latT = lat;
       if (a.nuevo) { a.lon = a.lonT; a.lat = a.latT; a.nuevo = false; }
       a.visible = true; a.g.visible = true; a.etiqueta.visible = this._capas.etiquetas;
+      if (a.rayoZod) a.rayoZod.visible = true;
       vistos.add(clave);
 
       // Actualizar badge con grado y signo zodiacal exactos [ ♂ Marte · 12° ♌ ]
@@ -1431,7 +1400,7 @@ export class EsferaArmilarPro {
       }
     }
     for (const [k, a] of Object.entries(this._astros)) {
-      if (!vistos.has(k)) { a.visible = false; a.g.visible = false; a.etiqueta.visible = false; }
+      if (!vistos.has(k)) { a.visible = false; a.g.visible = false; a.etiqueta.visible = false; if (a.rayoZod) a.rayoZod.visible = false; }
     }
 
     // — Casas —
@@ -1514,7 +1483,7 @@ export class EsferaArmilarPro {
     if (this._coronaMat) this._coronaMat.uniforms.uTime.value = t;
     if (this._fondoMat) this._fondoMat.uniforms.uTime.value = t;
     if (this._estrellasMat) this._estrellasMat.uniforms.uTime.value = t;
-    this._haloZenit.material.opacity = 0.75 + 0.2 * Math.sin(t * 1.6);
+    if (this._haloZenit) this._haloZenit.material.opacity = 0.75 + 0.2 * Math.sin(t * 1.6);
     this._vela.intensity = (this._phys ? 110 : 1.7) * (1 + 0.035 * Math.sin(t * 7.3) * Math.sin(t * 3.1)); // parpadeo de vela
   }
 
@@ -1542,13 +1511,24 @@ export class EsferaArmilarPro {
       if (!a.visible) continue;
       a.lon = mod(a.lon + difAng(a.lon, a.lonT) * k, 360);
       a.lat += (a.latT - a.lat) * k;
-      posEclip(a.lon, a.lat, R_CIELO, a.g.position);
-      a.etiqueta.position.copy(a.g.position).multiplyScalar(1.0 + (a.def.r + 0.062) / R_CIELO);
+      const r = a.def.rOrb || 2.5;
+      posEclip(a.lon, a.lat, r, a.g.position);
+      a.etiqueta.position.set(a.g.position.x, a.g.position.y + a.def.r + 0.16, a.g.position.z);
       const pulso = 1 + 0.10 * Math.sin(t * 1.7 + a.semilla);
       a.halo.scale.setScalar(a.def.r * 7.5 * pulso);
       a.halo.material.opacity = 0.42 + 0.16 * Math.sin(t * 2.1 + a.semilla);
       for (const m of a.spin) m.rotation.y += dtMs * 0.0004;
       if (a.rayos) { a.rayos.material.rotation += dtMs * 0.00012; a.rayos.scale.setScalar(a.def.r * 11 * (1 + 0.06 * Math.sin(t * 1.3))); }
+      if (a.clave === 'sol' && this._luzSol) {
+        this._luzSol.position.copy(a.g.position);
+      }
+      if (a.rayoZod) {
+        const pa = a.rayoZod.geometry.attributes.position.array;
+        pa[0] = a.g.position.x; pa[1] = a.g.position.y; pa[2] = a.g.position.z;
+        const l = a.lon * DEG;
+        pa[3] = R_ZODIACO * Math.cos(l); pa[4] = 0; pa[5] = -R_ZODIACO * Math.sin(l);
+        a.rayoZod.geometry.attributes.position.needsUpdate = true;
+      }
     }
   }
 
@@ -1577,7 +1557,7 @@ export class EsferaArmilarPro {
             dir.multiplyScalar(1 / len);
             m.quaternion.setFromUnitVectors(UP, dir);
             const pulso = 0.80 + 0.20 * Math.sin(t * 2.1 + u.uSeed.value);
-            const w = (0.0030 + 0.0075 * s) * (1 + 0.28 * Math.sin(t * 3.0 + u.uSeed.value));
+            const w = (0.007 + 0.015 * s) * (1 + 0.28 * Math.sin(t * 3.0 + u.uSeed.value));
             m.scale.set(w, len, w);
             u.uColor.value.setHex(asp.color);
             u.uStr.value = (0.35 + 0.65 * s) * pulso;
@@ -1615,7 +1595,7 @@ export class EsferaArmilarPro {
     }
     // Puntos angulares sobre la eclíptica (AC, DC, MC, IC)
     const ang = [cus[0], mod(cus[0] + 180, 360), this._mcLon ?? cus[9], mod((this._mcLon ?? cus[9]) + 180, 360)];
-    this._angulares.forEach((s, i) => { posEclip(ang[i], 0, R_CIELO * 1.075, s.position); s.visible = true; });
+    this._angulares.forEach((s, i) => { posEclip(ang[i], 0, R_ZODIACO * 1.04, s.position); s.visible = true; });
   }
 
   /** Aros mecánicos: horas (1 rev/12 h), minutos (1 rev/h), segundos con paso de escape. */
