@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esfera Armilar Pro — Astrolabio Mecánico Vivo (demo)</title>
+<meta name="description" content="Demo de la esfera armilar 3D tenebrista: planetas como joyas, aspectos de plasma, casas y mecánica horológica en tiempo real.">
+<style>
+  html,body{margin:0;height:100%;background:#020104;color:#d8b878;font:13px system-ui,sans-serif}
+  #esfera{position:fixed;inset:0}
+  #hud{position:fixed;left:14px;bottom:12px;padding:8px 12px;border:1px solid rgba(217,162,27,.35);border-radius:10px;
+       background:rgba(10,7,4,.6);backdrop-filter:blur(6px);line-height:1.5;pointer-events:none;max-width:60vw}
+  #hud b{color:#f0c860}
+  #capas{position:fixed;right:14px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  #capas button{all:unset;cursor:pointer;padding:7px 12px;border:1px solid rgba(217,162,27,.45);border-radius:999px;
+       background:rgba(10,7,4,.6);color:#d8b878;font-weight:600}
+</style>
+</head>
+<body>
+<h1>Cosmograma Sagrado 3D</h1>
+<main id="esfera" aria-label="Cosmograma sagrado 3D"></main>
+<div id="capas" role="group" aria-label="Capas">
+  <button id="b-aspectos" aria-pressed="true">Aspectos</button>
+  <button id="b-casas" aria-pressed="false">Casas</button>
+  <button id="b-etiquetas" aria-pressed="true">Badges</button>
+  <button id="b-reloj" aria-pressed="false">Mecánica</button>
+</div>
+<div id="hud"></div>
+
+<script>
+  // ?three=/ruta/three.min.js para probar otra versión (por defecto r128 vía CDN)
+  const q = new URLSearchParams(location.search);
+  document.write('<script src="' + (q.get('three') || 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js') + '"><\/script>');
+</script>
+<script type="module">
+  import { EsferaArmilarPro } from './js/esfera_armilar_pro.js';
+
+  const DEG = Math.PI / 180, mod = (a, n) => ((a % n) + n) % n;
+  const LAT = -34.6, LON = -58.38;
+
+  // — Efemérides de demostración (medias, ±1–2°). En producción: motor.calculated.planets —
+  function efemerides(date) {
+    const T = (date.getTime() / 86400000 + 2440587.5 - 2451545.0) / 36525;
+    const L = (L0, r) => mod(L0 + r * T, 360);
+    const M = (357.52911 + 35999.05029 * T) * DEG;
+    const sol = mod(280.46646 + 36000.76983 * T + (1.914602 * Math.sin(M) + 0.019993 * Math.sin(2 * M)), 360);
+    const Lp = 218.3164477 + 481267.88123421 * T, Mp = (134.9633964 + 477198.8675055 * T) * DEG;
+    const D = (297.8501921 + 445267.1114034 * T) * DEG, F = (93.272095 + 483202.0175233 * T) * DEG;
+    const luna = mod(Lp + 6.289 * Math.sin(Mp) + 1.274 * Math.sin(2 * D - Mp) + 0.658 * Math.sin(2 * D), 360);
+    const latLuna = 5.128 * Math.sin(F);
+    return {
+      'Sol': { grado_absoluto: sol }, 'Luna': { grado_absoluto: luna, lat: latLuna },
+      'Mercurio': { grado_absoluto: mod(sol + 22 * Math.sin((L(252.25, 149472.67) - sol) * DEG * 1.0), 360), lat: 3 * Math.sin(L(252.25, 149472.67) * DEG) },
+      'Venus': { grado_absoluto: mod(sol + 44 * Math.sin((L(181.98, 58517.82) - sol) * DEG), 360), lat: 2.5 * Math.sin(L(181.98, 58517.82) * DEG) },
+      'Marte': { grado_absoluto: L(355.43, 19140.30), lat: 1.2 * Math.sin(L(355.43, 19140.30) * DEG) },
+      'Júpiter': { grado_absoluto: L(34.35, 3034.91), lat: -0.4 },
+      'Saturno': { grado_absoluto: L(50.08, 1222.11), lat: 1.0 },
+      'Urano': { grado_absoluto: L(314.06, 428.47), lat: 0.4 },
+      'Neptuno': { grado_absoluto: L(304.35, 218.46), lat: -1.2 },
+      'Plutón': { grado_absoluto: L(238.96, 145.18), lat: -2.5 },
+      'Nodo Norte': { grado_absoluto: mod(125.04452 - 1934.136261 * T, 360) },
+    };
+  }
+  function angulares(date, lat, lon) {
+    const d = date.getTime() / 86400000 + 2440587.5 - 2451545.0;
+    const lst = mod(280.46061837 + 360.98564736629 * d + lon, 360);
+    const ramc = lst * DEG, eps = 23.439 * DEG, la = lat * DEG;
+    const mc = mod(Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(eps)) / DEG, 360);
+    const asc = mod(Math.atan2(-Math.cos(ramc), Math.sin(eps) * Math.tan(la) + Math.cos(eps) * Math.sin(ramc)) / DEG, 360);
+    return { lst, asc, mc, casas: Array.from({ length: 12 }, (_, h) => mod(asc + h * 30, 360)) };
+  }
+
+  const esfera = new EsferaArmilarPro(document.getElementById('esfera'), { latitud: LAT, longitud: LON });
+  window.esfera = esfera;
+  esfera.iniciar();
+
+  const hud = document.getElementById('hud');
+  const SIGNOS = ['Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capricornio','Acuario','Piscis'];
+  const fmt = (l) => `${Math.floor(l % 30)}° ${SIGNOS[Math.floor(l / 30)]}`;
+  function tick() {
+    const ahora = new Date(), p = efemerides(ahora), a = angulares(ahora, LAT, LON);
+    esfera.actualizarPosiciones(p, a.casas, a.lst);
+    hud.innerHTML = `<b>ASC</b> ${fmt(a.asc)} · <b>MC</b> ${fmt(a.mc)}<br><b>Sol</b> ${fmt(p.Sol.grado_absoluto)} · <b>Luna</b> ${fmt(p.Luna.grado_absoluto)}<br><small>Click izq: orbitar · Click derecho/Shift: mover centro · Rueda: zoom · Doble clic: reencuadrar</small>`;
+  }
+  tick(); setInterval(tick, 1000);
+
+  for (const k of ['aspectos', 'casas', 'etiquetas', 'reloj']) {
+    const b = document.getElementById('b-' + k);
+    b.onclick = () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); esfera.setCapa(k, on); };
+  }
+</script>
+</body>
+</html>
