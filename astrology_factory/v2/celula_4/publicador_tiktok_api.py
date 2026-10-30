@@ -203,9 +203,11 @@ def check_publish_status(publish_id, access_token, max_attempts=12, delay_sec=5)
     log(f"⚠️ El video sigue procesándose en los servidores de TikTok. El Publish ID es {publish_id}.", AMARILLO)
     return True, publish_id
 
-def upload_video(video_path, description, privacy_level=None):
+def upload_video(video_path, description="", privacy_level=None, modo="inbox"):
     """
-    Subida directa y robusta de video a TikTok API V2 (Direct Post).
+    Subida robusta de video a TikTok API V2.
+    modo: 'inbox' (Recomendado: se sube a la app móvil como borrador para publicar con 1 tap)
+          'direct' (Direct Post al feed público, requiere app auditada)
     video_path: ruta al archivo .mp4
     description: descripción con hashtags
     privacy_level: 'PUBLIC_TO_EVERYONE' | 'MUTUAL_FOLLOW_FRIENDS' | 'SELF_ONLY'
@@ -220,16 +222,14 @@ def upload_video(video_path, description, privacy_level=None):
 
     # Determinar nivel de privacidad
     level = privacy_level or DEFAULT_PRIVACY
-    # Validación de valores aceptados por TikTok
     valid_levels = {"PUBLIC_TO_EVERYONE", "MUTUAL_FOLLOW_FRIENDS", "FOLLOWER_OF_CREATOR", "SELF_ONLY"}
     if level not in valid_levels:
-        log(f"⚠️ Nivel '{level}' desconocido. Usando 'PUBLIC_TO_EVERYONE'.", AMARILLO)
         level = "PUBLIC_TO_EVERYONE"
 
     # Obtener token garantizado
     access_token = get_valid_access_token()
 
-    # Cálculo de Chunks: Si es menor o igual a 64MB se sube en 1 solo chunk de tamaño exacto
+    # TikTok exige: si el video es <= 64MB, DEBE ser exactamente 1 solo chunk de tamaño exacto
     MAX_SINGLE_CHUNK = 64 * 1024 * 1024
     if file_size <= MAX_SINGLE_CHUNK:
         chunk_size = file_size
@@ -238,31 +238,42 @@ def upload_video(video_path, description, privacy_level=None):
         chunk_size = 20 * 1024 * 1024
         total_chunk_count = math.ceil(file_size / chunk_size)
 
-    log(f"\n🚀 Iniciando subida a TikTok API V2: {video_path.name}", MAGENTA)
-    log(f"🔒 Nivel de Privacidad: {level}", CYAN)
+    log(f"\n🚀 Iniciando subida a TikTok API V2 (Modo: {modo.upper()}): {video_path.name}", MAGENTA)
     log(f"📦 Tamaño: {file_size / (1024*1024):.2f} MB en {total_chunk_count} chunk(s)", CYAN)
 
-    init_url = "https://open.tiktokapis.com/v2/post/publish/video/init/"
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json; charset=UTF-8"
     }
-    payload = {
-        "post_info": {
-            "title": description,
-            "privacy_level": level,
-            "disable_duet": False,
-            "disable_comment": False,
-            "disable_stitch": False,
-            "video_cover_timestamp_ms": 1000
-        },
-        "source_info": {
-            "source": "FILE_UPLOAD",
-            "video_size": file_size,
-            "chunk_size": chunk_size,
-            "total_chunk_count": total_chunk_count
+
+    if modo == "inbox":
+        init_url = "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/"
+        payload = {
+            "source_info": {
+                "source": "FILE_UPLOAD",
+                "video_size": file_size,
+                "chunk_size": chunk_size,
+                "total_chunk_count": total_chunk_count
+            }
         }
-    }
+    else:
+        init_url = "https://open.tiktokapis.com/v2/post/publish/video/init/"
+        payload = {
+            "post_info": {
+                "title": description,
+                "privacy_level": level,
+                "disable_duet": False,
+                "disable_comment": False,
+                "disable_stitch": False,
+                "video_cover_timestamp_ms": 1000
+            },
+            "source_info": {
+                "source": "FILE_UPLOAD",
+                "video_size": file_size,
+                "chunk_size": chunk_size,
+                "total_chunk_count": total_chunk_count
+            }
+        }
 
     # Inicializar subida (con reintento de refresh si da 401)
     response = requests.post(init_url, headers=headers, json=payload, timeout=30)
@@ -311,7 +322,7 @@ def upload_video(video_path, description, privacy_level=None):
             subido = False
             for retry in range(1, 4):
                 try:
-                    upload_res = requests.put(upload_url, headers=put_headers, data=chunk_data, timeout=60)
+                    upload_res = requests.put(upload_url, headers=put_headers, data=chunk_data, timeout=300)
                     if upload_res.status_code in [200, 201]:
                         subido = True
                         break

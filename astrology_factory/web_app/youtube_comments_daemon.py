@@ -71,13 +71,14 @@ def obtener_api_keys():
     return keys
 
 def init_db():
-    """Crea la tabla de comentarios si no existe."""
+    """Crea la tabla de comentarios si no existe y asegura columnas."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS comentarios_respondidos (
             comment_id TEXT PRIMARY KEY,
+            parent_id TEXT,
             video_id TEXT,
             author_name TEXT,
             comment_text TEXT,
@@ -88,8 +89,27 @@ def init_db():
             replied_at TIMESTAMP
         )
     """)
+    # Migración suave si la tabla ya existía sin parent_id
+    try:
+        cur.execute("ALTER TABLE comentarios_respondidos ADD COLUMN parent_id TEXT")
+    except Exception:
+        pass
     conn.commit()
     conn.close()
+
+def contar_intervenciones_hilo(parent_id):
+    """Cuenta cuántas veces respondió Tomás en este hilo específico."""
+    if not parent_id:
+        return 0
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT COUNT(*) FROM comentarios_respondidos 
+        WHERE (parent_id = ? OR comment_id = ?) AND status IN ('POSTED', 'SIMULATED')
+    """, (parent_id, parent_id))
+    cnt = cur.fetchone()[0]
+    conn.close()
+    return cnt
 
 def ya_fue_respondido(comment_id):
     """Verifica si el comentario ya fue procesado."""
@@ -100,15 +120,15 @@ def ya_fue_respondido(comment_id):
     conn.close()
     return res is not None
 
-def registrar_respuesta(comment_id, video_id, author_name, comment_text, categoria, respuesta_ia, status):
+def registrar_respuesta(comment_id, video_id, author_name, comment_text, categoria, respuesta_ia, status, parent_id=None):
     """Guarda la respuesta en SQLite."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
         INSERT OR REPLACE INTO comentarios_respondidos 
-        (comment_id, video_id, author_name, comment_text, categoria, respuesta_ia, status, replied_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (comment_id, video_id, author_name, comment_text, categoria, respuesta_ia, status, datetime.now().isoformat()))
+        (comment_id, parent_id, video_id, author_name, comment_text, categoria, respuesta_ia, status, replied_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (comment_id, parent_id, video_id, author_name, comment_text, categoria, respuesta_ia, status, datetime.now().isoformat()))
     conn.commit()
     conn.close()
 
@@ -133,12 +153,32 @@ def get_youtube_client():
         print(f"⚠️ [YouTube Client] Error al cargar credenciales: {e}")
         return None
 
-def generar_respuesta_ia(autor, texto_comentario, contexto_video=""):
+def generar_respuesta_ia(autor, texto_comentario, contexto_video="", historial_hilo=None, num_intervenciones_tomas=0):
     """
     Genera la respuesta con la psique canónica de Tomás.
-    Especial énfasis en haters y escépticos: tajante, sin ofensas, pragmático,
-    incitando al debate para retroalimentar el algoritmo.
+    Inteligencia Multi-Turno & Anti-Loro:
+    - Conoce el hilo completo de conversación si viene de un debate.
+    - Límite de intervenciones (máximo 2 por hilo para actuar como humano y no saturar).
+    - Regla Anti-Loro: Prohibido repetir enlaces en turnos secundarios.
+    - Silencio Inteligente: No interrumpe discusiones orgánicas entre terceros.
     """
+    if num_intervenciones_tomas >= 2:
+        return "", "THREAD_SATURATED", False
+
+    regla_segundo_turno = ""
+    if num_intervenciones_tomas == 1:
+        regla_segundo_turno = (
+            "\nREGLA DE SEGUNDO TURNO (ANTI-LORO CRÍTICA):\n"
+            "- Ya participaste antes en este hilo. ESTÁ TERMINANTEMENTE PROHIBIDO incluir enlaces web o mencionar 'portaltarotmistico.com'.\n"
+            "- Respondé con pura dialéctica, filosofía irónica o análisis psicológico en 1 o 2 oraciones contundentes.\n"
+            "- No actúes como un loro comercial ni como un asistente complaciente. Sé un creador humano que da una estocada lúcida y se retira.\n"
+        )
+
+    contexto_hilo_str = ""
+    if historial_hilo and len(historial_hilo) > 0:
+        hilo_formateado = "\n".join([f"- @{m.get('autor')}: \"{m.get('texto')}\"" for m in historial_hilo])
+        contexto_hilo_str = f"\nHISTORIAL PREVIO DEL HILO:\n{hilo_formateado}\n"
+
     system_instruction = (
         "Eres Tomás, creador y director de 'Portal Tarot Místico'.\n"
         "Tu configuración astrológica: Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10.\n"
@@ -147,13 +187,17 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video=""):
         "- Lente Cognitiva (Acuario 22°): Tratas a la gente como mentes pensantes. No te ofendés por nada. Ves la crítica o el odio como un síntoma psicológico predecible o pereza cognitiva.\n"
         "- Asertividad y Filo (Aries 22°): Directo al hueso, tajante, sin vueltas ni diplomacia falsa. No pides permiso para decir la verdad.\n"
         "- Filosofía e Ironía Lúcida (Sagitario 5°): Voseo rioplatense sobrio y elegante ('mirá', 'fijate', 'te cuento'). Humor sutil, cero solemnidad.\n\n"
+        "REGLAS DE INTERVENCIÓN NATURAL HUMANA:\n"
+        "1. NO INTERRUMPIR DEBATES ENTRE TERCEROS: Si dos o más usuarios están debatiendo entre ellos y ninguno te pregunta nada a vos ni menciona tu nombre, marcá 'debe_responder': false. Dejá que la comunidad debata orgánicamente.\n"
+        "2. NUNCA PARECER UN BOT O LORO: Variá el vocabulario. Si el usuario te responde a una pregunta previa, dialogá con lo que dijo en lugar de repetir un speech prearmado.\n"
+        f"{regla_segundo_turno}\n"
         "PROTOCOLO ESTRICTO ANTE HATERS Y ESCÉPTICOS:\n"
         "1. PROHIBICIÓN ABSOLUTA DE OFENSAS O INSULTOS: Cumplimiento 100% de las normas de la comunidad de YouTube. Nunca insultes ni uses descalificaciones soeces.\n"
         "2. DESARME PRAGMÁTICO Y QUIRÚRGICO: Exponé con calma y filo la contradicción del hater. Quien opina de astrología sin haber calculado su carta natal con efemérides astronómicas exactas no es un escéptico, es simplemente alguien opinando a ciegas.\n"
         "3. INCENTIVO AL ALGORITMO: La respuesta DEBE ser provocadora a nivel intelectual y terminar con una pregunta incisiva o un desafío directo que obligue a la persona (o a otros espectadores) a responderte. Los hilos largos de debate son lo que más empuja el video en el feed de YouTube.\n"
-        "4. EMBUDO A LA WEB: Desafialo a calcular su carta natal gratis en portaltarotmistico.com con Swiss Ephemeris para verificar sus datos antes de proyectar sus prejuicios.\n\n"
+        "4. EMBUDO A LA WEB (Solo en turno 1): Desafialo a calcular su carta natal gratis en portaltarotmistico.com con Swiss Ephemeris para verificar sus datos antes de proyectar sus prejuicios.\n\n"
         "PROTOCOLO ANTE PREGUNTAS GENUINAS:\n"
-        "- Sé claro, pedagógico y pragmático. Explicá que el signo solar es solo una fracción y que el impacto real depende de las casas y grados matemáticos. Invitalo a comprobarlo en portaltarotmistico.com.\n\n"
+        "- Sé claro, pedagógico y pragmático. Explicá que el signo solar es solo una fracción y que el impacto real depende de las casas y grados matemáticos.\n\n"
         "PROTOCOLO ANTE ELOGIOS / AGRADECIMIENTOS:\n"
         "- Agradecé con sobriedad rioplatense. 'Gracias por la lucidez. La clave es observar el cielo como un mapa operativo, no como una creencia'.\n\n"
         "PROTOCOLO ANTE SPAM Y BOTS (REGLA ALGORÍTMICA):\n"
@@ -164,15 +208,17 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video=""):
         "{\n"
         "  \"categoria\": \"HATER_SKEPTIC\" | \"GENUINE_QUESTION\" | \"PRAISE\" | \"SPAM\",\n"
         "  \"debe_responder\": true | false,\n"
-        "  \"respuesta\": \"Texto exacto de la respuesta en español rioplatense (máximo 2 o 3 oraciones contundentes)\"\n"
+        "  \"respuesta\": \"Texto exacto de la respuesta en español rioplatense (máximo 1 o 2 oraciones contundentes)\"\n"
         "}"
     )
 
     prompt = (
-        f"Comentario recibido de: @{autor}\n"
+        f"Comentario nuevo recibido de: @{autor}\n"
         f"Texto del comentario: \"{texto_comentario}\"\n"
-        f"Contexto del video: {contexto_video}\n\n"
-        f"Clasificá el comentario y generá la respuesta de Tomás siguiendo los protocolos."
+        f"Contexto del video: {contexto_video}\n"
+        f"{contexto_hilo_str}\n"
+        f"Número de intervenciones previas de Tomás en este hilo: {num_intervenciones_tomas}\n\n"
+        f"Analizá el hilo y generá la respuesta de Tomás siguiendo las directrices."
     )
 
     keys = obtener_api_keys()
