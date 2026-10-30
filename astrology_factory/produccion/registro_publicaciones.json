@@ -17,32 +17,43 @@
     "2026-10-30": {
       "evento_id": "2026-10-30_Mercurio_Cuadratura_Partil_Marte",
       "titulo": "Clímax de Tensión: Mercurio Retrógrado en Cuadratura Partil Exacta a Marte",
-      "youtube_video_id": null,
-      "youtube_url": null,
+      "youtube_video_id": "TssKybYIjnw",
+      "youtube_url": "https://www.youtube.com/watch?v=TssKybYIjnw",
       "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
-      "estado_youtube": "PENDIENTE_RENDER",
-      "estado_tiktok": "PENDIENTE_RENDER",
-      "fecha_publicacion": "2026-10-30"
+      "estado_youtube": "PUBLICADO",
+      "estado_tiktok": "PUBLICADO",
+      "fecha_publicacion": "2026-10-30",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_29oct_01nov/FINAL_2026-10-30_Mercurio_Cuadratura_Partil_Marte.mp4",
+      "estado_render": "COMPLETADO"
     },
     "2026-10-31": {
       "evento_id": "2026-10-31_Samhain_Luna_Trigono_Mercurio",
       "titulo": "Noche de Samhain: Luna en Cáncer en Trígono con Mercurio Retrógrado en Escorpio",
-      "youtube_video_id": null,
-      "youtube_url": null,
+      "youtube_video_id": "k-jTiIdppxk",
+      "youtube_url": "https://www.youtube.com/watch?v=k-jTiIdppxk",
       "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
-      "estado_youtube": "PENDIENTE_RENDER",
-      "estado_tiktok": "PENDIENTE_RENDER",
-      "fecha_publicacion": "2026-10-31"
+      "estado_youtube": "PROGRAMADO",
+      "estado_tiktok": "BORRADOR_INBOX",
+      "tiktok_publish_id": "v_inbox_file~v2.7702258571173480500",
+      "fecha_publicacion": "2026-10-31",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_29oct_01nov/FINAL_2026-10-31_Samhain_Luna_Trigono_Mercurio.mp4",
+      "estado_render": "COMPLETADO"
     },
     "2026-11-01": {
       "evento_id": "2026-11-01_Luna_Oposicion_Pluton_Cuarto_Menguante",
       "titulo": "Luna en Leo en Oposición a Plutón en Acuario (Cuarto Menguante)",
-      "youtube_video_id": null,
-      "youtube_url": null,
+      "youtube_video_id": "jWsO3Tto2A8",
+      "youtube_url": "https://www.youtube.com/watch?v=jWsO3Tto2A8",
       "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
-      "estado_youtube": "PENDIENTE_RENDER",
-      "estado_tiktok": "PENDIENTE_RENDER",
-      "fecha_publicacion": "2026-11-01"
+      "estado_youtube": "PROGRAMADO",
+      "estado_tiktok": "BORRADOR_INBOX",
+      "tiktok_publish_id": "v_inbox_file~v2.7702260116137052180",
+      "fecha_publicacion": "2026-11-01",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_29oct_01nov/FINAL_2026-11-01_Luna_Oposicion_Pluton_Cuarto_Menguante.mp4",
+      "estado_render": "COMPLETADO"
     }
   }
 }

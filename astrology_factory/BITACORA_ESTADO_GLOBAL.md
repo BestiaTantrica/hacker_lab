@@ -24,6 +24,12 @@ Este documento rige la coordinación de IAs en el ecosistema Astrology Factory.
   - **YouTube Shorts**: Publicado en vivo exitosamente: `https://www.youtube.com/watch?v=yTI2hIFoyT8`.
   - **TikTok**: Publicado en vivo en la cuenta `@portaltarotmistico`.
   - **Aplicación Direct Post API**: Enviada a revisión final en TikTok Developers.
+- [x] **TikTok Posting: Estrategia Canónica de Cookies Web Automation**:
+  - Descartado el modo Inbox de la API V2 (`SEND_TO_USER_INBOX`) por omitir descripciones/hashtags en el buzón móvil.
+  - Fijada como estrategia operativa primaria la **Automatización Web con Cookies (`cookies.txt` / Playwright)** para garantizar que todo video suba con título, descripción completa y hashtags de forma 100% automatizada.
+- [x] **Directriz Audiovisual: Integración Mandatoria del Reloj 2D en Videos Diarios**:
+  - Para todos los próximos lotes de producción (los videos del 29/10 al 01/11 quedan como están), se establece la obligación de incluir 1 o 2 tomas dinámicas del Reloj 2D con zoom sutil (Ken Burns) sobre los planetas en aspecto.
+  - Cumple triple propósito: ahorro de cuotas de imágenes IA, branding orgánico de la web (`portaltarotmistico.com`) y pedagogía visual clara de los aspectos y grados zodiacales.
 - [x] **Telegram Daily Broadcast & Molde de Oro (`daily_channel_job.py`)**:
   - Incorporada la voz canónica de Tomás (Aries 22°, Acuario 22°, Luna Sagitario 5°), Swiss Ephemeris y botones interactivos multicanal (YouTube Shorts, TikTok, Bot Horóscopo y Web).
   - Integrado con `produccion/registro_publicaciones.json` para resolver dinámicamente el video exacto del día.

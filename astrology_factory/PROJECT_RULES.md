@@ -84,10 +84,16 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 2. **Base de Datos Visual como "Single Source of Truth" (SSoT)**: Cero lecturas ciegas al sistema de archivos. Todo script que necesite assets visuales debe consultarlos exclusivamente a través de la base de datos SQLite (`assets_visuales.db` gestionada por `db_visual.py`). El motor de renderizado (`video_maker.py`) es "tonto": no elige assets por heurística ni `glob`, solo obedece las rutas absolutas indicadas en el archivo JSON de corte validado.
 
 
-## 9. API E INTEGRACIÓN (TIKTOK SANDBOX)
-1. **TikTok Content Posting API (v2)**: Para publicar videos directamente (Direct Post), el scope obligatorio es `video.publish`. El scope `video.upload` está reservado para la Content Sharing API (borradores en inbox).
-2. **Pruebas Sandbox**: Las cuentas de prueba (`Target Users`) deben estar explícitamente añadidas en el portal y DEBEN ser cuentas configuradas como Privadas en la app móvil; de lo contrario, se obtendrá `unaudited_client_can_only_post_to_private_accounts`.
-3. **Review End-to-End**: En aplicaciones Server-Side, la revisión de TikTok exige mostrar el flujo completo. Se requiere un botón de testing en el panel admin que invoque manualmente la función de publicación en backend para demostrar el envío del video.
+## 9. PUBLICACIÓN EN TIKTOK (ESTRATEGIA CANÓNICA: COOKIES / AUTOMATION)
+1. **Estrategia Primaria Operativa (Cookies Web Automation)**:
+   - Se utiliza **Automatización Web (`cookies.txt` / Playwright)** para subir borradores o videos finales.
+   - **Causa Mandatoria:** La API V2 en modo Inbox (`SEND_TO_USER_INBOX`) no traslada títulos ni descripciones, obligando a redactar a mano en el celular. La subida vía web con cookies garantiza inyección 100% automatizada de título, descripción completa y hashtags.
+2. **TikTok Developer API (En Revisión)**:
+   - Mantener el registro de la app en TikTok Developer Console únicamente para obtener aprobación de `Direct Post` (`video.publish`) en producción.
+   - Mientras la app permanezca sin auditar o limitada a Sandbox, la vía de producción diaria es la automatización por cookies.
+3. **Integración Obligatoria del Reloj 2D en Videos Diarios**:
+   - Todo video de tránsito futuro debe incorporar al menos 1 o 2 tomas del Reloj Astrológico 2D (`web_app/templates/reloj.html`) con zooms sutiles a los planetas y aspectos en conflicto/armonía, cumpliendo triple función: didáctica astral clara, branding orgánico y ahorro de cuotas de generación de imágenes IA.
+
 
 ## 10. PRODUCTOS PREMIUM Y LECTURAS ASTRALES (CARTA NATAL / REVOLUCIÓN SOLAR)
 
