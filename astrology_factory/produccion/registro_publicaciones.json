@@ -34,7 +34,7 @@
       "youtube_url": "https://www.youtube.com/watch?v=k-jTiIdppxk",
       "tiktok_url": "https://www.tiktok.com/@portaltarotmistico",
       "estado_youtube": "PROGRAMADO",
-      "estado_tiktok": "BORRADOR_INBOX",
+      "estado_tiktok": "PUBLICADO",
       "tiktok_publish_id": "v_inbox_file~v2.7702258571173480500",
       "fecha_publicacion": "2026-10-31",
       "video_generado": true,
@@ -53,6 +53,19 @@
       "fecha_publicacion": "2026-11-01",
       "video_generado": true,
       "path_video": "/home/LAB/astrology_factory/produccion/semana_29oct_01nov/FINAL_2026-11-01_Luna_Oposicion_Pluton_Cuarto_Menguante.mp4",
+      "estado_render": "COMPLETADO"
+    },
+    "2026-11-02": {
+      "evento_id": "2026-11-02_Luna_Conjuncion_Marte_Leo",
+      "titulo": "2 de Noviembre: Luna y Marte en Conjunción en Leo en Cuadratura a Mercurio Retrógrado",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": null,
+      "estado_youtube": "LISTO_AUDITORIA",
+      "estado_tiktok": "LISTO_AUDITORIA",
+      "fecha_publicacion": "2026-11-02",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-02_Luna_Conjuncion_Marte_Leo.mp4",
       "estado_render": "COMPLETADO"
     }
   }

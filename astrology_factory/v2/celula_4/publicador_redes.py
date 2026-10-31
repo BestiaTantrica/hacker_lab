@@ -71,10 +71,25 @@ def main():
     parser.add_argument("--programar", help="Fecha/hora UTC para programar en YouTube (ej: 2026-10-30T21:00:00.000Z)")
     parser.add_argument("--solo_youtube", action="store_true", help="Subir solo a YouTube")
     parser.add_argument("--solo_tiktok", action="store_true", help="Subir solo a TikTok")
+    parser.add_argument("--forzar", action="store_true", help="Forzar subida incluso si el evento ya figura como PUBLICADO")
     args = parser.parse_args()
 
     evento_activo = args.evento or EVENTO_ID
     log(f"\n📢 CÉLULA 4.2 — Publicador Multicanal: {evento_activo}", MAGENTA)
+    
+    # ── Control de Idempotencia Anti-Duplicados ──
+    registro_path = FACTORY_ROOT / "produccion" / "registro_publicaciones.json"
+    pub_info = {}
+    if registro_path.exists():
+        try:
+            with open(registro_path, "r", encoding="utf-8") as rf:
+                reg_master = json.load(rf)
+            for f_key, pub in reg_master.get("publicaciones", {}).items():
+                if pub.get("evento_id") == evento_activo:
+                    pub_info = pub
+                    break
+        except Exception:
+            pass
     
     SEMANA = ADN["produccion"].get("semana_prefijo", "")
     video_dir = VIDEOS_FINALES / SEMANA if SEMANA else VIDEOS_FINALES
@@ -138,44 +153,47 @@ def main():
     
     youtube_id = None
     if not args.solo_tiktok:
-        youtube = get_youtube_client()
-        if youtube is not None:
-            media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True)
-            request = youtube.videos().insert(
-                part="snippet,status",
-                body=body,
-                media_body=media
-            )
-            try:
-                response = request.execute()
-                youtube_id = response.get('id')
-                log(f"✅ ¡Video subido a YouTube con éxito!", VERDE)
-                log(f"🔗 ID del video: {youtube_id}", VERDE)
-                log(f"👁️ Podés verlo en: https://studio.youtube.com/video/{youtube_id}/edit", CYAN)
-
-                # Actualizar registro maestro de publicaciones
-                registro_path = FACTORY_ROOT / "produccion" / "registro_publicaciones.json"
-                if registro_path.exists():
-                    try:
-                        with open(registro_path, "r", encoding="utf-8") as rf:
-                            reg_data = json.load(rf)
-                        # Buscar por evento_id
-                        for f_key, pub in reg_data.get("publicaciones", {}).items():
-                            if pub.get("evento_id") == evento_activo:
-                                pub["youtube_video_id"] = youtube_id
-                                pub["youtube_url"] = f"https://www.youtube.com/watch?v={youtube_id}"
-                                pub["estado_youtube"] = "PROGRAMADO" if args.programar else "PUBLICADO"
-                                break
-                        with open(registro_path, "w", encoding="utf-8") as rf:
-                            json.dump(reg_data, rf, indent=2, ensure_ascii=False)
-                        log(f"📋 Registro maestro actualizado con YouTube ID: {youtube_id}", VERDE)
-                    except Exception as rex:
-                        log(f"⚠️ No se pudo actualizar registro_publicaciones.json: {rex}", AMARILLO)
-
-            except googleapiclient.errors.HttpError as e:
-                log(f"❌ Error de la API de YouTube: {e}", ROJO)
+        if not args.forzar and pub_info.get("estado_youtube") in ["PUBLICADO", "PROGRAMADO"]:
+            log(f"🛑 OMITIENDO YOUTUBE: El evento {evento_activo} ya figura como {pub_info.get('estado_youtube')} (ID: {pub_info.get('youtube_video_id')}). Usá --forzar si querés re-subirlo.", AMARILLO)
         else:
-            log("⚠️ Subida a YouTube omitida debido a credenciales no válidas/expiradas.", AMARILLO)
+            youtube = get_youtube_client()
+            if youtube is not None:
+                media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True)
+                request = youtube.videos().insert(
+                    part="snippet,status",
+                    body=body,
+                    media_body=media
+                )
+                try:
+                    response = request.execute()
+                    youtube_id = response.get('id')
+                    log(f"✅ ¡Video subido a YouTube con éxito!", VERDE)
+                    log(f"🔗 ID del video: {youtube_id}", VERDE)
+                    log(f"👁️ Podés verlo en: https://studio.youtube.com/video/{youtube_id}/edit", CYAN)
+
+                    # Actualizar registro maestro de publicaciones
+                    registro_path = FACTORY_ROOT / "produccion" / "registro_publicaciones.json"
+                    if registro_path.exists():
+                        try:
+                            with open(registro_path, "r", encoding="utf-8") as rf:
+                                reg_data = json.load(rf)
+                            # Buscar por evento_id
+                            for f_key, pub in reg_data.get("publicaciones", {}).items():
+                                if pub.get("evento_id") == evento_activo:
+                                    pub["youtube_video_id"] = youtube_id
+                                    pub["youtube_url"] = f"https://www.youtube.com/watch?v={youtube_id}"
+                                    pub["estado_youtube"] = "PROGRAMADO" if args.programar else "PUBLICADO"
+                                    break
+                            with open(registro_path, "w", encoding="utf-8") as rf:
+                                json.dump(reg_data, rf, indent=2, ensure_ascii=False)
+                            log(f"📋 Registro maestro actualizado con YouTube ID: {youtube_id}", VERDE)
+                        except Exception as rex:
+                            log(f"⚠️ No se pudo actualizar registro_publicaciones.json: {rex}", AMARILLO)
+
+                except googleapiclient.errors.HttpError as e:
+                    log(f"❌ Error de la API de YouTube: {e}", ROJO)
+            else:
+                log("⚠️ Subida a YouTube omitida debido a credenciales no válidas/expiradas.", AMARILLO)
 
     # ==========================================
     # Lógica para TikTok (Estrategia Canónica: Cookies Web Automation)
@@ -183,24 +201,35 @@ def main():
     if not args.solo_youtube:
         log("\n📢 CÉLULA 4.3 — Publicador TikTok (Producción)", MAGENTA)
         
-        subido_tiktok = False
-        cookies_path = Path(__file__).parent / "cookies.txt"
-        tiktok_desc = f"{titulo}\n\n{hashtags}"
-
-        # 1. Estrategia Primaria Canónica: Cookies Web Automation (Inyección completa de descripción y hashtags)
-        if cookies_path.exists():
-            log("🍪 Archivo cookies.txt detectado. Publicando vía Automatización Web (Descripción completa)...", CYAN)
-            try:
-                from tiktok_uploader.upload import upload_video as upload_video_web
-                upload_video_web(str(video_path), description=tiktok_desc, cookies=str(cookies_path), headless=True)
-                log(f"✅ ¡Video subido a TikTok con éxito con descripción y hashtags automáticos!", VERDE)
-                subido_tiktok = True
-            except ImportError:
-                log("❌ La librería tiktok-uploader no está instalada para automatización web.", ROJO)
-            except Exception as e:
-                log(f"⚠️ Error al subir a TikTok por Web Automation: {e}", AMARILLO)
+        if not args.forzar and pub_info.get("estado_tiktok") == "PUBLICADO":
+            log(f"🛑 OMITIENDO TIKTOK: El evento {evento_activo} ya figura como PUBLICADO en TikTok. Usá --forzar si querés re-subirlo.", AMARILLO)
         else:
-            log("⚠️ No se encontró cookies.txt en celula_4. Procediendo con API fallback.", AMARILLO)
+            subido_tiktok = False
+            import re
+            base_text = descripcion if descripcion else hashtags
+            tiktok_desc = f"{titulo}\n\n{base_text}"
+            # TikTok Anti-Shadowban: sustituir URLs crudas por llamada a Link en bio
+            tiktok_desc = re.sub(r'https?://[^\s]+', '👉 Link en mi perfil', tiktok_desc)
+
+            cookies_path = Path(__file__).parent / "cookies.txt"
+
+            # 1. Estrategia Primaria Canónica: Cookies Web Automation (Inyección completa de descripción y hashtags)
+            if cookies_path.exists():
+                log("🍪 Archivo cookies.txt detectado. Publicando vía Automatización Web (Descripción completa)...", CYAN)
+                try:
+                    from tiktok_uploader.upload import upload_video as upload_video_web
+                    failed = upload_video_web(str(video_path), description=tiktok_desc, cookies=str(cookies_path), headless=True)
+                    if not failed:
+                        log(f"✅ ¡Video subido a TikTok con éxito con descripción y hashtags automáticos!", VERDE)
+                        subido_tiktok = True
+                    else:
+                        log(f"❌ TikTok Web Uploader reportó fallo: {failed}", ROJO)
+                except ImportError:
+                    log("❌ La librería tiktok-uploader no está instalada para automatización web.", ROJO)
+                except Exception as e:
+                    log(f"⚠️ Error al subir a TikTok por Web Automation: {e}", AMARILLO)
+            else:
+                log("⚠️ No se encontró cookies.txt en celula_4. Procediendo con API fallback.", AMARILLO)
 
         # 2. Fallback Secundario: API Oficial V2 (Direct Post) si la app ya fue aprobada
         if not subido_tiktok:

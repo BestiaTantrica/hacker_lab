@@ -25,5 +25,6 @@ __pycache__/
 .pytest_cache/
 historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
 *.onnx
-products/revolucion_solar/test_camila/
 astrology_engine/ephe/
+*cookies*.txt
+token.json

@@ -272,25 +272,45 @@ def elegir_asset_gancho(cat: dict):
 # ── C. Plan de cortes (solo datos, ningún render) ────────────────────────────
 
 def calcular_cortes_ritmicos(texto: str, duracion_total: float) -> list:
-    """Cortes de ~2 s para un viaje sensorial dinámico. El último absorbe el residuo de redondeo."""
-    n = max(1, int(duracion_total / 2.0))
+    """
+    TOMAS ESTABLES (3.5s - 5.5s) PARA CONTEMPLACIÓN TENEBRISTA ROBERTO FERRI.
+    Elimina hiper-cortes de 2s que agotan el stock visual y causan repetición innecesaria.
+    Si la toma dura <= 5.5s: 1 solo corte íntegro y cinematográfico.
+    Si la toma dura > 5.5s: divide en 2 cortes estables equilibrados (~3.5s - 4s).
+    """
+    if duracion_total <= 5.5:
+        return [round(duracion_total, 3)]
+    n = 2
     base = round(duracion_total / n, 3)
-    cortes = [base] * n
-    cortes[-1] = round(duracion_total - base * (n - 1), 3)
-    return cortes
+    return [base, round(duracion_total - base, 3)]
 
 def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: dict,
                               ultimos_usados: list, gancho_id, gemini_clients: list):
     """
     Devuelve (cortes, protagonista_id). `cortes` es la lista de dicts del contrato JSON.
     Muta `ultimos_usados` (los assets elegidos quedan vetados para el resto del video).
+    Garantiza:
+    1. Toma 3 (medio): Reloj Astrológico 2D / Astrolabio para la mecánica celeste.
+    2. Cero duplicados de assets en el mismo video.
     """
     es_primera = toma_idx == 0
+    es_tercera = toma_idx == 2  # Toma 3: El Reloj Astrológico en el medio
     es_ultima  = toma_idx == total_tomas - 1
     duraciones = calcular_cortes_ritmicos(toma.get("texto", ""), toma["duracion_s"])
 
     if (es_primera or es_ultima) and gancho_id:
         protagonista = gancho_id
+    elif es_tercera:
+        # Prioridad absoluta para Toma 3: Reloj Astrológico / Astrolabio / Mandala
+        reloj_candidatos = [
+            k for k, v in cat.items()
+            if any(term in k.lower() or term in v.get("etiquetas", "") for term in ["reloj", "astrolabio", "mandala"])
+            and k not in ultimos_usados
+        ]
+        if reloj_candidatos:
+            protagonista = random.choice(reloj_candidatos)
+        else:
+            protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients)
     else:
         protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients)
 
@@ -302,10 +322,14 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
 
         if (es_corte_inicial_video or es_corte_final_video) and gancho_id:
             elegido = gancho_id                      # loop: abre y cierra con el mismo portal
-        elif i == idx_principal and protagonista:
-            elegido = protagonista                   # honra la elección (Gemini / ranking)
+        elif i == idx_principal and protagonista and protagonista not in elegidos:
+            elegido = protagonista                   # honra la elección principal
         else:
-            elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + elegidos) or protagonista
+            elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + elegidos)
+            # Fallback estricto anti-duplicados: JAMÁS repetir el protagonista ni un asset ya usado
+            if not elegido or elegido in (ultimos_usados + elegidos):
+                disponibles = [k for k in cat.keys() if k not in (ultimos_usados + elegidos)]
+                elegido = random.choice(disponibles) if disponibles else protagonista
         elegidos.append(elegido)
 
     cortes = []

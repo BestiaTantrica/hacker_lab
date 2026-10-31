@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 import sys
 import sqlite3
 import os
+import json
 import urllib.parse
 import httpx
 from pathlib import Path
@@ -108,6 +109,147 @@ async def read_reloj(request: Request):
 @app.get("/privacy", response_class=HTMLResponse)
 async def read_privacy(request: Request):
     return templates.TemplateResponse(request=request, name="privacy.html")
+
+@app.get("/admin", response_class=HTMLResponse)
+async def read_admin(request: Request):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT COUNT(*) FROM subscribers")
+    total_subscribers = cursor.fetchone()[0]
+    
+    cursor.execute("SELECT id, name, email, birth_date, birth_time, birth_city FROM subscribers ORDER BY id DESC LIMIT 50")
+    subscribers = cursor.fetchall()
+    
+    try:
+        cursor.execute("SELECT COUNT(*) FROM chat_logs")
+        total_chats = cursor.fetchone()[0]
+    except Exception:
+        total_chats = 0
+        
+    conn.close()
+    
+    # Cargar publicaciones
+    reg_path = os.path.join(PROJECT_DIR, "produccion", "registro_publicaciones.json")
+    publicaciones = {}
+    total_videos_ready = 0
+    total_tiktoks_published = 0
+    if os.path.exists(reg_path):
+        try:
+            with open(reg_path, "r", encoding="utf-8") as f:
+                reg_data = json.load(f)
+                publicaciones = reg_data.get("publicaciones", {})
+                for p in publicaciones.values():
+                    if p.get("video_generado") or p.get("estado_render") == "COMPLETADO":
+                        total_videos_ready += 1
+                    if p.get("estado_tiktok") == "PUBLICADO":
+                        total_tiktoks_published += 1
+        except Exception:
+            pass
+
+    # Chequeo de daemons en background
+    import subprocess
+    yt_bot_active = False
+    telegram_bot_active = False
+    try:
+        ps_out = subprocess.check_output(["ps", "aux"]).decode()
+        yt_bot_active = "youtube_comments_daemon" in ps_out
+        telegram_bot_active = "daily_channel_job" in ps_out or "telegram" in ps_out
+    except Exception:
+        pass
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin.html",
+        context={
+            "total_subscribers": total_subscribers,
+            "subscribers": subscribers,
+            "total_chats": total_chats,
+            "publicaciones": publicaciones,
+            "total_videos_ready": total_videos_ready,
+            "total_tiktoks_published": total_tiktoks_published,
+            "yt_bot_active": yt_bot_active,
+            "telegram_bot_active": telegram_bot_active,
+        }
+    )
+
+@app.post("/api/admin/generate-reply")
+async def generate_admin_reply(request: Request):
+    try:
+        data = await request.json()
+        comment = data.get("comment", "").strip()
+        platform = data.get("platform", "tiktok").lower()
+        transit_info = data.get("transit", "Mercurio Retrógrado en Escorpio en cuadratura a Marte en Leo / Luna en Leo oposición Plutón en Acuario")
+
+        if not comment:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "El comentario no puede estar vacío"})
+
+        prompt = f"""
+Actúa como Tomás, astrólogo y creador de 'Portal Tarot Místico'.
+Tus datos natales: Sol y Mercurio en Aries a 22°, Ascendente Acuario a 22°, Luna en Sagitario a 5°.
+Tu personalidad: Directo, lúcido, magnético, eléctrico, sin vueltas, pedagógico y con gancho. Tono argentino natural y maduro (voseo: 'mirá', 'fijate', 'tenés', 'andá a ver').
+PROHIBICIONES ESTRICTAS:
+1. NADA de esnobismo ni melosidad ('bebé', 'mi amor', 'hermosa alma').
+2. NADA de tenebrismo escabroso ni mórbido (cero sangre, cero autopsias, cero vísceras).
+3. NADA de clichés new-age o paganos vacíos ('Samhain', 'códices sagrados', 'seres de luz').
+4. REGLA DE ORO DE REDES:
+   - Si la plataforma es TikTok: NUNCA coloques URLs crudas ('portaltarotmistico.com', 'https://...'). TikTok penaliza y oculta comentarios con enlaces externos. Usa SIEMPRE: "en el link de mi perfil" o "link en mi bio".
+   - Si es YouTube: puedes sugerir "en el link fijado o en mi perfil".
+5. CONTEXTO DE LA WEB: Tenemos una herramienta interactiva gratuita en vivo: el 'Reloj Astrológico 2D' (en el link de la bio). Allí el seguidor ingresa su fecha y hora natal y ve exactamente qué casas y planetas suyos reciben el impacto en grados reales.
+
+COMENTARIO DEL SEGUIDOR EN {platform.upper()}:
+"{comment}"
+
+CONTEXTO ASTRAL ACTUAL:
+{transit_info}
+
+Genera 3 opciones de respuesta breves (máximo 2 a 3 oraciones cada una), personalizadas según lo que mencionó el seguidor (planetas, signos, casas):
+1. 'directa': Punzante, rápida, al hueso (estilo Aries). Despierta curiosidad y manda al link en bio.
+2. 'pedagogica': Explica brevemente la mecánica de las casas o planetas que mencionó el usuario (estilo Acuario/Sagitario) y lo invita a verificar sus grados en el reloj del perfil.
+3. 'alquimica': Enfocada en cómo no chocar contra la energía sino transmutarla en poder personal, cerrando con el llamado a la bio.
+
+Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
+{{
+  "directa": "texto de la respuesta directa...",
+  "pedagogica": "texto de la respuesta pedagógica...",
+  "alquimica": "texto de la respuesta alquímica..."
+}}
+"""
+
+        replies = None
+        if gemini_client:
+            for model_candidate in ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']:
+                try:
+                    response = gemini_client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt,
+                    )
+                    text = response.text.strip()
+                    if text.startswith("```json"):
+                        text = text[7:]
+                    if text.startswith("```"):
+                        text = text[3:]
+                    if text.endswith("```"):
+                        text = text[:-3]
+                    text = text.strip()
+                    replies = json.loads(text)
+                    if isinstance(replies, dict) and "directa" in replies:
+                        break
+                except Exception as e_gen:
+                    print(f"Error generando respuestas con {model_candidate}: {e_gen}")
+                    continue
+
+        if not replies or not isinstance(replies, dict):
+            # Fallback inteligente con el ADN de Tomás
+            replies = {
+                "directa": f"¡Esa configuración no come vidrio! ⚡ Tensión pura para mover fichas grandes. Entrá al link de mi perfil y poné tus datos en el reloj: te canta al grado exacto dónde te pega y cómo usarlo a tu favor.",
+                "pedagogica": f"Tremendo mapa. Cuando esos planetas tocan esas casas, el choque te obliga a hacer consciente lo que venías barriendo bajo la alfombra. En el link de mi bio tenés el reloj interactivo para ver en vivo los orbes exactos de tu tránsito.",
+                "alquimica": f"La tensión planetaria no vino a romperte, vino a exigirte maestría. Si dejás de reaccionar y mirás el eje exacto, lo transmutás en poder. Pasate por el link en mi perfil que el reloj te lo muestra servido."
+            }
+
+        return JSONResponse(content={"status": "success", "replies": replies})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 @app.post("/api/subscribe")
 async def subscribe(

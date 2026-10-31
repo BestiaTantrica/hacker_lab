@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Control Astral — Portal Tarot Místico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #07090e;
+            --bg-card: rgba(16, 22, 34, 0.85);
+            --border-glass: rgba(0, 242, 254, 0.15);
+            --cyan-accent: #00f2fe;
+            --purple-accent: #7928ca;
+            --gold-accent: #d4af37;
+            --text-main: #f0f4f8;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(circle at 10% 20%, rgba(121, 40, 202, 0.12) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.08) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            padding: 24px 20px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Top Bar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ffffff, var(--cyan-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-cyan {
+            background: rgba(0, 242, 254, 0.12);
+            color: var(--cyan-accent);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+        .btn-cyan:hover {
+            background: rgba(0, 242, 254, 0.22);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-purple {
+            background: rgba(121, 40, 202, 0.2);
+            color: #d8b4fe;
+            border-color: rgba(121, 40, 202, 0.4);
+        }
+        .btn-purple:hover {
+            background: rgba(121, 40, 202, 0.35);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan-accent), transparent);
+            opacity: 0.5;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .kpi-desc {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* Services & Daemons Row */
+        .system-status {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .status-items {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .dot-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .dot-yellow { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+        .dot-red { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+        /* Content Sections */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 960px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .panel-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        th {
+            padding: 10px 14px;
+            color: var(--text-dim);
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-tag {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-published { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-scheduled { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-draft { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+        .link-media {
+            color: var(--cyan-accent);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .link-media:hover { text-decoration: underline; }
+
+        /* Comment Helper Box */
+        .helper-box {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .quick-reply-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .quick-reply-title {
+            color: var(--cyan-accent);
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover { color: #fff; background: rgba(0, 242, 254, 0.2); }
+
+        /* Interactive Comment Generator Styles */
+        .interactive-form {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .interactive-form textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 65px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .interactive-form textarea:focus {
+            border-color: var(--cyan-accent);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+        }
+
+        .form-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .platform-select {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #eee;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #050508;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-generate:hover {
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reply-editable-box {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.84rem;
+            line-height: 1.45;
+            resize: vertical;
+            min-height: 60px;
+            padding: 4px;
+            outline: none;
+        }
+        .reply-editable-box:focus {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid var(--cyan-accent);
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div>
+                <h1 class="brand-title">PORTAL TAROT MÍSTICO</h1>
+                <p class="brand-subtitle">Centro de Control Astral & Telemetría en Vivo</p>
+            </div>
+            <div class="header-actions">
+                <a href="/reloj" target="_blank" class="btn btn-cyan">🔮 Reloj 2D Web</a>
+                <a href="/" target="_blank" class="btn btn-purple">🌐 Ver Sitio Web</a>
+            </div>
+        </header>
+
+        <!-- Daemons and Bots Status -->
+        <div class="system-status">
+            <div>
+                <span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">Estado de Automatizaciones:</span>
+            </div>
+            <div class="status-items">
+                <div class="status-badge">
+                    <div class="dot {{ 'dot-green' if yt_bot_active else 'dot-yellow' }}"></div>
+                    <span>Bot YouTube: <b>{{ 'Activo (Daemon)' if yt_bot_active else 'Inactivo / Standby' }}</b></span>
+                </div>
+                <div class="status-badge">
+                    <div class="dot {{ 'dot-green' if telegram_bot_active else 'dot-yellow' }}"></div>
+                    <span>Canal Telegram: <b>{{ 'Conectado' if telegram_bot_active else 'Standby' }}</b></span>
+                </div>
+                <div class="status-badge">
+                    <div class="dot dot-green"></div>
+                    <span>TikTok Auth: <b>@portaltarotmistico</b></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Suscriptores Registrados</div>
+                <div class="kpi-value">{{ total_subscribers }}</div>
+                <div class="kpi-desc">Usuarios en base de datos local</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Consultas al Oráculo</div>
+                <div class="kpi-value">{{ total_chats }}</div>
+                <div class="kpi-desc">Interacciones con Gemini Web</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Videos Semanales Listos</div>
+                <div class="kpi-value">{{ total_videos_ready }}</div>
+                <div class="kpi-desc">Renderizados en resolución vertical</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">TikToks Publicados</div>
+                <div class="kpi-value">{{ total_tiktoks_published }}</div>
+                <div class="kpi-desc">Publicados vía Web Automation</div>
+            </div>
+        </div>
+
+        <!-- Grid 2 Columns -->
+        <div class="grid-2">
+            <!-- Left: Publications Radar -->
+            <div class="panel-box">
+                <div class="panel-header">
+                    <h2 class="panel-title">🎬 Radar de Publicaciones (Semana Activa)</h2>
+                    <span style="font-size: 0.8rem; color: var(--text-dim);">Sincronizado con registro_publicaciones.json</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tránsito / Video</th>
+                                <th>YouTube</th>
+                                <th>TikTok</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fecha, pub in publicaciones.items() %}
+                            <tr>
+                                <td style="font-weight: 600; white-space: nowrap;">{{ fecha }}</td>
+                                <td>
+                                    <div style="font-weight: 500;">{{ pub.titulo }}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ pub.evento_id }}</div>
+                                </td>
+                                <td>
+                                    {% if pub.estado_youtube == 'PUBLICADO' %}
+                                        <span class="badge-tag badge-published">PUBLICADO</span>
+                                        {% if pub.youtube_video_id %}
+                                            <br><a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media">Ver Short ↗</a>
+                                        {% endif %}
+                                    {% elif pub.estado_youtube == 'PROGRAMADO' %}
+                                        <span class="badge-tag badge-scheduled">PROGRAMADO</span>
+                                        {% if pub.youtube_video_id %}
+                                            <br><a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media">Ver Programado ↗</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge-tag badge-draft">{{ pub.estado_youtube or 'PENDIENTE' }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if pub.estado_tiktok == 'PUBLICADO' %}
+                                        <span class="badge-tag badge-published">PUBLICADO</span>
+                                        <br><a href="{{ pub.tiktok_url }}" target="_blank" class="link-media">Ver Canal ↗</a>
+                                    {% elif pub.estado_tiktok == 'BORRADOR_INBOX' %}
+                                        <span class="badge-tag badge-scheduled">EN INBOX</span>
+                                    {% else %}
+                                        <span class="badge-tag badge-draft">{{ pub.estado_tiktok or 'PENDIENTE' }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Comment Reply Generator (ADN Tomás) -->
+            <div class="panel-box">
+                <div class="panel-header">
+                    <h2 class="panel-title">⚡ Asistente de Respuestas (ADN Tomás)</h2>
+                    <span style="font-size: 0.75rem; color: var(--cyan-accent); font-weight: 600;">IA en Vivo</span>
+                </div>
+                <div class="helper-box">
+                    <div class="interactive-form">
+                        <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">
+                            Pegá el comentario del seguidor:
+                        </label>
+                        <textarea id="commentInput" placeholder="Ej: sol y pluton casa 3 leo casa 1 acuario casa 7 tauro casa 9..."></textarea>
+                        
+                        <div class="form-controls-row">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.75rem; color: var(--text-dim);">Red:</label>
+                                <select id="platformSelect" class="platform-select">
+                                    <option value="tiktok">TikTok (Link en bio)</option>
+                                    <option value="youtube">YouTube (Link fijado)</option>
+                                    <option value="general">General (Web)</option>
+                                </select>
+                            </div>
+                            <button id="btnGenerateReply" class="btn-generate" onclick="generateReply()">
+                                <span>⚡ Generar Respuestas</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loader -->
+                    <div id="replyLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.85rem;">
+                        <span class="spinner" style="margin-right: 8px; vertical-align: middle;"></span>
+                        <span>Canalizando ADN de Tomás (Aries/Acuario/Sagitario)...</span>
+                    </div>
+
+                    <!-- Dynamic Reply Cards -->
+                    <div id="repliesContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>⚡ Directa (Aries - Rápida & Punzante)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'replyDirecta')">Copiar</button>
+                            </div>
+                            <textarea id="replyDirecta" class="reply-editable-box">¡Esa configuración no come vidrio! ⚡ Tenés tensión pura para mover fichas grandes. Entrá al link de mi perfil y poné tus datos en el reloj: te canta al grado exacto dónde te pega y cómo transmutarlo a tu favor.</textarea>
+                        </div>
+
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>🔮 Pedagógica (Acuario/Sagitario - Reveladora)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'replyPedagogica')">Copiar</button>
+                            </div>
+                            <textarea id="replyPedagogica" class="reply-editable-box">Tremendo mapa. Cuando esos planetas tocan esas casas, el choque te obliga a hacer consciente lo que venías barriendo bajo la alfombra. En el link de mi bio tenés el reloj interactivo para ver en vivo los orbes exactos de tu tránsito.</textarea>
+                        </div>
+
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>🔥 Alquímica (Transmutación & Poder)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'replyAlquimica')">Copiar</button>
+                            </div>
+                            <textarea id="replyAlquimica" class="reply-editable-box">La tensión planetaria no vino a romperte, vino a exigirte maestría. Si dejás de reaccionar y mirás el eje exacto, lo transmutás en poder. Pasate por el link en mi perfil que el reloj te lo muestra servido.</textarea>
+                        </div>
+                    </div>
+
+                    <div class="quick-reply-card" style="border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04);">
+                        <div class="quick-reply-title" style="color: #fbbf24;">
+                            <span>⚠️ Regla de Oro TikTok</span>
+                        </div>
+                        <p style="color: #fbbf24; font-size: 0.78rem; margin: 0; line-height: 1.4;">
+                            <b>Jamás escribas "http://" ni enlaces crudos en comentarios de TikTok</b>. TikTok oculta los comentarios con links externos. Usá siempre <b>"en el link de mi perfil"</b> o <b>"link en bio"</b>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Subscribers -->
+        <div class="panel-box">
+            <div class="panel-header">
+                <h2 class="panel-title">👥 Últimos Suscriptores Registrados</h2>
+                <span style="font-size: 0.8rem; color: var(--text-dim);">Datos natales para cálculo de tránsitos</span>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Fecha Nac.</th>
+                            <th>Hora Nac.</th>
+                            <th>Ciudad Natal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if subscribers %}
+                            {% for sub in subscribers %}
+                            <tr>
+                                <td>#{{ sub[0] }}</td>
+                                <td style="font-weight: 600;">{{ sub[1] }}</td>
+                                <td>{{ sub[2] }}</td>
+                                <td>{{ sub[3] }}</td>
+                                <td>{{ sub[4] }}</td>
+                                <td>{{ sub[5] }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                                    Aún no hay suscriptores en la base de datos. Los formularios de la web y el reloj inyectan los registros directamente aquí.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function generateReply() {
+            const comment = document.getElementById('commentInput').value.trim();
+            if (!comment) {
+                alert('Por favor pegá primero el comentario del seguidor.');
+                return;
+            }
+
+            const platform = document.getElementById('platformSelect').value;
+            const btn = document.getElementById('btnGenerateReply');
+            const loader = document.getElementById('replyLoader');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/admin/generate-reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comment: comment, platform: platform })
+                });
+                const data = await res.json();
+                if (data.status === 'success' && data.replies) {
+                    if (data.replies.directa) document.getElementById('replyDirecta').value = data.replies.directa;
+                    if (data.replies.pedagogica) document.getElementById('replyPedagogica').value = data.replies.pedagogica;
+                    if (data.replies.alquimica) document.getElementById('replyAlquimica').value = data.replies.alquimica;
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudieron generar las respuestas'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Ocurrió un error al conectar con el asistente de IA.');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        function copyReply(btnElement, textareaId) {
+            const textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const prev = btnElement.innerText;
+                btnElement.innerText = '¡Copiado!';
+                btnElement.style.color = '#34d399';
+                setTimeout(() => {
+                    btnElement.innerText = prev;
+                    btnElement.style.color = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+    </script>
+</body>
+</html>

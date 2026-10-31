@@ -92,26 +92,28 @@ DIAS = [
 ]
 
 # ── 2. MOTOR DE GUIONES CANÓNICOS DE AUTOR (CLAUDE PRO GOLD STANDARD) ────────
-def generar_guion(dia: dict, client: genai.Client) -> dict:
     prompt = f"""
-Eres un Astrólogo Clínico y Sociológico de autor, con tono tenebrista, filosófico y visceral (estilo Roberto Ferri y James Hillman).
-PROHIBIDO EL COACHING DE PELUQUERÍA, CERO FRASES CLICHÉ ("auditá tus vínculos", "no seas cobarde", "universo cuántico").
-Escribe un guion riguroso de EXACTAMENTE 5 tomas para un video vertical (Short / Reel / TikTok) de 38 a 40 segundos.
-Métrica estricta: Cada toma debe tener entre 14 y 20 palabras (total: 80 a 95 palabras).
+Eres Tomás: astrólogo de autor con ADN natal de fuego y aire (Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°).
+Tu voz es: DIRECTA AL HUESO, LÚCIDA, ENÉRGICA, PEDAGÓGICA Y CON VOSEO ARGENTINO MADURO. Cero rodeos, con chispa y fuerza.
+
+REGLAS DE ORO DE PERSONALIDAD Y TONO:
+1. PROHIBIDO EL MORBO Y LO ESCABROSO: Vetado terminantemente hablar de autopsias, vísceras, podredumbre, sangrado psíquico o muerte morbosa. El "tenebrismo" es SOLO un estilo visual para los fondos y luces de la imagen; jamás debe contaminar el guion con pesimismo gótico.
+2. PROHIBIDO EL HUMO NEW AGE Y PAGANO: Cero referencias a festividades mágicas o paganas ("Samhain", "brujería", "códices cuánticos", "vibración de luz"). Esto es ASTROLOGÍA REAL, PSICOLÓGICA Y EMPÍRICA.
+3. ADN TOMÁS (Aries/Acuario/Sagitario): Explicás con claridad mental (Acuario), fuerza de arranque para no estancarse (Aries) y sentido constructivo/filosófico (Sagitario). Desarmás la victimización con una sonrisa lúcida y una verdad tajante.
 
 DATOS ASTRONÓMICOS REALES:
 - Título: {dia['titulo']}
 - Tránsito: {dia['planeta']} ({dia['simbolos']}) en {dia['signos']} ({dia['aspecto']} - Orbe {dia['orbe']})
 - Arquetipo: {dia['arquetipo']}
-- Clima emocional: {dia['emocion']}
-- Síntesis cósmica: {dia['descripcion']}
+- Clima psicológico: {dia['emocion']}
+- Síntesis del tránsito: {dia['descripcion']}
 
-ESTRUCTURA OBLIGATORIA EN 5 TOMAS:
-- Toma 1 (Gancho visceral): Nombra el síntoma físico o mental exacto que la gente está sintiendo hoy en el pecho o la cabeza.
-- Toma 2 (Efecto en la sombra): Explica cómo la psicología humana tropieza con esta energía (el orgullo, la herida o el miedo).
-- Toma 3 (Mecánica celeste): Traduce la geometría astronómica ({dia['aspecto']}) en una ley de causa y efecto lúcida.
-- Toma 4 (Afrontamiento maduro): Una instrucción de dignidad y sobriedad para transitar el día sin quemar puentes.
-- Toma 5 (CTA COMERCIAL DIRECTO): Manda al espectador a portaltarotmistico.com o link del perfil a ingresar su fecha y hora para ver la casa exacta afectada.
+ESTRUCTURA DIDÁCTICA EN 5 TOMAS (38 a 40 segundos totales, 14 a 18 palabras por toma):
+- Toma 1 (Gancho directo): Plantea la tensión concreta o el dilema real del día sin dramatismo barato.
+- Toma 2 (Mecánica psicológica): Explica qué mecanismo inconsciente o qué trampa de ego se dispara y por qué.
+- Toma 3 (Tránsito celeste): Traduce el aspecto ({dia['aspecto']}) en una ley de causa y efecto clara y pedagógica.
+- Toma 4 (Acción y maestría): Da una pauta de acción directa, soberana y práctica (fuego ariano constructivo).
+- Toma 5 (Llamado a la web): Invita a revisar el reloj interactivo ingresando al link del perfil (portaltarotmistico.com).
 
 Responde ÚNICAMENTE en JSON con esta estructura exacta:
 {{
