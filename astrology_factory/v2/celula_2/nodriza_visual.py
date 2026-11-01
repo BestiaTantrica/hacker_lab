@@ -301,7 +301,30 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
     if (es_primera or es_ultima) and gancho_id:
         protagonista = gancho_id
     elif es_tercera:
-        # Prioridad absoluta para Toma 3: Reloj Astrológico / Astrolabio / Mandala
+        # Prioridad absoluta para Toma 3: Video Animado Real del Reloj Astrológico 2D Wallpaper
+        fecha_pub = ADN.get("produccion", {}).get("fecha_publicacion", "2026-11-02")
+        reloj_clip_path = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}.mp4"
+        if not reloj_clip_path.exists():
+            try:
+                from v2.celula_2.grabar_reloj_2d import capturar_clip_reloj
+                reloj_clip_path = capturar_clip_reloj(f"{fecha_pub}T12:00:00", duracion_s=toma["duracion_s"])
+            except Exception as e:
+                print(f"  [Warn] No se pudo capturar reloj 2D al vuelo: {e}")
+        
+        if reloj_clip_path and Path(reloj_clip_path).exists():
+            cortes = [{
+                "orden": 0,
+                "asset_id": f"reloj_2d_{fecha_pub}",
+                "archivo": str(reloj_clip_path),
+                "nombre": Path(reloj_clip_path).name,
+                "tipo": "video",
+                "duracion_s": toma["duracion_s"],
+                "es_iconica": True,
+                "reverse": False,
+                "transicion_entrada": toma.get("transicion_entrada", "fade"),
+            }]
+            return cortes, f"reloj_2d_{fecha_pub}"
+
         reloj_candidatos = [
             k for k, v in cat.items()
             if any(term in k.lower() or term in v.get("etiquetas", "") for term in ["reloj", "astrolabio", "mandala"])

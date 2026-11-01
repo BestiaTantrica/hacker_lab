@@ -173,6 +173,49 @@ async def read_admin(request: Request):
         }
     )
 
+@app.post("/api/admin/registrar-manual")
+async def registrar_publicacion_manual(request: Request):
+    try:
+        data = await request.json()
+        fecha = data.get("fecha", "").strip()
+        titulo = data.get("titulo", "").strip()
+        youtube_url = data.get("youtube_url", "").strip()
+        tiktok_url = data.get("tiktok_url", "").strip()
+        
+        if not fecha:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "La fecha es obligatoria (YYYY-MM-DD)"})
+            
+        reg_path = os.path.join(PROJECT_DIR, "produccion", "registro_publicaciones.json")
+        reg_data = {"publicaciones": {}}
+        if os.path.exists(reg_path):
+            with open(reg_path, "r", encoding="utf-8") as f:
+                reg_data = json.load(f)
+                
+        pubs = reg_data.setdefault("publicaciones", {})
+        existente = pubs.get(fecha, {})
+        
+        pubs[fecha] = {
+            "evento_id": existente.get("evento_id", f"{fecha}_Manual"),
+            "titulo": titulo or existente.get("titulo", f"Tránsito {fecha}"),
+            "youtube_video_id": existente.get("youtube_video_id"),
+            "youtube_url": youtube_url or existente.get("youtube_url"),
+            "tiktok_url": tiktok_url or existente.get("tiktok_url"),
+            "estado_youtube": "PUBLICADO" if youtube_url else existente.get("estado_youtube", "MANUAL"),
+            "estado_tiktok": "PUBLICADO" if tiktok_url else existente.get("estado_tiktok", "MANUAL"),
+            "fecha_publicacion": fecha,
+            "video_generado": True,
+            "path_video": existente.get("path_video"),
+            "estado_render": "MANUAL",
+            "origen": "REGISTRO_MANUAL_ADMIN"
+        }
+        
+        with open(reg_path, "w", encoding="utf-8") as f:
+            json.dump(reg_data, f, indent=2, ensure_ascii=False)
+            
+        return JSONResponse({"status": "success", "message": f"Publicación del {fecha} guardada con éxito en el registro"})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
 @app.post("/api/admin/generate-reply")
 async def generate_admin_reply(request: Request):
     try:

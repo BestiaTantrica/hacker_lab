@@ -152,3 +152,37 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
 10. **Invariante de Estabilidad en Pipelines y Procesos Activos**:
     - PROHIBIDO modificar parámetros internos, cuotas, ratios o lógica de scripts operativos (como `vault_scraper.py`, `video_maker.py`, etc.) sin instrucción explícita del usuario.
     - Cuando el usuario indique "reanudar", "seguir descargando" o "encargarse", el agente debe limitarse a verificar el estado, reiniciar procesos caídos o ejecutar el flujo con la configuración vigente, sin alterar el código fuente.
+
+## 12. REGLAS CANÓNICAS DE PRODUCCIÓN DE VIDEOS DIARIOS (TIKTOK / SHORTS)
+
+1. **Duración Estricta de 40 Segundos**:
+   - Todo video diario debe durar entre **38 y 40 segundos exactos** (entre 85 y 95 palabras totales distribuidas en 5 tomas).
+   - Prohibido generar textos que superen los 40 segundos.
+
+2. **Tono Editorial (El Estilo Telegram / Tomás)**:
+   - PROHIBIDO el lenguaje gótico, tétrico, morboso o esotérico barato ("abismos oscuros", "magia negra", "códices malditos").
+   - Pura **psicología conductual lúcida, empírica y voseo argentino maduro**:
+     * Desglosar la fricción mental vs la reacción visceral del ego.
+     * Identificar la trampa de la susceptibilidad (la urgencia automática por tener la última palabra).
+     * Brújula lúcida: no morder el anzuelo, no alimentar una pulseada estéril, registrar el dato en silencio.
+
+3. **Incrustación Obligatoria del Reloj 2D Digital en Toma 3**:
+   - La Toma 3 rige la mecánica celeste y DEBE mostrar el video animado en alta resolución del **Reloj Astrológico 2D** (`reloj.html`), generado con `v2/celula_2/grabar_reloj_2d.py` con la fecha astronómica exacta del día, ruedas en rotación y fondo negro puro.
+   - Prohibido sustituir el Reloj 2D por imágenes estáticas de astrolabios de bronce.
+
+4. **Política Anti-Shadowban Estricta (Cero Dominios)**:
+   - Prohibido pronunciar o rotular `.com` o dominios web directos en el guion de voz o subtítulos ASS.
+   - Usar exclusivamente llamados a la acción nativos: *"Entrá al link de mi perfil"* o *"Tenés el link en la bio"*.
+
+5. **Títulos Explícitos y Cadena Narrativa (Continuidad de Tránsitos)**:
+   - En el título debe constar siempre la fecha exacta y el aspecto (Ej: `2 de Noviembre | Luna conjunción Marte en Leo: Orgullo en la trinchera`).
+   - Cuando un tránsito se extiende durante varios días, los videos se encadenan narrativamente:
+     * **Día 1**: Disparador mental.
+     * **Día 2**: Reacción visceral del ego (haciendo puente: *"Ayer la mente escarbaba; hoy la Luna y Marte encienden el orgullo..."*).
+     * **Día 3**: Integración y maestría.
+   - En la descripción y primer comentario fijado se referencia automáticamente el video anterior para maximizar visualizaciones cruzadas.
+
+6. **Prosodia Humana y Respiración (Fin de la Voz Robótica)**:
+   - La locución con `es-AR-TomasNeural` se configura con cadencia pausada (`rate="-2%"` a `"-3%"`) y tono barítono (`pitch="-1Hz"` a `"-2Hz"`).
+   - La redacción debe incorporar elipsis (`...`) y pausas de coma/punto para permitir micro-respiraciones naturales en el motor neural.
+

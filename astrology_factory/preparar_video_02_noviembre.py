@@ -40,81 +40,64 @@ REGISTRO_PATH = FACTORY_ROOT / "produccion" / "registro_publicaciones.json"
 DIA_02_NOV = {
     "fecha": "2026-11-02",
     "evento_id": "2026-11-02_Luna_Conjuncion_Marte_Leo",
-    "titulo": "2 de Noviembre: Luna y Marte en Conjunción en Leo en Cuadratura a Mercurio Retrógrado",
+    "titulo": "2 de Noviembre | Luna conjunción Marte en Leo: Orgullo en la trinchera",
     "planeta": "Luna/Marte",
     "simbolos": "☽/♂",
     "signos": "Leo/Escorpio",
     "aspecto": "conjunción y cuadratura",
     "intensidad": "alta",
-    "orbe": "0.80°",
-    "arquetipo_primario": "El Fuego del Corazón",
-    "arquetipo_secundario": "La Alquimia del Orgullo",
-    "emocion": "impulso visceral / maestría sobre la reactividad",
+    "orbe": "1.00°",
+    "arquetipo_primario": "La Alquimia del Orgullo",
+    "arquetipo_secundario": "La Soberanía del Silencio",
+    "emocion": "reacción visceral del ego vs maestría de contención",
     "elemento": "Fuego/Agua",
     "modalidad": "Fija",
     "planeta_regente": "Sol/Pluton",
     "simbolo_regente": "☉/♇",
-    "descripcion": "El 2 de Noviembre la Luna se une a Marte a los 18 grados de Leo, encendiendo un impulso emocional ardiente que choca en cuadratura con Mercurio retrógrado en Escorpio. No reacciones por orgullo ni te quemes en discusiones estériles: usá este voltaje para crear y afirmarte en tu centro.",
-    "palabras_clave": ["luna", "marte", "leo", "mercurio", "escorpio", "fuego", "voluntad", "transmutacion", "astrolabio"]
+    "descripcion": "El 2 de Noviembre la Luna se une a Marte a los 18 y 19 grados de Leo en cuadratura directa a Mercurio en Escorpio. Ayer la mente escarbaba; hoy el orgullo salta a la defensiva. La maestría está en no alimentar una pulseada estéril.",
+    "palabras_clave": ["luna", "marte", "leo", "mercurio", "escorpio", "fuego", "orgullo", "silencio", "astrolabio"]
+}
+
+GUION_CANONICO_02_NOV = {
+  "titulo": DIA_02_NOV["titulo"],
+  "evento_id": DIA_02_NOV["evento_id"],
+  "fecha": DIA_02_NOV["fecha"],
+  "tomas": [
+    {
+      "num": 1,
+      "rol": "gancho_fecha_continuidad",
+      "duracion_s": 7.5,
+      "texto": "2 de noviembre. Ayer la mente escarbaba... Hoy la Luna y Marte en Leo encienden el orgullo."
+    },
+    {
+      "num": 2,
+      "rol": "mecanica_psicologica",
+      "duracion_s": 8.0,
+      "texto": "Cuando el impulso responde desde el ego, cualquier charla se vuelve trinchera... La trampa: querer tener la última palabra."
+    },
+    {
+      "num": 3,
+      "rol": "mecanica_celeste_reloj2d",
+      "duracion_s": 8.0,
+      "texto": "Mirá el reloj en vivo: la conjunción a dieciocho grados choca con Mercurio, activando la susceptibilidad inmediata."
+    },
+    {
+      "num": 4,
+      "rol": "brujula_lucida",
+      "duracion_s": 8.5,
+      "texto": "La maestría de hoy no es ganar discusiones. Si tocan tu orgullo, registralo en silencio... No alimentes pulseadas estériles."
+    },
+    {
+      "num": 5,
+      "rol": "cta_antiban",
+      "duracion_s": 6.1,
+      "texto": "Para ver en qué casa te pega este choque, entrá al link de mi perfil."
+    }
+  ]
 }
 
 def generar_guion_tomas(dia: dict, client: genai.Client) -> dict:
-    prompt = f"""
-Eres Tomás: creador de 'Portal Tarot Místico' con ADN astral de fuego y aire (Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°).
-Tu voz es: DIRECTA AL HUESO, LÚCIDA, ENÉRGICA, PEDAGÓGICA Y CON VOSEO ARGENTINO MADURO (mirá, fijate, tenés, no comas vidrio).
-
-REGLAS INNEGOCIABLES DE PERSONALIDAD:
-1. PROHIBIDO EL MORBO Y LO ESCABROSO: Cero referencias a autopsias, heridas sangrantes, podredumbre o muerte morbosa. El tenebrismo de Roberto Ferri es exclusivamente la estética visual pictórica de los cuadros en claroscuro; jamás debe contaminar el guion con pesimismo gótico.
-2. PROHIBIDO EL HUMO NEW AGE O PAGANO: Cero palabras como 'Samhain', 'códices sagrados', 'portales de luz' o 'brujería'. Esto es astrología técnica, psicológica y viva.
-3. DATOS PRECISOS: Menciona la fecha exacta ("2 de Noviembre") y los grados exactos ("18 grados de Leo").
-4. TOMA 3 (EL RELOJ ASTROLÓGICO): La Toma 3 es donde se muestra en pantalla el Reloj Astrológico 2D y se traduce la geometría del cielo en una ley clara y práctica.
-
-DATOS ASTRONÓMICOS REALES:
-- Título: {dia['titulo']}
-- Tránsito: {dia['planeta']} en {dia['signos']} ({dia['aspecto']} - Orbe {dia['orbe']})
-- Arquetipo: {dia['arquetipo_primario']} vs {dia['arquetipo_secundario']}
-- Clima psicológico: {dia['emocion']}
-- Síntesis: {dia['descripcion']}
-
-ESTRUCTURA DIDÁCTICA EN 5 TOMAS (38 a 40 segundos totales, 14 a 18 palabras por toma):
-- Toma 1 (Gancho directo con fecha): "2 de Noviembre: la Luna y Marte se juntan a quemarropa en el signo de Leo..."
-- Toma 2 (Mecánica psicológica / Fricción): Explica qué trampa de ego salta (el orgullo herido frente a lo que destapa Mercurio en Escorpio).
-- Toma 3 (Mecánica celeste / Reloj 2D): Explica la conjunción partil a 18° y la cuadratura.
-- Toma 4 (Acción soberana / Maestría): Acción constructiva ariana (no engancharse, dirigir la potencia a crear).
-- Toma 5 (Llamado a la web): Invita a meter su mapa en el reloj interactivo de la bio (portaltarotmistico.com).
-
-Responde ÚNICAMENTE en JSON con esta estructura exacta:
-{{
-  "titulo": "{dia['titulo']}",
-  "evento_id": "{dia['evento_id']}",
-  "fecha": "{dia['fecha']}",
-  "tomas": [
-    {{ "num": 1, "rol": "gancho", "duracion_s": 7, "texto": "..." }},
-    {{ "num": 2, "rol": "efecto_sombra", "duracion_s": 8, "texto": "..." }},
-    {{ "num": 3, "rol": "mecanica_astral", "duracion_s": 9, "texto": "..." }},
-    {{ "num": 4, "rol": "afrontamiento", "duracion_s": 8, "texto": "..." }},
-    {{ "num": 5, "rol": "cta_web", "duracion_s": 7, "texto": "..." }}
-  ]
-}}
-"""
-    modelos = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"]
-    for m in modelos:
-        try:
-            res = client.models.generate_content(
-                model=m,
-                contents=prompt,
-                config={"temperature": 0.7}
-            )
-            txt = res.text.strip()
-            if txt.startswith("```json"): txt = txt[7:]
-            if txt.startswith("```"): txt = txt[3:]
-            if txt.endswith("```"): txt = txt[:-3]
-            data = json.loads(txt.strip())
-            return data
-        except Exception as e:
-            print(f"  [Warn] Falló {m}: {e}")
-            continue
-    raise RuntimeError("No se pudo generar guion con los modelos disponibles.")
+    return GUION_CANONICO_02_NOV
 
 async def sintetizar_audio(texto: str, output_path: Path):
     voice = "es-AR-TomasNeural"
@@ -235,10 +218,10 @@ async def main():
     for t in guion["tomas"]:
         print(f"   [{t['num']}] {t['rol'].upper()}: {t['texto']}")
 
-    # 2. Audio Master con TomasNeural
-    texto_completo = " ".join(t["texto"].strip() for t in guion["tomas"])
+    # 2. Audio Master con TomasNeural y pausas naturales
+    texto_completo = " \n\n ".join(t["texto"].strip() for t in guion["tomas"])
     audio_local = OUTPUT_DIR / f"audio_{DIA_02_NOV['evento_id']}.mp3"
-    print("\n🎙️  Sintetizando locución argentina (es-AR-TomasNeural)...")
+    print("\n🎙️  Sintetizando locución argentina con prosodia natural (es-AR-TomasNeural)...")
     await sintetizar_audio(texto_completo, audio_local)
     print(f"✅ Audio generado: {audio_local.name}")
 
