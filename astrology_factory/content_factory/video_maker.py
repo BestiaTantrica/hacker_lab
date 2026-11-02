@@ -337,10 +337,8 @@ def construir_comando(slots: list[dict], audio: Path, ass: Path | None, salida: 
             cmd += ["-stream_loop", "-1", "-t", f"{largo:.4f}", "-i", s["archivo"]]
     cmd += ["-i", str(audio)]
 
-    watermark_path = Path("/home/LAB/astrology_factory/products/revolucion_solar/visor_cinematico/watermark_reloj_badge.png")
-    usar_wm = watermark_path.is_file()
-    if usar_wm:
-        cmd += ["-i", str(watermark_path)]
+    # Marca de agua circular desactivada por petición de diseño limpio
+    usar_wm = False
 
     partes = []
     for i, (s, largo) in enumerate(zip(slots, largos)):

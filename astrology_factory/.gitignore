@@ -17,7 +17,13 @@ ready_for_capcut/
 *.mp4
 video_full/
 video_preview_full/
+*video_preview_full/
 video_test/
+*video_test_zoom/
+scratch/*frames*/
+scratch/final_verification_frames/
+scratch/*.png
+scratch/*.jpg
 
 # Archivos de caché y python
 __pycache__/
