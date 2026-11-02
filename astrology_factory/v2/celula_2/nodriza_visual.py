@@ -235,7 +235,7 @@ def elegir_mejor_asset_local(toma: dict, cat: dict, ultimos_usados: list):
     return mejor_key
 
 def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, gemini_clients: list):
-    """Ranking local (top 40, sin bloqueados) → desempate creativo con Gemini → fallback local."""
+    """Ranking local semántico (top 40, sin bloqueados) ordenado por score del Director de Arte."""
     scores = sorted(
         ((calcular_score(toma, k, m, ultimos_usados), k) for k, m in cat.items()),
         key=lambda x: x[0], reverse=True,
@@ -243,16 +243,6 @@ def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, gemi
     top_40 = [k for s, k in scores[:40] if s > -500]
     if not top_40:
         return None
-
-    if gemini_clients:
-        cat_filtrado = {k: cat[k] for k in top_40}
-        texto = toma.get("texto_narrador", toma.get("texto", ""))
-        mejor = elegir_mejor_asset_con_gemini(
-            random.choice(gemini_clients), texto, toma.get("rol", ""), cat_filtrado,
-            ultimos_usados, toma.get("emocion", "indefinida"), ELEMENTO_ADN,
-        )
-        if mejor and mejor in cat_filtrado:
-            return mejor
     return top_40[0]
 
 def elegir_asset_gancho(cat: dict):
@@ -298,10 +288,43 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
     es_ultima  = toma_idx == total_tomas - 1
     duraciones = calcular_cortes_ritmicos(toma.get("texto", ""), toma["duracion_s"])
 
+    fecha_pub = ADN.get("produccion", {}).get("fecha_publicacion", "2026-11-03")
+    clip_apertura = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}_apertura.mp4"
+    clip_cierre = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}_cierre.mp4"
+
+    # Si existen clips duales del Reloj 2D (Loop Continuo de 24h: inicio y fin del día):
+    if es_primera and clip_apertura.exists():
+        cortes = [{
+            "orden": 0,
+            "asset_id": f"reloj_2d_{fecha_pub}_apertura",
+            "archivo": str(clip_apertura),
+            "nombre": clip_apertura.name,
+            "tipo": "video",
+            "duracion_s": toma["duracion_s"],
+            "es_iconica": True,
+            "reverse": False,
+            "transicion_entrada": None,
+        }]
+        return cortes, f"reloj_2d_{fecha_pub}_apertura"
+
+    if es_ultima and clip_cierre.exists():
+        cortes = [{
+            "orden": 0,
+            "asset_id": f"reloj_2d_{fecha_pub}_cierre",
+            "archivo": str(clip_cierre),
+            "nombre": clip_cierre.name,
+            "tipo": "video",
+            "duracion_s": toma["duracion_s"],
+            "es_iconica": True,
+            "reverse": False,
+            "transicion_entrada": toma.get("transicion_entrada", "fade"),
+        }]
+        return cortes, f"reloj_2d_{fecha_pub}_cierre"
+
     if (es_primera or es_ultima) and gancho_id:
         protagonista = gancho_id
-    elif es_tercera:
-        # Prioridad absoluta para Toma 3: Video Animado Real del Reloj Astrológico 2D Wallpaper
+    elif es_tercera and not (clip_apertura.exists() and clip_cierre.exists()):
+        # Prioridad para Toma 3 solo si NO hay Doble Reloj 2D (Apertura y Cierre):
         fecha_pub = ADN.get("produccion", {}).get("fecha_publicacion", "2026-11-02")
         reloj_clip_path = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}.mp4"
         if not reloj_clip_path.exists():

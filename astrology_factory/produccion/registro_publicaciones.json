@@ -67,6 +67,20 @@
       "video_generado": true,
       "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-02_Luna_Conjuncion_Marte_Leo.mp4",
       "estado_render": "COMPLETADO"
+    },
+    "2026-11-03": {
+      "evento_id": "2026-11-03_Luna_Ingresa_Virgo",
+      "titulo": "3 de Noviembre | Luna ingresa a Virgo: Ordenar sin quemarse la cabeza",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": null,
+      "estado_youtube": "LISTO_AUDITORIA",
+      "estado_tiktok": "LISTO_AUDITORIA",
+      "fecha_publicacion": "2026-11-03",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-03_Luna_Ingresa_Virgo.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Doble Reloj 2D (Apertura zoom Virgo + Cierre Loop Infinito 24h)"
     }
   }
 }

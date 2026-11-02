@@ -44,7 +44,7 @@ def generate_ass(
     video_width:  int = 1080,
     video_height: int = 1920,
     font_size:    int = 52,
-    margin_v:     int = 100,
+    margin_v:     int = 220,
 ) -> str:
     """
     Transcribe el MP3 con Whisper local y genera un .ass con PlayRes correcto.
@@ -112,13 +112,57 @@ def generate_ass(
         f"Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
     )
 
-    # ── Eventos ───────────────────────────────────────────────────────────────
-    eventos = []
+    # Extraer todas las palabras con marcas de tiempo si están disponibles
+    all_words = []
     for seg in segments:
-        t_ini  = _segundos_a_ass(seg["start"])
-        t_fin  = _segundos_a_ass(seg["end"])
-        texto  = seg["text"].strip().replace("\n", " ")
-        eventos.append(f"Dialogue: 0,{t_ini},{t_fin},Default,,0,0,0,,{texto}\n")
+        if "words" in seg and seg["words"]:
+            all_words.extend(seg["words"])
+
+    eventos = []
+    if all_words:
+        # Agrupación cinética (3 a 5 palabras, pausas o signos de puntuación, máx 2.2s por bloque)
+        chunks = []
+        cur_chunk = []
+        cur_start = None
+
+        for w in all_words:
+            raw = w["word"].strip()
+            if not raw:
+                continue
+            if not cur_chunk:
+                cur_start = w["start"]
+            cur_chunk.append(raw)
+
+            dur = w["end"] - cur_start
+            ends_punct = any(raw.endswith(p) for p in [".", ",", "...", "!", "?", ":", ";"])
+            # Romper en 5 palabras, o en 3+ palabras si hay puntuación, o si la duración supera 2.2s
+            if len(cur_chunk) >= 5 or (len(cur_chunk) >= 3 and ends_punct) or dur >= 2.2:
+                chunks.append({
+                    "start": cur_start,
+                    "end": w["end"],
+                    "text": " ".join(cur_chunk)
+                })
+                cur_chunk = []
+
+        if cur_chunk:
+            chunks.append({
+                "start": cur_start,
+                "end": all_words[-1]["end"],
+                "text": " ".join(cur_chunk)
+            })
+
+        for c in chunks:
+            t_ini = _segundos_a_ass(c["start"])
+            t_fin = _segundos_a_ass(c["end"])
+            texto = c["text"].replace("\n", " ")
+            eventos.append(f"Dialogue: 0,{t_ini},{t_fin},Default,,0,0,0,,{texto}\n")
+    else:
+        # Fallback a segmentos clásicos si no hay marcas de palabra
+        for seg in segments:
+            t_ini  = _segundos_a_ass(seg["start"])
+            t_fin  = _segundos_a_ass(seg["end"])
+            texto  = seg["text"].strip().replace("\n", " ")
+            eventos.append(f"Dialogue: 0,{t_ini},{t_fin},Default,,0,0,0,,{texto}\n")
 
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write(ass_header)
@@ -127,9 +171,13 @@ def generate_ass(
     # También escribir .srt de respaldo (para referencia, no lo usa FFmpeg)
     srt_path = mp3_path.replace(".mp3", ".srt")
     with open(srt_path, "w", encoding="utf-8") as f:
-        for i, seg in enumerate(segments, 1):
-            f.write(f"{i}\n{_segundos_a_srt(seg['start'])} --> {_segundos_a_srt(seg['end'])}\n"
-                    f"{seg['text'].strip()}\n\n")
+        for i, ev in enumerate(eventos, 1):
+            # Parsear t_ini y t_fin desde el Dialogue ASS
+            parts = ev.split(",", 9)
+            if len(parts) >= 10:
+                s_txt, e_txt, txt = parts[1], parts[2], parts[9].strip()
+                srt_path_line = f"{i}\n{s_txt.replace('.', ',')} --> {e_txt.replace('.', ',')}\n{txt}\n\n"
+                f.write(srt_path_line)
 
     # Guardar archivo words.json para el diseño sonoro inteligente
     words_data = []

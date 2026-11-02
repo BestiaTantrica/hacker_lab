@@ -166,23 +166,28 @@ Toda interacción de IAs en este proyecto debe respetar la estructura de 3 nivel
      * Identificar la trampa de la susceptibilidad (la urgencia automática por tener la última palabra).
      * Brújula lúcida: no morder el anzuelo, no alimentar una pulseada estéril, registrar el dato en silencio.
 
-3. **Incrustación Obligatoria del Reloj 2D Digital en Toma 3**:
-   - La Toma 3 rige la mecánica celeste y DEBE mostrar el video animado en alta resolución del **Reloj Astrológico 2D** (`reloj.html`), generado con `v2/celula_2/grabar_reloj_2d.py` con la fecha astronómica exacta del día, ruedas en rotación y fondo negro puro.
-   - Prohibido sustituir el Reloj 2D por imágenes estáticas de astrolabios de bronce.
+3. **Incrustación del Doble Reloj 2D en Loop Infinito (Apertura y Cierre)**:
+   - **Toma 1 (Apertura)**: Muestra el Reloj 2D (`reloj.html`) con rotación celestial de la primera mitad del día (00:00 a 12:00, 180°) y un **zoom focal dinámico (2.0x - 2.4x)** centrado en el astro o signo protagonista mencionado en el guion (ej. Luna entrando a Virgo), con la retícula áurea activada (`hoveredItem`).
+   - **Tomas 2, 3 y 4 (Núcleo Narrativo)**: Muestran arte tenebrista de Roberto Ferri, glifos y símbolos de alta densidad conceptual (mecánica psicológica, tensión cósmica y brújula de discernimiento). NO repetir el reloj aquí para no saturar.
+   - **Toma 5 (Cierre / CTA)**: Muestra el Reloj 2D en plano general cósmico (zoom 1.0x) completando la rotación de la segunda mitad del día (12:00 a 24:00/00:00). Al terminar el video en 24:00, el reinicio empalma con el 00:00 de la Toma 1, logrando un **loop circular perfecto y continuo de 360° sin cortes**.
 
 4. **Política Anti-Shadowban Estricta (Cero Dominios)**:
    - Prohibido pronunciar o rotular `.com` o dominios web directos en el guion de voz o subtítulos ASS.
    - Usar exclusivamente llamados a la acción nativos: *"Entrá al link de mi perfil"* o *"Tenés el link en la bio"*.
 
 5. **Títulos Explícitos y Cadena Narrativa (Continuidad de Tránsitos)**:
-   - En el título debe constar siempre la fecha exacta y el aspecto (Ej: `2 de Noviembre | Luna conjunción Marte en Leo: Orgullo en la trinchera`).
+   - En el título debe constar siempre la fecha exacta y el aspecto (Ej: `3 de Noviembre | Luna ingresa a Virgo: Ordenar sin quemarse la cabeza`).
    - Cuando un tránsito se extiende durante varios días, los videos se encadenan narrativamente:
      * **Día 1**: Disparador mental.
      * **Día 2**: Reacción visceral del ego (haciendo puente: *"Ayer la mente escarbaba; hoy la Luna y Marte encienden el orgullo..."*).
-     * **Día 3**: Integración y maestría.
+     * **Día 3**: Integración y maestría práctica (*"Después del fuego de ayer, la Luna entra en Virgo a poner orden..."*).
    - En la descripción y primer comentario fijado se referencia automáticamente el video anterior para maximizar visualizaciones cruzadas.
 
 6. **Prosodia Humana y Respiración (Fin de la Voz Robótica)**:
    - La locución con `es-AR-TomasNeural` se configura con cadencia pausada (`rate="-2%"` a `"-3%"`) y tono barítono (`pitch="-1Hz"` a `"-2Hz"`).
    - La redacción debe incorporar elipsis (`...`) y pausas de coma/punto para permitir micro-respiraciones naturales en el motor neural.
+
+7. **Subtítulos Cinéticos Dinámicos (Estándar Shorts / TikTok)**:
+   - Prohibido acumular párrafos completos en pantalla. `subtitle_generator.py` agrupa las marcas de tiempo de Whisper en bloques de 3 a 5 palabras (máximo 2.2 segundos por bloque o al cerrar puntuación).
+   - Margen vertical de seguridad inferior: `MarginV=220` para flotar con holgura por encima de la barra de descripción y botones de TikTok/Reels sin tapar el arte visual.
 
