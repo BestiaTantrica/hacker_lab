@@ -200,12 +200,12 @@ async def registrar_publicacion_manual(request: Request):
             "youtube_video_id": existente.get("youtube_video_id"),
             "youtube_url": youtube_url or existente.get("youtube_url"),
             "tiktok_url": tiktok_url or existente.get("tiktok_url"),
-            "estado_youtube": "PUBLICADO" if youtube_url else existente.get("estado_youtube", "MANUAL"),
-            "estado_tiktok": "PUBLICADO" if tiktok_url else existente.get("estado_tiktok", "MANUAL"),
+            "estado_youtube": data.get("estado_youtube") or ("PUBLICADO" if youtube_url else existente.get("estado_youtube", "PUBLICADO")),
+            "estado_tiktok": data.get("estado_tiktok") or ("PUBLICADO" if tiktok_url else existente.get("estado_tiktok", "PROGRAMADO")),
             "fecha_publicacion": fecha,
             "video_generado": True,
             "path_video": existente.get("path_video"),
-            "estado_render": "MANUAL",
+            "estado_render": existente.get("estado_render", "MANUAL"),
             "origen": "REGISTRO_MANUAL_ADMIN"
         }
         
@@ -216,13 +216,50 @@ async def registrar_publicacion_manual(request: Request):
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
+@app.post("/api/admin/actualizar-estado-redes")
+async def actualizar_estado_redes(request: Request):
+    """Actualización rápida de estado (PUBLICADO/PROGRAMADO/PENDIENTE) desde el radar."""
+    try:
+        data = await request.json()
+        fecha = data.get("fecha", "").strip()
+        if not fecha:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "La fecha es requerida"})
+            
+        reg_path = os.path.join(PROJECT_DIR, "produccion", "registro_publicaciones.json")
+        if not os.path.exists(reg_path):
+            return JSONResponse(status_code=404, content={"status": "error", "message": "Registro no encontrado"})
+            
+        with open(reg_path, "r", encoding="utf-8") as f:
+            reg_data = json.load(f)
+            
+        pubs = reg_data.setdefault("publicaciones", {})
+        pub = pubs.get(fecha)
+        if not pub:
+            return JSONResponse(status_code=404, content={"status": "error", "message": f"Evento de fecha {fecha} no encontrado"})
+            
+        if "estado_tiktok" in data:
+            pub["estado_tiktok"] = data["estado_tiktok"]
+        if "tiktok_url" in data and data["tiktok_url"]:
+            pub["tiktok_url"] = data["tiktok_url"]
+        if "estado_youtube" in data:
+            pub["estado_youtube"] = data["estado_youtube"]
+        if "youtube_url" in data and data["youtube_url"]:
+            pub["youtube_url"] = data["youtube_url"]
+            
+        with open(reg_path, "w", encoding="utf-8") as f:
+            json.dump(reg_data, f, indent=2, ensure_ascii=False)
+            
+        return JSONResponse({"status": "success", "message": f"Estado de {fecha} actualizado a TikTok: {pub.get('estado_tiktok')}"})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
 @app.post("/api/admin/generate-reply")
 async def generate_admin_reply(request: Request):
     try:
         data = await request.json()
         comment = data.get("comment", "").strip()
         platform = data.get("platform", "tiktok").lower()
-        transit_info = data.get("transit", "Mercurio Retrógrado en Escorpio en cuadratura a Marte en Leo / Luna en Leo oposición Plutón en Acuario")
+        transit_info = data.get("transit", "Luna en Virgo inconjunción Neptuno / Luna en Leo conjunción Marte")
 
         if not comment:
             return JSONResponse(status_code=400, content={"status": "error", "message": "El comentario no puede estar vacío"})
@@ -261,7 +298,8 @@ Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
 
         replies = None
         if gemini_client:
-            for model_candidate in ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']:
+            # Priorizamos gemini-3.5-flash-lite que responde al instante y sin spikes de demanda 503
+            for model_candidate in ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite']:
                 try:
                     response = gemini_client.models.generate_content(
                         model=model_candidate,
@@ -283,7 +321,6 @@ Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
                     continue
 
         if not replies or not isinstance(replies, dict):
-            # Fallback inteligente con el ADN de Tomás
             replies = {
                 "directa": f"¡Esa configuración no come vidrio! ⚡ Tensión pura para mover fichas grandes. Entrá al link de mi perfil y poné tus datos en el reloj: te canta al grado exacto dónde te pega y cómo usarlo a tu favor.",
                 "pedagogica": f"Tremendo mapa. Cuando esos planetas tocan esas casas, el choque te obliga a hacer consciente lo que venías barriendo bajo la alfombra. En el link de mi bio tenés el reloj interactivo para ver en vivo los orbes exactos de tu tránsito.",
@@ -291,6 +328,80 @@ Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
             }
 
         return JSONResponse(content={"status": "success", "replies": replies})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.post("/api/admin/generate-pinned-comment")
+async def generate_admin_pinned_comment(request: Request):
+    """Generador de Comentarios Fijados (Pinned Comments) de alta conversión y debate."""
+    try:
+        data = await request.json()
+        platform = data.get("platform", "tiktok").lower()
+        fecha = data.get("fecha", "3 de Noviembre").strip()
+        transit = data.get("transit", "Luna entra en Virgo en inconjunción con Neptuno: ordenar sin quemarse la cabeza").strip()
+
+        prompt = f"""
+Actúa como Tomás, astrólogo y creador de 'Portal Tarot Místico'.
+Tus datos natales: Sol y Mercurio en Aries a 22°, Ascendente Acuario a 22°, Luna en Sagitario a 5°.
+Tono: Auténtico argentino (voseo: 'mirá', 'contame', 'fijate'), directo, eléctrico, provocador pero clínico y lúcido.
+Misión: Redactar el PRIMER COMENTARIO FIJADO (Pinned Comment) para el video del día: {fecha} ({transit}).
+
+REGLAS DE ORO:
+1. En TikTok: NUNCA pongas URLs crudas ('portaltarotmistico.com'). TikTok oculta el comentario. Usa siempre 'en el link de mi perfil' o 'en mi bio'.
+2. En YouTube: Puedes sugerir 'en el link de mi perfil o web portaltarotmistico.com'.
+3. El comentario fijado debe ser el motor de engagement: debe invitar a la gente a comentar en qué casa o grado tienen el tránsito, y dirigir a la herramienta gratuita del 'Reloj Astrológico en vivo' de la bio para que chequeen su grado exacto.
+
+Genera 3 opciones de comentario fijado:
+1. 'conversion': Breve, punzante, gancho directo al reloj en bio para ver grados y casas exactas.
+2. 'comunidad': Pregunta provocadora que obliga a comentar ('¿En qué casa te cae? Dejámelo acá abajo que leo los más picantes...') y link en bio.
+3. 'alquimica': Brújula o advertencia del día sintetizada en 2 frases potentes + invitación a revisar su mapa en el link del perfil.
+
+Responde ÚNICAMENTE en JSON con la siguiente estructura:
+{{
+  "conversion": "texto...",
+  "comunidad": "texto...",
+  "alquimica": "texto..."
+}}
+"""
+        pinned = None
+        if gemini_client:
+            for model_candidate in ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite']:
+                try:
+                    response = gemini_client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt,
+                    )
+                    text = response.text.strip()
+                    if text.startswith("```json"):
+                        text = text[7:]
+                    if text.startswith("```"):
+                        text = text[3:]
+                    if text.endswith("```"):
+                        text = text[:-3]
+                    text = text.strip()
+                    pinned = json.loads(text)
+                    if isinstance(pinned, dict) and "conversion" in pinned:
+                        break
+                except Exception as e_gen:
+                    print(f"Error generando pinned comment con {model_candidate}: {e_gen}")
+                    continue
+
+        if not pinned or not isinstance(pinned, dict):
+            pinned = {
+                "conversion": f"🌌 ¿En qué casa te cae este tránsito? No adivines: en el link de mi perfil tenés el reloj astrológico gratuito en vivo para ver al grado exacto qué área de tu vida se está moviendo. ✨",
+                "comunidad": f"👇 Contame acá abajo: ¿En qué signo tenés la Luna o en qué casa te cae este aspecto? Voy a estar leyendo y respondiendo las configuraciones más intensas. Para chequear tus grados exactos, entrá al link de mi perfil 🔗",
+                "alquimica": f"⚡ La clave de hoy no es pelear contra la marea ni querer resolver todo ya: es discernir lo urgente de lo importante. Fijate en el reloj interactivo de mi bio qué planetas te activa para no chocar con la pared."
+            }
+
+        return JSONResponse(content={
+            "status": "success", 
+            "pinned": pinned,
+            "pinned_comments": {
+                "conversion": pinned.get("conversion", ""),
+                "community": pinned.get("comunidad", pinned.get("community", "")),
+                "alchemical": pinned.get("alquimica", pinned.get("alchemical", ""))
+            }
+        })
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 

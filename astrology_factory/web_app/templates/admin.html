@@ -109,6 +109,46 @@
             background: rgba(121, 40, 202, 0.35);
         }
 
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .tab-btn.active {
+            color: var(--cyan-accent);
+            background: rgba(0, 242, 254, 0.12);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-micro {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            font-size: 0.68rem;
+            font-weight: 500;
+            padding: 3px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: all 0.15s ease;
+        }
+        .btn-micro:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #34d399;
+        }
+
         /* KPI Grid */
         .kpi-grid {
             display: grid;
@@ -510,16 +550,35 @@
                         </div>
                         <div>
                             <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Título del Video / Tránsito</label>
-                            <input type="text" id="manualTitulo" placeholder="Ej: Luna en Leo y Cuadratura Mercurio-Marte" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
+                            <input type="text" id="manualTitulo" placeholder="Ej: Luna ingresa en Virgo" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Estado TikTok</label>
+                            <select id="manualEstadoTikTok" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
+                                <option value="PROGRAMADO">⏰ PROGRAMADO</option>
+                                <option value="PUBLICADO">✅ PUBLICADO</option>
+                                <option value="BORRADOR_INBOX">📥 BORRADOR_INBOX</option>
+                                <option value="PENDIENTE">⏳ PENDIENTE</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Estado YouTube</label>
+                            <select id="manualEstadoYouTube" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
+                                <option value="PROGRAMADO">⏰ PROGRAMADO</option>
+                                <option value="PUBLICADO">✅ PUBLICADO</option>
+                                <option value="PENDIENTE">⏳ PENDIENTE</option>
+                            </select>
                         </div>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">URL de TikTok</label>
+                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">URL de TikTok (Opcional)</label>
                             <input type="url" id="manualTikTok" placeholder="https://www.tiktok.com/@..." style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">URL de YouTube Shorts</label>
+                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">URL de YouTube Shorts (Opcional)</label>
                             <input type="url" id="manualYouTube" placeholder="https://www.youtube.com/shorts/..." style="width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 4px; color: #fff;">
                         </div>
                     </div>
@@ -547,6 +606,7 @@
                                     <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ pub.evento_id }}</div>
                                 </td>
                                 <td>
+                                    <div id="badge-yt-{{ fecha }}">
                                     {% if pub.estado_youtube == 'PUBLICADO' %}
                                         <span class="badge-tag badge-published">PUBLICADO</span>
                                         {% if pub.youtube_video_id %}
@@ -560,16 +620,31 @@
                                     {% else %}
                                         <span class="badge-tag badge-draft">{{ pub.estado_youtube or 'PENDIENTE' }}</span>
                                     {% endif %}
+                                    </div>
+                                    <div style="margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;">
+                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'youtube', 'PUBLICADO')">✅ Publicado</button>
+                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'youtube', 'PROGRAMADO')">⏰ Programado</button>
+                                    </div>
                                 </td>
                                 <td>
+                                    <div id="badge-tt-{{ fecha }}">
                                     {% if pub.estado_tiktok == 'PUBLICADO' %}
                                         <span class="badge-tag badge-published">PUBLICADO</span>
-                                        <br><a href="{{ pub.tiktok_url }}" target="_blank" class="link-media">Ver Canal ↗</a>
+                                        {% if pub.tiktok_url %}
+                                            <br><a href="{{ pub.tiktok_url }}" target="_blank" class="link-media">Ver Canal ↗</a>
+                                        {% endif %}
+                                    {% elif pub.estado_tiktok == 'PROGRAMADO' %}
+                                        <span class="badge-tag badge-scheduled">PROGRAMADO</span>
                                     {% elif pub.estado_tiktok == 'BORRADOR_INBOX' %}
                                         <span class="badge-tag badge-scheduled">EN INBOX</span>
                                     {% else %}
                                         <span class="badge-tag badge-draft">{{ pub.estado_tiktok or 'PENDIENTE' }}</span>
                                     {% endif %}
+                                    </div>
+                                    <div style="margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;">
+                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'tiktok', 'PUBLICADO')">✅ Publicado</button>
+                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'tiktok', 'PROGRAMADO')">⏰ Programado</button>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -578,13 +653,26 @@
                 </div>
             </div>
 
-            <!-- Right: Interactive Comment Reply Generator (ADN Tomás) -->
+            <!-- Right: Interactive Creative Assistant (ADN Tomás) -->
             <div class="panel-box">
-                <div class="panel-header">
-                    <h2 class="panel-title">⚡ Asistente de Respuestas (ADN Tomás)</h2>
-                    <span style="font-size: 0.75rem; color: var(--cyan-accent); font-weight: 600;">IA en Vivo</span>
+                <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <h2 class="panel-title">⚡ Asistente Creativo (ADN Tomás)</h2>
+                        <span style="font-size: 0.75rem; color: var(--cyan-accent); font-weight: 600;">IA en Vivo</span>
+                    </div>
+                    <!-- Tab Selector -->
+                    <div style="display: flex; gap: 8px; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+                        <button type="button" id="tabRepliesBtn" class="tab-btn active" onclick="switchAITab('replies')">
+                            💬 Respuestas a Seguidores
+                        </button>
+                        <button type="button" id="tabPinnedBtn" class="tab-btn" onclick="switchAITab('pinned')">
+                            📌 Primer Comentario Fijado
+                        </button>
+                    </div>
                 </div>
-                <div class="helper-box">
+
+                <!-- SECTION 1: RESPUESTAS A SEGUIDORES -->
+                <div id="repliesSection" class="helper-box">
                     <div class="interactive-form">
                         <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">
                             Pegá el comentario del seguidor:
@@ -646,6 +734,68 @@
                         <p style="color: #fbbf24; font-size: 0.78rem; margin: 0; line-height: 1.4;">
                             <b>Jamás escribas "http://" ni enlaces crudos en comentarios de TikTok</b>. TikTok oculta los comentarios con links externos. Usá siempre <b>"en el link de mi perfil"</b> o <b>"link en bio"</b>.
                         </p>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: COMENTARIO FIJADO (PINNED COMMENT) -->
+                <div id="pinnedSection" class="helper-box" style="display: none;">
+                    <div class="interactive-form">
+                        <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">
+                            Generar Primer Comentario para Fijar (Pin):
+                        </label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Fecha del Video:</label>
+                                <input type="date" id="pinnedFecha" style="width: 100%; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.82rem;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Red Social:</label>
+                                <select id="pinnedPlatform" class="platform-select" style="width: 100%; padding: 6px 8px;">
+                                    <option value="tiktok">TikTok (Link en bio)</option>
+                                    <option value="youtube">YouTube (Link con URL)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Tránsito / Tema (Opcional):</label>
+                            <input type="text" id="pinnedTransit" placeholder="Ej: Luna ingresa en Virgo / Oposición Saturno" style="width: 100%; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.82rem;">
+                        </div>
+                        <button id="btnGeneratePinned" class="btn-generate" onclick="generatePinnedComment()" style="margin-top: 4px;">
+                            <span>📌 Generar Comentarios Fijados</span>
+                        </button>
+                    </div>
+
+                    <!-- Loader Pinned -->
+                    <div id="pinnedLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.85rem;">
+                        <span class="spinner" style="margin-right: 8px; vertical-align: middle;"></span>
+                        <span>Redactando ganchos de alta conversión y retención...</span>
+                    </div>
+
+                    <!-- Dynamic Pinned Cards -->
+                    <div id="pinnedContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>🎯 Opción Conversión (Foco en probar el Reloj)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'pinnedConversion')">Copiar</button>
+                            </div>
+                            <textarea id="pinnedConversion" class="reply-editable-box">🔮 ¿En qué casa tenés este tránsito? Entrá al link de mi perfil y poné tu fecha: el reloj astral interactivo te muestra en qué área de tu vida se activa exactamente esta energía.</textarea>
+                        </div>
+
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>🔥 Opción Comunidad (Debate & Engagement)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'pinnedCommunity')">Copiar</button>
+                            </div>
+                            <textarea id="pinnedCommunity" class="reply-editable-box">Dejame en los comentarios tu Signo Solar y Ascendente 👇 Te leo y te digo cómo canalizar este aspecto antes de que termine el día.</textarea>
+                        </div>
+
+                        <div class="quick-reply-card">
+                            <div class="quick-reply-title">
+                                <span>⚡ Opción Alquímica (Impacto & Advertencia)</span>
+                                <button class="copy-btn" onclick="copyReply(this, 'pinnedAlchemical')">Copiar</button>
+                            </div>
+                            <textarea id="pinnedAlchemical" class="reply-editable-box">No te resistas a lo que este tránsito viene a ordenar. El mapa no falla, fallamos cuando operamos en piloto automático. Fijate en el link de mi perfil cómo está tu carta hoy.</textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -760,9 +910,105 @@
             }
         }
 
+        function switchAITab(tab) {
+            const repliesBtn = document.getElementById('tabRepliesBtn');
+            const pinnedBtn = document.getElementById('tabPinnedBtn');
+            const repliesSection = document.getElementById('repliesSection');
+            const pinnedSection = document.getElementById('pinnedSection');
+
+            if (tab === 'replies') {
+                repliesBtn.classList.add('active');
+                pinnedBtn.classList.remove('active');
+                repliesSection.style.display = 'flex';
+                pinnedSection.style.display = 'none';
+            } else {
+                pinnedBtn.classList.add('active');
+                repliesBtn.classList.remove('active');
+                pinnedSection.style.display = 'flex';
+                repliesSection.style.display = 'none';
+
+                if (!document.getElementById('pinnedFecha').value) {
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('pinnedFecha').value = today;
+                }
+            }
+        }
+
+        async function actualizarEstadoDirecto(fecha, campo, estado) {
+            if (!confirm(`¿Actualizar estado de ${campo.toUpperCase()} para el ${fecha} a "${estado}"?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/actualizar-estado-redes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fecha: fecha,
+                        campo: campo,
+                        estado: estado
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const badgeId = campo === 'tiktok' ? `badge-tt-${fecha}` : `badge-yt-${fecha}`;
+                    const container = document.getElementById(badgeId);
+                    if (container) {
+                        const badgeClass = estado === 'PUBLICADO' ? 'badge-published' : (estado === 'PROGRAMADO' ? 'badge-scheduled' : 'badge-draft');
+                        container.innerHTML = `<span class="badge-tag ${badgeClass}">${estado}</span>`;
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al actualizar el estado directo.');
+            }
+        }
+
+        async function generatePinnedComment() {
+            const fecha = document.getElementById('pinnedFecha').value;
+            const platform = document.getElementById('pinnedPlatform').value;
+            const transito = document.getElementById('pinnedTransit').value.trim();
+            const btn = document.getElementById('btnGeneratePinned');
+            const loader = document.getElementById('pinnedLoader');
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/admin/generate-pinned-comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fecha: fecha,
+                        platform: platform,
+                        transito: transito
+                    })
+                });
+                const data = await res.json();
+                const p = data.pinned || data.pinned_comments;
+                if (data.status === 'success' && p) {
+                    if (p.conversion) document.getElementById('pinnedConversion').value = p.conversion;
+                    if (p.community || p.comunidad) document.getElementById('pinnedCommunity').value = p.community || p.comunidad;
+                    if (p.alchemical || p.alquimica) document.getElementById('pinnedAlchemical').value = p.alchemical || p.alquimica;
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudieron generar los comentarios fijados'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Ocurrió un error al generar el comentario fijado.');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
         async function guardarRegistroManual() {
             const fecha = document.getElementById('manualFecha').value;
             const titulo = document.getElementById('manualTitulo').value;
+            const estado_tiktok = document.getElementById('manualEstadoTikTok') ? document.getElementById('manualEstadoTikTok').value : null;
+            const estado_youtube = document.getElementById('manualEstadoYouTube') ? document.getElementById('manualEstadoYouTube').value : null;
             const tiktok = document.getElementById('manualTikTok').value;
             const youtube = document.getElementById('manualYouTube').value;
             const btn = document.getElementById('btnGuardarManual');
@@ -783,7 +1029,9 @@
                         fecha: fecha,
                         titulo: titulo,
                         tiktok_url: tiktok,
-                        youtube_url: youtube
+                        youtube_url: youtube,
+                        estado_tiktok: estado_tiktok,
+                        estado_youtube: estado_youtube
                     })
                 });
                 const data = await res.json();
