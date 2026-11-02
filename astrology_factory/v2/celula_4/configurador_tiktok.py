@@ -16,8 +16,8 @@ from dotenv import load_dotenv
 FACTORY_ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(FACTORY_ROOT / ".env")
 
-CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "awmsg6oie1tr1sf3")
-CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "tXdG40y22ZtzGJs2Q3IFJpXlPb1iktCC")
+CLIENT_KEY = os.environ.get("TIKTOK_CLIENT_KEY", "")
+CLIENT_SECRET = os.environ.get("TIKTOK_CLIENT_SECRET", "")
 REDIRECT_URI = os.environ.get("TIKTOK_REDIRECT_URI", "https://www.portaltarotmistico.com/oauth/")
 
 TOKEN_FILE = Path(__file__).parent / "tiktok_token.json"

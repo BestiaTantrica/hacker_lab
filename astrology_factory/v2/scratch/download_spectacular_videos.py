@@ -1,8 +1,9 @@
 import os, requests, urllib.parse
 from pathlib import Path
 import random
-
-PEXELS_API_KEY = "7K2mt0pIWQ3Ic5hBDhqHC2QCaxrhAIIrdN8UEGxbtHiztwJxsBf20zG3"
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
 queries = [
     "space nebula animation",
     "galaxy zoom fly",

@@ -58,6 +58,9 @@ frame*.jpg
 
 # Targets y datos sensibles (OPSEC)
 auth_*.txt
+*cookies*.txt
+*token*.json
+client_secret*.json
 targets_*.txt
 targets_*.csv
 empresas_*.txt

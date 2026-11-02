@@ -27,4 +27,6 @@ historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
 *.onnx
 astrology_engine/ephe/
 *cookies*.txt
+*token*.json
 token.json
+client_secret*.json
