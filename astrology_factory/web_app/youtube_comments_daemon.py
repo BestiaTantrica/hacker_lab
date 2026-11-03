@@ -153,7 +153,7 @@ def get_youtube_client():
         print(f"⚠️ [YouTube Client] Error al cargar credenciales: {e}")
         return None
 
-def generar_respuesta_ia(autor, texto_comentario, contexto_video="", historial_hilo=None, num_intervenciones_tomas=0):
+def generar_respuesta_ia(autor, texto_comentario, contexto_video="", cadena_temporal="", historial_hilo=None, num_intervenciones_tomas=0):
     """
     Genera la respuesta con la psique canónica de Tomás.
     Inteligencia Multi-Turno & Anti-Loro:
@@ -161,6 +161,7 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video="", historial_h
     - Límite de intervenciones (máximo 2 por hilo para actuar como humano y no saturar).
     - Regla Anti-Loro: Prohibido repetir enlaces en turnos secundarios.
     - Silencio Inteligente: No interrumpe discusiones orgánicas entre terceros.
+    - Conciencia de Cadena Temporal: Conecta el video actual con ayer y mañana.
     """
     if num_intervenciones_tomas >= 2:
         return "", "THREAD_SATURATED", False
@@ -187,6 +188,9 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video="", historial_h
         "- Lente Cognitiva (Acuario 22°): Tratas a la gente como mentes pensantes. No te ofendés por nada. Ves la crítica o el odio como un síntoma psicológico predecible o pereza cognitiva.\n"
         "- Asertividad y Filo (Aries 22°): Directo al hueso, tajante, sin vueltas ni diplomacia falsa. No pides permiso para decir la verdad.\n"
         "- Filosofía e Ironía Lúcida (Sagitario 5°): Voseo rioplatense sobrio y elegante ('mirá', 'fijate', 'te cuento'). Humor sutil, cero solemnidad.\n\n"
+        "CONCIENCIA DE CADENA TEMPORAL (AYER ↔ HOY ↔ MAÑANA):\n"
+        "- Tomás comprende que los tránsitos astrológicos son procesos continuos, no islas aisladas.\n"
+        "- Si el comentario lo amerita, podés conectar el sentir del usuario con el tránsito de ayer o alertarlo con filo sobre lo que se activa mañana, incentivándolo a revisar el video anterior o a esperar el próximo.\n\n"
         "REGLAS DE INTERVENCIÓN NATURAL HUMANA:\n"
         "1. NO INTERRUMPIR DEBATES ENTRE TERCEROS: Si dos o más usuarios están debatiendo entre ellos y ninguno te pregunta nada a vos ni menciona tu nombre, marcá 'debe_responder': false. Dejá que la comunidad debata orgánicamente.\n"
         "2. NUNCA PARECER UN BOT O LORO: Variá el vocabulario. Si el usuario te responde a una pregunta previa, dialogá con lo que dijo en lugar de repetir un speech prearmado.\n"
@@ -212,10 +216,12 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video="", historial_h
         "}"
     )
 
+    cadena_str = f"\nCADENA TEMPORAL DE TRÁNSITOS DEL CANAL:\n{cadena_temporal}\n" if cadena_temporal else ""
     prompt = (
         f"Comentario nuevo recibido de: @{autor}\n"
         f"Texto del comentario: \"{texto_comentario}\"\n"
-        f"Contexto del video: {contexto_video}\n"
+        f"Contexto del video actual: {contexto_video}\n"
+        f"{cadena_str}"
         f"{contexto_hilo_str}\n"
         f"Número de intervenciones previas de Tomás en este hilo: {num_intervenciones_tomas}\n\n"
         f"Analizá el hilo y generá la respuesta de Tomás siguiendo las directrices."
@@ -259,6 +265,7 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         print("⚠️ [Daemon] No se pudo inicializar el cliente de YouTube. Verificando...")
         return
 
+    CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID", "UCaSKtvaO4kGR9yVUIQEknaA")
     print(f"[{datetime.now()}] 🔍 Buscando nuevos comentarios en YouTube...")
     try:
         if video_id:
@@ -271,7 +278,7 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         else:
             req = youtube.commentThreads().list(
                 part="snippet",
-                allThreadsRelatedToChannelId=os.getenv("YOUTUBE_CHANNEL_ID", ""),
+                allThreadsRelatedToChannelId=CHANNEL_ID,
                 maxResults=max_results,
                 order="time"
             )
@@ -288,7 +295,6 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
             print("ℹ️ Reintentando búsqueda con video específico del contexto...")
             adn_file = PROJECT_ROOT / "contexto_astrologico.json"
             if adn_file.exists():
-                # Video del 29 oct: yTI2hIFoyT8
                 return procesar_comentarios(video_id="yTI2hIFoyT8", max_results=max_results, modo_simulacion=modo_simulacion)
         print(f"❌ Error al consultar comentarios de YouTube: {http_err}")
         return
@@ -306,12 +312,47 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         autor = snippet.get("authorDisplayName", "Usuario")
         texto = snippet.get("textOriginal", "")
         v_id = snippet.get("videoId", video_id or "desconocido")
+        author_channel_id = snippet.get("authorChannelId", {}).get("value")
 
+        # Regla 1: No procesar si ya fue respondido o no tiene ID
         if not c_id or ya_fue_respondido(c_id):
             continue
 
+        # Regla 2: Ignorar comentarios propios del canal (comentarios fijados de Tomás, etc.)
+        if author_channel_id == CHANNEL_ID or autor.lower() in ["@portaltarotmistico", "portaltarotmistico"]:
+            continue
+
+        # Obtener título, contexto y cadena temporal del video
+        contexto_video = f"Video ID: {v_id}"
+        cadena_temporal = ""
+        try:
+            reg_path = PROJECT_ROOT / "produccion" / "registro_publicaciones.json"
+            if reg_path.exists():
+                with open(reg_path, "r", encoding="utf-8") as rf:
+                    reg_data = json.load(rf)
+                pubs = reg_data.get("publicaciones", {})
+                fechas = sorted(pubs.keys())
+                for idx, f_key in enumerate(fechas):
+                    pub = pubs[f_key]
+                    if pub.get("youtube_video_id") == v_id:
+                        contexto_video = f"Video de fecha {f_key}: '{pub.get('titulo')}'"
+                        partes = []
+                        if idx > 0:
+                            f_prev = fechas[idx - 1]
+                            partes.append(f"- AYER ({f_prev}): '{pubs[f_prev].get('titulo')}'")
+                        partes.append(f"- HOY ({f_key} - ESTE VIDEO): '{pub.get('titulo')}'")
+                        if idx < len(fechas) - 1:
+                            f_next = fechas[idx + 1]
+                            partes.append(f"- MAÑANA ({f_next}): '{pubs[f_next].get('titulo')}'")
+                        cadena_temporal = "\n".join(partes)
+                        break
+        except Exception:
+            pass
+
         print(f"\n💬 Procesando comentario de @{autor}: \"{texto[:60]}...\"")
-        respuesta, categoria, debe_responder = generar_respuesta_ia(autor, texto, contexto_video=f"Video ID: {v_id}")
+        respuesta, categoria, debe_responder = generar_respuesta_ia(
+            autor, texto, contexto_video=contexto_video, cadena_temporal=cadena_temporal
+        )
 
         if not debe_responder or categoria == "SPAM" or not respuesta:
             print(f"⏩ Comentario ignorado (Categoría: {categoria})")
@@ -349,17 +390,18 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         except Exception as e:
             print(f"❌ Error al publicar: {e}")
 
-def run_daemon(interval_seconds=300):
+def run_daemon(interval_seconds=60, video_id=None):
     """Bucle infinito del demonio 24/7."""
     print("=" * 60)
     print("🤖 INICIANDO DAEMON DE COMENTARIOS DE YOUTUBE 24/7")
     print(f"⏱️ Intervalo de escaneo: {interval_seconds} segundos")
+    print(f"🎯 Modo: {'Canal completo (todos los videos)' if not video_id else f'Video específico: {video_id}'}")
     print("🎯 Persona Tomás: Aries 22° / Acuario 22° / Sagitario 5°")
     print("=" * 60)
 
     while True:
         try:
-            procesar_comentarios(video_id="yTI2hIFoyT8")
+            procesar_comentarios(video_id=video_id)
         except Exception as e:
             print(f"⚠️ Error en ciclo del demonio: {e}")
         time.sleep(interval_seconds)
@@ -368,11 +410,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YouTube Comments Responder Daemon")
     parser.add_argument("--once", action="store_true", help="Ejecutar una sola vez y salir")
     parser.add_argument("--simular", action="store_true", help="Modo simulación sin escribir en YouTube")
-    parser.add_argument("--video", type=str, default="yTI2hIFoyT8", help="ID del video a monitorear")
-    parser.add_argument("--intervalo", type=int, default=300, help="Segundos entre escaneos en modo daemon")
+    parser.add_argument("--video", type=str, default=None, help="ID de un video específico (por defecto: monitorea todo el canal)")
+    parser.add_argument("--intervalo", type=int, default=60, help="Segundos entre escaneos en modo daemon (default: 60)")
     args = parser.parse_args()
 
     if args.once:
         procesar_comentarios(video_id=args.video, modo_simulacion=args.simular)
     else:
-        run_daemon(interval_seconds=args.intervalo)
+        run_daemon(interval_seconds=args.intervalo, video_id=args.video)

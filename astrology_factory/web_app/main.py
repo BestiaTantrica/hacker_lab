@@ -158,7 +158,7 @@ async def read_admin(request: Request):
     except Exception:
         pass
 
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         request=request,
         name="admin.html",
         context={
@@ -172,6 +172,11 @@ async def read_admin(request: Request):
             "telegram_bot_active": telegram_bot_active,
         }
     )
+    # Anti-caché estricto para evitar discrepancias Celular ↔ PC
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.post("/api/admin/registrar-manual")
 async def registrar_publicacion_manual(request: Request):
@@ -218,10 +223,13 @@ async def registrar_publicacion_manual(request: Request):
 
 @app.post("/api/admin/actualizar-estado-redes")
 async def actualizar_estado_redes(request: Request):
-    """Actualización rápida de estado (PUBLICADO/PROGRAMADO/PENDIENTE) desde el radar."""
+    """Actualización rápida de estado (PUBLICADO/PROGRAMADO/PENDIENTE) desde el radar (1-Click Toggle)."""
     try:
         data = await request.json()
         fecha = data.get("fecha", "").strip()
+        campo = data.get("campo", "").strip().lower()
+        estado = data.get("estado", "").strip()
+        
         if not fecha:
             return JSONResponse(status_code=400, content={"status": "error", "message": "La fecha es requerida"})
             
@@ -237,6 +245,13 @@ async def actualizar_estado_redes(request: Request):
         if not pub:
             return JSONResponse(status_code=404, content={"status": "error", "message": f"Evento de fecha {fecha} no encontrado"})
             
+        # Actualización por campo directo (Toggle 1-Click)
+        if campo == "youtube" and estado:
+            pub["estado_youtube"] = estado
+        elif campo == "tiktok" and estado:
+            pub["estado_tiktok"] = estado
+            
+        # Soporte para payload directo
         if "estado_tiktok" in data:
             pub["estado_tiktok"] = data["estado_tiktok"]
         if "tiktok_url" in data and data["tiktok_url"]:
@@ -249,7 +264,54 @@ async def actualizar_estado_redes(request: Request):
         with open(reg_path, "w", encoding="utf-8") as f:
             json.dump(reg_data, f, indent=2, ensure_ascii=False)
             
-        return JSONResponse({"status": "success", "message": f"Estado de {fecha} actualizado a TikTok: {pub.get('estado_tiktok')}"})
+        return JSONResponse({
+            "status": "success", 
+            "message": f"Estado de {fecha} actualizado en {campo.upper() or 'redes'}",
+            "estado_youtube": pub.get("estado_youtube"),
+            "estado_tiktok": pub.get("estado_tiktok")
+        })
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.get("/api/admin/astronomia-fecha")
+async def obtener_astronomia_fecha(fecha: str):
+    """Calcula datos astronómicos exactos de Swiss Ephemeris y cadena temporal para una fecha YYYY-MM-DD."""
+    try:
+        from datetime import datetime
+        dt = datetime.strptime(fecha, "%Y-%m-%d")
+        
+        # 1. Calcular con Swiss Ephemeris
+        from astrology_engine.clima_astral_engine import obtener_resumen_cielo_hoy
+        cielo = obtener_resumen_cielo_hoy(dt)
+        
+        # 2. Buscar en registro de publicaciones para la cadena temporal
+        reg_path = os.path.join(PROJECT_DIR, "produccion", "registro_publicaciones.json")
+        titulo_hoy = ""
+        cadena_ayer = ""
+        cadena_manana = ""
+        if os.path.exists(reg_path):
+            with open(reg_path, "r", encoding="utf-8") as rf:
+                reg = json.load(rf)
+            pubs = reg.get("publicaciones", {})
+            fechas = sorted(pubs.keys())
+            if fecha in pubs:
+                titulo_hoy = pubs[fecha].get("titulo", "")
+                idx = fechas.index(fecha)
+                if idx > 0:
+                    f_prev = fechas[idx - 1]
+                    cadena_ayer = f"{f_prev}: {pubs[f_prev].get('titulo', '')}"
+                if idx < len(fechas) - 1:
+                    f_next = fechas[idx + 1]
+                    cadena_manana = f"{f_next}: {pubs[f_next].get('titulo', '')}"
+                    
+        return JSONResponse({
+            "status": "success",
+            "fecha": fecha,
+            "titulo": titulo_hoy,
+            "resumen_astronomico": cielo,
+            "cadena_ayer": cadena_ayer,
+            "cadena_manana": cadena_manana
+        })
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -260,6 +322,8 @@ async def generate_admin_reply(request: Request):
         comment = data.get("comment", "").strip()
         platform = data.get("platform", "tiktok").lower()
         transit_info = data.get("transit", "Luna en Virgo inconjunción Neptuno / Luna en Leo conjunción Marte")
+        cadena_temporal = data.get("cadena", "")
+        cadena_str = f"\nCADENA TEMPORAL (AYER ↔ HOY ↔ MAÑANA):\n{cadena_temporal}\n" if cadena_temporal else ""
 
         if not comment:
             return JSONResponse(status_code=400, content={"status": "error", "message": "El comentario no puede estar vacío"})
@@ -282,6 +346,7 @@ COMENTARIO DEL SEGUIDOR EN {platform.upper()}:
 
 CONTEXTO ASTRAL ACTUAL:
 {transit_info}
+{cadena_str}
 
 Genera 3 opciones de respuesta breves (máximo 2 a 3 oraciones cada una), personalizadas según lo que mencionó el seguidor (planetas, signos, casas):
 1. 'directa': Punzante, rápida, al hueso (estilo Aries). Despierta curiosidad y manda al link en bio.

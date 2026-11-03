@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Centro de Control Astral — Portal Tarot Místico</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -234,6 +237,41 @@
         .dot-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .dot-yellow { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
         .dot-red { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+        /* 1-Click Toggle Status Button */
+        .btn-toggle-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            width: fit-content;
+        }
+        .status-published {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+        .status-published:hover {
+            background: rgba(16, 185, 129, 0.28);
+            transform: translateY(-1px);
+        }
+        .status-scheduled {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+        .status-scheduled:hover {
+            background: rgba(245, 158, 11, 0.28);
+            transform: translateY(-1px);
+        }
 
         /* Content Sections */
         .grid-2 {
@@ -606,44 +644,33 @@
                                     <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ pub.evento_id }}</div>
                                 </td>
                                 <td>
-                                    <div id="badge-yt-{{ fecha }}">
-                                    {% if pub.estado_youtube == 'PUBLICADO' %}
-                                        <span class="badge-tag badge-published">PUBLICADO</span>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <button type="button" 
+                                                id="toggle-yt-{{ fecha }}"
+                                                class="btn-toggle-status {% if pub.estado_youtube == 'PUBLICADO' %}status-published{% else %}status-scheduled{% endif %}"
+                                                onclick="toggleEstadoRed('{{ fecha }}', 'youtube')"
+                                                title="Clic para conmutar entre PROGRAMADO y PUBLICADO">
+                                            {% if pub.estado_youtube == 'PUBLICADO' %}🟢 PUBLICADO{% else %}🟡 PROGRAMADO{% endif %}
+                                        </button>
                                         {% if pub.youtube_video_id %}
-                                            <br><a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media">Ver Short ↗</a>
+                                            <a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media" style="font-size: 0.73rem;">Ver Short ↗</a>
+                                        {% elif pub.youtube_url %}
+                                            <a href="{{ pub.youtube_url }}" target="_blank" class="link-media" style="font-size: 0.73rem;">Ver Link ↗</a>
                                         {% endif %}
-                                    {% elif pub.estado_youtube == 'PROGRAMADO' %}
-                                        <span class="badge-tag badge-scheduled">PROGRAMADO</span>
-                                        {% if pub.youtube_video_id %}
-                                            <br><a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media">Ver Programado ↗</a>
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="badge-tag badge-draft">{{ pub.estado_youtube or 'PENDIENTE' }}</span>
-                                    {% endif %}
-                                    </div>
-                                    <div style="margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;">
-                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'youtube', 'PUBLICADO')">✅ Publicado</button>
-                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'youtube', 'PROGRAMADO')">⏰ Programado</button>
                                     </div>
                                 </td>
                                 <td>
-                                    <div id="badge-tt-{{ fecha }}">
-                                    {% if pub.estado_tiktok == 'PUBLICADO' %}
-                                        <span class="badge-tag badge-published">PUBLICADO</span>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <button type="button" 
+                                                id="toggle-tt-{{ fecha }}"
+                                                class="btn-toggle-status {% if pub.estado_tiktok == 'PUBLICADO' %}status-published{% else %}status-scheduled{% endif %}"
+                                                onclick="toggleEstadoRed('{{ fecha }}', 'tiktok')"
+                                                title="Clic para conmutar entre PROGRAMADO y PUBLICADO">
+                                            {% if pub.estado_tiktok == 'PUBLICADO' %}🟢 PUBLICADO{% else %}🟡 PROGRAMADO{% endif %}
+                                        </button>
                                         {% if pub.tiktok_url %}
-                                            <br><a href="{{ pub.tiktok_url }}" target="_blank" class="link-media">Ver Canal ↗</a>
+                                            <a href="{{ pub.tiktok_url }}" target="_blank" class="link-media" style="font-size: 0.73rem;">Ver Canal ↗</a>
                                         {% endif %}
-                                    {% elif pub.estado_tiktok == 'PROGRAMADO' %}
-                                        <span class="badge-tag badge-scheduled">PROGRAMADO</span>
-                                    {% elif pub.estado_tiktok == 'BORRADOR_INBOX' %}
-                                        <span class="badge-tag badge-scheduled">EN INBOX</span>
-                                    {% else %}
-                                        <span class="badge-tag badge-draft">{{ pub.estado_tiktok or 'PENDIENTE' }}</span>
-                                    {% endif %}
-                                    </div>
-                                    <div style="margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;">
-                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'tiktok', 'PUBLICADO')">✅ Publicado</button>
-                                        <button type="button" class="btn-micro" onclick="actualizarEstadoDirecto('{{ fecha }}', 'tiktok', 'PROGRAMADO')">⏰ Programado</button>
                                     </div>
                                 </td>
                             </tr>
@@ -668,6 +695,23 @@
                         <button type="button" id="tabPinnedBtn" class="tab-btn" onclick="switchAITab('pinned')">
                             📌 Primer Comentario Fijado
                         </button>
+                    </div>
+
+                    <!-- Swiss Ephemeris & Cadena Temporal Selector -->
+                    <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 8px; padding: 10px 12px; margin-top: 4px; width: 100%;">
+                        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <label style="font-size: 0.74rem; color: var(--cyan-accent); font-weight: 700;">📅 FECHA TRÁNSITO:</label>
+                                <input type="date" id="aiDateSelector" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 4px 8px; color: #fff; font-size: 0.8rem;">
+                            </div>
+                            <button type="button" class="btn-micro" onclick="cargarAstrologiaFecha()" style="background: linear-gradient(135deg, var(--purple-accent), var(--cyan-accent)); color: #000; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">
+                                🔮 Sincronizar Swiss Ephemeris
+                            </button>
+                        </div>
+                        <div id="cadenaTemporalBox" style="margin-top: 8px; font-size: 0.74rem; display: none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+                            <div id="cadenaHoyTxt" style="color: #fff; font-weight: 600;"></div>
+                            <div id="cadenaAyerMananaTxt" style="color: var(--cyan-accent); font-size: 0.72rem; margin-top: 2px;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -860,10 +904,16 @@
             loader.style.display = 'block';
 
             try {
+                const payload = { 
+                    comment: comment, 
+                    platform: platform,
+                    transit: window.currentAstroContext || '',
+                    cadena: window.currentCadenaTemporal || ''
+                };
                 const res = await fetch('/api/admin/generate-reply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ comment: comment, platform: platform })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.status === 'success' && data.replies) {
@@ -934,10 +984,17 @@
             }
         }
 
-        async function actualizarEstadoDirecto(fecha, campo, estado) {
-            if (!confirm(`¿Actualizar estado de ${campo.toUpperCase()} para el ${fecha} a "${estado}"?`)) {
-                return;
-            }
+        async function toggleEstadoRed(fecha, campo) {
+            const btnId = `toggle-${campo === 'youtube' ? 'yt' : 'tt'}-${fecha}`;
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            const esPublicado = btn.classList.contains('status-published');
+            const nuevoEstado = esPublicado ? 'PROGRAMADO' : 'PUBLICADO';
+
+            // Feedback visual reactivo inmediato
+            btn.style.opacity = '0.5';
+            btn.style.pointerEvents = 'none';
 
             try {
                 const res = await fetch('/api/admin/actualizar-estado-redes', {
@@ -946,25 +1003,76 @@
                     body: JSON.stringify({
                         fecha: fecha,
                         campo: campo,
-                        estado: estado
+                        estado: nuevoEstado
                     })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    const badgeId = campo === 'tiktok' ? `badge-tt-${fecha}` : `badge-yt-${fecha}`;
-                    const container = document.getElementById(badgeId);
-                    if (container) {
-                        const badgeClass = estado === 'PUBLICADO' ? 'badge-published' : (estado === 'PROGRAMADO' ? 'badge-scheduled' : 'badge-draft');
-                        container.innerHTML = `<span class="badge-tag ${badgeClass}">${estado}</span>`;
+                    if (nuevoEstado === 'PUBLICADO') {
+                        btn.className = 'btn-toggle-status status-published';
+                        btn.innerHTML = '🟢 PUBLICADO';
+                    } else {
+                        btn.className = 'btn-toggle-status status-scheduled';
+                        btn.innerHTML = '🟡 PROGRAMADO';
                     }
                 } else {
                     alert('Error: ' + data.message);
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error al actualizar el estado directo.');
+                alert('Error de red al actualizar estado');
+            } finally {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
             }
         }
+
+        async function cargarAstrologiaFecha() {
+            const fechaInput = document.getElementById('aiDateSelector').value;
+            if (!fechaInput) {
+                alert('Selecciona una fecha');
+                return;
+            }
+            try {
+                const res = await fetch(`/api/admin/astronomia-fecha?fecha=${fechaInput}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const box = document.getElementById('cadenaTemporalBox');
+                    const hoyTxt = document.getElementById('cadenaHoyTxt');
+                    const ayerMananaTxt = document.getElementById('cadenaAyerMananaTxt');
+                    box.style.display = 'block';
+                    hoyTxt.innerText = `🎯 Día (${data.fecha}): ${data.titulo || 'Cálculo Swiss Ephemeris listo'}`;
+                    
+                    let cadenaPartes = [];
+                    if (data.cadena_ayer) cadenaPartes.push(`⏮️ Ayer: ${data.cadena_ayer}`);
+                    if (data.cadena_manana) cadenaPartes.push(`⏭️ Mañana: ${data.cadena_manana}`);
+                    ayerMananaTxt.innerText = cadenaPartes.join('  |  ');
+
+                    // Sincronizar campo de Primer Comentario Fijado si está disponible
+                    const pinnedFecha = document.getElementById('pinnedFecha');
+                    const pinnedTransit = document.getElementById('pinnedTransit');
+                    if (pinnedFecha) pinnedFecha.value = data.fecha;
+                    if (pinnedTransit && data.titulo) {
+                        pinnedTransit.value = `${data.titulo} | ${data.resumen_astronomico.split('\n')[1] || ''}`;
+                    }
+
+                    window.currentAstroContext = data.resumen_astronomico;
+                    window.currentCadenaTemporal = `${cadenaPartes.join('\n')}\n- HOY: ${data.titulo}`;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al consultar Swiss Ephemeris');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('aiDateSelector');
+            if (dateInput && !dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+                cargarAstrologiaFecha();
+            }
+        });
 
         async function generatePinnedComment() {
             const fecha = document.getElementById('pinnedFecha').value;
