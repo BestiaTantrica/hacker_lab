@@ -136,7 +136,7 @@ def generar_horoscopo_personalizado_texto(name, birth_date, birth_time, birth_ci
         "3. Cercanía y Gravedad (Luna en Sagitario / Rioplatense sobrio): Habla en segunda persona con voseo rioplatense natural y respetuoso ('mirá {name}', 'fijate', 'tenés', 'hacés'). Nada de caricaturas.\n"
         "4. Precisión Técnica Traducida: Menciona los tránsitos y casas clave involucrados, traduciendo esa matemática celeste a situaciones concretas y de consciencia práctica.\n"
         "5. Cierre obligatorio:\n"
-        "Las cartas marcan el suelo, tu voluntad construye.\n"
+        "El cielo describe el mapa, tu consciencia toma el timón.\n"
         "Tomás · portaltarotmistico.com\n\n"
         "Longitud: Conciso, contundente, 3 o 4 párrafos ágiles pensados para leer cómodamente en Telegram."
     )

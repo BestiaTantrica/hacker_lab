@@ -81,6 +81,20 @@
       "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-03_Luna_Ingresa_Virgo.mp4",
       "estado_render": "COMPLETADO",
       "notas": "Doble Reloj 2D (Apertura zoom Virgo + Cierre Loop Infinito 24h)"
+    },
+    "2026-11-04": {
+      "evento_id": "2026-11-04_Mercurio_Cazimi_Escorpio",
+      "titulo": "4 de Noviembre | Mercurio en el corazón del Sol: Ver la verdad sin filtro",
+      "youtube_video_id": null,
+      "youtube_url": null,
+      "tiktok_url": null,
+      "estado_youtube": "LISTO_AUDITORIA",
+      "estado_tiktok": "LISTO_AUDITORIA",
+      "fecha_publicacion": "2026-11-04",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-04_Mercurio_Cazimi_Escorpio.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Doble Reloj 2D (Apertura 00-06h + Cierre 18-24h destello) · Safe Subtitle Zone · Xfade 0.75s"
     }
   }
 }

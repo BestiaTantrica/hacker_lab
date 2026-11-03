@@ -24,7 +24,7 @@ SCOPES = [
 SECRETS_FILE = FACTORY_ROOT / "v2" / "celula_4" / "client_secret.json"
 TOKEN_FILE = FACTORY_ROOT / "v2" / "celula_4" / "token.json"
 
-RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"
+RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"; AMARILLO = "\033[93m"
 
 def log(msg, color=RESET): print(f"{color}{msg}{RESET}")
 
@@ -46,10 +46,13 @@ def main():
         except Exception as e:
             log(f"⚠️ El token existe pero está corrupto o desactualizado: {e}", ROJO)
             
-    # Si no hay credenciales o no son válidas
-    if not creds or not creds.valid:
+    # Si no hay credenciales, no son válidas, o faltan scopes necesarios
+    necesita_reauth = not creds or not creds.valid or not creds.has_scopes(SCOPES)
+
+    if necesita_reauth:
         refreshed = False
-        if creds and creds.expired and creds.refresh_token:
+        # Si tiene scopes pero solo expiró, intentar refresh
+        if creds and creds.has_scopes(SCOPES) and creds.expired and creds.refresh_token:
             try:
                 log("🔄 Refrescando token expirado...", CYAN)
                 creds.refresh(Request())
@@ -58,7 +61,7 @@ def main():
                 log(f"⚠️ El refresh_token ya no es válido ({e}). Iniciando autenticación...", AMARILLO)
         
         if not refreshed:
-            log("🌐 Abriendo flujo de autenticación...", CYAN)
+            log("🌐 Abriendo flujo de autenticación para YouTube Upload + Moderación de Comentarios...", CYAN)
             flow = InstalledAppFlow.from_client_secrets_file(str(SECRETS_FILE), SCOPES)
             creds = flow.run_local_server(port=0)
             
@@ -67,7 +70,7 @@ def main():
             token.write(creds.to_json())
         log(f"✅ ¡Autenticación exitosa! Token guardado en {TOKEN_FILE}", VERDE)
     else:
-        log("✅ ¡El token actual ya es válido y está listo para usarse!", VERDE)
+        log("✅ ¡El token actual ya es válido y cuenta con todos los permisos (Upload + Comentarios)!", VERDE)
         
 if __name__ == "__main__":
     main()
