@@ -517,11 +517,22 @@
             color: #fff;
         }
 
+        /* Desktop Default for Mobile Elements */
+        .mobile-app-nav {
+            display: none !important;
+        }
+        .cards-mobile {
+            display: none !important;
+        }
+        .table-desktop {
+            display: block;
+        }
+
         /* 📱 Mobile First Responsive Overhaul (Optimizado para Celular) */
         @media (max-width: 768px) {
             body {
-                padding: 12px 10px;
-                font-size: 15px;
+                padding: 10px 8px 30px 8px;
+                font-size: 16px;
             }
             .container {
                 width: 100%;
@@ -529,15 +540,18 @@
             header {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 12px;
-                margin-bottom: 16px;
+                gap: 10px;
+                margin-bottom: 12px;
+                padding-bottom: 14px;
             }
             .brand-title {
-                font-size: 1.4rem;
+                font-size: 1.35rem;
                 text-align: center;
+                letter-spacing: 0.5px;
             }
             .brand-subtitle {
                 text-align: center;
+                font-size: 0.8rem;
             }
             .header-actions {
                 width: 100%;
@@ -547,10 +561,135 @@
             .header-actions .btn {
                 flex: 1;
                 justify-content: center;
-                padding: 11px 10px;
-                font-size: 0.88rem;
+                padding: 10px 8px;
+                font-size: 0.85rem;
                 min-height: 44px;
             }
+
+            /* Sticky Mobile App Navigation Bar */
+            .mobile-app-nav {
+                display: flex !important;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                background: rgba(7, 9, 14, 0.96);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                padding: 8px 0 10px 0;
+                margin-bottom: 14px;
+                gap: 6px;
+                border-bottom: 1px solid rgba(0, 242, 254, 0.25);
+            }
+            .m-nav-btn {
+                flex: 1;
+                padding: 12px 4px;
+                font-size: 0.88rem;
+                font-weight: 700;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: rgba(255, 255, 255, 0.04);
+                color: #94a3b8;
+                cursor: pointer;
+                text-align: center;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 46px;
+                user-select: none;
+            }
+            .m-nav-btn.active {
+                background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(121, 40, 202, 0.3));
+                border-color: var(--cyan-accent);
+                color: #ffffff;
+                box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+            }
+
+            /* Sections display toggling on mobile */
+            .table-desktop {
+                display: none !important;
+            }
+            .cards-mobile {
+                display: flex !important;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .radar-card-mobile {
+                background: rgba(15, 23, 42, 0.85);
+                border: 1px solid rgba(0, 242, 254, 0.25);
+                border-radius: 12px;
+                padding: 14px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            }
+            .card-mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .card-date-badge {
+                font-size: 0.88rem;
+                font-weight: 700;
+                color: var(--cyan-accent);
+                background: rgba(0, 242, 254, 0.12);
+                padding: 4px 10px;
+                border-radius: 6px;
+                border: 1px solid rgba(0, 242, 254, 0.3);
+            }
+            .btn-card-use-ai {
+                background: rgba(121, 40, 202, 0.25);
+                border: 1px solid rgba(121, 40, 202, 0.5);
+                color: #e9d5ff;
+                font-size: 0.78rem;
+                font-weight: 600;
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .btn-card-use-ai:hover {
+                background: rgba(121, 40, 202, 0.45);
+                color: #fff;
+            }
+            .card-mobile-title {
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: #ffffff;
+                line-height: 1.4;
+                margin-bottom: 4px;
+            }
+            .card-mobile-id {
+                font-size: 0.76rem;
+                color: var(--text-dim);
+                margin-bottom: 12px;
+            }
+            .card-mobile-status-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-top: 10px;
+            }
+            .card-status-col {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .btn-toggle-status-mob {
+                width: 100%;
+                padding: 10px 6px;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                font-weight: 700;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                min-height: 46px;
+                border: 1px solid transparent;
+                transition: all 0.2s ease;
+            }
+
             .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
@@ -570,8 +709,8 @@
                 gap: 12px;
             }
             .panel-box {
-                padding: 16px 14px;
-                border-radius: 10px;
+                padding: 16px 12px;
+                border-radius: 12px;
             }
             /* Tabs táctiles para el pulgar */
             .tab-btn {
@@ -588,46 +727,80 @@
             input[type="date"], input[type="text"], input[type="url"], select, textarea {
                 font-size: 16px !important;
             }
+            .interactive-form {
+                padding: 14px 12px;
+                border-radius: 10px;
+                background: rgba(10, 15, 28, 0.7);
+                border: 1px solid rgba(0, 242, 254, 0.25);
+            }
             .interactive-form textarea {
                 min-height: 90px;
                 padding: 12px;
                 line-height: 1.45;
                 font-size: 16px !important;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #ffffff;
             }
             .btn-generate {
                 width: 100%;
                 justify-content: center;
-                padding: 13px;
+                padding: 14px;
                 font-size: 0.95rem;
-                min-height: 48px;
+                font-weight: 700;
+                min-height: 50px;
             }
             /* Tarjetas de respuestas grandes y legibles (Cero forzar la vista) */
             .quick-reply-card {
-                padding: 16px 14px;
+                background: rgba(15, 23, 42, 0.85);
+                border: 1.5px solid rgba(0, 242, 254, 0.3);
+                border-radius: 10px;
+                padding: 14px;
+                margin-bottom: 6px;
             }
             .quick-reply-title {
                 font-size: 0.95rem;
+                font-weight: 700;
                 margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
             .copy-btn {
-                padding: 7px 16px;
+                padding: 8px 16px;
                 font-size: 0.88rem;
                 font-weight: 700;
-                min-height: 38px;
+                min-height: 40px;
                 background: rgba(0, 242, 254, 0.18);
                 color: var(--cyan-accent);
-                border-radius: 6px;
+                border: 1px solid rgba(0, 242, 254, 0.4);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .copy-btn:hover {
+                background: rgba(0, 242, 254, 0.35);
+                color: #ffffff;
             }
             .reply-editable-box {
-                font-size: 1.05rem !important;
-                line-height: 1.55;
+                font-size: 16px !important;
+                line-height: 1.6;
                 min-height: 85px;
-                padding: 10px 8px;
+                padding: 10px;
+                color: #ffffff !important;
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 8px;
+            }
+            .chip-container {
+                gap: 8px;
+                margin-bottom: 10px;
             }
             .chip-btn {
-                padding: 8px 12px;
+                padding: 8px 14px;
                 font-size: 0.82rem;
-                min-height: 38px;
+                min-height: 40px;
+                border-radius: 18px;
             }
             .form-controls-row {
                 flex-direction: column;
@@ -636,7 +809,7 @@
             }
             .platform-select {
                 width: 100%;
-                min-height: 44px;
+                min-height: 46px;
                 font-size: 16px !important;
             }
         }
@@ -667,55 +840,71 @@
             </div>
         </header>
 
-        <!-- Daemons and Bots Status -->
-        <div class="system-status">
-            <div>
-                <span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">Estado de Automatizaciones:</span>
-            </div>
-            <div class="status-items">
-                <div class="status-badge">
-                    <div class="dot {{ 'dot-green' if yt_bot_active else 'dot-yellow' }}"></div>
-                    <span>Bot YouTube: <b>{{ 'Activo (Daemon)' if yt_bot_active else 'Inactivo / Standby' }}</b></span>
-                </div>
-                <div class="status-badge">
-                    <div class="dot {{ 'dot-green' if telegram_bot_active else 'dot-yellow' }}"></div>
-                    <span>Canal Telegram: <b>{{ 'Conectado' if telegram_bot_active else 'Standby' }}</b></span>
-                </div>
-                <div class="status-badge">
-                    <div class="dot dot-green"></div>
-                    <span>TikTok Auth: <b>@portaltarotmistico</b></span>
-                </div>
-            </div>
-        </div>
+        <!-- Sticky Mobile App Navigation Bar (Optimizado para Celular) -->
+        <nav class="mobile-app-nav" id="mobileAppNav">
+            <button type="button" class="m-nav-btn active" id="mNavAssistant" onclick="switchMobileView('assistant')">
+                💬 Asistente IA
+            </button>
+            <button type="button" class="m-nav-btn" id="mNavRadar" onclick="switchMobileView('radar')">
+                🎬 Radar Videos
+            </button>
+            <button type="button" class="m-nav-btn" id="mNavMetrics" onclick="switchMobileView('metrics')">
+                📊 Métricas & BD
+            </button>
+        </nav>
 
-        <!-- KPI Grid -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">Suscriptores Registrados</div>
-                <div class="kpi-value">{{ total_subscribers }}</div>
-                <div class="kpi-desc">Usuarios en base de datos local</div>
+        <!-- Section Metrics (Agrupa Daemons y KPIs en móvil) -->
+        <div id="sectionMetrics">
+            <!-- Daemons and Bots Status -->
+            <div class="system-status">
+                <div>
+                    <span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">Estado de Automatizaciones:</span>
+                </div>
+                <div class="status-items">
+                    <div class="status-badge">
+                        <div class="dot {{ 'dot-green' if yt_bot_active else 'dot-yellow' }}"></div>
+                        <span>Bot YouTube: <b>{{ 'Activo (Daemon)' if yt_bot_active else 'Inactivo / Standby' }}</b></span>
+                    </div>
+                    <div class="status-badge">
+                        <div class="dot {{ 'dot-green' if telegram_bot_active else 'dot-yellow' }}"></div>
+                        <span>Canal Telegram: <b>{{ 'Conectado' if telegram_bot_active else 'Standby' }}</b></span>
+                    </div>
+                    <div class="status-badge">
+                        <div class="dot dot-green"></div>
+                        <span>TikTok Auth: <b>@portaltarotmistico</b></span>
+                    </div>
+                </div>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Consultas al Oráculo</div>
-                <div class="kpi-value">{{ total_chats }}</div>
-                <div class="kpi-desc">Interacciones con Gemini Web</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Videos Semanales Listos</div>
-                <div class="kpi-value">{{ total_videos_ready }}</div>
-                <div class="kpi-desc">Renderizados en resolución vertical</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">TikToks Publicados</div>
-                <div class="kpi-value">{{ total_tiktoks_published }}</div>
-                <div class="kpi-desc">Publicados vía Web Automation</div>
+
+            <!-- KPI Grid -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Suscriptores Registrados</div>
+                    <div class="kpi-value">{{ total_subscribers }}</div>
+                    <div class="kpi-desc">Usuarios en base de datos local</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Consultas al Oráculo</div>
+                    <div class="kpi-value">{{ total_chats }}</div>
+                    <div class="kpi-desc">Interacciones con Gemini Web</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Videos Semanales Listos</div>
+                    <div class="kpi-value">{{ total_videos_ready }}</div>
+                    <div class="kpi-desc">Renderizados en resolución vertical</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">TikToks Publicados</div>
+                    <div class="kpi-value">{{ total_tiktoks_published }}</div>
+                    <div class="kpi-desc">Publicados vía Web Automation</div>
+                </div>
             </div>
         </div>
 
         <!-- Grid 2 Columns -->
         <div class="grid-2">
             <!-- Left: Publications Radar -->
-            <div class="panel-box">
+            <div class="panel-box" id="colRadar">
                 <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <h2 class="panel-title">🎬 Radar de Publicaciones (Semana Activa)</h2>
@@ -773,7 +962,8 @@
                         <button type="button" onclick="guardarRegistroManual()" id="btnGuardarManual" style="background: var(--accent); color: #000; border: none; font-weight: 600; padding: 6px 16px; border-radius: 4px; cursor: pointer;">💾 Guardar en Registro</button>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <!-- Tabla para Desktop -->
+                <div class="table-responsive table-desktop">
                     <table>
                         <thead>
                             <tr>
@@ -826,10 +1016,55 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Tarjetas Táctiles para Celular (Cero tablas rotas) -->
+                <div class="cards-mobile">
+                    {% for fecha, pub in publicaciones.items() %}
+                    <div class="radar-card-mobile">
+                        <div class="card-mobile-header">
+                            <span class="card-date-badge">📅 {{ fecha }}</span>
+                            <button type="button" class="btn-card-use-ai" onclick="loadVideoToAssistant('{{ fecha }}', '{{ pub.titulo | replace("'", "\\'") }}')">
+                                ⚡ Cargar en Asistente
+                            </button>
+                        </div>
+                        <div class="card-mobile-title">{{ pub.titulo }}</div>
+                        {% if pub.evento_id %}
+                            <div class="card-mobile-id">ID: {{ pub.evento_id }}</div>
+                        {% endif %}
+                        
+                        <div class="card-mobile-status-grid">
+                            <div class="card-status-col">
+                                <button type="button" 
+                                        id="toggle-yt-mob-{{ fecha }}"
+                                        class="btn-toggle-status-mob {% if pub.estado_youtube == 'PUBLICADO' %}status-published{% else %}status-scheduled{% endif %}"
+                                        onclick="toggleEstadoRed('{{ fecha }}', 'youtube')">
+                                    {% if pub.estado_youtube == 'PUBLICADO' %}🔴 YT: 🟢 PUBLICADO{% else %}🔴 YT: 🟡 PROGRAMADO{% endif %}
+                                </button>
+                                {% if pub.youtube_video_id %}
+                                    <a href="https://www.youtube.com/shorts/{{ pub.youtube_video_id }}" target="_blank" class="link-media" style="margin-top: 4px; font-size: 0.8rem; justify-content: center;">Ver Short ↗</a>
+                                {% elif pub.youtube_url %}
+                                    <a href="{{ pub.youtube_url }}" target="_blank" class="link-media" style="margin-top: 4px; font-size: 0.8rem; justify-content: center;">Ver Link ↗</a>
+                                {% endif %}
+                            </div>
+                            <div class="card-status-col">
+                                <button type="button" 
+                                        id="toggle-tt-mob-{{ fecha }}"
+                                        class="btn-toggle-status-mob {% if pub.estado_tiktok == 'PUBLICADO' %}status-published{% else %}status-scheduled{% endif %}"
+                                        onclick="toggleEstadoRed('{{ fecha }}', 'tiktok')">
+                                    {% if pub.estado_tiktok == 'PUBLICADO' %}🎵 TT: 🟢 PUBLICADO{% else %}🎵 TT: 🟡 PROGRAMADO{% endif %}
+                                </button>
+                                {% if pub.tiktok_url %}
+                                    <a href="{{ pub.tiktok_url }}" target="_blank" class="link-media" style="margin-top: 4px; font-size: 0.8rem; justify-content: center;">Ver Canal ↗</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
             <!-- Right: Interactive Creative Assistant (ADN Tomás) -->
-            <div class="panel-box">
+            <div class="panel-box" id="colAssistant">
                 <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                         <h2 class="panel-title">⚡ Asistente Creativo (ADN Tomás)</h2>
@@ -1037,7 +1272,7 @@
         </div>
 
         <!-- Recent Subscribers -->
-        <div class="panel-box">
+        <div class="panel-box" id="sectionSubscribers">
             <div class="panel-header">
                 <h2 class="panel-title">👥 Últimos Suscriptores Registrados</h2>
                 <span style="font-size: 0.8rem; color: var(--text-dim);">Datos natales para cálculo de tránsitos</span>
@@ -1080,6 +1315,80 @@
     </div>
 
     <script>
+        // 📱 Control de Vistas Móviles (Tab Switcher)
+        function switchMobileView(view) {
+            const btnAssistant = document.getElementById('mNavAssistant');
+            const btnRadar = document.getElementById('mNavRadar');
+            const btnMetrics = document.getElementById('mNavMetrics');
+
+            const colAssistant = document.getElementById('colAssistant');
+            const colRadar = document.getElementById('colRadar');
+            const sectionMetrics = document.getElementById('sectionMetrics');
+            const sectionSubscribers = document.getElementById('sectionSubscribers');
+
+            if (!btnAssistant) return;
+
+            btnAssistant.classList.remove('active');
+            btnRadar.classList.remove('active');
+            btnMetrics.classList.remove('active');
+
+            if (window.innerWidth <= 768) {
+                if (colAssistant) colAssistant.style.display = 'none';
+                if (colRadar) colRadar.style.display = 'none';
+                if (sectionMetrics) sectionMetrics.style.display = 'none';
+                if (sectionSubscribers) sectionSubscribers.style.display = 'none';
+
+                if (view === 'assistant') {
+                    btnAssistant.classList.add('active');
+                    if (colAssistant) colAssistant.style.display = 'block';
+                } else if (view === 'radar') {
+                    btnRadar.classList.add('active');
+                    if (colRadar) colRadar.style.display = 'block';
+                } else if (view === 'metrics') {
+                    btnMetrics.classList.add('active');
+                    if (sectionMetrics) sectionMetrics.style.display = 'block';
+                    if (sectionSubscribers) sectionSubscribers.style.display = 'block';
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function initMobileView() {
+            const colAssistant = document.getElementById('colAssistant');
+            const colRadar = document.getElementById('colRadar');
+            const sectionMetrics = document.getElementById('sectionMetrics');
+            const sectionSubscribers = document.getElementById('sectionSubscribers');
+
+            if (window.innerWidth <= 768) {
+                switchMobileView('assistant');
+            } else {
+                if (colAssistant) colAssistant.style.display = '';
+                if (colRadar) colRadar.style.display = '';
+                if (sectionMetrics) sectionMetrics.style.display = '';
+                if (sectionSubscribers) sectionSubscribers.style.display = '';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            initMobileView();
+        });
+
+        // Cargar video del Radar directamente en el Asistente en 1 tap
+        function loadVideoToAssistant(fecha, titulo) {
+            const dateInput = document.getElementById('aiDateSelector');
+            if (dateInput) {
+                dateInput.value = fecha;
+                cargarAstrologiaFecha();
+            }
+            const pinnedFecha = document.getElementById('pinnedFecha');
+            if (pinnedFecha) pinnedFecha.value = fecha;
+
+            const pinnedTransit = document.getElementById('pinnedTransit');
+            if (pinnedTransit) pinnedTransit.value = titulo;
+
+            switchMobileView('assistant');
+        }
+
         async function generateReply() {
             const comment = document.getElementById('commentInput').value.trim();
             if (!comment) {
@@ -1127,12 +1436,14 @@
             const textarea = document.getElementById(textareaId);
             if (!textarea) return;
             navigator.clipboard.writeText(textarea.value).then(() => {
-                const prev = btnElement.innerText;
-                btnElement.innerText = '¡Copiado!';
+                const prevHtml = btnElement.innerHTML;
+                btnElement.innerHTML = '✅ ¡Copiado!';
                 btnElement.style.color = '#34d399';
+                btnElement.style.borderColor = '#10b981';
                 setTimeout(() => {
-                    btnElement.innerText = prev;
+                    btnElement.innerHTML = prevHtml;
                     btnElement.style.color = '';
+                    btnElement.style.borderColor = '';
                 }, 2000);
             }).catch(err => {
                 console.error('Error al copiar:', err);
@@ -1242,16 +1553,41 @@
         }
 
         async function toggleEstadoRed(fecha, campo) {
-            const btnId = `toggle-${campo === 'youtube' ? 'yt' : 'tt'}-${fecha}`;
-            const btn = document.getElementById(btnId);
-            if (!btn) return;
+            const isYt = campo === 'youtube';
+            const btnDesktop = document.getElementById(`toggle-${isYt ? 'yt' : 'tt'}-${fecha}`);
+            const btnMobile = document.getElementById(`toggle-${isYt ? 'yt' : 'tt'}-mob-${fecha}`);
+            
+            const activeBtn = btnDesktop || btnMobile;
+            if (!activeBtn) return;
 
-            const esPublicado = btn.classList.contains('status-published');
+            const esPublicado = activeBtn.classList.contains('status-published');
             const nuevoEstado = esPublicado ? 'PROGRAMADO' : 'PUBLICADO';
 
-            // Feedback visual reactivo inmediato
-            btn.style.opacity = '0.5';
-            btn.style.pointerEvents = 'none';
+            const setButtonsVisual = (loading, publicado) => {
+                [btnDesktop, btnMobile].forEach(btn => {
+                    if (!btn) return;
+                    if (loading) {
+                        btn.style.opacity = '0.5';
+                        btn.style.pointerEvents = 'none';
+                    } else {
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                        if (publicado) {
+                            btn.className = (btn === btnMobile) ? 'btn-toggle-status-mob status-published' : 'btn-toggle-status status-published';
+                            btn.innerHTML = (btn === btnMobile) 
+                                ? `${isYt ? '🔴 YT' : '🎵 TT'}: 🟢 PUBLICADO` 
+                                : '🟢 PUBLICADO';
+                        } else {
+                            btn.className = (btn === btnMobile) ? 'btn-toggle-status-mob status-scheduled' : 'btn-toggle-status status-scheduled';
+                            btn.innerHTML = (btn === btnMobile) 
+                                ? `${isYt ? '🔴 YT' : '🎵 TT'}: 🟡 PROGRAMADO` 
+                                : '🟡 PROGRAMADO';
+                        }
+                    }
+                });
+            };
+
+            setButtonsVisual(true, esPublicado);
 
             try {
                 const res = await fetch('/api/admin/actualizar-estado-redes', {
@@ -1265,22 +1601,15 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    if (nuevoEstado === 'PUBLICADO') {
-                        btn.className = 'btn-toggle-status status-published';
-                        btn.innerHTML = '🟢 PUBLICADO';
-                    } else {
-                        btn.className = 'btn-toggle-status status-scheduled';
-                        btn.innerHTML = '🟡 PROGRAMADO';
-                    }
+                    setButtonsVisual(false, nuevoEstado === 'PUBLICADO');
                 } else {
                     alert('Error: ' + data.message);
+                    setButtonsVisual(false, esPublicado);
                 }
             } catch (err) {
                 console.error(err);
                 alert('Error de red al actualizar estado');
-            } finally {
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
+                setButtonsVisual(false, esPublicado);
             }
         }
 
@@ -1323,6 +1652,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initMobileView();
             const dateInput = document.getElementById('aiDateSelector');
             if (dateInput && !dateInput.value) {
                 const today = new Date().toISOString().split('T')[0];
