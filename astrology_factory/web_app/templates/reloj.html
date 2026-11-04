@@ -4,7 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>El Glifo Maestro — Reloj Astrológico en Tiempo Real Pro</title>
-  <link rel="stylesheet" href="/static/css/reloj_styles.css?v=8">
+  <style>
+    html, body {
+      background-color: #000000 !important;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    html.cinematico-mode body,
+    html.cinematico-mode #reloj-container {
+      background-color: #000000 !important;
+    }
+    html.cinematico-mode .corner-hud,
+    html.cinematico-mode #reloj-tooltip {
+      display: none !important;
+    }
+  </style>
+  <script>
+    if (window.location.search.includes('cinematico=1')) {
+      document.documentElement.classList.add('cinematico-mode');
+    }
+  </script>
+  <link rel="stylesheet" href="/static/css/reloj_styles.css?v=9">
 </head>
 <body>
   <div id="reloj-container">

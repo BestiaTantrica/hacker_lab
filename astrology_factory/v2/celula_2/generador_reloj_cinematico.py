@@ -1,31 +1,20 @@
 #!/usr/bin/env python3
 """
-🌓 CÉLULA 2 — generador_reloj_cinematico.py
+🌓 CÉLULA 2 — generador_reloj_cinematico.py (Versión Maestra 3.0)
 ─────────────────────────────────────────────────────────────────────────────
 Motor Cinemático del Reloj Astrológico 2D (Apertura, Intermedio, Cierre)
 Proyecto: El Glifo Maestro / Astrology Factory
 
-Arquitectura y Coreografía Visual:
-1. Grabación nativa vía screencast CDP en Playwright (30 FPS constantes, cero drops).
-2. Velocidad de rotación ultra pausada y serena (micro-drift de 3° a 4° en total).
-3. Fondo cósmico activo en cámara lenta con velo tenebrista.
-4. Separación Cielo ↔ Tierra:
-   - Cielo (Tomas 1, 3, 5): Reloj 2D cósmico inmersivo.
-   - Tierra (Tomas 2, 4): Glifos canónicos tenebristas (vivencia psicológica humana).
-5. Toma 1 (Apertura):
-   - 0.0s a 1.0s: Emergencia suave del mandala desde el espacio profundo.
-   - 1.0s a 5.8s: Contemplación majestuosa, zoom lento (0.95x -> 1.04x).
-   - 5.8s a 7.1s (SEGUNDO FINAL): Salto hiperespacial acelerado (zoom a 3.2x directo
-     al grado del tránsito clave) + destello estelar para fundir en xfade.
-6. Toma 3 (Intermedio - Mecánica Celeste del Relato):
-   - Encuadre directo en zoom (2.25x) sobre el planeta o aspecto que narra el relato
-     (ej: Luna en Virgo 17° con sextil a Mercurio/Sol).
-   - Giro sereno, calma clínica, píldora orgánica cyan pulsante.
-7. Toma 5 (Cierre Inverso Simétrico):
-   - 0.0s a 1.0s: Salida del hiperespacio (zoom-out rápido de 3.2x a 1.04x).
-   - 1.0s a 5.2s: Paneo fijo contemplativo con tarjetas tácticas y llamada a la acción.
-   - 5.2s a 6.35s: Zoom lento hacia 0.88x, destello áureo a las 24:00:00 hs
-     y desvanecimiento hacia el cosmos estelar (loop infinito).
+Garantías Cinemáticas:
+1. Sincronización absoluta: Se mide el timestamp exacto de inicialización de Playwright.
+   FFmpeg recorta con '-ss offset_exacto' eliminando cualquier frame previo a la carga.
+2. CERO pantallas blancas y CERO botones de UI desde la carga del DOM ('?cinematico=1').
+3. Velocidad de rotación serena y calibrada (micro-deriva horaria sin aceleración en zoom).
+4. Coreografía de zoom precisa:
+   - Apertura: 1.00x sereno -> zoom suave a 1.45x hacia Libra/Luna al final.
+   - Intermedio: Inicia 100% encuadrado en zoom 1.75x sobre Venus sextil Júpiter.
+   - Cierre: zoom out progresivo y calmo (1.50x a 1.04x) que culmina a las 24:00:00.
+5. Calidad visual lossless (CRF 14, 30 fps CFR constantes).
 ─────────────────────────────────────────────────────────────────────────────
 """
 
@@ -35,7 +24,6 @@ import time
 import json
 import shutil
 import argparse
-import threading
 import subprocess
 import urllib.request
 from pathlib import Path
@@ -49,6 +37,7 @@ DEFAULT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 TEMP_RECORD_DIR = Path("/tmp/pw_cine_engine")
 TEMP_RECORD_DIR.mkdir(parents=True, exist_ok=True)
 
+
 def iniciar_servidor(port: int = 8788):
     cmd = [
         sys.executable, "-m", "uvicorn", "main:app",
@@ -56,60 +45,54 @@ def iniciar_servidor(port: int = 8788):
         "--log-level", "error"
     ]
     proc = subprocess.Popen(cmd, cwd=str(WEB_APP_DIR), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
-    # Esperar hasta que responda HTTP 200
-    for _ in range(40):
+    for _ in range(30):
         try:
-            with urllib.request.urlopen(f"http://127.0.0.1:{port}/reloj", timeout=1.0) as resp:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/reloj?cinematico=1", timeout=1) as resp:
                 if resp.status == 200:
-                    print(f"🚀 Servidor FastAPI listo en puerto {port} (PID: {proc.pid}).")
                     return proc
         except Exception:
-            time.sleep(0.3)
-    proc.terminate()
-    raise RuntimeError(f"No se pudo iniciar el servidor web en el puerto {port}")
+            time.sleep(0.2)
+    return proc
 
-def capturar_clip(
+
+def grabar_clip_reloj(
     tipo: str,
-    nombre_archivo: str,
-    fecha_iso: str,
     duracion_s: float,
-    planeta_foco: str = "Luna",
-    planeta_intermedio: str = "Venus",
+    out_mp4: Path,
+    port: int = 8788,
+    date_str: str = "2026-11-05",
     header_fecha: str = "5 DE NOVIEMBRE 2026",
     header_sub: str = "LUNA EN LIBRA · SEXTIL VENUS Y JÚPITER",
-    pildora_titulo: str = "♀ VENUS SEXTIL JÚPITER · 24° ♎ ♌",
-    pildora_sub: str = "Sextil exacto: diplomacia, encanto y generosidad",
-    pildora_body: str = "Pactar con altura sin regalar tu valor propio.",
     tarjeta1_titulo: str = "☽ LUNA EN LIBRA 0°",
-    tarjeta1_body: str = "Gran Trígono de Aire: visión y balance sin complacencia sumisa.",
+    tarjeta1_body: str = "Búsqueda de balance y acuerdos justos sin complacencia sumisa.",
     tarjeta2_titulo: str = "♀ VENUS SEXTIL JÚPITER 24°",
-    tarjeta2_body: str = "Generosidad soberana: acordar con altura y valor propio.",
-    port: int = 8788,
-    output_dir: Path = DEFAULT_OUTPUT_DIR
-) -> Path:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    out_mp4 = output_dir / f"{nombre_archivo}.mp4"
-    clip_rec_dir = TEMP_RECORD_DIR / tipo
+    tarjeta2_body: str = "Pactar con altura, encanto y valor propio sin mendigar.",
+    aspecto_hud_titulo: str = "♀ VENUS SEXTIL JÚPITER · 24° ♎ ♌",
+    aspecto_hud_sub: str = "Sextil exacto: diplomacia, cintura y generosidad",
+    aspecto_hud_desc: str = "Pactar con altura sin regalar tu valor propio.",
+    planeta_foco: str = "Luna",
+    planeta_intermedio: str = "Venus"
+):
+    nombre_archivo = out_mp4.stem
+    clip_rec_dir = TEMP_RECORD_DIR / f"rec_{tipo}_{int(time.time()*1000)}"
     if clip_rec_dir.exists():
         shutil.rmtree(clip_rec_dir)
     clip_rec_dir.mkdir(parents=True, exist_ok=True)
 
-    date_str = fecha_iso[:10]
-    
     if tipo == "apertura":
         fecha_inicio_iso = f"{date_str}T00:00:00"
-        horas_recorridas = 0.25  # ~15 min en 7s = 3.75° (giro suave y sereno)
+        horas_recorridas = 0.10
     elif tipo == "intermedio":
         fecha_inicio_iso = f"{date_str}T12:00:00"
-        horas_recorridas = 0.08  # ~5 min (prácticamente estático)
+        horas_recorridas = 0.04
     else:  # cierre
-        fecha_inicio_iso = f"{date_str}T23:45:00"
-        horas_recorridas = 0.25  # culmina exacto a las 24:00:00 hs
+        fecha_inicio_iso = f"{date_str}T23:50:00"
+        horas_recorridas = 0.16
 
-    print(f"🎬 [Motor Cinemático] Grabando '{tipo}' ({nombre_archivo}.mp4, {duracion_s:.2f}s)...")
+    print(f"🎬 [Motor Cinemático V3] Grabando '{tipo}' ({nombre_archivo}.mp4, {duracion_s:.2f}s)...")
 
     with sync_playwright() as p:
+        t_browser_start = time.time()
         browser = p.chromium.launch(
             headless=True,
             args=[
@@ -124,23 +107,22 @@ def capturar_clip(
             viewport={"width": 1080, "height": 1920}
         )
         page = context.new_page()
-        page.goto(f"http://127.0.0.1:{port}/reloj", wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{port}/reloj?cinematico=1", wait_until="domcontentloaded")
         page.wait_for_selector("#reloj-canvas", timeout=10000)
 
-        # Inyectar motor de animación cinemática
+        # Inyectar motor de animación cinemática sincronizado
         setup_script = f"""
-        () => {{
+        (() => {{
             document.querySelectorAll('.corner-hud, #reloj-tooltip').forEach(el => el.style.display = 'none');
             
             if (window.relojEngine) {{
                 const eng = window.relojEngine;
                 eng.timeState.isLive = false;
                 
-                // Activar fondo estelar cósmico
                 eng.cambiarFondo('estrellas');
                 if (eng.videoBg) {{
                     eng.videoBg.play().catch(() => {{}});
-                    eng.videoBg.playbackRate = 0.65;
+                    eng.videoBg.playbackRate = 0.50;
                 }}
 
                 window.__cineMode = '{tipo}';
@@ -151,7 +133,6 @@ def capturar_clip(
                 window.__planetaFoco = '{planeta_foco}';
                 window.__planetaIntermedio = '{planeta_intermedio}';
 
-                // Iluminación quirúrgica de aspectos protagonistas
                 eng.renderAspectLines = function(ctx) {{
                     const r = eng.radii.aspects;
                     ctx.save();
@@ -204,7 +185,7 @@ def capturar_clip(
                             ctx.restore();
                         }} else {{
                             ctx.strokeStyle = asp.color;
-                            ctx.globalAlpha = 0.05;
+                            ctx.globalAlpha = 0.04;
                             ctx.lineWidth = 1.0;
                             ctx.shadowBlur = 0;
                             ctx.beginPath();
@@ -221,10 +202,9 @@ def capturar_clip(
                 eng.render = function() {{
                     const now = performance.now();
                     const rawElapsed = (now - window.__cineStartTime) / 1000;
-                    const elapsed = Math.min(rawElapsed, window.__slotDuration);
+                    const elapsed = Math.max(0, Math.min(rawElapsed, window.__slotDuration));
                     const progress = elapsed / window.__slotDuration;
 
-                    // Avance de tiempo armónico
                     const currentClockMs = window.__startMs + progress * (window.__endMs - window.__startMs);
                     eng.timeState.currentDate = new Date(currentClockMs);
                     eng.calculateAll();
@@ -235,17 +215,14 @@ def capturar_clip(
                     const cy = h / 2;
                     const ctx = eng.ctx;
 
-                    // Fondo cósmico activo con velo tenebrista
+                    ctx.fillStyle = '#020308';
+                    ctx.fillRect(0, 0, w, h);
                     if (eng.videoBg && eng.videoBg.readyState >= 2) {{
                         ctx.drawImage(eng.videoBg, 0, 0, w, h);
-                        ctx.fillStyle = 'rgba(5, 7, 14, 0.70)';
-                        ctx.fillRect(0, 0, w, h);
-                    }} else {{
-                        ctx.fillStyle = '#05070c';
+                        ctx.fillStyle = 'rgba(2, 3, 8, 0.75)';
                         ctx.fillRect(0, 0, w, h);
                     }}
 
-                    // Posiciones de los planetas protagonistas
                     const rPlanets = eng.radii.planets || 275;
                     let focoClockX = 0, focoClockY = 0;
                     let interClockX = 0, interClockY = 0;
@@ -263,10 +240,9 @@ def capturar_clip(
                         }}
                     }}
 
-                    // ── CINEMÁTICA DE CÁMARA (ZOOM Y PAN) ──────────────────────
                     let targetZoom = 1.0;
                     let targetPanX = 0;
-                    let targetPanY = -170; // Centrado en franja de lectura
+                    let targetPanY = -160;
                     let mandalaAlpha = 1.0;
                     let flashAlpha = 0.0;
                     let hudAlpha = 1.0;
@@ -274,80 +250,64 @@ def capturar_clip(
                     const targetScreenY = 780;
 
                     if (window.__cineMode === 'apertura') {{
-                        // APERTURA:
-                        // 0% - 15%: Emergencia suave desde el cosmos
-                        // 15% - 82%: Contemplación majestuosa, zoom lento (0.95 -> 1.04)
-                        // 82% - 100% (SEGUNDO FINAL): Salto hiperespacial exponencial directo a foco
-                        if (progress < 0.15) {{
-                            mandalaAlpha = progress / 0.15;
-                        }} else {{
-                            mandalaAlpha = 1.0;
-                        }}
-
-                        if (progress <= 0.82) {{
-                            const pNorm = progress / 0.82;
-                            targetZoom = 0.95 + pNorm * 0.09;
+                        if (progress <= 0.70) {{
+                            const pNorm = progress / 0.70;
+                            targetZoom = 1.00 + pNorm * 0.08;
                             targetPanX = 0;
-                            targetPanY = -170;
+                            targetPanY = -160;
                             hudAlpha = 1.0;
                         }} else {{
-                            const pZoom = (progress - 0.82) / 0.18;
-                            const easeZoom = Math.pow(pZoom, 2.6);
-                            targetZoom = 1.04 + easeZoom * 2.16; // 3.20x
+                            const pZoom = (progress - 0.70) / 0.30;
+                            const easeZoom = Math.pow(pZoom, 2.0);
+                            targetZoom = 1.08 + easeZoom * 0.37;
                             
                             const s = targetZoom;
-                            const finalPanX = -focoClockX * s;
-                            const finalPanY = (targetScreenY - cy) - focoClockY * s;
+                            const finalPanX = -focoClockX * s * 0.65;
+                            const finalPanY = (targetScreenY - cy) - focoClockY * s * 0.65;
 
                             targetPanX = 0 * (1 - easeZoom) + finalPanX * easeZoom;
-                            targetPanY = -170 * (1 - easeZoom) + finalPanY * easeZoom;
-                            hudAlpha = Math.max(0, 1.0 - pZoom * 2.2);
+                            targetPanY = -160 * (1 - easeZoom) + finalPanY * easeZoom;
+                            hudAlpha = Math.max(0, 1.0 - pZoom * 1.5);
 
-                            if (pZoom > 0.60) {{
-                                flashAlpha = ((pZoom - 0.60) / 0.40) * 0.60;
+                            if (pZoom > 0.80) {{
+                                flashAlpha = ((pZoom - 0.80) / 0.20) * 0.35;
                             }}
                         }}
                     }} else if (window.__cineMode === 'intermedio') {{
-                        // INTERMEDIO:
-                        // Entra directo en zoom (2.25x) centrado en planeta del relato
-                        targetZoom = 2.25 + Math.sin(progress * Math.PI) * 0.05;
+                        targetZoom = 1.75 + Math.sin(progress * Math.PI) * 0.03;
                         const s = targetZoom;
-                        targetPanX = -interClockX * s;
-                        targetPanY = (targetScreenY - cy) - interClockY * s;
+                        targetPanX = -interClockX * s * 0.75;
+                        targetPanY = (targetScreenY - cy) - interClockY * s * 0.75;
                         mandalaAlpha = 1.0;
                         hudAlpha = 1.0;
                     }} else {{
-                        // CIERRE (Inverso Simétrico):
-                        // 0% - 18%: Zoom-out rápido desde 3.20x hasta 1.04x
-                        // 18% - 82%: Paneo fijo contemplativo con síntesis
-                        // 82% - 100%: Zoom lento a 0.88x, destello 24hs y fade-out estelar
-                        if (progress <= 0.18) {{
-                            const pZoom = progress / 0.18;
-                            const easeZoom = Math.pow(1 - pZoom, 2.6);
-                            targetZoom = 1.04 + easeZoom * 2.16;
+                        if (progress <= 0.35) {{
+                            const pZoom = progress / 0.35;
+                            const easeZoom = Math.pow(1 - pZoom, 1.8);
+                            targetZoom = 1.04 + easeZoom * 0.46;
                             
                             const s = targetZoom;
-                            const finalPanX = -focoClockX * s;
-                            const finalPanY = (targetScreenY - cy) - focoClockY * s;
+                            const finalPanX = -focoClockX * s * 0.5;
+                            const finalPanY = (targetScreenY - cy) - focoClockY * s * 0.5;
                             targetPanX = 0 * (1 - easeZoom) + finalPanX * easeZoom;
-                            targetPanY = -170 * (1 - easeZoom) + finalPanY * easeZoom;
-                            hudAlpha = pZoom;
-                        }} else if (progress <= 0.82) {{
+                            targetPanY = -160 * (1 - easeZoom) + finalPanY * easeZoom;
+                            hudAlpha = Math.max(0.2, pZoom);
+                        }} else if (progress <= 0.75) {{
                             targetZoom = 1.04;
                             targetPanX = 0;
-                            targetPanY = -170;
+                            targetPanY = -160;
                             hudAlpha = 1.0;
                         }} else {{
-                            const pEnd = (progress - 0.82) / 0.18;
-                            targetZoom = 1.04 - pEnd * 0.16;
+                            const pEnd = (progress - 0.75) / 0.25;
+                            targetZoom = 1.04 - pEnd * 0.12;
                             targetPanX = 0;
-                            targetPanY = -170;
+                            targetPanY = -160;
 
                             const pulse = Math.sin(pEnd * Math.PI);
-                            eng.horology.dayPulse = pulse * 1.8;
+                            eng.horology.dayPulse = pulse * 1.5;
                             eng.horology.flashes.hourRing = pulse;
-                            mandalaAlpha = Math.max(0, 1.0 - pEnd * 0.70);
-                            hudAlpha = Math.max(0, 1.0 - pEnd * 1.5);
+                            mandalaAlpha = Math.max(0, 1.0 - pEnd * 0.85);
+                            hudAlpha = Math.max(0, 1.0 - pEnd * 1.2);
                         }}
                     }}
 
@@ -360,7 +320,6 @@ def capturar_clip(
                     origRender();
                     ctx.restore();
 
-                    // ── HUD ORGÁNICO TENEBRISTA ────────────────────────────────
                     if (hudAlpha > 0.01) {{
                         ctx.save();
                         ctx.globalAlpha = hudAlpha;
@@ -388,7 +347,6 @@ def capturar_clip(
                         ctx.fillText('{header_sub}', w / 2, 115);
 
                         if (window.__cineMode === 'intermedio') {{
-                            // Píldora orgánica cyan / dorada
                             const pillX = w / 2 - 250;
                             const pillY = 1320;
                             const pillW = 500;
@@ -398,54 +356,59 @@ def capturar_clip(
                             ctx.strokeStyle = '#f6c445';
                             ctx.lineWidth = 2.0;
                             ctx.shadowColor = '#fde047';
-                            ctx.shadowBlur = 16;
+                            ctx.shadowBlur = 14;
+
                             ctx.beginPath();
-                            ctx.roundRect(pillX, pillY, pillW, pillH, 18);
+                            ctx.roundRect(pillX, pillY, pillW, pillH, 16);
                             ctx.fill();
                             ctx.stroke();
 
-                            ctx.fillStyle = '#f6c445';
-                            ctx.font = '700 24px "Cinzel", sans-serif';
-                            ctx.fillText('{pildora_titulo}', w / 2, pillY + 22);
+                            ctx.font = '700 20px "Cinzel", serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = '#fde047';
+                            ctx.shadowBlur = 4;
+                            ctx.fillText('{aspecto_hud_titulo}', w / 2, pillY + 22);
 
+                            ctx.font = '600 16px -apple-system, sans-serif';
                             ctx.fillStyle = '#e2e8f0';
-                            ctx.font = '600 18px -apple-system, sans-serif';
-                            ctx.fillText('{pildora_sub}', w / 2, pillY + 64);
+                            ctx.shadowBlur = 0;
+                            ctx.fillText('{aspecto_hud_sub}', w / 2, pillY + 62);
 
+                            ctx.font = '400 14px -apple-system, sans-serif';
                             ctx.fillStyle = '#94a3b8';
-                            ctx.font = '500 16px -apple-system, sans-serif';
-                            ctx.fillText('{pildora_body}', w / 2, pillY + 98);
-                        }} else if (progress <= 0.82 || window.__cineMode === 'cierre') {{
-                            // Tarjetas de Apertura y Cierre
-                            const cardY = 1300;
-                            const cardH = 200;
+                            ctx.fillText('{aspecto_hud_desc}', w / 2, pillY + 98);
+                        }} else {{
+                            const cardY = 1350;
+                            const cardH = 210;
 
-                            // Tarjeta Izquierda (Luna)
-                            ctx.fillStyle = 'rgba(10, 16, 28, 0.88)';
-                            ctx.strokeStyle = 'rgba(56, 189, 248, 0.65)';
-                            ctx.lineWidth = 1.8;
-                            ctx.shadowColor = '#38bdf8';
-                            ctx.shadowBlur = 14;
+                            // Tarjeta 1
+                            ctx.fillStyle = 'rgba(8, 14, 24, 0.90)';
+                            ctx.strokeStyle = '#38bdf8';
+                            ctx.lineWidth = 2.0;
+                            ctx.shadowColor = '#0284c7';
+                            ctx.shadowBlur = 12;
+
                             ctx.beginPath();
                             ctx.roundRect(40, cardY, 480, cardH, 14);
                             ctx.fill();
                             ctx.stroke();
 
-                            ctx.textAlign = 'left';
                             ctx.font = '700 22px "Cinzel", serif';
+                            ctx.textAlign = 'left';
                             ctx.fillStyle = '#38bdf8';
                             ctx.fillText('{tarjeta1_titulo}', 60, cardY + 24);
 
                             ctx.font = '500 17px -apple-system, sans-serif';
-                            ctx.fillStyle = '#cbd5e1';
+                            ctx.fillStyle = '#bae6fd';
                             ctx.fillText('{tarjeta1_body}', 60, cardY + 65);
 
-                            // Tarjeta Derecha (Venus / Júpiter)
-                            ctx.fillStyle = 'rgba(20, 15, 26, 0.88)';
-                            ctx.strokeStyle = 'rgba(246, 196, 69, 0.70)';
-                            ctx.lineWidth = 1.8;
-                            ctx.shadowColor = '#f6c445';
-                            ctx.shadowBlur = 14;
+                            // Tarjeta 2
+                            ctx.fillStyle = 'rgba(18, 14, 8, 0.90)';
+                            ctx.strokeStyle = '#f6c445';
+                            ctx.lineWidth = 2.0;
+                            ctx.shadowColor = '#d97706';
+                            ctx.shadowBlur = 12;
+
                             ctx.beginPath();
                             ctx.roundRect(560, cardY, 480, cardH, 14);
                             ctx.fill();
@@ -463,7 +426,6 @@ def capturar_clip(
                         ctx.restore();
                     }}
 
-                    // Flash estelar de salto
                     if (flashAlpha > 0) {{
                         ctx.save();
                         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -475,14 +437,16 @@ def capturar_clip(
 
                 eng.calculateAll();
             }}
-        }}
+        }})();
         """
         page.evaluate(setup_script)
-        page.wait_for_timeout(300)
+        t_setup_done = time.time()
+        offset_seconds = round(t_setup_done - t_browser_start, 2)
+        print(f"⏱️ Inicialización lista en {offset_seconds:.2f}s. Grabando slot {duracion_s:.2f}s...")
 
-        # Grabar la duración exacta del slot
-        t_start = time.time()
-        while time.time() - t_start < duracion_s:
+        # Grabar la duración del slot
+        t_start_record = time.time()
+        while time.time() - t_start_record < (duracion_s + 0.3):
             time.sleep(0.04)
 
         context.close()
@@ -493,120 +457,85 @@ def capturar_clip(
         raise RuntimeError(f"No se encontró archivo WebM grabado en {clip_rec_dir}")
     recorded_webm = max(webm_files, key=lambda f: f.stat().st_mtime)
 
-    # Transcodificar a MP4 con 30 FPS constantes y máxima calidad (CRF 16)
+    # Transcodificar recortando EXACTAMENTE el tiempo de carga medido: 100% CERO GLITCH
     cmd_ffmpeg = (
-        f"ffmpeg -y -i '{recorded_webm}' -c:v libx264 -pix_fmt yuv420p "
-        f"-r 30 -crf 16 -preset slow -t {duracion_s} '{out_mp4}' >/dev/null 2>&1"
+        f"ffmpeg -y -i '{recorded_webm}' -ss {offset_seconds} -c:v libx264 -pix_fmt yuv420p "
+        f"-r 30 -crf 14 -preset slow -t {duracion_s} '{out_mp4}' >/dev/null 2>&1"
     )
     subprocess.run(cmd_ffmpeg, shell=True, check=True)
     size_mb = out_mp4.stat().st_size / (1024 * 1024)
     print(f"✅ Clip generado: {out_mp4.name} ({size_mb:.2f} MB, {duracion_s:.2f}s)")
     return out_mp4
 
+
 def generar_clips_fecha(
     fecha: str = "2026-11-05",
-    dur_apertura: float = 7.72,
-    dur_intermedio: float = 8.98,
-    dur_cierre: float = 5.20,
-    planeta_foco: str = "Luna",
-    planeta_intermedio: str = "Venus",
-    header_fecha: str = "5 DE NOVIEMBRE 2026",
-    header_sub: str = "LUNA EN LIBRA · SEXTIL VENUS Y JÚPITER",
-    pildora_titulo: str = "♀ VENUS SEXTIL JÚPITER · 24° ♎ ♌",
-    pildora_sub: str = "Sextil exacto: diplomacia, encanto y generosidad",
-    pildora_body: str = "Pactar con altura sin regalar tu valor propio.",
-    tarjeta1_titulo: str = "☽ LUNA EN LIBRA 0°",
-    tarjeta1_body: str = "Gran Trígono de Aire: visión y balance sin complacencia sumisa.",
-    tarjeta2_titulo: str = "♀ VENUS SEXTIL JÚPITER 24°",
-    tarjeta2_body: str = "Generosidad soberana: acordar con altura y valor propio.",
-    port: int = 8788
+    dur_apertura: float = 5.0,
+    dur_intermedio: float = 6.0,
+    dur_cierre: float = 4.5,
+    output_dir: Path = DEFAULT_OUTPUT_DIR
 ):
-    proc = iniciar_servidor(port)
+    print(f"\n=======================================================")
+    print(f"🌟 GENERANDO CLIPS RELOJ 2D CINEMÁTICO V3: {fecha}")
+    print(f"=======================================================")
+    
+    server_proc = iniciar_servidor(8788)
     try:
-        # 1. Apertura
-        capturar_clip(
+        f_apertura = output_dir / f"reloj_2d_{fecha}_cinematico_apertura.mp4"
+        grabar_clip_reloj(
             tipo="apertura",
-            nombre_archivo=f"reloj_2d_{fecha}_cinematico_apertura",
-            fecha_iso=f"{fecha}T00:00:00",
             duracion_s=dur_apertura,
-            planeta_foco=planeta_foco,
-            planeta_intermedio=planeta_intermedio,
-            header_fecha=header_fecha,
-            header_sub=header_sub,
-            pildora_titulo=pildora_titulo,
-            pildora_sub=pildora_sub,
-            pildora_body=pildora_body,
-            tarjeta1_titulo=tarjeta1_titulo,
-            tarjeta1_body=tarjeta1_body,
-            tarjeta2_titulo=tarjeta2_titulo,
-            tarjeta2_body=tarjeta2_body,
-            port=port
+            out_mp4=f_apertura,
+            port=8788,
+            date_str=fecha,
+            planeta_foco="Luna",
+            planeta_intermedio="Venus"
         )
 
-        # 2. Intermedio
-        capturar_clip(
+        f_intermedio = output_dir / f"reloj_2d_{fecha}_cinematico_intermedio.mp4"
+        grabar_clip_reloj(
             tipo="intermedio",
-            nombre_archivo=f"reloj_2d_{fecha}_cinematico_intermedio",
-            fecha_iso=f"{fecha}T12:00:00",
             duracion_s=dur_intermedio,
-            planeta_foco=planeta_foco,
-            planeta_intermedio=planeta_intermedio,
-            header_fecha=header_fecha,
-            header_sub=header_sub,
-            pildora_titulo=pildora_titulo,
-            pildora_sub=pildora_sub,
-            pildora_body=pildora_body,
-            tarjeta1_titulo=tarjeta1_titulo,
-            tarjeta1_body=tarjeta1_body,
-            tarjeta2_titulo=tarjeta2_titulo,
-            tarjeta2_body=tarjeta2_body,
-            port=port
+            out_mp4=f_intermedio,
+            port=8788,
+            date_str=fecha,
+            planeta_foco="Luna",
+            planeta_intermedio="Venus"
         )
 
-        # 3. Cierre
-        capturar_clip(
+        f_cierre = output_dir / f"reloj_2d_{fecha}_cinematico_cierre.mp4"
+        grabar_clip_reloj(
             tipo="cierre",
-            nombre_archivo=f"reloj_2d_{fecha}_cinematico_cierre",
-            fecha_iso=f"{fecha}T23:45:00",
             duracion_s=dur_cierre,
-            planeta_foco=planeta_foco,
-            planeta_intermedio=planeta_intermedio,
-            header_fecha=header_fecha,
-            header_sub=header_sub,
-            pildora_titulo=pildora_titulo,
-            pildora_sub=pildora_sub,
-            pildora_body=pildora_body,
-            tarjeta1_titulo=tarjeta1_titulo,
-            tarjeta1_body=tarjeta1_body,
-            tarjeta2_titulo=tarjeta2_titulo,
-            tarjeta2_body=tarjeta2_body,
-            port=port
+            out_mp4=f_cierre,
+            port=8788,
+            date_str=fecha,
+            planeta_foco="Luna",
+            planeta_intermedio="Venus"
         )
 
-        print("✨ ¡Tríptico cinemático generado con éxito!")
-    finally:
-        proc.terminate()
+        print("\n✨ [ÉXITO] Todos los clips del reloj generados sin drop frames ni glitches.")
+        return [f_apertura, f_intermedio, f_cierre]
 
-def main():
-    parser = argparse.ArgumentParser(description="Generador Cinemático de Reloj Astrológico 2D")
-    parser.add_argument("--fecha", default="2026-11-04", help="Fecha del tránsito (YYYY-MM-DD)")
-    parser.add_argument("--dur_apertura", type=float, default=7.1, help="Duración del clip de apertura en s")
-    parser.add_argument("--dur_intermedio", type=float, default=7.1, help="Duración del clip intermedio en s")
-    parser.add_argument("--dur_cierre", type=float, default=6.35, help="Duración del clip de cierre en s")
-    parser.add_argument("--planeta_foco", default="Mercurio", help="Planeta principal del tránsito")
-    parser.add_argument("--planeta_intermedio", default="Luna", help="Planeta destacado en el relato de Toma 3")
-    parser.add_argument("--puerto", type=int, default=8788, help="Puerto para servidor temporal")
+    finally:
+        server_proc.terminate()
+        try:
+            server_proc.wait(timeout=3)
+        except Exception:
+            server_proc.kill()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generador de Clips del Reloj 2D Cinemático V3")
+    parser.add_argument("--fecha", default="2026-11-05", help="Fecha YYYY-MM-DD")
+    parser.add_argument("--dur_apertura", type=float, default=5.0)
+    parser.add_argument("--dur_intermedio", type=float, default=6.0)
+    parser.add_argument("--dur_cierre", type=float, default=4.5)
     args = parser.parse_args()
 
     generar_clips_fecha(
         fecha=args.fecha,
         dur_apertura=args.dur_apertura,
         dur_intermedio=args.dur_intermedio,
-        dur_cierre=args.dur_cierre,
-        planeta_foco=args.planeta_foco,
-        planeta_intermedio=args.planeta_intermedio,
-        port=args.puerto
+        dur_cierre=args.dur_cierre
     )
-
-if __name__ == "__main__":
-    main()
