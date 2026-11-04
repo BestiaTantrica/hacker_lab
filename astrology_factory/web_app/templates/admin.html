@@ -481,16 +481,164 @@
             border-radius: 6px;
             color: var(--text-main);
             font-family: inherit;
-            font-size: 0.84rem;
-            line-height: 1.45;
+            font-size: 0.95rem;
+            line-height: 1.5;
             resize: vertical;
-            min-height: 60px;
-            padding: 4px;
+            min-height: 70px;
+            padding: 8px;
             outline: none;
         }
         .reply-editable-box:focus {
             background: rgba(255, 255, 255, 0.03);
             border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .chip-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .chip-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            color: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .chip-btn:hover {
+            background: rgba(0, 242, 254, 0.18);
+            border-color: var(--cyan-accent);
+            color: #fff;
+        }
+
+        /* 📱 Mobile First Responsive Overhaul (Optimizado para Celular) */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px 10px;
+                font-size: 15px;
+            }
+            .container {
+                width: 100%;
+            }
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+            .brand-title {
+                font-size: 1.4rem;
+                text-align: center;
+            }
+            .brand-subtitle {
+                text-align: center;
+            }
+            .header-actions {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+            }
+            .header-actions .btn {
+                flex: 1;
+                justify-content: center;
+                padding: 11px 10px;
+                font-size: 0.88rem;
+                min-height: 44px;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 18px;
+            }
+            .kpi-card {
+                padding: 14px 12px;
+            }
+            .kpi-value {
+                font-size: 1.5rem;
+            }
+            .system-status {
+                padding: 14px 14px;
+                margin-bottom: 18px;
+            }
+            .status-items {
+                gap: 12px;
+            }
+            .panel-box {
+                padding: 16px 14px;
+                border-radius: 10px;
+            }
+            /* Tabs táctiles para el pulgar */
+            .tab-btn {
+                flex: 1;
+                padding: 10px 6px;
+                font-size: 0.85rem;
+                min-height: 44px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            /* Prevenir zoom automático de iOS/Android forzando font-size 16px */
+            input[type="date"], input[type="text"], input[type="url"], select, textarea {
+                font-size: 16px !important;
+            }
+            .interactive-form textarea {
+                min-height: 90px;
+                padding: 12px;
+                line-height: 1.45;
+                font-size: 16px !important;
+            }
+            .btn-generate {
+                width: 100%;
+                justify-content: center;
+                padding: 13px;
+                font-size: 0.95rem;
+                min-height: 48px;
+            }
+            /* Tarjetas de respuestas grandes y legibles (Cero forzar la vista) */
+            .quick-reply-card {
+                padding: 16px 14px;
+            }
+            .quick-reply-title {
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+            }
+            .copy-btn {
+                padding: 7px 16px;
+                font-size: 0.88rem;
+                font-weight: 700;
+                min-height: 38px;
+                background: rgba(0, 242, 254, 0.18);
+                color: var(--cyan-accent);
+                border-radius: 6px;
+            }
+            .reply-editable-box {
+                font-size: 1.05rem !important;
+                line-height: 1.55;
+                min-height: 85px;
+                padding: 10px 8px;
+            }
+            .chip-btn {
+                padding: 8px 12px;
+                font-size: 0.82rem;
+                min-height: 38px;
+            }
+            .form-controls-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .platform-select {
+                width: 100%;
+                min-height: 44px;
+                font-size: 16px !important;
+            }
         }
 
         .spinner {
@@ -688,12 +836,15 @@
                         <span style="font-size: 0.75rem; color: var(--cyan-accent); font-weight: 600;">IA en Vivo</span>
                     </div>
                     <!-- Tab Selector -->
-                    <div style="display: flex; gap: 8px; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+                    <div style="display: flex; gap: 6px; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; flex-wrap: wrap;">
                         <button type="button" id="tabRepliesBtn" class="tab-btn active" onclick="switchAITab('replies')">
-                            💬 Respuestas a Seguidores
+                            💬 Respuestas Humanas
                         </button>
                         <button type="button" id="tabPinnedBtn" class="tab-btn" onclick="switchAITab('pinned')">
-                            📌 Primer Comentario Fijado
+                            📌 Comentario Fijado
+                        </button>
+                        <button type="button" id="tabAdviceBtn" class="tab-btn" onclick="switchAITab('advice')">
+                            🔮 Asesor de Tránsitos
                         </button>
                     </div>
 
@@ -702,81 +853,81 @@
                         <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                             <div style="display: flex; gap: 6px; align-items: center;">
                                 <label style="font-size: 0.74rem; color: var(--cyan-accent); font-weight: 700;">📅 FECHA TRÁNSITO:</label>
-                                <input type="date" id="aiDateSelector" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 4px 8px; color: #fff; font-size: 0.8rem;">
+                                <input type="date" id="aiDateSelector" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 6px 8px; color: #fff; font-size: 0.85rem;">
                             </div>
-                            <button type="button" class="btn-micro" onclick="cargarAstrologiaFecha()" style="background: linear-gradient(135deg, var(--purple-accent), var(--cyan-accent)); color: #000; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">
+                            <button type="button" class="btn-micro" onclick="cargarAstrologiaFecha()" style="background: linear-gradient(135deg, var(--purple-accent), var(--cyan-accent)); color: #000; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.78rem; font-weight: 700;">
                                 🔮 Sincronizar Swiss Ephemeris
                             </button>
                         </div>
-                        <div id="cadenaTemporalBox" style="margin-top: 8px; font-size: 0.74rem; display: none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+                        <div id="cadenaTemporalBox" style="margin-top: 8px; font-size: 0.76rem; display: none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
                             <div id="cadenaHoyTxt" style="color: #fff; font-weight: 600;"></div>
-                            <div id="cadenaAyerMananaTxt" style="color: var(--cyan-accent); font-size: 0.72rem; margin-top: 2px;"></div>
+                            <div id="cadenaAyerMananaTxt" style="color: var(--cyan-accent); font-size: 0.74rem; margin-top: 2px;"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION 1: RESPUESTAS A SEGUIDORES -->
+                <!-- SECTION 1: RESPUESTAS A SEGUIDORES (100% HUMANAS / CERO SPAM) -->
                 <div id="repliesSection" class="helper-box">
                     <div class="interactive-form">
-                        <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">
+                        <label style="font-size: 0.82rem; text-transform: uppercase; color: var(--cyan-accent); font-weight: 700;">
                             Pegá el comentario del seguidor:
                         </label>
-                        <textarea id="commentInput" placeholder="Ej: sol y pluton casa 3 leo casa 1 acuario casa 7 tauro casa 9..."></textarea>
+                        <textarea id="commentInput" placeholder="Ej: Las nubes que me cortan internet jajaj // o: sol y marte en leo casa 1..."></textarea>
                         
                         <div class="form-controls-row">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.75rem; color: var(--text-dim);">Red:</label>
+                                <label style="font-size: 0.8rem; color: var(--text-dim);">Red:</label>
                                 <select id="platformSelect" class="platform-select">
-                                    <option value="tiktok">TikTok (Link en bio)</option>
-                                    <option value="youtube">YouTube (Link fijado)</option>
-                                    <option value="general">General (Web)</option>
+                                    <option value="tiktok">TikTok (Respuesta Humana)</option>
+                                    <option value="youtube">YouTube (Respuesta Humana)</option>
+                                    <option value="general">General</option>
                                 </select>
                             </div>
                             <button id="btnGenerateReply" class="btn-generate" onclick="generateReply()">
-                                <span>⚡ Generar Respuestas</span>
+                                <span>⚡ Generar Respuestas Frescas</span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Loader -->
-                    <div id="replyLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.85rem;">
+                    <div id="replyLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.9rem;">
                         <span class="spinner" style="margin-right: 8px; vertical-align: middle;"></span>
-                        <span>Canalizando ADN de Tomás (Aries/Acuario/Sagitario)...</span>
+                        <span>Canalizando la voz fresca de Tomás (Aries/Acuario/Sagitario)...</span>
                     </div>
 
                     <!-- Dynamic Reply Cards -->
-                    <div id="repliesContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div id="repliesContainer" style="display: flex; flex-direction: column; gap: 12px;">
                         <div class="quick-reply-card">
                             <div class="quick-reply-title">
-                                <span>⚡ Directa (Aries - Rápida & Punzante)</span>
+                                <span>⚡ Directa (Aries - Rápida & con Chispa)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'replyDirecta')">Copiar</button>
                             </div>
-                            <textarea id="replyDirecta" class="reply-editable-box">¡Esa configuración no come vidrio! ⚡ Tenés tensión pura para mover fichas grandes. Entrá al link de mi perfil y poné tus datos en el reloj: te canta al grado exacto dónde te pega y cómo transmutarlo a tu favor.</textarea>
+                            <textarea id="replyDirecta" class="reply-editable-box">¡Totalmente! Esa energía no come vidrio: cuando se activa, o la dirigís vos o te pasa por encima ⚡</textarea>
                         </div>
 
                         <div class="quick-reply-card">
                             <div class="quick-reply-title">
-                                <span>🔮 Pedagógica (Acuario/Sagitario - Reveladora)</span>
+                                <span>🔮 Pedagógica (Acuario/Sagitario - Clara & Empática)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'replyPedagogica')">Copiar</button>
                             </div>
-                            <textarea id="replyPedagogica" class="reply-editable-box">Tremendo mapa. Cuando esos planetas tocan esas casas, el choque te obliga a hacer consciente lo que venías barriendo bajo la alfombra. En el link de mi bio tenés el reloj interactivo para ver en vivo los orbes exactos de tu tránsito.</textarea>
+                            <textarea id="replyPedagogica" class="reply-editable-box">Tremendo mapa. Cuando esos planetas tocan esas casas, la clave no es pelear contra la corriente sino ordenar lo que venías haciendo en piloto automático.</textarea>
                         </div>
 
                         <div class="quick-reply-card">
                             <div class="quick-reply-title">
-                                <span>🔥 Alquímica (Transmutación & Poder)</span>
+                                <span>🔥 Disparadora (Engagement & Comunidad)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'replyAlquimica')">Copiar</button>
                             </div>
-                            <textarea id="replyAlquimica" class="reply-editable-box">La tensión planetaria no vino a romperte, vino a exigirte maestría. Si dejás de reaccionar y mirás el eje exacto, lo transmutás en poder. Pasate por el link en mi perfil que el reloj te lo muestra servido.</textarea>
+                            <textarea id="replyAlquimica" class="reply-editable-box">¿Sentís que te está pegando más en lo personal o en el laburo? Contame cómo lo venís llevando 👇</textarea>
                         </div>
                     </div>
 
-                    <div class="quick-reply-card" style="border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04);">
-                        <div class="quick-reply-title" style="color: #fbbf24;">
-                            <span>⚠️ Regla de Oro TikTok</span>
+                    <div class="quick-reply-card" style="border-color: rgba(0, 242, 254, 0.25); background: rgba(0, 242, 254, 0.03);">
+                        <div class="quick-reply-title" style="color: var(--cyan-accent);">
+                            <span>💡 Estrategia de Cercanía Humana</span>
                         </div>
-                        <p style="color: #fbbf24; font-size: 0.78rem; margin: 0; line-height: 1.4;">
-                            <b>Jamás escribas "http://" ni enlaces crudos en comentarios de TikTok</b>. TikTok oculta los comentarios con links externos. Usá siempre <b>"en el link de mi perfil"</b> o <b>"link en bio"</b>.
+                        <p style="color: #cbd5e1; font-size: 0.82rem; margin: 0; line-height: 1.5;">
+                            En los comentarios individuales Tomás habla <b>100% como persona</b> (fresco, rioplatense, sin autobombo). El link a la bio o reloj va <b>exclusivamente en el primer comentario fijado</b> para que la comunidad no sienta un bot de spam.
                         </p>
                     </div>
                 </div>
@@ -784,25 +935,25 @@
                 <!-- SECTION 2: COMENTARIO FIJADO (PINNED COMMENT) -->
                 <div id="pinnedSection" class="helper-box" style="display: none;">
                     <div class="interactive-form">
-                        <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-dim); font-weight: 600;">
-                            Generar Primer Comentario para Fijar (Pin):
+                        <label style="font-size: 0.82rem; text-transform: uppercase; color: var(--cyan-accent); font-weight: 700;">
+                            Primer Comentario para Fijar (Pin - Alta Conversión):
                         </label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <div>
-                                <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Fecha del Video:</label>
-                                <input type="date" id="pinnedFecha" style="width: 100%; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.82rem;">
+                                <label style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Fecha del Video:</label>
+                                <input type="date" id="pinnedFecha" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.85rem;">
                             </div>
                             <div>
-                                <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Red Social:</label>
-                                <select id="pinnedPlatform" class="platform-select" style="width: 100%; padding: 6px 8px;">
+                                <label style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Red Social:</label>
+                                <select id="pinnedPlatform" class="platform-select" style="width: 100%; padding: 8px;">
                                     <option value="tiktok">TikTok (Link en bio)</option>
                                     <option value="youtube">YouTube (Link con URL)</option>
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Tránsito / Tema (Opcional):</label>
-                            <input type="text" id="pinnedTransit" placeholder="Ej: Luna ingresa en Virgo / Oposición Saturno" style="width: 100%; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.82rem;">
+                            <label style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-bottom: 2px;">Tránsito / Tema (Opcional):</label>
+                            <input type="text" id="pinnedTransit" placeholder="Ej: Luna ingresa en Virgo / Oposición Saturno" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.85rem;">
                         </div>
                         <button id="btnGeneratePinned" class="btn-generate" onclick="generatePinnedComment()" style="margin-top: 4px;">
                             <span>📌 Generar Comentarios Fijados</span>
@@ -810,19 +961,19 @@
                     </div>
 
                     <!-- Loader Pinned -->
-                    <div id="pinnedLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.85rem;">
+                    <div id="pinnedLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.9rem;">
                         <span class="spinner" style="margin-right: 8px; vertical-align: middle;"></span>
-                        <span>Redactando ganchos de alta conversión y retención...</span>
+                        <span>Redactando ganchos de alta retención y llamada al reloj...</span>
                     </div>
 
                     <!-- Dynamic Pinned Cards -->
-                    <div id="pinnedContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div id="pinnedContainer" style="display: flex; flex-direction: column; gap: 12px;">
                         <div class="quick-reply-card">
                             <div class="quick-reply-title">
                                 <span>🎯 Opción Conversión (Foco en probar el Reloj)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'pinnedConversion')">Copiar</button>
                             </div>
-                            <textarea id="pinnedConversion" class="reply-editable-box">🔮 ¿En qué casa tenés este tránsito? Entrá al link de mi perfil y poné tu fecha: el reloj astral interactivo te muestra en qué área de tu vida se activa exactamente esta energía.</textarea>
+                            <textarea id="pinnedConversion" class="reply-editable-box" style="min-height: 55px;">🔮 ¿En qué casa te cae hoy? Te leo abajo 👇&#10;Reloj en vivo al grado exacto: portaltarotmistico.com</textarea>
                         </div>
 
                         <div class="quick-reply-card">
@@ -830,7 +981,7 @@
                                 <span>🔥 Opción Comunidad (Debate & Engagement)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'pinnedCommunity')">Copiar</button>
                             </div>
-                            <textarea id="pinnedCommunity" class="reply-editable-box">Dejame en los comentarios tu Signo Solar y Ascendente 👇 Te leo y te digo cómo canalizar este aspecto antes de que termine el día.</textarea>
+                            <textarea id="pinnedCommunity" class="reply-editable-box" style="min-height: 55px;">👇 Contame tu signo y en qué casa te cae. Te leo.&#10;Reloj interactivo en vivo: portaltarotmistico.com</textarea>
                         </div>
 
                         <div class="quick-reply-card">
@@ -838,7 +989,47 @@
                                 <span>⚡ Opción Alquímica (Impacto & Advertencia)</span>
                                 <button class="copy-btn" onclick="copyReply(this, 'pinnedAlchemical')">Copiar</button>
                             </div>
-                            <textarea id="pinnedAlchemical" class="reply-editable-box">No te resistas a lo que este tránsito viene a ordenar. El mapa no falla, fallamos cuando operamos en piloto automático. Fijate en el link de mi perfil cómo está tu carta hoy.</textarea>
+                            <textarea id="pinnedAlchemical" class="reply-editable-box" style="min-height: 55px;">⚡ La verdad sin filtro. ¿Por dónde te pega? Te leo 👇&#10;Chequeá tu grado exacto: portaltarotmistico.com</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: ASESOR DE TRÁNSITOS & CONTEXTO ASTRAL -->
+                <div id="adviceSection" class="helper-box" style="display: none;">
+                    <div class="interactive-form">
+                        <label style="font-size: 0.82rem; text-transform: uppercase; color: var(--cyan-accent); font-weight: 700;">
+                            🔮 Consultá o Dale Forma a lo que querés decir:
+                        </label>
+                        <!-- Quick Prompt Chips -->
+                        <div class="chip-container">
+                            <button type="button" class="chip-btn" onclick="setAdvicePrompt('¿Cómo explicar este aspecto en palabras simples y sin dramatismo?')">💡 En palabras simples</button>
+                            <button type="button" class="chip-btn" onclick="setAdvicePrompt('Dame 3 ideas de remates frescos y pícaros para este tránsito.')">🎯 3 Remates gancheros</button>
+                            <button type="button" class="chip-btn" onclick="setAdvicePrompt('¿Qué casas y temas concretos de la vida real activa este aspecto?')">♈ Casas y Vida real</button>
+                            <button type="button" class="chip-btn" onclick="setAdvicePrompt('Hacé este texto más corto, fresco y rioplatense (cero robot): ')">✨ Pulir texto</button>
+                        </div>
+                        <textarea id="adviceInput" placeholder="Preguntale lo que sea sobre el tránsito del video, pedile ideas de remate, o pasale un texto para darle onda..."></textarea>
+                        <button id="btnAskAdvice" class="btn-generate" onclick="askAstralAdvice()">
+                            <span>🔮 Consultar Asesor Astral</span>
+                        </button>
+                    </div>
+
+                    <!-- Loader Advice -->
+                    <div id="adviceLoader" style="display: none; text-align: center; padding: 12px; color: var(--cyan-accent); font-size: 0.9rem;">
+                        <span class="spinner" style="margin-right: 8px; vertical-align: middle;"></span>
+                        <span>Consultando efemérides y sintetizando con la voz de Tomás...</span>
+                    </div>
+
+                    <!-- Dynamic Advice Result Card -->
+                    <div id="adviceContainer" style="display: none;">
+                        <div class="quick-reply-card" style="border-color: rgba(0, 242, 254, 0.35); background: rgba(0, 242, 254, 0.04);">
+                            <div class="quick-reply-title">
+                                <span>💡 Respuesta del Asesor Astral</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="copy-btn" onclick="copyReply(this, 'adviceOutput')">Copiar</button>
+                                    <button class="copy-btn" onclick="usarComoComentario()" style="background: rgba(121, 40, 202, 0.3); color: #d8b4fe;">Usar en Respuestas ➔</button>
+                                </div>
+                            </div>
+                            <textarea id="adviceOutput" class="reply-editable-box" style="min-height: 120px; font-size: 1rem; line-height: 1.55;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -963,24 +1154,90 @@
         function switchAITab(tab) {
             const repliesBtn = document.getElementById('tabRepliesBtn');
             const pinnedBtn = document.getElementById('tabPinnedBtn');
+            const adviceBtn = document.getElementById('tabAdviceBtn');
             const repliesSection = document.getElementById('repliesSection');
             const pinnedSection = document.getElementById('pinnedSection');
+            const adviceSection = document.getElementById('adviceSection');
+
+            repliesBtn.classList.remove('active');
+            pinnedBtn.classList.remove('active');
+            if (adviceBtn) adviceBtn.classList.remove('active');
+
+            repliesSection.style.display = 'none';
+            pinnedSection.style.display = 'none';
+            if (adviceSection) adviceSection.style.display = 'none';
 
             if (tab === 'replies') {
                 repliesBtn.classList.add('active');
-                pinnedBtn.classList.remove('active');
                 repliesSection.style.display = 'flex';
-                pinnedSection.style.display = 'none';
-            } else {
+            } else if (tab === 'pinned') {
                 pinnedBtn.classList.add('active');
-                repliesBtn.classList.remove('active');
                 pinnedSection.style.display = 'flex';
-                repliesSection.style.display = 'none';
-
                 if (!document.getElementById('pinnedFecha').value) {
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('pinnedFecha').value = today;
                 }
+            } else if (tab === 'advice') {
+                if (adviceBtn) adviceBtn.classList.add('active');
+                if (adviceSection) adviceSection.style.display = 'flex';
+            }
+        }
+
+        function setAdvicePrompt(text) {
+            const input = document.getElementById('adviceInput');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        function usarComoComentario() {
+            const adviceText = document.getElementById('adviceOutput').value.trim();
+            if (!adviceText) return;
+            switchAITab('replies');
+            document.getElementById('replyDirecta').value = adviceText;
+            document.getElementById('replyDirecta').focus();
+        }
+
+        async function askAstralAdvice() {
+            const pregunta = document.getElementById('adviceInput').value.trim();
+            if (!pregunta) {
+                alert('Por favor escribe tu consulta o duda sobre el tránsito.');
+                return;
+            }
+            const btn = document.getElementById('btnAskAdvice');
+            const loader = document.getElementById('adviceLoader');
+            const container = document.getElementById('adviceContainer');
+            const output = document.getElementById('adviceOutput');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+            
+            try {
+                const payload = {
+                    pregunta: pregunta,
+                    fecha: document.getElementById('aiDateSelector').value || '',
+                    transit: window.currentAstroContext || '',
+                    cadena: window.currentCadenaTemporal || ''
+                };
+                const res = await fetch('/api/admin/astral-consultant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === 'success' && data.respuesta) {
+                    output.value = data.respuesta;
+                    container.style.display = 'block';
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo obtener el consejo astral.'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error de conexión con el Asesor Astral.');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
             }
         }
 

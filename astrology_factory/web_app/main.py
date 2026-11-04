@@ -330,40 +330,36 @@ async def generate_admin_reply(request: Request):
 
         prompt = f"""
 Actúa como Tomás, astrólogo y creador de 'Portal Tarot Místico'.
-Tus datos natales: Sol y Mercurio en Aries a 22°, Ascendente Acuario a 22°, Luna en Sagitario a 5°.
-Tu personalidad: Directo, lúcido, magnético, eléctrico, sin vueltas, pedagógico y con gancho. Tono argentino natural y maduro (voseo: 'mirá', 'fijate', 'tenés', 'andá a ver').
-PROHIBICIONES ESTRICTAS:
-1. NADA de esnobismo ni melosidad ('bebé', 'mi amor', 'hermosa alma').
-2. NADA de tenebrismo escabroso ni mórbido (cero sangre, cero autopsias, cero vísceras).
-3. NADA de clichés new-age o paganos vacíos ('Samhain', 'códices sagrados', 'seres de luz').
-4. REGLA DE ORO DE REDES:
-   - Si la plataforma es TikTok: NUNCA coloques URLs crudas ('portaltarotmistico.com', 'https://...'). TikTok penaliza y oculta comentarios con enlaces externos. Usa SIEMPRE: "en el link de mi perfil" o "link en mi bio".
-   - Si es YouTube: puedes sugerir "en el link fijado o en mi perfil".
-5. CONTEXTO DE LA WEB: Tenemos una herramienta interactiva gratuita en vivo: el 'Reloj Astrológico 2D' (en el link de la bio). Allí el seguidor ingresa su fecha y hora natal y ve exactamente qué casas y planetas suyos reciben el impacto en grados reales.
+Tus datos natales: Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10.
+Tu personalidad: Directo, lúcido, con chispa, canchero, empático y 100% humano. Voseo argentino rioplatense auténtico ('mirá', 'fijate', 'tenés', 'de una', 'jajaja', 'olvidate', 'posta', 'che').
+
+REGLA DE ORO DE RESPUESTAS INDIVIDUALES (CERO AUTOBOMBO / CERO ROBOT):
+1. ESTÁ TERMINANTEMENTE PROHIBIDO poner links, mencionar 'link en bio', 'mi perfil', 'portaltarotmistico.com' o mandar a ver el reloj. El llamado a la acción va ÚNICAMENTE en el comentario fijado (pinned comment), nunca en las respuestas a la gente.
+2. Hablá como una persona de carne y hueso que charla con su comunidad en TikTok / YouTube: cercano, con onda, cero acartonamiento, cero sermones solemnes o de autoayuda.
+3. Si el comentario es un chiste, ironía o algo casual, reite y seguile el juego. Si es una duda astrológica, contestale concreto y al pie con buena onda.
 
 COMENTARIO DEL SEGUIDOR EN {platform.upper()}:
 "{comment}"
 
-CONTEXTO ASTRAL ACTUAL:
+CONTEXTO ASTRAL ACTUAL (Tránsitos y efemérides):
 {transit_info}
 {cadena_str}
 
-Genera 3 opciones de respuesta breves (máximo 2 a 3 oraciones cada una), personalizadas según lo que mencionó el seguidor (planetas, signos, casas):
-1. 'directa': Punzante, rápida, al hueso (estilo Aries). Despierta curiosidad y manda al link en bio.
-2. 'pedagogica': Explica brevemente la mecánica de las casas o planetas que mencionó el usuario (estilo Acuario/Sagitario) y lo invita a verificar sus grados en el reloj del perfil.
-3. 'alquimica': Enfocada en cómo no chocar contra la energía sino transmutarla en poder personal, cerrando con el llamado a la bio.
+Genera 3 opciones de respuesta breves, humanas y frescas (máximo 1 o 2 oraciones cada una):
+1. 'directa': Rápida, canchera, al hueso (estilo Aries), con remate o humor si amerita.
+2. 'pedagogica': Empática, explica la energía o responde la duda sin tecnicismos pesados (estilo Acuario/Sagitario), como un amigo que sabe de astrología.
+3. 'alquimica': Disparadora o con repregunta curiosa que incite al usuario a seguir comentando para alimentar el algoritmo orgánicamente (sin enlaces).
 
 Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
 {{
   "directa": "texto de la respuesta directa...",
   "pedagogica": "texto de la respuesta pedagógica...",
-  "alquimica": "texto de la respuesta alquímica..."
+  "alquimica": "texto de la respuesta disparadora..."
 }}
 """
 
         replies = None
         if gemini_client:
-            # Priorizamos gemini-3.5-flash-lite que responde al instante y sin spikes de demanda 503
             for model_candidate in ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite']:
                 try:
                     response = gemini_client.models.generate_content(
@@ -387,12 +383,66 @@ Responde ÚNICAMENTE en formato JSON con la siguiente estructura:
 
         if not replies or not isinstance(replies, dict):
             replies = {
-                "directa": f"¡Esa configuración no come vidrio! ⚡ Tensión pura para mover fichas grandes. Entrá al link de mi perfil y poné tus datos en el reloj: te canta al grado exacto dónde te pega y cómo usarlo a tu favor.",
-                "pedagogica": f"Tremendo mapa. Cuando esos planetas tocan esas casas, el choque te obliga a hacer consciente lo que venías barriendo bajo la alfombra. En el link de mi bio tenés el reloj interactivo para ver en vivo los orbes exactos de tu tránsito.",
-                "alquimica": f"La tensión planetaria no vino a romperte, vino a exigirte maestría. Si dejás de reaccionar y mirás el eje exacto, lo transmutás en poder. Pasate por el link en mi perfil que el reloj te lo muestra servido."
+                "directa": "¡Totalmente! Esa energía no come vidrio: cuando se activa, o la dirigís vos o te pasa por encima ⚡",
+                "pedagogica": "Es un aspecto intenso. La clave no es pelear contra la corriente sino ordenar lo que venías haciendo en piloto automático.",
+                "alquimica": "¿Sentís que te está pegando más en lo personal o en el laburo? Contame cómo lo venís llevando 👇"
             }
 
         return JSONResponse(content={"status": "success", "replies": replies})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.post("/api/admin/astral-consultant")
+async def astral_consultant(request: Request):
+    """Asesor astrológico rápido con contexto de tránsitos, videos y tono de Tomás."""
+    try:
+        data = await request.json()
+        pregunta = data.get("pregunta", "").strip()
+        fecha = data.get("fecha", "").strip()
+        transit_info = data.get("transit", "").strip()
+        cadena_temporal = data.get("cadena", "").strip()
+        
+        if not pregunta:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "La consulta no puede estar vacía"})
+
+        prompt = f"""
+Sos el Asesor Astrológico y Co-Piloto Creativo de Tomás (creador de Portal Tarot Místico).
+Tu misión es darle a Tomás respuestas rápidas, lúcidas y súper prácticas sobre el estudio de los tránsitos que analizamos en los videos, o ayudarlo a pulir y reformular respuestas e ideas creativas.
+
+PERFIL DE TOMÁS:
+Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°. Rioplatense, fresco, directo, cero clichés solemnes ni solemnidad new-age.
+
+CONTEXTO ASTROLÓGICO DEL DÍA ({fecha or 'Activo'}):
+- Aspectos / Efemérides: {transit_info or 'Tránsitos activos del ciclo'}
+- Cadena temporal: {cadena_temporal or 'No especificada'}
+
+CONSULTA / PEDIDO DE TOMÁS:
+"{pregunta}"
+
+INSTRUCCIONES DE RESPUESTA:
+1. Sé súper claro, pragmático y al grano (máximo 2 párrafos o bullet points claros).
+2. Si pide ideas de remate, ganchos o pulir un texto, dáselas listas para copiar en tono rioplatense fresco.
+3. Si pregunta por casas, grados o mecánica astrológica, explicale el por qué concreto en la vida real sin rodeos académicos aburridos.
+"""
+        answer = None
+        if gemini_client:
+            for model_candidate in ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash']:
+                try:
+                    resp = gemini_client.models.generate_content(
+                        model=model_candidate,
+                        contents=prompt,
+                    )
+                    if resp and resp.text:
+                        answer = resp.text.strip()
+                        break
+                except Exception as e:
+                    print(f"Error consultor astral con {model_candidate}: {e}")
+                    continue
+                    
+        if not answer:
+            answer = "Este tránsito pide foco y acción consciente. Es ideal para ordenar prioridades sin quemarse la cabeza con pequeñeces."
+            
+        return JSONResponse({"status": "success", "respuesta": answer})
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -407,25 +457,25 @@ async def generate_admin_pinned_comment(request: Request):
 
         prompt = f"""
 Actúa como Tomás, astrólogo y creador de 'Portal Tarot Místico'.
-Tus datos natales: Sol y Mercurio en Aries a 22°, Ascendente Acuario a 22°, Luna en Sagitario a 5°.
-Tono: Auténtico argentino (voseo: 'mirá', 'contame', 'fijate'), directo, eléctrico, provocador pero clínico y lúcido.
+Tus datos natales: Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5°.
+Tono: Auténtico argentino rioplatense, directo, lúcido, canchero y con chispa.
 Misión: Redactar el PRIMER COMENTARIO FIJADO (Pinned Comment) para el video del día: {fecha} ({transit}).
 
-REGLAS DE ORO:
-1. En TikTok: NUNCA pongas URLs crudas ('portaltarotmistico.com'). TikTok oculta el comentario. Usa siempre 'en el link de mi perfil' o 'en mi bio'.
-2. En YouTube: Puedes sugerir 'en el link de mi perfil o web portaltarotmistico.com'.
-3. El comentario fijado debe ser el motor de engagement: debe invitar a la gente a comentar en qué casa o grado tienen el tránsito, y dirigir a la herramienta gratuita del 'Reloj Astrológico en vivo' de la bio para que chequeen su grado exacto.
+REGLA CRÍTICA DE BREVEDAD (CERO PARRAFADAS):
+- MÁXIMO 2 LÍNEAS CORTAS (menos de 120 caracteres en total). Debe leerse en 1 segundo en el celular sin botón 'ver más'.
+- Si la plataforma es TikTok: Usa siempre 'en el link de mi perfil' o 'link en bio'.
+- Si es YouTube: Usa 'portaltarotmistico.com'.
 
-Genera 3 opciones de comentario fijado:
-1. 'conversion': Breve, punzante, gancho directo al reloj en bio para ver grados y casas exactas.
-2. 'comunidad': Pregunta provocadora que obliga a comentar ('¿En qué casa te cae? Dejámelo acá abajo que leo los más picantes...') y link en bio.
-3. 'alquimica': Brújula o advertencia del día sintetizada en 2 frases potentes + invitación a revisar su mapa en el link del perfil.
+Genera 3 opciones ULTRA-BREVES:
+1. 'conversion': Pregunta directa sobre el tránsito + llamado al reloj (ej: '🔮 ¿En qué casa te cae hoy? Te leo abajo 👇\\nReloj en vivo: {("portaltarotmistico.com" if platform == "youtube" else "link en mi bio")}')
+2. 'comunidad': Pregunta para disparar debate y comentarios + link breve.
+3. 'alquimica': Advertencia o consejo lúcido de 1 frase corta + link.
 
 Responde ÚNICAMENTE en JSON con la siguiente estructura:
 {{
-  "conversion": "texto...",
-  "comunidad": "texto...",
-  "alquimica": "texto..."
+  "conversion": "línea 1\\nlínea 2",
+  "comunidad": "línea 1\\nlínea 2",
+  "alquimica": "línea 1\\nlínea 2"
 }}
 """
         pinned = None
@@ -451,11 +501,12 @@ Responde ÚNICAMENTE en JSON con la siguiente estructura:
                     print(f"Error generando pinned comment con {model_candidate}: {e_gen}")
                     continue
 
+        link_dest = "portaltarotmistico.com" if platform == "youtube" else "link en mi bio"
         if not pinned or not isinstance(pinned, dict):
             pinned = {
-                "conversion": f"🌌 ¿En qué casa te cae este tránsito? No adivines: en el link de mi perfil tenés el reloj astrológico gratuito en vivo para ver al grado exacto qué área de tu vida se está moviendo. ✨",
-                "comunidad": f"👇 Contame acá abajo: ¿En qué signo tenés la Luna o en qué casa te cae este aspecto? Voy a estar leyendo y respondiendo las configuraciones más intensas. Para chequear tus grados exactos, entrá al link de mi perfil 🔗",
-                "alquimica": f"⚡ La clave de hoy no es pelear contra la marea ni querer resolver todo ya: es discernir lo urgente de lo importante. Fijate en el reloj interactivo de mi bio qué planetas te activa para no chocar con la pared."
+                "conversion": f"🔮 ¿En qué casa te cae hoy? Te leo abajo 👇\nReloj interactivo en vivo: {link_dest}",
+                "comunidad": f"👇 Contame tu signo y casa. Los leo a todos.\nVer grados exactos: {link_dest}",
+                "alquimica": f"⚡ No luches contra lo que hoy se ordena.\nChequeá tu mapa al grado exacto: {link_dest}"
             }
 
         return JSONResponse(content={

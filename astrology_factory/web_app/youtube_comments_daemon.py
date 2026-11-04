@@ -278,14 +278,17 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video="", cadena_temp
     return None, "ERROR", False
 
 def generar_comentario_fijado_ia(contexto_video="", cadena_temporal=""):
-    """Genera un comentario inicial magnético y fresco para fijar en la cima del video."""
+    """Genera un comentario inicial ultra-breve y magnético para fijar (Pinned Comment)."""
     prompt = (
         f"Contexto del video: {contexto_video}\n"
         f"Cadena temporal: {cadena_temporal}\n\n"
-        "Escribe un comentario inicial para FIJAR (pinned comment) en este nuevo video de YouTube Shorts / canal.\n"
-        "Debe ser de Tomás (Aries/Acuario/Sagitario), tono rioplatense súper fresco, cercano y con chispa.\n"
-        "Debe lanzar una pregunta intrigante o disparador directo para que la gente comente abajo en qué signo/casa tienen el aspecto o cómo lo están sintiendo, e invitar a revisar el reloj astrológico gratuito en vivo en la web (portaltarotmistico.com).\n"
-        "Máximo 2 oraciones contundentes con 1 o 2 emojis discretos."
+        "Redacta el PRIMER COMENTARIO FIJADO (Pinned Comment) para este video de YouTube Shorts / canal.\n"
+        "REGLA CRÍTICA DE BREVEDAD:\n"
+        "- Máximo 2 líneas muy cortas (menos de 120 caracteres en total). Cero textos largos.\n"
+        "- Debe leerse completo de un vistazo en el celular sin que YouTube corte con 'ver más'.\n"
+        "- Línea 1: Pregunta directa y canchera al hueso para incentivar comentarios (ej: '👁️ ¿En qué casa te cae hoy? Los leo acá abajo 👇')\n"
+        "- Línea 2: Enlace directo y limpio al reloj (ej: 'Reloj en vivo al grado exacto: portaltarotmistico.com')\n"
+        "Devuelve ÚNICAMENTE las 2 líneas de texto, sin comillas ni preámbulos."
     )
     keys = obtener_api_keys()
     for model in MODEL_CANDIDATES:
@@ -304,7 +307,7 @@ def generar_comentario_fijado_ia(contexto_video="", cadena_temporal=""):
                     return texto
             except Exception:
                 continue
-    return "🌌 ¿En qué casa te cae este tránsito hoy? Déjenmelo acá abajo que los voy leyendo a todos. Y para chequear sus grados exactos en vivo, dense una vuelta por el reloj en portaltarotmistico.com ✨"
+    return "👁️ ¿En qué casa te cae hoy? Te leo abajo 👇\nReloj en vivo al grado exacto: portaltarotmistico.com"
 
 def publicar_comentario_fijado(video_id, texto=None, modo_simulacion=False):
     """Publica un comentario de primer nivel para fijar en el video."""
