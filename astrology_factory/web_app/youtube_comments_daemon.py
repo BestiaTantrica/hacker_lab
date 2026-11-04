@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-🤖 YOUTUBE COMMENTS AUTO-RESPONDER DAEMON 24/7
+🤖 YOUTUBE COMMENTS AUTO-RESPONDER DAEMON 24/7 (Multi-Turno + Tono Fresco Rioplatense)
 Portal Tarot Místico — Persona: Tomás (Sol/Mercurio Aries 22°, Asc Acuario 22°, Luna Sagitario 5°)
 
 Objetivo:
-- Monitorear comentarios nuevos en los videos/Shorts del canal.
-- Clasificar comentarios (Hater/Escéptico, Pregunta Genuina, Agradecimiento, Spam).
-- Responder con la voz y psique de Tomás: tajante, pragmático, sin insultos (100% YouTube Policy Safe),
-  desarmando falacias y lanzando preguntas punzantes para incentivar el debate en hilos y disparar el algoritmo.
-- Convertir interacciones en tráfico hacia portaltarotmistico.com.
+- Monitorear comentarios nuevos y respuestas a hilos en los videos/Shorts del canal.
+- Detección inteligente de hilos (Multi-Turno): Si un usuario re-contesta, Tomás sigue la charla naturalmente.
+- Tono 100% fresco, rioplatense, pícaro, cercano y humano (CERO robot, cero solemnidad, cero sermones).
+- Soporte para generar y publicar el primer comentario fijado (Pinned Comment).
 - Persistencia e idempotencia estricta en SQLite.
 """
 
@@ -50,17 +49,19 @@ SCOPES = [
 ]
 
 MODEL_CANDIDATES = [
-    "gemini-3.6-flash",
-    "gemini-3.8-flash"
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite"
 ]
 
 def obtener_api_keys():
-    """Recolecta todas las API keys de Gemini para rotación."""
+    """Recolecta todas las API keys de Gemini para rotación, priorizando las más rápidas."""
     keys = []
     for var in [
-        "GEMINI_API_KEY", "GEMINI_API_KEY_TEXT", "GEMINI_API_KEY_WEB",
-        "GEMINI_API_KEY_5", "GEMINI_API_KEY_6", "GEMINI_API_KEY_7",
-        "GEMINI_API_KEY_8", "GEMINI_API_KEY_9", "GEMINI_API_KEY_10"
+        "GEMINI_API_KEY_WEB", "GEMINI_API_KEY_WEB_TEXT", "GEMINI_API_KEY_TEXT",
+        "GEMINI_API_KEY", "GEMINI_API_KEY_5", "GEMINI_API_KEY_6",
+        "GEMINI_API_KEY_7", "GEMINI_API_KEY_8", "GEMINI_API_KEY_9", "GEMINI_API_KEY_10"
     ]:
         v = os.getenv(var)
         if v and v not in keys:
@@ -89,7 +90,6 @@ def init_db():
             replied_at TIMESTAMP
         )
     """)
-    # Migración suave si la tabla ya existía sin parent_id
     try:
         cur.execute("ALTER TABLE comentarios_respondidos ADD COLUMN parent_id TEXT")
     except Exception:
@@ -98,7 +98,7 @@ def init_db():
     conn.close()
 
 def contar_intervenciones_hilo(parent_id):
-    """Cuenta cuántas veces respondió Tomás en este hilo específico."""
+    """Cuenta cuántas veces respondió Tomás en este hilo específico según la base de datos."""
     if not parent_id:
         return 0
     conn = sqlite3.connect(DB_PATH)
@@ -112,7 +112,9 @@ def contar_intervenciones_hilo(parent_id):
     return cnt
 
 def ya_fue_respondido(comment_id):
-    """Verifica si el comentario ya fue procesado."""
+    """Verifica si este comentario puntual ya fue procesado."""
+    if not comment_id:
+        return True
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM comentarios_respondidos WHERE comment_id = ?", (comment_id,))
@@ -153,78 +155,93 @@ def get_youtube_client():
         print(f"⚠️ [YouTube Client] Error al cargar credenciales: {e}")
         return None
 
+def obtener_contexto_video(v_id):
+    """Obtiene título, contexto y cadena temporal del video a partir de su ID."""
+    contexto_video = f"Video ID: {v_id}"
+    cadena_temporal = ""
+    try:
+        reg_path = PROJECT_ROOT / "produccion" / "registro_publicaciones.json"
+        if reg_path.exists():
+            with open(reg_path, "r", encoding="utf-8") as rf:
+                reg_data = json.load(rf)
+            pubs = reg_data.get("publicaciones", {})
+            fechas = sorted(pubs.keys())
+            for idx, f_key in enumerate(fechas):
+                pub = pubs[f_key]
+                if pub.get("youtube_video_id") == v_id:
+                    contexto_video = f"Video de fecha {f_key}: '{pub.get('titulo')}'"
+                    partes = []
+                    if idx > 0:
+                        f_prev = fechas[idx - 1]
+                        partes.append(f"- AYER ({f_prev}): '{pubs[f_prev].get('titulo')}'")
+                    partes.append(f"- HOY ({f_key} - ESTE VIDEO): '{pub.get('titulo')}'")
+                    if idx < len(fechas) - 1:
+                        f_next = fechas[idx + 1]
+                        partes.append(f"- MAÑANA ({f_next}): '{pubs[f_next].get('titulo')}'")
+                    cadena_temporal = "\n".join(partes)
+                    break
+    except Exception:
+        pass
+    return contexto_video, cadena_temporal
+
 def generar_respuesta_ia(autor, texto_comentario, contexto_video="", cadena_temporal="", historial_hilo=None, num_intervenciones_tomas=0):
     """
-    Genera la respuesta con la psique canónica de Tomás.
-    Inteligencia Multi-Turno & Anti-Loro:
-    - Conoce el hilo completo de conversación si viene de un debate.
-    - Límite de intervenciones (máximo 2 por hilo para actuar como humano y no saturar).
-    - Regla Anti-Loro: Prohibido repetir enlaces en turnos secundarios.
-    - Silencio Inteligente: No interrumpe discusiones orgánicas entre terceros.
-    - Conciencia de Cadena Temporal: Conecta el video actual con ayer y mañana.
+    Genera la respuesta con la personalidad fresca y canónica de Tomás.
+    Voz: Joven, argentino (voseo), canchero, lúcido, con chispa, cero robot/pastor.
+    Multi-turno: Conoce el hilo completo y responde en contexto natural.
     """
     if num_intervenciones_tomas >= 2:
         return "", "THREAD_SATURATED", False
 
     regla_segundo_turno = ""
-    if num_intervenciones_tomas == 1:
+    if num_intervenciones_tomas >= 1:
         regla_segundo_turno = (
-            "\nREGLA DE SEGUNDO TURNO (ANTI-LORO CRÍTICA):\n"
-            "- Ya participaste antes en este hilo. ESTÁ TERMINANTEMENTE PROHIBIDO incluir enlaces web o mencionar 'portaltarotmistico.com'.\n"
-            "- Respondé con pura dialéctica, filosofía irónica o análisis psicológico en 1 o 2 oraciones contundentes.\n"
-            "- No actúes como un loro comercial ni como un asistente complaciente. Sé un creador humano que da una estocada lúcida y se retira.\n"
+            "\nREGLA DE SEGUNDO TURNO (RE-RESPUESTA DEL USUARIO):\n"
+            "- Ya charlaste con este usuario antes en este hilo y te acaba de re-contestar.\n"
+            "- TERMINANTEMENTE PROHIBIDO poner enlaces o promocionar la web.\n"
+            "- Seguile la conversación a lo que acaba de decir. Si tiró un chiste, reite ('jajaja tal cual') y hacé un remate gracioso o cómplice.\n"
+            "- Cerrá la interacción con calidez y naturalidad humana en 1 o 2 oraciones cortitas.\n"
         )
 
     contexto_hilo_str = ""
     if historial_hilo and len(historial_hilo) > 0:
         hilo_formateado = "\n".join([f"- @{m.get('autor')}: \"{m.get('texto')}\"" for m in historial_hilo])
-        contexto_hilo_str = f"\nHISTORIAL PREVIO DEL HILO:\n{hilo_formateado}\n"
+        contexto_hilo_str = f"\nHISTORIAL COMPLETO DEL HILO HASTA AHORA:\n{hilo_formateado}\n"
 
     system_instruction = (
-        "Eres Tomás, creador y director de 'Portal Tarot Místico'.\n"
-        "Tu configuración astrológica: Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10.\n"
-        "Estás respondiendo comentarios en tus videos de YouTube Shorts y transmisiones.\n\n"
-        "TU IDENTIDAD Y TONO:\n"
-        "- Lente Cognitiva (Acuario 22°): Tratas a la gente como mentes pensantes. No te ofendés por nada. Ves la crítica o el odio como un síntoma psicológico predecible o pereza cognitiva.\n"
-        "- Asertividad y Filo (Aries 22°): Directo al hueso, tajante, sin vueltas ni diplomacia falsa. No pides permiso para decir la verdad.\n"
-        "- Filosofía e Ironía Lúcida (Sagitario 5°): Voseo rioplatense sobrio y elegante ('mirá', 'fijate', 'te cuento'). Humor sutil, cero solemnidad.\n\n"
-        "CONCIENCIA DE CADENA TEMPORAL (AYER ↔ HOY ↔ MAÑANA):\n"
-        "- Tomás comprende que los tránsitos astrológicos son procesos continuos, no islas aisladas.\n"
-        "- Si el comentario lo amerita, podés conectar el sentir del usuario con el tránsito de ayer o alertarlo con filo sobre lo que se activa mañana, incentivándolo a revisar el video anterior o a esperar el próximo.\n\n"
-        "REGLAS DE INTERVENCIÓN NATURAL HUMANA:\n"
-        "1. NO INTERRUMPIR DEBATES ENTRE TERCEROS: Si dos o más usuarios están debatiendo entre ellos y ninguno te pregunta nada a vos ni menciona tu nombre, marcá 'debe_responder': false. Dejá que la comunidad debata orgánicamente.\n"
-        "2. NUNCA PARECER UN BOT O LORO: Variá el vocabulario. Si el usuario te responde a una pregunta previa, dialogá con lo que dijo en lugar de repetir un speech prearmado.\n"
+        "Sos Tomás, creador de 'Portal Tarot Místico'. Tu carta natal: Sol y Mercurio en Aries 22°, Ascendente Acuario 22°, Luna en Sagitario 5° en Casa 10.\n"
+        "Estás respondiendo comentarios en tus videos de YouTube (Shorts y videos largos) desde tu celular, charlando mano a mano con tu gente.\n\n"
+        "PERSONALIDAD Y ESTILO (100% HUMANO Y FRESCO):\n"
+        "- Voseo rioplatense genuino: 'mirá', 'fijate', 'contame', 'de una', 'olvidate', 'posta', 'jajaja', 'che'.\n"
+        "- Actitud: Canchero, lúcido, con chispa, sin pelos en la lengua, pero re buena onda y cómplice con la comunidad.\n"
+        "- CERO ROBOT, CERO SOLEMNIDAD: Terminantemente prohibido hablar como profesor, predicador o gurú de autoayuda. NUNCA uses frases acartonadas como 'el mapa operativo', 'despejar el humo', 'pereza cognitiva' o sermones sobre la vida.\n"
+        "- HUMOR Y REFLEJOS RÁPIDOS: Si el usuario tira un chiste, ironía o algo casual (ej: 'las nubes que me cortan internet jajaj'), no te pongas a filosofar. Reite y seguile el juego con picardía y un remate divertido ('Jajajaja contra el wifi y las tormentas no hay tránsito en Escorpio que te salve 💀').\n"
+        "- CONCISIÓN: Respuestas cortas (1 o 2 oraciones breves máximo). Que parezca escrito en 5 segundos por alguien de carne y hueso.\n\n"
+        "PAUTAS POR TIPO DE COMENTARIO:\n"
+        "1. CHISTES / COMENTARIOS CASUALES / INFORMALES: Responder con humor, risa y complicidad.\n"
+        "2. BUENA ONDA / ELOGIOS / MANIFESTACIÓN ('abundancia!', 'genio', 'gracias'): Responder con buena vibra, calidez y entusiasmo sincero, sin juzgar ni dar lecciones ('¡De una! Que se destrabe todo lo que esté frenado 🙌 ¿Por dónde sentís que viene, laburo o proyectos?').\n"
+        "3. PREGUNTAS ASTROLÓGICAS REALES: Explicá cortito y al pie, con onda práctica.\n"
+        "4. HATERS / ESCÉPTICOS: Ironía tranquila, sin insultos ni enojo. Picante pero simpático ('Jajaja el típico que opina sin haber visto ni un grado de su carta. Calculala primero y después me contás 😉').\n"
+        "5. REGLA ANTI-SPAM DE ENLACES: Prohibido spamear 'portaltarotmistico.com' o links en cada respuesta. Solo sugerir la web o el reloj astrológico si el usuario pregunta explícitamente por su carta natal, compatibilidad o grados matemáticos.\n"
         f"{regla_segundo_turno}\n"
-        "PROTOCOLO ESTRICTO ANTE HATERS Y ESCÉPTICOS:\n"
-        "1. PROHIBICIÓN ABSOLUTA DE OFENSAS O INSULTOS: Cumplimiento 100% de las normas de la comunidad de YouTube. Nunca insultes ni uses descalificaciones soeces.\n"
-        "2. DESARME PRAGMÁTICO Y QUIRÚRGICO: Exponé con calma y filo la contradicción del hater. Quien opina de astrología sin haber calculado su carta natal con efemérides astronómicas exactas no es un escéptico, es simplemente alguien opinando a ciegas.\n"
-        "3. INCENTIVO AL ALGORITMO: La respuesta DEBE ser provocadora a nivel intelectual y terminar con una pregunta incisiva o un desafío directo que obligue a la persona (o a otros espectadores) a responderte. Los hilos largos de debate son lo que más empuja el video en el feed de YouTube.\n"
-        "4. EMBUDO A LA WEB (Solo en turno 1): Desafialo a calcular su carta natal gratis en portaltarotmistico.com con Swiss Ephemeris para verificar sus datos antes de proyectar sus prejuicios.\n\n"
-        "PROTOCOLO ANTE PREGUNTAS GENUINAS:\n"
-        "- Sé claro, pedagógico y pragmático. Explicá que el signo solar es solo una fracción y que el impacto real depende de las casas y grados matemáticos.\n\n"
-        "PROTOCOLO ANTE ELOGIOS / AGRADECIMIENTOS:\n"
-        "- Agradecé con sobriedad rioplatense. 'Gracias por la lucidez. La clave es observar el cielo como un mapa operativo, no como una creencia'.\n\n"
-        "PROTOCOLO ANTE SPAM Y BOTS (REGLA ALGORÍTMICA):\n"
-        "- ESTAFAS Y PHISHING (categoria: SPAM, debe_responder: false): Promociones crypto, números de WhatsApp falsos o enlaces dudosos. NO RESPONDER: YouTube degrada el score de los canales que interactúan con redes de estafa.\n"
-        "- TROLLS Y BOTS GENÉRICOS (categoria: HATER_SKEPTIC, debe_responder: true): Si es un troll, hater o escéptico sin enlaces de estafa, RESPONDÉLE con el filo y la ironía de Tomás. La controversia limpia alimenta la retención y el algoritmo.\n\n"
         "FORMATO DE SALIDA:\n"
         "Devuelve ÚNICAMENTE un JSON con este esquema:\n"
         "{\n"
         "  \"categoria\": \"HATER_SKEPTIC\" | \"GENUINE_QUESTION\" | \"PRAISE\" | \"SPAM\",\n"
         "  \"debe_responder\": true | false,\n"
-        "  \"respuesta\": \"Texto exacto de la respuesta en español rioplatense (máximo 1 o 2 oraciones contundentes)\"\n"
+        "  \"respuesta\": \"Texto exacto de la respuesta en español rioplatense (1 o 2 oraciones breves y frescas)\"\n"
         "}"
     )
 
     cadena_str = f"\nCADENA TEMPORAL DE TRÁNSITOS DEL CANAL:\n{cadena_temporal}\n" if cadena_temporal else ""
     prompt = (
-        f"Comentario nuevo recibido de: @{autor}\n"
+        f"Comentario a responder de: @{autor}\n"
         f"Texto del comentario: \"{texto_comentario}\"\n"
         f"Contexto del video actual: {contexto_video}\n"
         f"{cadena_str}"
         f"{contexto_hilo_str}\n"
         f"Número de intervenciones previas de Tomás en este hilo: {num_intervenciones_tomas}\n\n"
-        f"Analizá el hilo y generá la respuesta de Tomás siguiendo las directrices."
+        f"Respondé como Tomás con frescura y naturalidad humana."
     )
 
     keys = obtener_api_keys()
@@ -240,29 +257,106 @@ def generar_respuesta_ia(autor, texto_comentario, contexto_video="", cadena_temp
                     contents=prompt,
                     config=types.GenerateContentConfig(
                         system_instruction=system_instruction,
-                        temperature=0.7,
+                        temperature=0.8,
                         response_mime_type="application/json"
                     )
                 )
                 if resp and resp.text:
-                    data = json.loads(resp.text.strip())
+                    clean_text = resp.text.strip()
+                    if clean_text.startswith("```json"):
+                        clean_text = clean_text[7:]
+                    if clean_text.startswith("```"):
+                        clean_text = clean_text[3:]
+                    if clean_text.endswith("```"):
+                        clean_text = clean_text[:-3]
+                    clean_text = clean_text.strip()
+                    data = json.loads(clean_text)
                     return data.get("respuesta", ""), data.get("categoria", "GENUINE_QUESTION"), data.get("debe_responder", True)
-            except Exception as e:
-                # Rotar si hay rate limit o fallo de modelo
+            except Exception:
                 continue
 
     return None, "ERROR", False
 
-def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
+def generar_comentario_fijado_ia(contexto_video="", cadena_temporal=""):
+    """Genera un comentario inicial magnético y fresco para fijar en la cima del video."""
+    prompt = (
+        f"Contexto del video: {contexto_video}\n"
+        f"Cadena temporal: {cadena_temporal}\n\n"
+        "Escribe un comentario inicial para FIJAR (pinned comment) en este nuevo video de YouTube Shorts / canal.\n"
+        "Debe ser de Tomás (Aries/Acuario/Sagitario), tono rioplatense súper fresco, cercano y con chispa.\n"
+        "Debe lanzar una pregunta intrigante o disparador directo para que la gente comente abajo en qué signo/casa tienen el aspecto o cómo lo están sintiendo, e invitar a revisar el reloj astrológico gratuito en vivo en la web (portaltarotmistico.com).\n"
+        "Máximo 2 oraciones contundentes con 1 o 2 emojis discretos."
+    )
+    keys = obtener_api_keys()
+    for model in MODEL_CANDIDATES:
+        for key in keys:
+            try:
+                client = genai.Client(api_key=key)
+                resp = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        temperature=0.7
+                    )
+                )
+                if resp and resp.text:
+                    texto = resp.text.strip().strip('"')
+                    return texto
+            except Exception:
+                continue
+    return "🌌 ¿En qué casa te cae este tránsito hoy? Déjenmelo acá abajo que los voy leyendo a todos. Y para chequear sus grados exactos en vivo, dense una vuelta por el reloj en portaltarotmistico.com ✨"
+
+def publicar_comentario_fijado(video_id, texto=None, modo_simulacion=False):
+    """Publica un comentario de primer nivel para fijar en el video."""
+    youtube = get_youtube_client()
+    if not youtube:
+        print("❌ [Pinned Comment] No se pudo autenticar cliente de YouTube.")
+        return False
+
+    contexto_video, cadena_temporal = obtener_contexto_video(video_id)
+    if not texto:
+        texto = generar_comentario_fijado_ia(contexto_video, cadena_temporal)
+
+    print(f"\n📌 [Pinned Comment] Video {video_id}:")
+    print(f"   \"{texto}\"")
+
+    if modo_simulacion:
+        print("✅ [Modo Simulación] Comentario no enviado a la API de YouTube.")
+        return True
+
+    try:
+        req = youtube.commentThreads().insert(
+            part="snippet",
+            body={
+                "snippet": {
+                    "videoId": video_id,
+                    "topLevelComment": {
+                        "snippet": {
+                            "textOriginal": texto
+                        }
+                    }
+                }
+            }
+        )
+        res = req.execute()
+        new_id = res.get("id")
+        print(f"🚀 ¡Comentario inicial publicado exitosamente! (ID: {new_id})")
+        print("💡 Podés entrar a YouTube Studio y hacer clic en 'Fijar' para que quede arriba de todo.")
+        registrar_respuesta(new_id, video_id, "@portaltarotmistico", texto, "PINNED_COMMENT", texto, "POSTED")
+        return True
+    except Exception as e:
+        print(f"❌ Error al publicar comentario fijado: {e}")
+        return False
+
+def procesar_comentarios(video_id=None, max_results=20, modo_simulacion=False):
     """
-    Lee comentarios de YouTube y responde a los pendientes.
-    Si falta el scope youtube.force-ssl, registra la respuesta en la base
-    como SIMULATED_PENDING_SCOPE para no perderla y notifica.
+    Lee comentarios de YouTube y responde inteligentemente a los pendientes,
+    soportando tanto comentarios raíz como respuestas anidadas (hilos multi-turno).
     """
     init_db()
     youtube = get_youtube_client()
     if not youtube:
-        print("⚠️ [Daemon] No se pudo inicializar el cliente de YouTube. Verificando...")
+        print("⚠️ [Daemon] No se pudo inicializar el cliente de YouTube. Verificando credenciales...")
         return
 
     CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID", "UCaSKtvaO4kGR9yVUIQEknaA")
@@ -270,14 +364,14 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
     try:
         if video_id:
             req = youtube.commentThreads().list(
-                part="snippet",
+                part="snippet,replies",
                 videoId=video_id,
                 maxResults=max_results,
                 order="time"
             )
         else:
             req = youtube.commentThreads().list(
-                part="snippet",
+                part="snippet,replies",
                 allThreadsRelatedToChannelId=CHANNEL_ID,
                 maxResults=max_results,
                 order="time"
@@ -285,17 +379,23 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         res = req.execute()
     except googleapiclient.errors.HttpError as http_err:
         if http_err.resp.status == 403 and "insufficientPermissions" in str(http_err):
-            print("⚠️ [Aviso de Scopes] El token.json actual solo tiene permisos de subida (youtube.upload).")
-            print("💡 Para activar respuestas automáticas en vivo en YouTube, ejecuta:")
-            print("   python3 v2/celula_4/configurador_oauth.py")
-            print("   (Ya hemos añadido el scope 'youtube.force-ssl' en la configuración).")
+            print("⚠️ [Aviso de Scopes] Se requiere el scope 'youtube.force-ssl'.")
             return
         elif http_err.resp.status == 400 and not video_id:
-            # Si no se pasó channel ID o falla allThreads, probar con el último video publicado
-            print("ℹ️ Reintentando búsqueda con video específico del contexto...")
-            adn_file = PROJECT_ROOT / "contexto_astrologico.json"
-            if adn_file.exists():
-                return procesar_comentarios(video_id="yTI2hIFoyT8", max_results=max_results, modo_simulacion=modo_simulacion)
+            # Fallback a video reciente si falla búsqueda general
+            print("ℹ️ Reintentando búsqueda con video del registro...")
+            reg_path = PROJECT_ROOT / "produccion" / "registro_publicaciones.json"
+            if reg_path.exists():
+                try:
+                    with open(reg_path, "r", encoding="utf-8") as rf:
+                        reg_data = json.load(rf)
+                    pubs = reg_data.get("publicaciones", {})
+                    for f_key in sorted(pubs.keys(), reverse=True):
+                        v_id = pubs[f_key].get("youtube_video_id")
+                        if v_id:
+                            return procesar_comentarios(video_id=v_id, max_results=max_results, modo_simulacion=modo_simulacion)
+                except Exception:
+                    pass
         print(f"❌ Error al consultar comentarios de YouTube: {http_err}")
         return
     except Exception as e:
@@ -303,88 +403,147 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
         return
 
     items = res.get("items", [])
-    print(f"📥 Comentarios recibidos: {len(items)}")
+    print(f"📥 Hilos de comentarios recibidos: {len(items)}")
 
     for item in items:
+        thread_id = item.get("id")
         top_level = item.get("snippet", {}).get("topLevelComment", {})
-        c_id = top_level.get("id")
-        snippet = top_level.get("snippet", {})
-        autor = snippet.get("authorDisplayName", "Usuario")
-        texto = snippet.get("textOriginal", "")
-        v_id = snippet.get("videoId", video_id or "desconocido")
-        author_channel_id = snippet.get("authorChannelId", {}).get("value")
+        top_snippet = top_level.get("snippet", {})
+        top_author = top_snippet.get("authorDisplayName", "Usuario")
+        top_text = top_snippet.get("textOriginal", "")
+        v_id = top_snippet.get("videoId", video_id or "desconocido")
+        top_author_channel_id = top_snippet.get("authorChannelId", {}).get("value")
 
-        # Regla 1: No procesar si ya fue respondido o no tiene ID
-        if not c_id or ya_fue_respondido(c_id):
+        # 1. Obtener contexto del video
+        contexto_video, cadena_temporal = obtener_contexto_video(v_id)
+
+        # 2. Respuestas en el hilo
+        replies_raw = item.get("replies", {}).get("comments", [])
+        total_reply_count = item.get("snippet", {}).get("totalReplyCount", len(replies_raw))
+
+        # Si hay más respuestas que las devueltas en snippet, traer el hilo completo
+        if total_reply_count > len(replies_raw):
+            try:
+                full_replies_req = youtube.comments().list(
+                    part="snippet",
+                    parentId=thread_id,
+                    maxResults=50
+                )
+                full_res = full_replies_req.execute()
+                replies_raw = full_res.get("items", [])
+            except Exception:
+                pass
+
+        # Ordenar cronológicamente (antiguos primero, recientes al final)
+        replies_sorted = sorted(replies_raw, key=lambda x: x.get("snippet", {}).get("publishedAt", ""))
+
+        # Construir historial completo del debate
+        historial_hilo = [{"autor": top_author, "texto": top_text}]
+        for r in replies_sorted:
+            r_snip = r.get("snippet", {})
+            historial_hilo.append({
+                "autor": r_snip.get("authorDisplayName", "Usuario"),
+                "texto": r_snip.get("textOriginal", "")
+            })
+
+        # 3. Contar intervenciones previas de Tomás en este hilo
+        intervenciones_live = 0
+        if top_author_channel_id == CHANNEL_ID or top_author.lower() in ["@portaltarotmistico", "portaltarotmistico"]:
+            intervenciones_live += 1
+        for r in replies_sorted:
+            r_snip = r.get("snippet", {})
+            r_auth = r_snip.get("authorDisplayName", "").lower()
+            r_ch = r_snip.get("authorChannelId", {}).get("value")
+            if r_ch == CHANNEL_ID or r_auth in ["@portaltarotmistico", "portaltarotmistico"]:
+                intervenciones_live += 1
+
+        num_intervenciones = max(contar_intervenciones_hilo(thread_id), intervenciones_live)
+
+        # 4. Determinar si hay un mensaje nuevo al que responder
+        target_comment_id = None
+        target_author = None
+        target_text = None
+
+        if not replies_sorted:
+            # Caso A: Hilo sin respuestas aún (solo el comentario raíz)
+            if not ya_fue_respondido(thread_id):
+                if top_author_channel_id != CHANNEL_ID and top_author.lower() not in ["@portaltarotmistico", "portaltarotmistico"]:
+                    target_comment_id = thread_id
+                    target_author = top_author
+                    target_text = top_text
+        else:
+            # Caso B: Hilo con respuestas. Miramos el último comentario de la cadena
+            last_reply = replies_sorted[-1]
+            last_snip = last_reply.get("snippet", {})
+            last_id = last_reply.get("id")
+            last_author = last_snip.get("authorDisplayName", "Usuario")
+            last_text = last_snip.get("textOriginal", "")
+            last_channel_id = last_snip.get("authorChannelId", {}).get("value")
+
+            # Si el último comentario fue del canal de Tomás, no hay nada pendiente que responder
+            if last_channel_id == CHANNEL_ID or last_author.lower() in ["@portaltarotmistico", "portaltarotmistico"]:
+                continue
+
+            # Si este comentario del usuario ya fue procesado, no repetir
+            if ya_fue_respondido(last_id):
+                continue
+
+            # Si Tomás ya intervino 2 veces en este hilo, no saturar al usuario
+            if num_intervenciones >= 2:
+                print(f"⏩ Hilo {thread_id} completó {num_intervenciones} intervenciones. Dejando espacio.")
+                registrar_respuesta(last_id, v_id, last_author, last_text, "THREAD_SATURATED", "", "SKIPPED", parent_id=thread_id)
+                continue
+
+            target_comment_id = last_id
+            target_author = last_author
+            target_text = last_text
+
+        if not target_comment_id:
             continue
 
-        # Regla 2: Ignorar comentarios propios del canal (comentarios fijados de Tomás, etc.)
-        if author_channel_id == CHANNEL_ID or autor.lower() in ["@portaltarotmistico", "portaltarotmistico"]:
-            continue
+        print(f"\n💬 Procesando intervención en hilo (Turno {num_intervenciones + 1})")
+        print(f"   Autor: @{target_author} | Texto: \"{target_text}\"")
 
-        # Obtener título, contexto y cadena temporal del video
-        contexto_video = f"Video ID: {v_id}"
-        cadena_temporal = ""
-        try:
-            reg_path = PROJECT_ROOT / "produccion" / "registro_publicaciones.json"
-            if reg_path.exists():
-                with open(reg_path, "r", encoding="utf-8") as rf:
-                    reg_data = json.load(rf)
-                pubs = reg_data.get("publicaciones", {})
-                fechas = sorted(pubs.keys())
-                for idx, f_key in enumerate(fechas):
-                    pub = pubs[f_key]
-                    if pub.get("youtube_video_id") == v_id:
-                        contexto_video = f"Video de fecha {f_key}: '{pub.get('titulo')}'"
-                        partes = []
-                        if idx > 0:
-                            f_prev = fechas[idx - 1]
-                            partes.append(f"- AYER ({f_prev}): '{pubs[f_prev].get('titulo')}'")
-                        partes.append(f"- HOY ({f_key} - ESTE VIDEO): '{pub.get('titulo')}'")
-                        if idx < len(fechas) - 1:
-                            f_next = fechas[idx + 1]
-                            partes.append(f"- MAÑANA ({f_next}): '{pubs[f_next].get('titulo')}'")
-                        cadena_temporal = "\n".join(partes)
-                        break
-        except Exception:
-            pass
-
-        print(f"\n💬 Procesando comentario de @{autor}: \"{texto[:60]}...\"")
         respuesta, categoria, debe_responder = generar_respuesta_ia(
-            autor, texto, contexto_video=contexto_video, cadena_temporal=cadena_temporal
+            target_author, 
+            target_text, 
+            contexto_video=contexto_video, 
+            cadena_temporal=cadena_temporal,
+            historial_hilo=historial_hilo,
+            num_intervenciones_tomas=num_intervenciones
         )
 
         if not debe_responder or categoria == "SPAM" or not respuesta:
             print(f"⏩ Comentario ignorado (Categoría: {categoria})")
-            registrar_respuesta(c_id, v_id, autor, texto, categoria, "", "SKIPPED")
+            registrar_respuesta(target_comment_id, v_id, target_author, target_text, categoria, "", "SKIPPED", parent_id=thread_id)
             continue
 
         print(f"⚡ [Categoría: {categoria}] Respuesta generada:")
         print(f"   {respuesta}")
 
         if modo_simulacion:
-            registrar_respuesta(c_id, v_id, autor, texto, categoria, respuesta, "SIMULATED")
+            registrar_respuesta(target_comment_id, v_id, target_author, target_text, categoria, respuesta, "SIMULATED", parent_id=thread_id)
             print(f"✅ Guardado en base de datos (Modo Simulación).")
             continue
 
-        # Intentar publicar la respuesta en YouTube
+        # Publicar la respuesta en el hilo (en YouTube, parentId siempre es el ID del hilo raíz)
         try:
             insert_req = youtube.comments().insert(
                 part="snippet",
                 body={
                     "snippet": {
-                        "parentId": c_id,
+                        "parentId": thread_id,
                         "textOriginal": respuesta
                     }
                 }
             )
             insert_req.execute()
-            registrar_respuesta(c_id, v_id, autor, texto, categoria, respuesta, "POSTED")
+            registrar_respuesta(target_comment_id, v_id, target_author, target_text, categoria, respuesta, "POSTED", parent_id=thread_id)
             print(f"🚀 ¡Respuesta publicada exitosamente en YouTube!")
         except googleapiclient.errors.HttpError as err:
             if "insufficientPermissions" in str(err) or err.resp.status == 403:
                 print(f"⚠️ Guardado en SQLite (Pendiente de scope youtube.force-ssl).")
-                registrar_respuesta(c_id, v_id, autor, texto, categoria, respuesta, "SIMULATED_PENDING_SCOPE")
+                registrar_respuesta(target_comment_id, v_id, target_author, target_text, categoria, respuesta, "SIMULATED_PENDING_SCOPE", parent_id=thread_id)
             else:
                 print(f"❌ Error al insertar comentario en YouTube: {err}")
         except Exception as e:
@@ -393,10 +552,10 @@ def procesar_comentarios(video_id=None, max_results=15, modo_simulacion=False):
 def run_daemon(interval_seconds=60, video_id=None):
     """Bucle infinito del demonio 24/7."""
     print("=" * 60)
-    print("🤖 INICIANDO DAEMON DE COMENTARIOS DE YOUTUBE 24/7")
+    print("🤖 INICIANDO DAEMON DE COMENTARIOS DE YOUTUBE 24/7 (Multi-Turno)")
     print(f"⏱️ Intervalo de escaneo: {interval_seconds} segundos")
     print(f"🎯 Modo: {'Canal completo (todos los videos)' if not video_id else f'Video específico: {video_id}'}")
-    print("🎯 Persona Tomás: Aries 22° / Acuario 22° / Sagitario 5°")
+    print("🎯 Persona Tomás: Rioplatense fresco / Aries 22° / Acuario 22° / Sagitario 5°")
     print("=" * 60)
 
     while True:
@@ -407,14 +566,21 @@ def run_daemon(interval_seconds=60, video_id=None):
         time.sleep(interval_seconds)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="YouTube Comments Responder Daemon")
+    parser = argparse.ArgumentParser(description="YouTube Comments Responder Daemon (Multi-Turno + Pinned)")
     parser.add_argument("--once", action="store_true", help="Ejecutar una sola vez y salir")
     parser.add_argument("--simular", action="store_true", help="Modo simulación sin escribir en YouTube")
     parser.add_argument("--video", type=str, default=None, help="ID de un video específico (por defecto: monitorea todo el canal)")
     parser.add_argument("--intervalo", type=int, default=60, help="Segundos entre escaneos en modo daemon (default: 60)")
+    parser.add_argument("--fijar", action="store_true", help="Generar y publicar un comentario fijado para el video indicado en --video")
+    parser.add_argument("--texto-fijar", type=str, default=None, help="Texto manual para el comentario fijado (opcional)")
     args = parser.parse_args()
 
-    if args.once:
+    if args.fijar:
+        if not args.video:
+            print("❌ Para fijar un comentario debes especificar --video <ID_DEL_VIDEO>")
+            sys.exit(1)
+        publicar_comentario_fijado(args.video, texto=args.texto_fijar, modo_simulacion=args.simular)
+    elif args.once:
         procesar_comentarios(video_id=args.video, modo_simulacion=args.simular)
     else:
         run_daemon(interval_seconds=args.intervalo, video_id=args.video)

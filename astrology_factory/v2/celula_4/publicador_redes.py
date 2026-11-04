@@ -190,6 +190,14 @@ def main():
                         except Exception as rex:
                             log(f"⚠️ No se pudo actualizar registro_publicaciones.json: {rex}", AMARILLO)
 
+                    # Publicar automáticamente el comentario inicial para fijar en YouTube
+                    try:
+                        from web_app.youtube_comments_daemon import publicar_comentario_fijado
+                        log(f"📌 Publicando comentario inicial para fijar en YouTube ({youtube_id})...", CYAN)
+                        publicar_comentario_fijado(youtube_id)
+                    except Exception as pin_ex:
+                        log(f"⚠️ Aviso al generar comentario fijado automático: {pin_ex}", AMARILLO)
+
                 except googleapiclient.errors.HttpError as e:
                     log(f"❌ Error de la API de YouTube: {e}", ROJO)
             else:
