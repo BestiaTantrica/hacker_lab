@@ -47,8 +47,8 @@ FORMATOS_IMG = {".jpg", ".jpeg", ".png", ".webp"}
 # ── Parámetros del Builder (no son rutas; las rutas viven en el ADN) ─────────
 XFADE_DUR_DEFAULT = 0.40   # se sobreescribe con ADN["render"]["xfade_duracion_s"] si existe
 SUPERSAMPLE       = 2      # las imágenes se amplían ×2 antes del zoompan (evita el "jitter" por redondeo)
-ZOOM_BASE         = 1.08   # zoom máximo Ken Burns para imágenes normales
-ZOOM_ICONICA      = 1.14   # zoom máximo para imágenes icónicas (tarot, signos, símbolos…)
+ZOOM_BASE         = 1.02   # zoom noble ultra sutil para no desvirtuar el arte
+ZOOM_ICONICA      = 1.03   # zoom noble ultra sutil para imágenes icónicas
 MIN_FRAMES_IMG    = 2
 
 # Transiciones xfade que FFmpeg 7.x acepta. Cualquier otra → "fade".
@@ -235,7 +235,7 @@ def _resolver_audio(cfg: dict, evento: str, aspecto: str, tomas: list[dict]) -> 
     Mejor audio ya mezclado por la Célula 3: _sfx > _binaural > _mix.
     Si solo existe la narración cruda, se aplica el diseño sonoro legado (audio_mixer).
     """
-    for sufijo in ("_sfx", "_binaural", "_mix"):
+    for sufijo in ("_sfx", "_binaural", "_mixed", "_mix"):
         p = cfg["AUDIO_DIR"] / f"{evento}{sufijo}.mp3"
         if p.exists():
             print(f"🔊 Audio: {p.name}")
