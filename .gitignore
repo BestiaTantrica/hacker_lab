@@ -84,3 +84,8 @@ historial_profundo/backups_db/ciberseguridad_backup_final.tar.gz
 # Symlink a proyecto independiente EcoMarvex
 ecomarvex
 
+
+# Meta / Facebook credentials
+*meta_tokens*.json
+meta_tokens.json
+*tokens*.json
