@@ -1,183 +1,339 @@
 {
-  "serie": "Guiones de Oro Canónicos - El Glifo Maestro",
-  "formato": "vertical 9:16, 40 segundos, 7 tomas",
+  "serie": "Guiones de Oro Canónicos - El Glifo Maestro (Voz y Personalidad Real de Tomás)",
+  "formato": "vertical 9:16, 30-35 segundos, 5 tomas",
   "metadatos": {
-    "autor": "Claude Pro (Auditoría Rigurosa)",
-    "estilo": "Roberto Ferri / Caravaggio / Psicología Arquetípica Junguiana",
-    "locucion_ritmo": "85-95 palabras, 40 segundos netos, pausas 0.3s"
+    "autor": "Tomás (Astrology Factory)",
+    "estilo": "Educador empático, psicología arquetípica visceral, voseo rioplatense auténtico, cero clichés",
+    "locucion_ritmo": "75-90 palabras, ~30-32 segundos netos, ritmo conversacional ágil y puntuación natural"
   },
   "guiones": [
     {
-      "id": "ORO_1",
-      "titulo": "Tensión y Fuego",
-      "tipo_arquetipo": "fuego_choque_dinamico",
-      "transito": "Oposición Marte en Cáncer - Plutón en Capricornio",
-      "geometria_astral": "180 grados (Oposición)",
+      "id": "ORO_CAN_01",
+      "fecha": "2026-11-14",
+      "titulo": "Cuadratura Marte-Plutón | La bronca que venís tragando",
+      "transito": "Marte cuadratura Plutón (10° Capricornio)",
       "tomas": [
         {
           "num": 1,
-          "duracion_segundos": 5,
-          "locucion": "Esa rabia que tragaste en silencio no desapareció. Se mudó adentro.",
-          "direccion_arte_visual": "Primer plano de un rostro masculino de perfil, mitad en sombra absoluta, mandíbula tensa. Luz de vela rasante desde la izquierda, piel con brillo húmedo, fondo negro profundo. Claroscuro Caravaggio.",
-          "arquetipo_clave": "La rabia contenida"
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "14 de noviembre. Te levantás con la mandíbula apretada y todavía no pasó nada. Esa es la señal."
         },
         {
           "num": 2,
-          "duracion_segundos": 6,
-          "locucion": "Marte en Cáncer se opone a Plutón en Capricornio: el instinto choca contra el poder.",
-          "direccion_arte_visual": "Dos figuras enfrentadas en la penumbra. Una, de piel pálida, con paño rojo sangre. La otra, cubierta de ceniza, en un trono de roca oscura. Brasas flotando entre ambas. Estilo Roberto Ferri.",
-          "arquetipo_clave": "Instinto contra poder"
+          "rol": "mecanica_psicologica",
+          "locucion": "Hay una bronca vieja que venís tragando hace rato. Hoy empuja hacia arriba y saltás por cualquier pavada mínima."
         },
         {
           "num": 3,
-          "duracion_segundos": 6,
-          "locucion": "Mandíbula apretada, pulso en el cuello, y una discusión ganada de antemano con alguien ausente.",
-          "direccion_arte_visual": "Detalle de un cuello con la vena marcada y un puño cerrado de nudillos blancos. Luz cálida ámbar contra fondo carbón, textura de óleo craquelado.",
-          "arquetipo_clave": "El cuerpo que arde"
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "Fijate en el astrolabio: Marte a diez grados tensiona a Plutón en Capricornio. Presión que no explota, implosiona."
         },
         {
           "num": 4,
-          "duracion_segundos": 6,
-          "locucion": "La trampa es el rencor frío: castigás con silencio y lo bautizás control.",
-          "direccion_arte_visual": "Figura de espaldas, sentada ante una mesa vacía, con una daga apoyada sin usar. Un rostro de mujer observa desde la oscuridad del fondo. Sombras densas, un único filo de luz sobre el metal.",
-          "arquetipo_clave": "El castigo silencioso"
+          "rol": "brujula_lucida",
+          "locucion": "No descargues en el primero que te cruces. Preguntate qué es lo que de verdad te tiene así, y decidilo vos."
         },
         {
           "num": 5,
-          "duracion_segundos": 6,
-          "locucion": "Integrar es nombrar lo que te duele antes de que mande, y elegir cuándo actuar.",
-          "direccion_arte_visual": "Una mano abierta sostiene una brasa sin quemarse. La luz dorada asciende por el antebrazo y revela el rostro apenas, sereno. Fondo negro absoluto.",
-          "arquetipo_clave": "Dominio del fuego"
-        },
-        {
-          "num": 6,
-          "duracion_segundos": 6,
-          "locucion": "¿Qué poder defendés con tanta furia: el tuyo, o el que te prestaron?",
-          "direccion_arte_visual": "Rostro frontal con los ojos fijos en cámara. Mitad iluminado con rojo cálido, mitad hundido en negro. Un espejo oscuro y agrietado sostenido a un costado.",
-          "arquetipo_clave": "El espejo del poder"
-        },
-        {
-          "num": 7,
-          "duracion_segundos": 5,
-          "locucion": "Tu carta natal muestra dónde pelea tu Marte. Entrá al canal de Telegram.",
-          "direccion_arte_visual": "Glifo dorado de Marte brillando tenuemente sobre una piedra negra. Humo lento ascendiendo. Cierre con viñeta oscura y espacio libre para el texto del canal.",
-          "arquetipo_clave": "El umbral"
+          "rol": "cta",
+          "locucion": "¿Con quién estás peleando en serio hoy? Escribilo abajo, aunque sea para sacártelo de encima."
         }
       ]
     },
     {
-      "id": "ORO_2",
-      "titulo": "Marea Psicológica y Agua",
-      "tipo_arquetipo": "agua_marea_emocional",
-      "transito": "Conjunción Luna - Neptuno en Piscis",
-      "geometria_astral": "0 grados (Conjunción)",
+      "id": "ORO_CAN_02",
+      "fecha": "2026-11-15",
+      "titulo": "Mercurio Cazimi | La verdad que venís esquivando",
+      "transito": "Mercurio cazimi (conjunción Sol, 23° Escorpio)",
       "tomas": [
         {
           "num": 1,
-          "duracion_segundos": 5,
-          "locucion": "Hoy no sabés si estás triste o si absorbiste la tristeza ajena.",
-          "direccion_arte_visual": "Rostro femenino semihundido en agua negra, ojos abiertos, cabello flotando. Luz lunar fría y azulada desde arriba. Superficie con reflejos tenues, estilo Ferri.",
-          "arquetipo_clave": "La esponja emocional"
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "15 de noviembre. Hay algo que sabés hace rato y venís haciéndote el distraído. Hoy ya no podés."
         },
         {
           "num": 2,
-          "duracion_segundos": 6,
-          "locucion": "La Luna conjunta a Neptuno en Piscis: el reflejo emocional pierde sus bordes por unas horas.",
-          "direccion_arte_visual": "Disco lunar pálido que se funde con una masa de niebla marina, sobre un mar de óleo oscuro. Dos círculos superpuestos, apenas dorados. Atmósfera barroca.",
-          "arquetipo_clave": "Disolución de límites"
+          "rol": "mecanica_psicologica",
+          "locucion": "La verdad que esquivabas se te pone en la cara, nítida. Ya no te sirve mirar para otro lado."
         },
         {
           "num": 3,
-          "duracion_segundos": 6,
-          "locucion": "Niebla en el pecho, sueño espeso, ojos húmedos sin motivo, y una ternura que desborda.",
-          "direccion_arte_visual": "Figura recostada entre sábanas oscuras, una mano sobre el esternón. Luz azul grisácea, lágrima brillante en la mejilla. Textura de óleo y sombras suaves.",
-          "arquetipo_clave": "La sensibilidad sin filtro"
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "Mirá el astrolabio: Mercurio cazimi a veintitrés grados de Escorpio, en el corazón del Sol. No es ruido, es claridad que quema."
         },
         {
           "num": 4,
-          "duracion_segundos": 6,
-          "locucion": "La trampa es la fuga: anestesiarte, idealizar a alguien, o hundirte en un dolor ajeno.",
-          "direccion_arte_visual": "Una copa volcada y una figura que se aleja hacia una orilla borrosa. Otra silueta se desvanece entre la bruma. Verdes y negros profundos con un solo destello plateado.",
-          "arquetipo_clave": "La evasión"
+          "rol": "brujula_lucida",
+          "locucion": "No la sueltes a lo bestia contra alguien. Primero decítela a vos, honesta, y después fijate a quién le toca escucharla."
         },
         {
           "num": 5,
-          "duracion_segundos": 6,
-          "locucion": "Integrar es darle forma: escribir, caminar, dormir, y dejar las decisiones grandes para cuando baje la marea.",
-          "direccion_arte_visual": "Mano que traza una línea con tinta sobre papel oscuro, con una vela al costado. Luz dorada contenida, rostro apenas visible. El agua del fondo se aquieta.",
-          "arquetipo_clave": "La marea con cauce"
-        },
-        {
-          "num": 6,
-          "duracion_segundos": 6,
-          "locucion": "¿Cuánto de lo que sentís hoy es tuyo, y cuánto es contagio?",
-          "direccion_arte_visual": "Rostro frontal medio sumergido, con el reflejo del agua dividiendo la imagen en dos. Una mitad nítida y la otra difusa. Luz lunar sobre la frente.",
-          "arquetipo_clave": "El reflejo"
-        },
-        {
-          "num": 7,
-          "duracion_segundos": 5,
-          "locucion": "Para ver dónde cae Neptuno en tu carta, el mapa te espera en Telegram.",
-          "direccion_arte_visual": "Glifo de Neptuno en plata sobre agua oscura quieta. Ondas concéntricas muy lentas, viñeta negra y espacio libre para el texto.",
-          "arquetipo_clave": "La orilla"
+          "rol": "cta",
+          "locucion": "Guardá este video para el día que necesites juntar el coraje de decir lo que ya sabés."
         }
       ]
     },
     {
-      "id": "ORO_3",
-      "titulo": "Estructura y Límite de Tierra",
-      "tipo_arquetipo": "tierra_limite_estructura",
-      "transito": "Trígono Mercurio en Virgo - Saturno en Capricornio",
-      "geometria_astral": "120 grados (Trígono)",
+      "id": "ORO_CAN_03",
+      "fecha": "2026-11-16",
+      "titulo": "Oposición Venus-Marte | La charla que nadie quiere empezar",
+      "transito": "Venus oposición Marte (eje vincular)",
       "tomas": [
         {
           "num": 1,
-          "duracion_segundos": 5,
-          "locucion": "Tu mente por fin hace silencio, y lo que dice es incómodamente claro.",
-          "direccion_arte_visual": "Rostro de anciano o escriba con la mirada baja sobre un manuscrito. Luz de vela precisa sobre los dedos y el papel, fondo marrón negruzco. Claroscuro tipo Caravaggio.",
-          "arquetipo_clave": "La claridad severa"
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "16 de noviembre. Esa conversación con tu pareja o tu socio que viene estirándose hace días, hoy pide mesa."
         },
         {
           "num": 2,
-          "duracion_segundos": 6,
-          "locucion": "Mercurio en Virgo forma trígono con Saturno en Capricornio: dos signos de tierra, ciento veinte grados de fluidez.",
-          "direccion_arte_visual": "Un compás y un reloj de arena sobre una mesa de piedra. Un triángulo luminoso apenas sugerido en el aire. Ocres, sombras densas y destellos de bronce.",
-          "arquetipo_clave": "Rigor que fluye"
+          "rol": "mecanica_psicologica",
+          "locucion": "Querés que te entiendan sin tener que explicar, y del otro lado pasa lo mismo. Nadie afloja primero."
         },
         {
           "num": 3,
-          "duracion_segundos": 6,
-          "locucion": "Se siente como una lista que por fin cierra: espalda erguida, escritorio en orden, deudas a la vista.",
-          "direccion_arte_visual": "Manos ordenando papeles y llaves bajo una lámpara de aceite. Postura recta, hombros firmes. Luz cálida cayendo en cono sobre fondo oscuro.",
-          "arquetipo_clave": "El cuerpo ordenado"
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "En el astrolabio, Venus se opone a Marte cruzando el eje. Dos deseos tirando de la misma soga."
         },
         {
           "num": 4,
-          "duracion_segundos": 6,
-          "locucion": "La sombra es el perfeccionismo: corregir al otro, postergar lo imperfecto, confundir rigor con dureza.",
-          "direccion_arte_visual": "Figura de rostro tenso tachando un texto con pluma. Un segundo personaje, en penumbra, baja la mirada. Contraste agudo, luz rasante verdosa.",
-          "arquetipo_clave": "El juez interno"
+          "rol": "brujula_lucida",
+          "locucion": "No se trata de ganar la discusión. Decí qué necesitás en concreto, sin acusar, y bancate la respuesta."
         },
         {
           "num": 5,
-          "duracion_segundos": 6,
-          "locucion": "Integrar es elegir una sola cosa verificable, hacerla completa, y aceptar que el límite también es forma.",
-          "direccion_arte_visual": "Una mano apoya una piedra pulida sobre una pila ordenada. Luz dorada lateral sobre el rostro sereno. Atmósfera de taller antiguo, óleo denso.",
-          "arquetipo_clave": "La obra acabada"
+          "rol": "cta",
+          "locucion": "¿Vos sos de los que ceden o de los que aguantan hasta el final? Contame abajo."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_04",
+      "fecha": "2026-11-17",
+      "titulo": "Luna Virgo / Neptuno | Querer controlar lo que no se deja",
+      "transito": "Luna en Virgo oposición Neptuno",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "17 de noviembre. Te despertás con una lista mental de todo lo que puede salir mal. Y recién arranca el día."
         },
         {
-          "num": 6,
-          "duracion_segundos": 6,
-          "locucion": "¿Qué estructura sostenés por costumbre, y cuál sostendrías aunque nadie la viera?",
-          "direccion_arte_visual": "Rostro frontal ante una puerta de piedra entreabierta, con luz fría al otro lado. La mitad del rostro se pierde en la sombra, la mirada va directo a cámara.",
-          "arquetipo_clave": "El pacto con uno mismo"
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "Querés tener todo bajo control porque hay algo difuso que no podés nombrar. Ordenás afuera lo que adentro está revuelto."
         },
         {
-          "num": 7,
-          "duracion_segundos": 5,
-          "locucion": "Tu mapa personal ordena lo que hoy se siente caos. Te espera en Telegram.",
-          "direccion_arte_visual": "Glifo de Saturno en bronce sobre piedra negra, con un reloj de arena inmóvil. Viñeta oscura y espacio libre para el texto del canal.",
-          "arquetipo_clave": "El tiempo como maestro"
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "La Luna en Virgo se enfrenta a Neptuno: tu necesidad de certeza choca con una niebla que no se deja agarrar."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "No todo se resuelve ordenando. Hay cosas que solo se aclaran si les bajás el ritmo y las dejás decantar."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "¿Qué estás tratando de controlar hoy que en realidad no depende de vos? Pensalo un segundo."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_05",
+      "fecha": "2026-11-18",
+      "titulo": "Luna Acuario / Plutón | Las ganas de desaparecer un rato",
+      "transito": "Luna en Acuario tensión Plutón",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "18 de noviembre. Tenés ganas de desaparecer un rato. De que nadie te pida nada ni te pregunte cómo estás."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "No es tristeza, es saturación. Venís dando explicaciones que nadie te pidió y el cuerpo te está pidiendo distancia."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "La Luna en Acuario toca a Plutón: un impulso frío de cortar por lo sano y reinventarte desde cero."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "Tomate el espacio, pero no lo confundas con escaparte. Aislarte un día es higiene; aislarte un mes, trinchera."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "Comentá tu Luna si alguna vez necesitaste desaparecer para volver a encontrarte."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_06",
+      "fecha": "2026-11-19",
+      "titulo": "Luna Cáncer / Saturno | El no que viene con culpa",
+      "transito": "Luna en Cáncer cuadratura Saturno",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "19 de noviembre. Alguien te va a pedir algo hoy y vos ya sabés que querés decir que no."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "El problema no es el no. Es la culpa que viene después, como si cuidarte fuera traicionar a alguien."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "La Luna en Cáncer se cuadra con Saturno: lo afectivo pide estructura, y eso al principio aprieta un poco."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "Poner un límite no te hace frío. Te hace alguien que dejó de abandonarse para quedar bien con todos."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "¿A quién te cuesta decirle que no? No hace falta nombrarlo, pero reconocelo adentro."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_07",
+      "fecha": "2026-11-20",
+      "titulo": "Luna Leo / Júpiter | Brillar para vos o para que te aplaudan",
+      "transito": "Luna en Leo trígono Júpiter",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "20 de noviembre. Hoy tenés ganas de que te vean, de que reconozcan lo que hacés. Y no está mal."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "Lo que duele no es querer brillar. Es depender de que otro te aplauda para sentir que valés."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "La Luna en Leo se abre con Júpiter: ganas de más, de grande, de mostrarte sin achicarte."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "Mostrate, sí. Pero fijate si lo hacés desde el gusto genuino o desde el hambre de aprobación ajena."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "¿Vos brillás para vos o para que te aplaudan? Pregunta incómoda; respondela abajo."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_08",
+      "fecha": "2026-11-21",
+      "titulo": "Trígono Sol-Marte | El envión que venías postergando",
+      "transito": "Sol trígono Marte",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "21 de noviembre. Eso que venís postergando hace semanas hoy tiene vía libre. Lo sabés, lo sentís en las manos."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "No hay nudo hoy, hay empuje. El riesgo es distinto: dejar pasar el envión por miedo a que salga bien."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "El Sol en trígono con Marte: la voluntad y la energía alineadas, sin fricción, remando para el mismo lado."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "No esperes sentirte cien por ciento listo. Ese día no llega. Dá el primer paso concreto, chico, hoy."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "Guardá este video y volvé mañana a contarme qué hiciste con el envión."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_09",
+      "fecha": "2026-11-22",
+      "titulo": "Mercurio en tensión | La respuesta filosa en la punta de la lengua",
+      "transito": "Mercurio en aspecto duro (velocidad mental)",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "22 de noviembre. Vas a tener la respuesta filosa en la punta de la lengua. Rápida, exacta, lista para herir."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "El tema no es si tenés razón. Es el precio de decirla como un bisturí cuando podías decirla distinto."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "Mercurio viene tensionado hoy: la mente va más rápido que el filtro, y la palabra sale antes de pensarla."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "Antes de mandar ese mensaje o soltar esa frase, contá hasta tres. Lo filoso se dice, no se dispara."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "¿Alguna vez ganaste la discusión y perdiste el vínculo? Contame cómo fue."
+        }
+      ]
+    },
+    {
+      "id": "ORO_CAN_10",
+      "fecha": "2026-11-23",
+      "titulo": "Quirón / Luna | La vocecita que dice que no alcanzás",
+      "transito": "Luna conjunción Quirón",
+      "tomas": [
+        {
+          "num": 1,
+          "rol": "gancho_fecha_continuidad",
+          "locucion": "23 de noviembre. Esa vocecita que te dice que no alcanzás, que no sos suficiente, hoy habla más fuerte."
+        },
+        {
+          "num": 2,
+          "rol": "mecanica_psicologica",
+          "locucion": "No es verdad lo que dice, pero duele igual. Es una herida vieja, no un diagnóstico de quién sos."
+        },
+        {
+          "num": 3,
+          "rol": "mecanica_celeste_reloj2d",
+          "locucion": "La Luna toca a Quirón: lo que creías cerrado se reabre, no para hundirte, sino para que lo mires de frente."
+        },
+        {
+          "num": 4,
+          "rol": "brujula_lucida",
+          "locucion": "No te hagas la víctima ni te hagas el fuerte. Mostrá la grieta sin dramatizarla. Ahí está tu humanidad."
+        },
+        {
+          "num": 5,
+          "rol": "cta",
+          "locucion": "Si esto te tocó, dejá un corazón. No hace falta decir nada más."
         }
       ]
     }

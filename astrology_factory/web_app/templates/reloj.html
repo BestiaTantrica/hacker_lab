@@ -16,6 +16,7 @@
       background-color: #000000 !important;
     }
     html.cinematico-mode .corner-hud,
+    html.cinematico-mode .top-action-bar,
     html.cinematico-mode #reloj-tooltip {
       display: none !important;
     }
@@ -25,11 +26,15 @@
       document.documentElement.classList.add('cinematico-mode');
     }
   </script>
-  <link rel="stylesheet" href="/static/css/reloj_styles.css?v=9">
+  <!-- Preconectar Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/reloj_styles.css?v=37">
 </head>
 <body>
   <div id="reloj-container">
-    <!-- Video de Fondo Dinámico (Selector A/B) -->
+    <!-- Video de Fondo Dinámico -->
     <video id="video-bg" loop muted playsinline>
       <source src="/videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4" type="video/mp4">
     </video>
@@ -37,11 +42,11 @@
     <!-- Canvas Principal del Reloj Cósmico -->
     <canvas id="reloj-canvas"></canvas>
 
-    <!-- Tooltip Interactivo para Astros, Casas y Signos -->
+    <!-- Tooltip Interactivo flotante -->
     <div id="reloj-tooltip"></div>
 
     <!-- ── ESQUINA SUPERIOR IZQUIERDA: Marca y Coordenadas ── -->
-    <div class="corner-hud top-left auto-fade">
+    <div class="corner-hud top-left">
       <div class="brand-section">
         <div class="brand-glyph">☉</div>
         <div>
@@ -49,85 +54,220 @@
           <div class="brand-subtitle">Reloj Cósmico en Tiempo Real</div>
         </div>
       </div>
-      <div class="location-pill" id="hud-location">
+      <div class="location-pill clickable" id="hud-location" title="Hacé clic para cambiar ciudad">
         📍 Detectando ubicación...
       </div>
     </div>
 
-    <!-- ── ESQUINA SUPERIOR DERECHA: Reloj Digital y Acciones ── -->
-    <div class="corner-hud top-right auto-fade">
+    <!-- ── ESQUINA SUPERIOR DERECHA: Reloj Digital y Fecha ── -->
+    <div class="corner-hud top-right">
       <div class="clock-display">
         <div class="clock-time" id="hud-time">--:--:--</div>
         <div class="clock-date" id="hud-date">Cargando fecha sideral...</div>
       </div>
-      <div class="top-actions">
-        <button class="hud-btn" id="btn-toggle-ui" title="Modo Inmersivo Puro (Presiona 'H')">
-          <span>👁</span> Ocultar UI
-        </button>
-        <button class="hud-btn highlight" id="btn-record-watermark" title="Captura bucle de 5 segundos con el reloj girando para reels o videos">
-          <span>🎬</span> Sello (5s)
-        </button>
-        <button class="hud-btn" id="btn-fullscreen" title="Pantalla Completa (Modo Wallpaper)">
-          <span>⛶</span> Wallpaper
-        </button>
-        <a href="/" class="hud-btn" style="text-decoration: none;" title="Volver al Portal">
-          <span>🏠</span> Portal
-        </a>
-      </div>
     </div>
 
-    <!-- ── ESQUINA INFERIOR IZQUIERDA: Inspector Astrológico HUD (100% Despejado el Mandala) ── -->
-    <div id="astro-inspector-hud" class="corner-hud bottom-left auto-fade">
-      <!-- Se inyecta dinámicamente desde reloj_engine.js: datos de planetas/casas al hover sin tapar el orbe -->
-      <div class="inspector-badge">🔭 INSPECTOR CÓSMICO</div>
-      <div class="inspector-title" style="color: #f6c445;">Bóveda Celeste en Vivo</div>
-      <div class="inspector-hint">Pasa el cursor sobre un planeta o casa para inspeccionar sin tapar el mandala.</div>
+    <!-- ── DOCK INFERIOR FLOTANTE (Botonera de Control en Vivo bajo el Astrolabio) ── -->
+    <div class="bottom-action-dock" id="live-action-dock">
+      <button class="dock-pill-btn" id="btn-open-drawer" title="Consultantes registrados en el Portal Web">
+        <span>👥</span> Consultantes (<span id="sub-count">0</span>)
+      </button>
+      <button class="dock-pill-btn" id="btn-open-location" title="Cambiar ubicación geográfica / ciudad">
+        <span>📍</span> Ubicación
+      </button>
+      <button class="dock-pill-btn" id="btn-open-solar" title="Calcular Revolución Solar">
+        <span>☀️</span> Rev. Solar
+      </button>
+      <button class="dock-pill-btn" id="btn-open-camara" title="Conectar cámara del celular vía QR">
+        <span>📱</span> Conectar Celular
+      </button>
+      <button class="dock-pill-btn live-layout-btn active" data-mode="solo" title="Modo Solo (Cámara Principal)">
+        <span>👤</span> Solo
+      </button>
+      <button class="dock-pill-btn live-layout-btn" data-mode="invitado-1" title="Modo 1 Invitado (Cámara Dividida)">
+        <span>👥</span> 1 Invitado
+      </button>
+      <button class="dock-pill-btn" id="btn-toggle-hud" title="Ocultar/Mostrar tarjeta en esta pantalla" onclick="window.relojAstroInstance && window.relojAstroInstance.toggleInspectorOnScreen()">
+        <span>👁</span> Tarjeta HUD
+      </button>
+      <button class="dock-pill-btn btn-return-live" id="btn-return-live" style="display: none;" title="Volver al cielo en vivo actual" onclick="window.relojAstroInstance && window.relojAstroInstance.returnToLiveSky()">
+        <span>⏱</span> Volver a Hoy en Vivo
+      </button>
     </div>
 
-    <!-- ── ESQUINA INFERIOR DERECHA: Controles de Tiempo, Fondos y Cámara ── -->
-    <div class="corner-hud bottom-right auto-fade">
-      <!-- Fila 1: Control de Tiempo y Cámara Virtual -->
-      <div class="control-row">
-        <button class="hud-btn" id="btn-reset-zoom" title="Resetear Zoom y Centrar Cámara (Presiona '0' o 'R')">
-          <span>⟲</span> 1.0x
-        </button>
-        <button class="hud-btn active" id="btn-play-pause">
-          <span>⏸</span> Pausar
-        </button>
-        <button class="hud-btn" id="btn-now" title="Volver a la hora exacta actual">
-          <span>⏱</span> Ahora
-        </button>
-        <button class="bg-toggle-btn" id="btn-time-minus-1h" title="Retroceder 1 hora">-1h</button>
-        <button class="bg-toggle-btn" id="btn-time-plus-1h" title="Avanzar 1 hora">+1h</button>
-        <button class="bg-toggle-btn" id="btn-time-minus-1d" title="Retroceder 1 día">-1d</button>
-        <button class="bg-toggle-btn" id="btn-time-plus-1d" title="Avanzar 1 día">+1d</button>
-      </div>
-
-      <!-- Fila 2: Velocidad y Selector de Fondo A/B -->
-      <div class="control-row">
-        <div class="dock-group">
-          <span class="dock-label">Vel:</span>
-          <button class="bg-toggle-btn speed-btn active" data-speed="1">1x</button>
-          <button class="bg-toggle-btn speed-btn" data-speed="60">60x</button>
-          <button class="bg-toggle-btn speed-btn" data-speed="3600">3600x</button>
-        </div>
-
-        <div class="dock-divider"></div>
-
-        <div class="dock-group">
-          <span class="dock-label">Fondo:</span>
-          <button class="bg-toggle-btn active" data-bg="negro" title="Tenebrismo Puro Roberto Ferri">⬛ Ferri</button>
-          <button class="bg-toggle-btn" data-bg="galaxia" title="Galaxia Espacio Profundo">🌌 Galaxia</button>
-          <button class="bg-toggle-btn" data-bg="estrellas" title="Estrellas Etéreas">✨ Estrellas</button>
-        </div>
-
-        <div class="slider-container" id="bg-slider-wrapper" style="opacity: 0.3;" title="Opacidad del Video">
-          <input type="range" id="bg-opacity-slider" min="0.05" max="0.85" step="0.05" value="0.35">
+    <!-- ── ESQUINA INFERIOR IZQUIERDA: Inspector y Guía de Lectura en Vivo (Oculto por defecto para mandala puro) ── -->
+    <div class="corner-hud bottom-left" id="astro-inspector-container" style="display: none;">
+      <div id="astro-inspector-hud" class="active-hover">
+        <div class="inspector-badge">🔭 INSPECTOR CÓSMICO EN VIVO</div>
+        <div class="inspector-title" style="color: #f6c445;">Bóveda Celeste en Vivo</div>
+        <div class="inspector-hint" style="margin-top: 6px; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+          Hacé clic en cualquier <strong>Planeta</strong>, <strong>Signo</strong>, <strong>Casa</strong> o <strong>Línea de Aspecto</strong> en el Astrolabio para fijar su interpretación completa en vivo.
         </div>
       </div>
     </div>
+
+    <!-- ── CAJÓN DE CONSULTANTES WEB (Embudo Live) ── -->
+    <div id="live-consultantes-drawer" class="consultantes-drawer">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <span>👥</span> Consultantes Web (<span id="drawer-sub-count">0</span>)
+        </div>
+        <button class="drawer-close-btn" id="btn-close-drawer">✕</button>
+      </div>
+      
+      <!-- Sub-panel para agregar consultante al vuelo desde el chat de TikTok / YouTube -->
+      <div class="drawer-quick-add">
+        <div style="font-size: 11px; font-weight: 700; color: #f6c445; margin-bottom: 4px;">➕ Cargar Consultante del Chat</div>
+        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+          <input type="text" id="qa-name" placeholder="Nombre" style="flex: 1; padding: 4px 6px; font-size: 11px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 4px; color: #fff;">
+          <input type="date" id="qa-date" style="width: 105px; padding: 4px 4px; font-size: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 4px; color: #fff;">
+        </div>
+        <div style="display: flex; gap: 4px;">
+          <input type="time" id="qa-time" value="12:00" style="width: 70px; padding: 4px 4px; font-size: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 4px; color: #fff;">
+          <input type="text" id="qa-city" placeholder="Ciudad (ej: Madrid)" style="flex: 1; padding: 4px 6px; font-size: 11px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 4px; color: #fff;">
+          <button id="qa-submit" style="background: #f6c445; color: #000; border: none; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Cargar</button>
+        </div>
+      </div>
+
+      <div class="drawer-content" id="drawer-subscribers-list">
+        <div style="font-size: 12px; color: #94a3b8; padding: 8px;">Cargando consultantes registrados en la web...</div>
+      </div>
+    </div>
+
+    <!-- ── MODAL SELECTOR DE UBICACIÓN ── -->
+    <div id="modal-ubicacion" class="astro-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">📍 Cambiar Ubicación en Vivo</div>
+          <button class="modal-close-btn" onclick="document.getElementById('modal-ubicacion').classList.remove('open')">✕</button>
+        </div>
+        <div class="modal-desc">
+          El Ascendente y las Casas se recalculan instantáneamente para las coordenadas seleccionadas.
+        </div>
+        
+        <div class="preset-cities-grid">
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-34.6037, -58.3816, 'Buenos Aires, Argentina')">🇦🇷 Buenos Aires</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-34.5833, -59.1333, 'Jáuregui / Luján, Argentina')">🇦🇷 Jáuregui / Luján</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-31.4201, -64.1888, 'Córdoba, Argentina')">🇦🇷 Córdoba</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-32.9468, -60.6393, 'Rosario, Argentina')">🇦🇷 Rosario</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(40.4168, -3.7038, 'Madrid, España')">🇪🇸 Madrid</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(41.3879, 2.1699, 'Barcelona, España')">🇪🇸 Barcelona</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(19.4326, -99.1332, 'Ciudad de México, México')">🇲🇽 CDMX</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(25.7617, -80.1918, 'Miami, EE. UU.')">🇺🇸 Miami</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-33.4489, -70.6693, 'Santiago, Chile')">🇨🇱 Santiago de Chile</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(4.7110, -74.0721, 'Bogotá, Colombia')">🇨🇴 Bogotá</button>
+          <button class="city-btn" onclick="window.relojAstroInstance.changeLocation(-34.9011, -56.1645, 'Montevideo, Uruguay')">🇺🇾 Montevideo</button>
+          <button class="city-btn gps" onclick="window.relojAstroInstance.detectGeolocation(); document.getElementById('modal-ubicacion').classList.remove('open');">📡 GPS Automático</button>
+        </div>
+
+        <div class="custom-coord-section">
+          <div style="font-size: 11px; color: #f6c445; font-weight: 700; margin-bottom: 6px;">O ingresar coordenadas manuales:</div>
+          <div style="display: flex; gap: 6px;">
+            <input type="text" id="cust-city" placeholder="Nombre Ciudad" style="flex: 2; padding: 6px 8px; font-size: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 6px; color: #fff;">
+            <input type="number" id="cust-lat" step="0.0001" placeholder="Lat (-34.6)" style="flex: 1; padding: 6px 8px; font-size: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 6px; color: #fff;">
+            <input type="number" id="cust-lon" step="0.0001" placeholder="Lon (-58.3)" style="flex: 1; padding: 6px 8px; font-size: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(246,196,69,0.3); border-radius: 6px; color: #fff;">
+            <button onclick="window.relojAstroInstance.applyCustomLocation()" style="background: #f6c445; color: #000; border: none; font-weight: 800; font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Aplicar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL REVOLUCIÓN SOLAR ── -->
+    <div id="modal-revolucion" class="astro-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">☀️ Calcular Revolución Solar</div>
+          <button class="modal-close-btn" onclick="document.getElementById('modal-revolucion').classList.remove('open')">✕</button>
+        </div>
+        <div class="modal-desc" id="rs-modal-desc">
+          Calcula el retorno exacto del Sol al grado, minuto y segundo de nacimiento para el año y ciudad seleccionados.
+        </div>
+        
+        <div style="margin: 12px 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 13px; color: #cbd5e1; font-weight: 600;">Consultante activo:</span>
+            <strong id="rs-active-person" style="font-size: 14px; color: #f6c445;">Tomás Reis (12/04/1982)</strong>
+          </div>
+          
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <label style="font-size: 12px; color: #94a3b8; width: 110px;">Año de Retorno:</label>
+            <select id="rs-target-year" style="flex: 1; padding: 6px 10px; font-size: 13px; background: #0c1220; border: 1px solid rgba(246,196,69,0.4); border-radius: 6px; color: #fff; font-weight: 700;">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <label style="font-size: 12px; color: #94a3b8; width: 110px;">Lugar del Cumpleaños:</label>
+            <input type="text" id="rs-location-name" value="Buenos Aires, Argentina" style="flex: 1; padding: 6px 10px; font-size: 12px; background: #0c1220; border: 1px solid rgba(246,196,69,0.4); border-radius: 6px; color: #fff;">
+          </div>
+        </div>
+
+        <button id="btn-calc-solar-return" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #f6c445, #d97706); color: #000; border: none; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(246,196,69,0.4); margin-top: 6px;">
+          🔮 Calcular Revolución Solar en Vivo
+        </button>
+      </div>
+    </div>
+
+    <!-- ── MODAL CONECTAR CÁMARA CELULAR ── -->
+    <div id="modal-camara" class="astro-modal">
+      <div class="modal-card" style="text-align: center; max-width: 420px;">
+        <div class="modal-header">
+          <div class="modal-title">📱 Conectar Celular a la Transmisión</div>
+          <button class="modal-close-btn" onclick="document.getElementById('modal-camara').classList.remove('open')">✕</button>
+        </div>
+        <div class="modal-desc" style="margin-bottom: 12px;">
+          Apuntá la cámara de tu celular a este código para conectar el video en vivo directamente a tu PC:
+        </div>
+        
+        <div style="background: #080c16; padding: 14px; border-radius: 12px; border: 2px solid #f6c445; display: inline-block; margin-bottom: 12px; box-shadow: 0 0 25px rgba(246,196,69,0.3);">
+          <img src="/static/img/qr_camara.png" alt="QR Conectar Celular" style="width: 200px; height: 200px; display: block; border-radius: 6px; margin: 0 auto;">
+        </div>
+
+        <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
+          O abrí este enlace directo en Chrome de tu celular:
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center; justify-content: center;">
+          <input type="text" readonly value="https://portaltarotmistico.com/camara" id="input-link-camara" style="flex: 1; padding: 8px 10px; font-size: 12px; background: rgba(0,0,0,0.7); border: 1px solid rgba(246,196,69,0.4); border-radius: 6px; color: #f6c445; font-weight: 700; text-align: center;">
+          <button onclick="navigator.clipboard.writeText('https://portaltarotmistico.com/camara'); this.innerText='✓ ¡Copiado!'; setTimeout(()=>this.innerText='📋 Copiar', 2000)" style="background: #f6c445; color: #000; border: none; font-weight: 800; font-size: 12px; padding: 8px 14px; border-radius: 6px; cursor: pointer;">📋 Copiar</button>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 10px; line-height: 1.4;">
+          💡 <em>Al entrar, la cámara se activa automáticamente y se transmite a tu ventana de Ninja en la PC.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL INVITADO EN VIVO (PANTALLA DIVIDIDA) ── -->
+    <div id="modal-invitado" class="astro-modal">
+      <div class="modal-card" style="text-align: center; max-width: 440px;">
+        <div class="modal-header">
+          <div class="modal-title">👥 Modo 1 Invitado (Pantalla Dividida)</div>
+          <button class="modal-close-btn" onclick="document.getElementById('modal-invitado').classList.remove('open')">✕</button>
+        </div>
+        <div class="modal-desc" style="margin-bottom: 12px;">
+          Compartí este enlace con tu invitado para que aparezca en pantalla dividida en tu transmisión:
+        </div>
+
+        <div style="background: #080c16; padding: 12px; border-radius: 12px; border: 2px solid #38bdf8; display: inline-block; margin-bottom: 12px; box-shadow: 0 0 20px rgba(56,189,248,0.25);">
+          <img src="/static/img/qr_invitado.png" alt="QR Link Invitado" style="width: 170px; height: 170px; display: block; border-radius: 6px; margin: 0 auto;">
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center; justify-content: center; margin-bottom: 8px;">
+          <input type="text" readonly value="https://portaltarotmistico.com/invitado" id="input-link-invitado" style="flex: 1; padding: 8px 10px; font-size: 12px; background: rgba(0,0,0,0.7); border: 1px solid rgba(56,189,248,0.4); border-radius: 6px; color: #38bdf8; font-weight: 700; text-align: center;">
+          <button onclick="navigator.clipboard.writeText('https://portaltarotmistico.com/invitado'); this.innerText='✓ ¡Copiado!'; setTimeout(()=>this.innerText='📋 Copiar', 2000)" style="background: #38bdf8; color: #000; border: none; font-weight: 800; font-size: 12px; padding: 8px 14px; border-radius: 6px; cursor: pointer;">📋 Copiar</button>
+        </div>
+
+        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; background: rgba(56,189,248,0.08); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8; text-align: left;">
+          ⚡ <strong>Magia Automática:</strong> En cuanto tu invitado entre desde su celu o PC, VDO.Ninja divide la escena automáticamente en 50/50. Cuando se desconecta, volvés a pantalla completa solo.
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <script src="/static/js/reloj_engine.js?v=8"></script>
+  <script src="/static/js/reloj_engine.js?v=37"></script>
 </body>
 </html>

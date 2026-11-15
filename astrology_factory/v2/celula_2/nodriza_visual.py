@@ -70,18 +70,70 @@ _VALIDOS_ADN   = {f".{e.lower().lstrip('.')}" for e in ADN.get("validaciones", {
 FORMATOS_ACEPTADOS = (FORMATOS_VIDEO | FORMATOS_IMG) & _VALIDOS_ADN if _VALIDOS_ADN else (FORMATOS_VIDEO | FORMATOS_IMG)
 MIN_SIZE_BYTES = int(ADN.get("validaciones", {}).get("min_size_bytes", 0))
 
-TRANSICION_INTRA_TOMA = "fade"   # transición entre cortes de una misma toma
+TRANSICION_INTRA_TOMA = "dissolve"   # disolución suave y onírica entre cortes para sugestión positiva
 
 BLOQUEADOS = {
     "familia", "bebe", "family", "baby", "niño", "niña", "hogar", "niños", "pareja",
-    "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child", "persona",
-    "hombre", "mujer", "gente", "people", "man", "woman", "person",
+    "couple", "boda", "wedding", "multitud", "crowd", "niñez", "child"
 }
 BLOQUEADOS_REDES = {
     "desnudo", "desnuda", "nude", "nudity", "torso_desnudo", "cuerpo_desnudo",
     "anatomia_expuesta", "genital", "pezon", "pezones", "sensual", "erotico", "erotica",
-    "tanga", "calzon", "calzones", "lenceria", "ropa_interior", "descartes", "descartes_exploratorios"
+    "tanga", "calzon", "calzones", "lenceria", "ropa_interior", "descartes", "descartes_exploratorios",
+    "lilith_v", "lilith_v1", "lilith_v2", "lilith_v3", "lilith_v4", "lilith_v5", "lilith_v6",
+    "seno", "senos", "anadyomene", "reclinada", "contrapposto", "desnudez",
+    "gluteo", "gluteos", "nalga", "nalgas", "torso_manos", "ferri_sin_disco", "fetal"
 }
+
+# ── Taxonomía Visual para Rotación y Diversidad de Tomas ──
+CATEGORIA_FIGURA_HUMANA = {
+    "escultura", "estatua", "busto", "mano", "rostro", "brazo", "figura",
+    "soberano", "dios", "arquetipo", "guardian", "anciano", "guerrero", "personaje",
+    "imposicion", "manos", "rostro_soberano", "hombre", "mujer",
+    "humano", "humanos", "persona", "personas", "retrato", "retratos",
+    "emocion", "emociones", "mirada", "ojos", "sabio", "alquimista", "sacerdote",
+    "figura_humana", "durmiente", "perfil"
+}
+CATEGORIA_SIMBOLO = {
+    "simbolo", "sigilo", "tarot", "carta", "orbe", "circulo",
+    "mandala", "geometria", "sello", "alquimia", "disco"
+}
+CATEGORIA_PAISAJE = {
+    "paisaje", "montaña", "bosque", "desierto", "cielo", "mar", "oceano",
+    "templo", "horizonte", "portal", "cosmos", "espacio", "universo",
+    "nebulosa", "estrellas", "galaxia", "abismo"
+}
+CATEGORIA_ELEMENTO = {
+    "fuego", "agua", "humo", "plasma", "rayo", "vortice", "calor",
+    "fluido", "ceniza", "onda", "niebla", "energia"
+}
+
+def obtener_familia_asset(nombre: str) -> str:
+    """
+    Extrae la familia o prompt base de un asset para evitar variantes casi idénticas en el mismo video.
+    Limpia sufijos de timestamps, números de iteración, '_variante', '_var', '_alt', etc.
+    """
+    stem = Path(nombre).stem.lower()
+    stem = re.sub(r'_(variante|var|alt|version|v\d+)', '', stem)
+    stem = re.sub(r'_\d{6,}(_\d+)*$', '', stem)
+    stem = re.sub(r'(_\d+){1,3}$', '', stem)
+    stem = re.sub(r'_(variante|var|alt|version|v\d+)', '', stem)
+    return stem.strip('_')
+
+FORZAR_ACTIVO = "--forzar" in sys.argv
+
+def clasificar_categoria_asset(haystack: str) -> str:
+    tokens = _tokens(haystack)
+    if tokens & CATEGORIA_PAISAJE:
+        return "paisaje"
+    if tokens & CATEGORIA_FIGURA_HUMANA:
+        return "figura_humana"
+    if tokens & CATEGORIA_ELEMENTO:
+        return "elemento"
+    if tokens & CATEGORIA_SIMBOLO:
+        return "simbolo"
+    return "general"
+
 PALABRAS_ICONICAS = (
     "tarot", "carta", "simbolo", "dios", "persona", "planeta",
     "arquetipo", "astrologia", "signo", "constelacion",
@@ -171,6 +223,12 @@ def cargar_catalogo_desde_db() -> dict:
         ruta_abs = str(p.resolve())
         stats_uso = [e for e in usos_db.get(asset_id, []) if e != EVENTO_ID]  # re-render idempotente
         haystack = " ".join(tags + [ruta_abs]).lower()
+
+        # Filtro estricto de moderación para redes sociales (cero desnudos, cero ban en IG/TikTok)
+        if any(k in haystack for k in BLOQUEADOS_REDES) or bool(_tokens(haystack) & BLOQUEADOS):
+            descartados += 1
+            continue
+
         cat[asset_id] = {
             "path_original":    ruta_abs,
             "path_video_final": ruta_abs,   # clave legada: prompt_semantico.py la exige no vacía (ya NO es un MP4 transmutado)
@@ -179,10 +237,11 @@ def cargar_catalogo_desde_db() -> dict:
             "etiquetas_visuales": tags,
             "stats_uso":        stats_uso,
             # cachés de scoring (prefijo _ → nunca se envían a Gemini ni al JSON)
-            "_bloqueado":       bool(_tokens(haystack) & BLOQUEADOS),
-            "_bloqueado_redes": bool(_tokens(haystack) & BLOQUEADOS_REDES),
+            "_bloqueado":       False,
+            "_bloqueado_redes": False,
             "_iconica":         any(w in haystack for w in PALABRAS_ICONICAS),
             "_haystack":        haystack,
+            "_categoria":       clasificar_categoria_asset(haystack),
         }
 
     if not cat:
@@ -193,12 +252,19 @@ def cargar_catalogo_desde_db() -> dict:
 
 # ── B. Scorer Emocional y Semántico ──────────────────────────────────────────
 
-def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list) -> float:
+def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list, categoria_previa: str = None) -> float:
     score = 0.5
 
     # NUNCA repetir un asset dentro del mismo video
     if asset_key in ultimos_usados:
-        score -= 100.0
+        return -99999.0
+
+    # VETO ROTUNDO a variantes del mismo prompt / familia visual en el mismo video
+    nombre_asset = Path(meta.get("path_original", asset_key)).name
+    familia = obtener_familia_asset(nombre_asset)
+    for u in ultimos_usados:
+        if familia and obtener_familia_asset(Path(u).name) == familia:
+            return -99999.0
 
     # Rotación de stock: penaliza uso histórico en videos anteriores
     score -= len(meta.get("stats_uso", [])) * 10.0
@@ -211,33 +277,88 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list)
     if meta.get("_bloqueado_redes", False):
         score -= 999.0
 
+    # Regla de Diversidad Visual Estricta: Prohibir encadenar dos tomas de la misma categoría
+    # (ej. jamás dos paisajes seguidos, jamás dos símbolos seguidos)
+    cat_asset = meta.get("_categoria", "general")
+    if categoria_previa and cat_asset != "general" and cat_asset == categoria_previa:
+        score -= 50.0
+    elif cat_asset == "figura_humana" and categoria_previa in ("paisaje", "simbolo", "elemento"):
+        # Incentivo para alternar con esculturas y figuras humanas solemnes
+        score += 20.0
+
     # Bonus semántico del Director de Arte (etiquetas de la DB vs emoción/texto de la toma)
     score += score_semantico(toma.get("texto", ""), toma.get("emocion", "aire"), meta["tags"])
 
+    hay = meta["_haystack"]
+
+    # ── Anclaje Astrológico Riguroso con el Tránsito Real del ADN ──
+    transito = ADN.get("transito", {})
+    planeta_str = transito.get("planeta", "")
+    planetas_transito = [p.strip().lower() for p in planeta_str.replace(" y ", ",").split(",") if p.strip()]
+
+    signos_todos = [
+        "aries", "tauro", "geminis", "cancer", "leo", "virgo",
+        "libra", "escorpio", "sagitario", "capricornio", "acuario", "piscis"
+    ]
+    # Detectar todos los signos involucrados en la geometría celeste del día
+    signos_transito = []
+    desc_transito = transito.get("descripcion_breve", "").lower()
+    for s in signos_todos:
+        if s in desc_transito or s == transito.get("signo_destino", "").lower():
+            if s not in signos_transito:
+                signos_transito.append(s)
+
+    elemento_transito = ADN.get("arquetipos", {}).get("elemento", "").lower()
+
+    # Prioridad altísima si el asset pertenece a los signos o planetas del tránsito
+    for s in signos_transito:
+        if s in hay:
+            score += 15.0
+    for p in planetas_transito:
+        if p and p in hay:
+            score += 14.0
+    for el in elemento_transito.split("/"):
+        el = el.strip()
+        if el and el in hay:
+            score += 5.0
+
+    # Veto estricto a signos zodiacales ajenos/contradictorios que NO forman parte del tránsito
+    for s in signos_todos:
+        if s not in signos_transito:
+            if f"_{s}" in hay or f"/{s}/" in hay or f"_{s}_" in hay or f"/{s}_" in hay:
+                score -= 40.0
+
+    # Priorizar Glifos sagrados, Sigilos y Casas reales de la astrología
+    if any(k in hay for k in ("glifo_", "sigilo_", "orbe_", "aspecto_", "casa_")):
+        score += 8.0
+
+    # Descartar estética cyber-mecánica o prótesis futuristas (ajenas al misticismo sagrado)
+    if "cyber" in hay or "protesis" in hay:
+        score -= 50.0
+
     # Bonos por rol
     rol = toma.get("rol", "").lower()
-    hay = meta["_haystack"]
-    if "cta" in rol and any(k in hay for k in ("fractal", "abstract", "fondo")):
-        score += 2.0
+    if "cta" in rol and any(k in hay for k in ("fractal", "abstract", "fondo", "glifo", "orbe")):
+        score += 4.0
     if "gancho" in rol:
-        if any(k in hay for k in ("fuego", "espacio", "luz")):
-            score += 1.0
+        if any(k in hay for k in ("fuego", "espacio", "luz", "abismo", "orbe", "vortice")):
+            score += 2.0
         if meta["tipo"] == "video":
-            score += 0.5
+            score += 1.0
     return score
 
-def elegir_mejor_asset_local(toma: dict, cat: dict, ultimos_usados: list):
+def elegir_mejor_asset_local(toma: dict, cat: dict, ultimos_usados: list, categoria_previa: str = None):
     mejor_score, mejor_key = -9999.0, None
     for key, meta in cat.items():
-        s = calcular_score(toma, key, meta, ultimos_usados)
+        s = calcular_score(toma, key, meta, ultimos_usados, categoria_previa)
         if s > mejor_score:
             mejor_score, mejor_key = s, key
     return mejor_key
 
-def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, gemini_clients: list):
+def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, gemini_clients: list, categoria_previa: str = None):
     """Ranking local semántico (top 40, sin bloqueados) ordenado por score del Director de Arte."""
     scores = sorted(
-        ((calcular_score(toma, k, m, ultimos_usados), k) for k, m in cat.items()),
+        ((calcular_score(toma, k, m, ultimos_usados, categoria_previa), k) for k, m in cat.items()),
         key=lambda x: x[0], reverse=True,
     )
     top_40 = [k for s, k in scores[:40] if s > -500]
@@ -246,7 +367,7 @@ def elegir_mejor_asset_hibrido(toma: dict, cat: dict, ultimos_usados: list, gemi
     return top_40[0]
 
 def elegir_asset_gancho(cat: dict):
-    """Video 'portal cósmico' que abre y cierra el video (loop). Prefiere el menos usado."""
+    """Asset 'portal cósmico' / espacio profundo que abre y cierra el video (loop). Prefiere el menos usado."""
     def _tags(m): return " ".join(m["tags"]).lower()
     videos = [k for k, m in cat.items() if m["tipo"] == "video" and not m["_bloqueado"]]
     candidatos = [k for k in videos if any(t in _tags(cat[k]) for t in TERMINOS_GANCHO)]
@@ -255,38 +376,51 @@ def elegir_asset_gancho(cat: dict):
                       if "07_espacio_galaxias" in cat[k]["_haystack"]
                       or "espacio" in _tags(cat[k]) or "cosmos" in _tags(cat[k])]
     if not candidatos:
+        # Fallback a imágenes de espacio profundo / galaxias / singularidad para loop infinito
+        candidatos = [
+            k for k, m in cat.items()
+            if not m["_bloqueado"] and (
+                "07_espacio_galaxias" in m["_haystack"]
+                or any(t in _tags(m) for t in TERMINOS_GANCHO)
+                or any(w in m["_haystack"] for w in ["espacio", "galaxia", "nebulosa", "cosmos", "agujero_negro", "singularidad"])
+            )
+        ]
+    if not candidatos:
         return None
     min_usos = min(len(cat[k]["stats_uso"]) for k in candidatos)
     return random.choice([k for k in candidatos if len(cat[k]["stats_uso"]) == min_usos])
 
 # ── C. Plan de cortes (solo datos, ningún render) ────────────────────────────
 
-def calcular_cortes_ritmicos(texto: str, duracion_total: float) -> list:
+def calcular_cortes_ritmicos(texto: str, duracion_total: float, es_astrolabio: bool = False) -> list:
     """
-    TOMAS ESTABLES (3.5s - 5.5s) PARA CONTEMPLACIÓN TENEBRISTA ROBERTO FERRI.
-    Elimina hiper-cortes de 2s que agotan el stock visual y causan repetición innecesaria.
-    Si la toma dura <= 5.5s: 1 solo corte íntegro y cinematográfico.
-    Si la toma dura > 5.5s: divide en 2 cortes estables equilibrados (~3.5s - 4s).
+    Ritmo visual cinematográfico adaptativo y sugestión positiva:
+    - Toma del Astrolabio (Toma 3): 1 plano secuencia continuo con zoom y HOLD.
+    - Tomas narrativas (> 5.0s): 2 cortes dinámicos (3.0s - 4.2s) para mantener el dinamismo,
+      aprovechar la variedad de obras visuales y acompañar la evolución psicológica del relato.
+    - Tomas breves (<= 5.0s): 1 corte íntegro.
     """
-    if duracion_total <= 5.5:
+    if es_astrolabio or duracion_total <= 5.0:
         return [round(duracion_total, 3)]
     n = 2
     base = round(duracion_total / n, 3)
     return [base, round(duracion_total - base, 3)]
 
 def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: dict,
-                              ultimos_usados: list, gancho_id, gemini_clients: list):
+                              ultimos_usados: list, gancho_id, gemini_clients: list,
+                              categoria_previa: str = None):
     """
-    Devuelve (cortes, protagonista_id). `cortes` es la lista de dicts del contrato JSON.
+    Devuelve (cortes, protagonista_id, categoria_elegida). `cortes` es la lista de dicts del contrato JSON.
     Muta `ultimos_usados` (los assets elegidos quedan vetados para el resto del video).
     Garantiza:
     1. Toma 3 (medio): Reloj Astrológico 2D / Astrolabio para la mecánica celeste.
     2. Cero duplicados de assets en el mismo video.
+    3. Diversidad visual estricta (no dos paisajes o dos símbolos seguidos).
     """
     es_primera = toma_idx == 0
     es_tercera = toma_idx == 2  # Toma 3: El Reloj Astrológico en el medio
     es_ultima  = toma_idx == total_tomas - 1
-    duraciones = calcular_cortes_ritmicos(toma.get("texto", ""), toma["duracion_s"])
+    duraciones = calcular_cortes_ritmicos(toma.get("texto", ""), toma["duracion_s"], es_astrolabio=es_tercera)
 
     fecha_pub = ADN.get("produccion", {}).get("fecha_publicacion", "2026-11-03")
     clip_apertura = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}_apertura.mp4"
@@ -305,7 +439,7 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
             "reverse": False,
             "transicion_entrada": None,
         }]
-        return cortes, f"reloj_2d_{fecha_pub}_apertura"
+        return cortes, f"reloj_2d_{fecha_pub}_apertura", "simbolo"
 
     if es_ultima and clip_cierre.exists():
         cortes = [{
@@ -319,7 +453,7 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
             "reverse": False,
             "transicion_entrada": toma.get("transicion_entrada", "fade"),
         }]
-        return cortes, f"reloj_2d_{fecha_pub}_cierre"
+        return cortes, f"reloj_2d_{fecha_pub}_cierre", "simbolo"
 
     if (es_primera or es_ultima) and gancho_id:
         protagonista = gancho_id
@@ -327,12 +461,17 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
         # Prioridad para Toma 3 solo si NO hay Doble Reloj 2D (Apertura y Cierre):
         fecha_pub = ADN.get("produccion", {}).get("fecha_publicacion", "2026-11-02")
         reloj_clip_path = FACTORY_ROOT / "produccion" / "clips_reloj_2d" / f"reloj_2d_{fecha_pub}.mp4"
-        if not reloj_clip_path.exists():
+        if not reloj_clip_path.exists() or reloj_clip_path.stat().st_size < 1_000_000 or FORZAR_ACTIVO:
             try:
-                from v2.celula_2.grabar_reloj_2d import capturar_clip_reloj
-                reloj_clip_path = capturar_clip_reloj(f"{fecha_pub}T12:00:00", duracion_s=toma["duracion_s"])
+                from v2.celula_2.generador_reloj_cinematico import capturar_clip_reloj_cinematico
+                reloj_clip_path = capturar_clip_reloj_cinematico(fecha_pub, duracion_s=toma["duracion_s"], forzar=True)
             except Exception as e:
-                print(f"  [Warn] No se pudo capturar reloj 2D al vuelo: {e}")
+                print(f"  [Warn] No se pudo capturar reloj 2D cinemático al vuelo: {e}")
+                try:
+                    from v2.celula_2.grabar_reloj_2d import capturar_clip_reloj
+                    reloj_clip_path = capturar_clip_reloj(f"{fecha_pub}T12:00:00", duracion_s=toma["duracion_s"])
+                except Exception as ex:
+                    print(f"  [Warn] Fallback reloj 2D básico también falló: {ex}")
         
         if reloj_clip_path and Path(reloj_clip_path).exists():
             cortes = [{
@@ -346,7 +485,7 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
                 "reverse": False,
                 "transicion_entrada": toma.get("transicion_entrada", "fade"),
             }]
-            return cortes, f"reloj_2d_{fecha_pub}"
+            return cortes, f"reloj_2d_{fecha_pub}", "simbolo"
 
         reloj_candidatos = [
             k for k, v in cat.items()
@@ -356,9 +495,9 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
         if reloj_candidatos:
             protagonista = random.choice(reloj_candidatos)
         else:
-            protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients)
+            protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients, categoria_previa)
     else:
-        protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients)
+        protagonista = elegir_mejor_asset_hibrido(toma, cat, ultimos_usados, gemini_clients, categoria_previa)
 
     idx_principal = len(duraciones) // 2 if len(duraciones) > 1 else 0
     elegidos = []
@@ -366,16 +505,27 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
         es_corte_inicial_video = es_primera and i == 0
         es_corte_final_video   = es_ultima and i == len(duraciones) - 1
 
-        if (es_corte_inicial_video or es_corte_final_video) and gancho_id:
-            elegido = gancho_id                      # loop: abre y cierra con el mismo portal
-        elif i == idx_principal and protagonista and protagonista not in elegidos:
+        if es_corte_inicial_video and gancho_id:
+            elegido = gancho_id                      # apertura con portal cósmico
+        elif es_corte_final_video and gancho_id:
+            elegido = gancho_id                      # loop infinito perfecto: cierra con el portal que abre el video
+        elif i == idx_principal and protagonista and protagonista not in elegidos and protagonista not in ultimos_usados:
             elegido = protagonista                   # honra la elección principal
         else:
-            elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + elegidos)
-            # Fallback estricto anti-duplicados: JAMÁS repetir el protagonista ni un asset ya usado
-            if not elegido or elegido in (ultimos_usados + elegidos):
-                disponibles = [k for k in cat.keys() if k not in (ultimos_usados + elegidos)]
-                elegido = random.choice(disponibles) if disponibles else protagonista
+            elegido = elegir_mejor_asset_local(toma, cat, ultimos_usados + elegidos, categoria_previa)
+            # Fallback estricto anti-duplicados y anti-familia de prompt
+            familias_usadas = {
+                obtener_familia_asset(Path(cat[x]["path_original"]).name if x in cat else Path(x).name)
+                for x in (ultimos_usados + elegidos) if x
+            }
+            nom_elegido = Path(cat.get(elegido, {}).get("path_original", elegido)).name if elegido else ""
+            if not elegido or elegido in (ultimos_usados + elegidos) or obtener_familia_asset(nom_elegido) in familias_usadas:
+                disponibles = [
+                    k for k in cat.keys()
+                    if k not in (ultimos_usados + elegidos)
+                    and obtener_familia_asset(Path(cat[k]["path_original"]).name) not in familias_usadas
+                ]
+                elegido = random.choice(disponibles) if disponibles else (elegido or protagonista)
         elegidos.append(elegido)
 
     cortes = []
@@ -400,7 +550,8 @@ def planificar_cortes_de_toma(toma: dict, toma_idx: int, total_tomas: int, cat: 
                 else TRANSICION_INTRA_TOMA
             ),
         })
-    return cortes, protagonista
+    cat_elegida = cat[protagonista].get("_categoria", "general") if protagonista and protagonista in cat else "general"
+    return cortes, protagonista, cat_elegida
 
 def construir_entrada_corte(toma: dict, cortes: list, protagonista_id, cat: dict,
                             fuente: str = "nodriza_visual_db") -> dict:
@@ -458,10 +609,11 @@ def run_nodriza():
     }
 
     ultimos_usados: list = []
+    categoria_actual = None
     for toma_idx, toma in enumerate(tomas):
         num_t = toma.get("num") or toma.get("num_toma", toma_idx + 1)
-        cortes, protagonista = planificar_cortes_de_toma(
-            toma, toma_idx, len(tomas), cat, ultimos_usados, gancho_id, gemini_clients
+        cortes, protagonista, categoria_actual = planificar_cortes_de_toma(
+            toma, toma_idx, len(tomas), cat, ultimos_usados, gancho_id, gemini_clients, categoria_actual
         )
         if not cortes:
             err(f"Toma {num_t} no pudo ser asignada.")
@@ -487,6 +639,8 @@ def run_nodriza():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--opcion", type=int, default=1)
+    parser.add_argument("--fecha", type=str, default=None, help="Fecha YYYY-MM-DD")
+    parser.add_argument("--forzar", action="store_true", help="Forzar regeneración")
     args = parser.parse_args()
 
     if args.opcion == 1:

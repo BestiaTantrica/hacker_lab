@@ -209,25 +209,85 @@ def guardar_guion(guion_data: dict, sufijo: str = "") -> Path:
     ok(f"Guion guardado: {ruta}")
     return ruta
 
-def validar_estructura_guion(guion_data: dict, num_tomas_esperadas: int) -> bool:
-    """Verifica que el JSON tenga la estructura correcta."""
-    if "tomas" not in guion_data:
-        err("El JSON no tiene la clave 'tomas'")
+FRASES_PROHIBIDAS_CLICHES = [
+    "la trampa:",
+    "la trampa es",
+    "la maestría de hoy",
+    "pulseada",
+    "pulseadas",
+    "nuestra biografía",
+    "hagan clic",
+    "ustedes",
+    "vosotros",
+    "veneno",
+    "destruís todo",
+    "abismo",
+    "rabia envenenada",
+    "cae la careta",
+    "se caen las caretas",
+    "caen las caretas",
+    "enlace de la bio",
+    "link de la bio",
+    "andá a mi link",
+    "entrá al link de mi perfil",
+    "link de mi perfil",
+    "aire se vuelve denso",
+    "denso y eléctrico",
+    "danza de los astros"
+]
+
+def validar_estructura_guion(guion_data: dict, num_tomas_esperadas: int = 5) -> bool:
+    """Verifica que el JSON tenga la estructura y calidad editorial correcta."""
+    valido, razon = validar_guion_editorial(guion_data, num_tomas_esperadas)
+    if not valido:
+        err(f"Validación editorial falló: {razon}")
         return False
-    tomas = guion_data["tomas"]
-    if not isinstance(tomas, list):
-        err("'tomas' no es una lista")
-        return False
-    if len(tomas) != num_tomas_esperadas:
-        warn(f"Se esperaban {num_tomas_esperadas} tomas, Gemini devolvió {len(tomas)}")
-    for i, toma in enumerate(tomas):
-        if "num" not in toma or "texto" not in toma:
-            err(f"Toma {i+1} falta 'num' o 'texto'")
-            return False
-        if not toma["texto"].strip():
-            err(f"Toma {i+1} tiene texto vacío")
-            return False
     return True
+
+def validar_guion_editorial(guion_data: dict, num_tomas_esperadas: int = 5) -> tuple[bool, str]:
+    """
+    Validador léxico, estructural y de tono editorial de Tomás.
+    Verifica que el guion sea auténtico, conciso y libre de clichés.
+    """
+    if "tomas" not in guion_data:
+        return False, "El JSON no contiene la clave 'tomas'"
+    tomas = guion_data["tomas"]
+    if not isinstance(tomas, list) or len(tomas) != num_tomas_esperadas:
+        return False, f"Se esperaban exactamente {num_tomas_esperadas} tomas, se recibieron {len(tomas) if isinstance(tomas, list) else 'ninguna'}"
+
+    total_palabras = 0
+    for i, t in enumerate(tomas):
+        texto = t.get("texto", "").strip()
+        if not texto:
+            return False, f"Toma {i+1} tiene texto vacío"
+        
+        words = texto.split()
+        total_palabras += len(words)
+        texto_lower = texto.lower()
+
+        # Revisar clichés prohibidos en cada toma
+        for f in FRASES_PROHIBIDAS_CLICHES:
+            if f in texto_lower:
+                return False, f"Toma {i+1} contiene la frase/cliché prohibido: '{f}'"
+
+        # Verificar ausencia de tuteo neutro despersonalizado
+        for pronombre in [" tú ", " ti ", "contigo"]:
+            if pronombre in f" {texto_lower} ":
+                return False, f"Toma {i+1} usa tuteo neutro ('{pronombre.strip()}'). Debe usar voseo rioplatense ('vos', 'te', 'mirá', 'sentís')."
+
+    if total_palabras < 65 or total_palabras > 105:
+        return False, f"El guion tiene {total_palabras} palabras. El estándar de Tomás es de 75 a 95 palabras."
+
+    toma_3 = tomas[2].get("texto", "").lower()
+    terminos_toma3 = ["reloj", "astrolabio", "cielo", "grados", "aspecto", "cuadratura", "conjunción", "oposición", "trígono", "sextil", "choque", "conecta"]
+    if not any(k in toma_3 for k in terminos_toma3):
+        return False, "Toma 3 no hace referencia visual al reloj/astrolabio o los grados celestes."
+
+    toma_5 = tomas[4].get("texto", "").lower()
+    if not any(k in toma_5 for k in ["perfil", "link", "casa", "carta"]):
+        return False, "Toma 5 no contiene un CTA válido hacia el link del perfil / carta natal."
+
+    return True, "OK"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # OPCIÓN 1 — Guion Diario (Tránsito)
@@ -243,10 +303,8 @@ def opcion_1_guion_diario():
     role_text   = cargar_role_scriptwriter()
     transito    = ADN["transito"]
     arquetipos  = ADN["arquetipos"]
-    estetica    = ADN["estetica_visual"]
-    estructura  = ADN["guion"]["estructura_tomas"]
     produccion  = ADN["produccion"]
-    num_tomas   = len(estructura)
+    num_tomas   = 5
 
     # Calcular efemérides reales y cruzar aspectos
     panorama = obtener_panorama_astral_completo()
@@ -258,15 +316,6 @@ def opcion_1_guion_diario():
         if panorama.get("texto_traducido"):
             efemerides_str += panorama["texto_traducido"]
 
-    # Construir la descripción de cada toma para el prompt
-    tomas_descripcion = ""
-    for t in estructura:
-        etiqueta = f" (etiqueta_visual: \"{t['etiqueta_visual']}\")" if t.get("etiqueta_visual") else ""
-        tomas_descripcion += (
-            f"\n  - Toma {t['num']} [rol: {t['rol']}] "
-            f"(máx. {t['duracion_max_segundos']}s, ~{t['duracion_max_segundos'] * 2} palabras): "
-            f"{t['instruccion']}{etiqueta}"
-        )
     # Leer termometro_global si existe
     termometro_str = ""
     termometro_path = TEMP_DIR / "termometro_actual.json"
@@ -280,109 +329,127 @@ Clima emocional: {term.get('clima_emocional', '')}
 Temas dominantes: {', '.join(term.get('temas_dominantes', []))}
 Foco regional (Argentina): {term.get('foco_argentina', '')}
 Arquetipo social activo: {term.get('arquetipo_social', '')}
--> UTILIZA sutilmente este contexto mundial para orientar la narrativa del guion y hacerlo más resonante con la realidad que vive la audiencia hoy. No menciones las noticias literalmente, solo capta el Zeitgeist.
+-> Capta sutilmente este Zeitgeist para darle peso real al relato, sin nombrar noticias explícitas.
 """
         except Exception as e:
             warn(f"No se pudo cargar termometro_actual.json: {e}")
 
-    # Cargar Guiones Canónicos de Oro (Estándar Claude Pro)
+    # Cargar Guiones Canónicos de Oro (Estándar Canónico de Tomás)
     ejemplos_oro_path = FACTORY_ROOT / "v2" / "celula_1" / "ejemplos_oro_diarios.json"
     ejemplos_oro_str = ""
     if ejemplos_oro_path.exists():
         try:
             with open(ejemplos_oro_path, "r", encoding="utf-8") as f:
                 oro_data = json.load(f)
-                ejemplos_oro_str = "\n=== GUIONES DE ORO CANÓNICOS (ESTÁNDAR DE AUTOR A IMITAR) ===\n"
-                ejemplos_oro_str += "Debes imitar con máxima fidelidad la métrica, concisión, ritmo (~85-95 palabras en total), tensión psicológica y tono tenebrista de estos ejemplos:\n"
+                ejemplos_oro_str = "\n=== GUIONES DE ORO CANÓNICOS (VOZ Y PERSONALIDAD REAL DE TOMÁS) ===\n"
+                ejemplos_oro_str += "Debes imitar con máxima fidelidad la estructura, calidez empática, sabiduría psicológica, concisión (~65-75 palabras en total) y la personalidad cercana, lúcida y educativa de Tomás:\n"
                 for g in oro_data.get("guiones", []):
-                    ejemplos_oro_str += f"\n[MODELO CANÓNICO: {g['titulo']} - {g['transito']}]\n"
+                    ejemplos_oro_str += f"\n[MODELO CANÓNICO DE TOMÁS: {g['titulo']} - {g['transito']}]\n"
                     for t in g.get("tomas", []):
-                        ejemplos_oro_str += f"  Toma {t['num']} ({t['duracion_segundos']}s): \"{t['locucion']}\"\n"
+                        ejemplos_oro_str += f"  Toma {t['num']} ({t.get('rol', '')}): \"{t['locucion']}\"\n"
         except Exception as e:
             warn(f"No se pudieron cargar ejemplos de oro: {e}")
 
-    prompt = f"""
+    p1_nombre = transito['planeta'].split(' y ')[0] if ' y ' in transito['planeta'] else transito['planeta']
+
+    feedback_retry = ""
+    guion_data = None
+    CANDIDATE_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite-preview', 'gemini-flash-latest']
+
+    for intento in range(1, 4):
+        info(f"Generando guion (Intento {intento}/3)...")
+
+        prompt = f"""
 {role_text}
 {termometro_str}
 {ejemplos_oro_str}
 
-=== ADN DEL VIDEO ===
+=== ADN DEL TRÁNSITO ===
 Evento: {produccion['evento_titulo']}
 Fecha publicación: {produccion['fecha_publicacion']}
-Tránsito: {transito['planeta']} ({transito['simbolo_planetario']}) ingresa a {transito['signo_destino']} ({transito['simbolo_signo']})
+Tránsito: {transito['planeta']} ({transito['simbolo_planetario']}) — Signo: {transito['signo_destino']} ({transito['simbolo_signo']})
 Tipo: {transito['tipo_aspecto']} — Intensidad: {transito['intensidad']}
 Descripción: {transito['descripcion_breve']}
 Palabras clave: {', '.join(transito['palabras_clave'])}
 
 Arquetipo primario: {arquetipos['primario']}
-Arquetipo sombra: {arquetipos['sombra']}
+Arquetipo secundario: {arquetipos['secundario']}
 Emoción dominante: {arquetipos['emocion_dominante'].replace('_', ' ')}
 Elemento: {arquetipos['elemento']} — Modalidad: {arquetipos['modalidad']}
 
-Tono del guion: {ADN['guion']['tono']}
+Tono del guion: Educador empático, brújula lúcida, psicológico, cercano.
 {efemerides_str}
 
-=== INSTRUCCIÓN DE TRADUCCIÓN (CRÍTICA) ===
-Eres un puente empático. Se te ha entregado arriba la red completa de aspectos matemáticos activos en el cielo hoy ("RED DE ASPECTOS ACTIVOS..."). 
-Tu trabajo es TRADUCIR esta complejidad astronómica al idioma de la masa.
-ATENCIÓN: SÍ DEBES nombrar a los planetas involucrados y el aspecto técnico (ej. "Esta Cuadratura entre la Luna y Plutón..."), no los ocultes. Pero no te quedes solo en lo teórico. 
-Debes tomar la esencia de esos choques (leyendo sus significados provistos) y explicar cómo se siente esa mezcla de energías en la calle, en el cuerpo y en los vínculos diarios. Fusiona la referencia astrológica real con una empatía palpable y comprensible.
+=== REGLAS EDITORIALES DE TOMÁS (5 TOMAS EXACTAS - VISCERAL Y HUMANO) ===
+1. TOMA 1 [gancho_fecha_continuidad] (15-20 palabras):
+   Apertura directa interpelando al cuerpo, a la mente o a una situación humana concreta del día.
+   PROHIBIDO frases gaseosas cósmicas ("el aire es denso y eléctrico", "la danza de los astros").
+2. TOMA 2 [mecanica_psicologica] (16-20 palabras):
+   Traduce la tensión psíquica real a lo cotidiano (vínculos, laburo, la mandíbula apretada, el mensaje que esquivás).
+   PROHIBIDO moralizar o usar fórmulas enlatadas como "La trampa:". Toca la fibra de la experiencia humana.
+3. TOMA 3 [mecanica_celeste_reloj2d] (16-20 palabras):
+   Conexión orgánica con el Astrolabio / reloj en vivo. Nombra los planetas, grados exactos y el aspecto sin rigidez.
+4. TOMA 4 [brujula_lucida] (16-20 palabras):
+   El anclaje lúcido y maduro para transitar la energía sin desgaste reactivo ni autoengaño. Sé conciso y sobrio.
+5. TOMA 5 [cta / cierre humano] (12-16 palabras):
+   Cierre dúctil que genera conversación genuina o pausa reflexiva:
+   - Pregunta directa al pecho para comentar ("¿Con quién estás peleando en serio hoy? Dejámelo abajo.")
+   - Anclaje para guardar el video ("Guardate esto para cuando baje la espuma.")
+   - Diagnóstico cercano de carta ("Fijate en qué casa tenés este signo o dejame tu signo y lo vemos.")
+   PROHIBIDO rotundamente decir "andá a mi link", "link en bio" o sonar a vendedor barato.
 
-=== ESTRUCTURA EXIGIDA ({num_tomas} TOMAS) ==={tomas_descripcion}
+=== FORMATO ESTRICTO ===
+- Voseo rioplatense impecable ("mirá", "fijate", "registralo", "decidilo", "soltá", "bancate", "sentís").
+- CERO tuteo neutro ("tú", "ti", "contigo").
+- CERO dramatismo sensacionalista ("veneno", "destrucción", "abismo").
+- Extensión total: ENTRE 75 Y 95 PALABRAS NETAS en todo el guion (locución ágil de ~30 a 33 segundos).
+- Puntuación natural y fluida: usá comas, puntos seguidos y guiones. PROHIBIDAS las elipsis repetitivas (...).
+{feedback_retry}
 
-=== INSTRUCCIÓN CRÍTICA ===
-Debes devolver ÚNICAMENTE un JSON válido con esta estructura exacta, sin ningún texto adicional,
-sin bloques de código markdown, sin explicaciones. Solo el JSON:
-
+Devuelve ÚNICAMENTE un JSON válido con esta estructura:
 {{
   "evento_id": "{EVENTO_ID}",
   "titulo": "{produccion['evento_titulo']}",
   "tomas": [
-    {{"num": 1, "rol": "gancho", "texto": "...", "etiqueta_visual": "[TITULO_PLANETA]"}},
-    {{"num": 2, "rol": "contexto_astral", "texto": "...", "etiqueta_visual": null}},
-    ... (continuar para las {num_tomas} tomas)
+    {{"num": 1, "rol": "gancho_fecha_continuidad", "texto": "...", "etiqueta_visual": "[TITULO_PLANETA]"}},
+    {{"num": 2, "rol": "mecanica_psicologica", "texto": "...", "etiqueta_visual": null}},
+    {{"num": 3, "rol": "mecanica_celeste_reloj2d", "texto": "...", "etiqueta_visual": null}},
+    {{"num": 4, "rol": "brujula_lucida", "texto": "...", "etiqueta_visual": null}},
+    {{"num": 5, "rol": "cta", "texto": "...", "etiqueta_visual": "[CTA]"}}
   ]
 }}
-
-Reglas absolutas:
-- Exactamente {num_tomas} tomas en el array
-- Cada "texto" debe respetar el límite de palabras de su toma
-- La toma final (CTA) debe ser un llamado a la acción dirigido a la web. Usa EXACTAMENTE esta frase o una variante muy cercana: "Para descubrir cómo este tránsito impacta en tu propia carta natal, haz clic en el enlace de nuestra biografía."
-- Tono: {ADN['guion']['tono']}. Enfoque sociológico y de acompañamiento energético.
-- NO es predictivo ni un horóscopo mágico. Es un análisis de energías.
-- Si hablas de un signo, SIEMPRE únelo al clima general (ej: "si eres fuego, esto lo sientes más, pero a todos nos impacta...").
-- Hablar en segunda persona plural (ustedes) o impersonal, nunca "tú".
 """
 
-    info(f"Enviando prompt a Gemini...")
+        texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
+        try:
+            texto_limpio = limpiar_json_gemini(texto_raw)
+            data_parsed = json.loads(texto_limpio)
+            es_valido, motivo = validar_guion_editorial(data_parsed, num_tomas)
+            if es_valido:
+                guion_data = data_parsed
+                ok("Guion validado editorialmente con éxito.")
+                break
+            else:
+                warn(f"Intento {intento} rechazado: {motivo}")
+                feedback_retry = f"\n⚠️ RECHAZO EN INTENTO ANTERIOR: {motivo}. Corrige esto estrictamente: respeta 65-78 palabras, voseo rioplatense y cero clichés."
+        except Exception as e:
+            warn(f"Error al decodificar JSON en intento {intento}: {e}")
 
-    CANDIDATE_MODELS = ['gemini-3.8-flash', 'gemini-3.8-pro', 'gemini-3.5-flash']
-    texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
-
-    try:
-        texto_limpio = limpiar_json_gemini(texto_raw)
-        guion_data = json.loads(texto_limpio)
-
-        if not validar_estructura_guion(guion_data, num_tomas):
-            err("El guion generado no pasó la validación. Abortando.")
-            sys.exit(1)
-
-        # Mostrar preview
-        log("\n📄 PREVIEW DEL GUION:", CYAN)
-        for toma in guion_data["tomas"]:
-            palabras = len(toma["texto"].split())
-            log(f"  [{toma['num']}] {toma['rol'].upper()} ({palabras}p): {toma['texto'][:80]}{'...' if len(toma['texto']) > 80 else ''}", GRIS)
-
-        ruta = guardar_guion(guion_data)
-        return str(ruta)
-
-    except json.JSONDecodeError as e:
-        err(f"Gemini no devolvió JSON válido: {e}")
-        err(f"Respuesta raw (primeros 300 chars): {texto_raw[:300]}")
+    if not guion_data:
+        err("No se pudo generar un guion que cumpla los estándares editoriales de Tomás tras 3 intentos.")
         sys.exit(1)
-    except Exception as e:
-        err(f"Error al generar guion: {e}")
-        sys.exit(1)
+
+    # Mostrar preview
+    log("\n📄 PREVIEW DEL GUION APROBADO:", CYAN)
+    total_palabras = 0
+    for toma in guion_data["tomas"]:
+        palabras = len(toma["texto"].split())
+        total_palabras += palabras
+        log(f"  [{toma['num']}] {toma['rol'].upper()} ({palabras}p): {toma['texto']}", GRIS)
+    log(f"  -> Total de palabras: {total_palabras} (Objetivo: 65-78)", VERDE)
+
+    ruta = guardar_guion(guion_data)
+    return str(ruta)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # OPCIÓN 2 — Guion Semanal / Resumen
@@ -445,7 +512,7 @@ Devuelve ÚNICAMENTE este JSON sin texto adicional ni markdown:
 """
 
     info(f"Enviando prompt semanal a Gemini...")
-    CANDIDATE_MODELS = ['gemini-3.8-pro', 'gemini-3.5-pro', 'gemini-3.8-flash']
+    CANDIDATE_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite-preview', 'gemini-flash-latest']
     
     try:
         texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
@@ -560,7 +627,7 @@ Devuelve ÚNICAMENTE este JSON. Sin markdown, sin explicaciones:
 """
 
     info("Enviando análisis personalizado a Gemini...")
-    CANDIDATE_MODELS = ['gemini-3.8-pro', 'gemini-3.8-flash']
+    CANDIDATE_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite-preview', 'gemini-flash-latest']
 
     try:
         texto_raw = generar_con_gemini_cuota(prompt, CANDIDATE_MODELS)
@@ -637,7 +704,7 @@ def opcion_4_inyectar_cta(guion_path: str = None):
     info(f"CTA actual (toma {toma_cta['num']}): {toma_cta['texto']}")
 
     # CTA directo aprobado por el usuario
-    nuevo_cta = "Para descubrir cómo este tránsito impacta en tu propia carta natal, haz clic en el enlace de nuestra biografía."
+    nuevo_cta = "Para ver en qué casa te cae este aspecto, entrá al link de mi perfil."
     
     palabras  = len(nuevo_cta.split())
     info(f"CTA seleccionado ({palabras} palabras): {nuevo_cta}")

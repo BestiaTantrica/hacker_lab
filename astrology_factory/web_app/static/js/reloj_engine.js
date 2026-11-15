@@ -50,6 +50,61 @@ const ASPECT_COLORS = {
   'Quincuncio': '#a855f7'
 };
 
+
+const CASA_TITULOS = {
+  1: "Ascendente / Identidad & Presencia",
+  2: "Recursos, Valores & Dinero",
+  3: "Mente Concreta & Comunicación",
+  4: "Fondo de Cielo / Raíces & Hogar",
+  5: "Creatividad, Pasión & Autoexpresión",
+  6: "Salud, Trabajo & Orden Cotidiano",
+  7: "Descendente / Pareja & Vínculos",
+  8: "Transformación, Crisis & Alquimia",
+  9: "Filosofía, Viajes & Expansión",
+  10: "Medio Cielo / Vocación & Destino",
+  11: "Redes, Comunidad & Futuro",
+  12: "Inconsciente, Espiritualidad & Cierres"
+};
+
+const SIGNO_SIGNIFICADOS = {
+  'Aries': 'Fuego Cardinal. Inicio valiente, impulso pionero, acción directa y soberanía del deseo. Arquetipo del Guerrero.',
+  'Tauro': 'Tierra Fija. Enraizamiento material, estabilidad somática, placer sensorial y acumulación fértil. Arquetipo del Creador.',
+  'Géminis': 'Aire Mutable. Curiosidad insaciable, agilidad mental, puentes dialécticos y juego de perspectivas. Arquetipo del Mensajero.',
+  'Cáncer': 'Agua Cardinal. Nutrición emocional, memoria del linaje, protección del santuario íntimo y ternura visceral. Arquetipo de la Madre.',
+  'Leo': 'Fuego Fijo. Fuego del corazón, irradiación magnética, dignidad soberana y autenticidad creadora. Arquetipo del Rey / Artista.',
+  'Virgo': 'Tierra Mutable. Alquimia del detalle, discernimiento sagrado, devoción por el servicio y purificación. Arquetipo del Sanador.',
+  'Libra': 'Aire Cardinal. Armonía vincular, diplomacia estética, justicia distributiva y la danza del espejo ajeno. Arquetipo del Mediador.',
+  'Escorpio': 'Agua Fija. Profundidad psicológica, regeneración plutoniana, muerte del ego y transmutación de sombras. Arquetipo del Chamán.',
+  'Sagitario': 'Fuego Mutable. Flecha hacia el horizonte, sabiduría filosófica, fe inquebrantable y expansión de fronteras. Arquetipo del Explorador.',
+  'Capricornio': 'Tierra Cardinal. Arquitectura del tiempo, maestría pragmática, perseverancia solitaria y legado perdurable. Arquetipo del Sabio / Constructor.',
+  'Acuario': 'Aire Fijo. Visión futurista, red colaborativa, rebelión iluminadora y libertad mental radical. Arquetipo del Revolucionario.',
+  'Piscis': 'Agua Mutable. Misticismo trascendente, compasión oceánica, disolución de fronteras y comunión cósmica. Arquetipo del Místico.'
+};
+
+const ASPECT_SIGNIFICADOS = {
+  'Conjunción': 'Fusión cuántica de energías: las dos fuerzas arquetípicas operan como una sola entidad indivisible, marcando un potente nuevo ciclo evolutivo.',
+  'Oposición': 'Tensión polar y dialéctica: desafío de integrar dos fuerzas opuestas a través de los vínculos y la conciencia reflexiva frente al espejo del otro.',
+  'Trígono': 'Fluidez armónica natural: talentos innatos, dones celestes y puertas de manifestación que se abren sin fricción ni esfuerzo.',
+  'Cuadratura': 'Fricción dinámica y fuego de crisis: tensión motora indispensable que exige decisiones firmes, maduración y quiebre de la pasividad.',
+  'Sextil': 'Oportunidad creadora y puente de entendimiento: estímulo intelectual que requiere intención consciente y acción para manifestarse.',
+  'Quincuncio': 'Reajuste alquímico constante: tensión entre dos mundos que no hablan el mismo idioma y obligan a afinar la percepción.'
+};
+
+const SOLAR_RETURN_ASC_SIGNIFICADOS = {
+  'Aries': 'Año de inicios radicales, independencia y coraje para abrir nuevos caminos por cuenta propia.',
+  'Tauro': 'Año de consolidación material, seguridad financiera, paciencia y disfrute del cuerpo y la materia.',
+  'Géminis': 'Año de apertura mental, aprendizaje acelerado, viajes cortos, trámites y nuevas redes de comunicación.',
+  'Cáncer': 'Año centrado en el hogar, la familia, la sanación de raíces y la búsqueda de pertenencia emocional.',
+  'Leo': 'Año de brillo personal, autoafirmación, liderazgo creativo y proyectos nacidos del corazón.',
+  'Virgo': 'Año de orden minucioso, disciplina laboral, cuidado de la salud y optimización de rutinas diarias.',
+  'Libra': 'Año de grandes definiciones vinculares, sociedades, compromisos afectivos y búsqueda de equilibrio.',
+  'Escorpio': 'Año de metamorfosis profunda, purga de lo obsoleto, poder personal y regeneración financiera.',
+  'Sagitario': 'Año de expansión de horizontes, viajes al extranjero, estudios superiores y renovación de la fe.',
+  'Capricornio': 'Año de consolidación profesional, asunción de responsabilidades mayores y cosecha de esfuerzos.',
+  'Acuario': 'Año de quiebre de estructuras, innovación tecnológica, grupos comunitarios y cambios imprevistos.',
+  'Piscis': 'Año de introspección espiritual, sensibilidad artística, cierres cármicos y perdón profundo.'
+};
+
 const CASA_SIGNIFICADOS = {
   1: "Casa I (Ascendente): Identidad, presencia física, impulso vital y máscara exterior.",
   2: "Casa II: Recursos propios, economía personal, valores y seguridad material.",
@@ -63,6 +118,19 @@ const CASA_SIGNIFICADOS = {
   10: "Casa X (Medio Cielo): Vocación, destino público, reputación y maestría en el mundo.",
   11: "Casa XI: Redes humanas, proyectos colectivos, ideales comunitarios y futuro.",
   12: "Casa XII: Inconsciente colectivo, lo no resuelto, retiro espiritual y disolución del ego."
+};
+
+const PLANETA_SIGNIFICADOS = {
+  'Sol': 'Identidad consciente, vitalidad radiante, propósito evolutivo y soberanía personal.',
+  'Luna': 'Mundo emocional interior, instinto, seguridad somática y memorias del inconsciente.',
+  'Mercurio': 'Mente analítica, comunicación, agilidad de pensamiento y puentes relacionales.',
+  'Venus': 'Magnetismo, valores, equilibrio afectivo, goce estético y apertura al encuentro.',
+  'Marte': 'Fuerza de acción, valentía asertiva, conquista, pasión y límites firmes.',
+  'Júpiter': 'Expansión de consciencia, cosmovisión superior, fe, sabiduría y oportunidades.',
+  'Saturno': 'Madurez, estructura sólida, tiempo sagrado, disciplina y leyes de realidad.',
+  'Urano': 'Revolución mental, despertar súbito, innovación radical y quiebre de viejos moldes.',
+  'Neptuno': 'Sensibilidad oceánica, intuición mística, arte trascendente y compasión universal.',
+  'Plutón': 'Metamorfosis alquímica, caída de máscaras, transmutación de sombras y renacimiento.'
 };
 
 const ROMAN_HOURS = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
@@ -178,6 +246,8 @@ class RelojAstrologicoEngine {
     this.tooltip = document.getElementById('reloj-tooltip');
     this.inspectorHUD = document.getElementById('astro-inspector-hud');
     this.hoveredItem = null;
+    this.pinnedItem = null;
+    this.liveLayoutMode = 'solo';
     this.inactivityTimer = null;
     this.uiHiddenPinned = false;
 
@@ -193,6 +263,10 @@ class RelojAstrologicoEngine {
     this.detectGeolocation();
     this.initEvents();
     this.calculateAll();
+    this.activeNatalPerson = null;
+    this.activeChartMode = 'live';
+    this.initLiveFunnelUI();
+    window.relojAstroInstance = this;
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
   }
@@ -442,7 +516,7 @@ class RelojAstrologicoEngine {
     this.canvas.addEventListener('mouseleave', () => {
       this.camera.isDragging = false;
       this.hoveredItem = null;
-      this.updateInspectorHUD(null);
+      this.updateInspectorHUD(this.pinnedItem || null);
     });
 
     this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
@@ -452,6 +526,14 @@ class RelojAstrologicoEngine {
       }
     }, { passive: true });
 
+    // ── Botones de Selector de Modo Live ─────────────────────────────────
+    document.querySelectorAll('.live-layout-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode');
+        if (mode) this.setLiveLayoutMode(mode);
+      });
+    });
+
     // ── Auto-Hide de Interfaz tras 3.8 segundos de inactividad ───────────
     window.addEventListener('mousemove', () => this.resetInactivityTimer());
     window.addEventListener('keydown', (e) => {
@@ -459,6 +541,17 @@ class RelojAstrologicoEngine {
         this.toggleUIVisibility();
       } else if (e.key === '0' || e.key === 'r' || e.key === 'R') {
         this.resetCamera();
+      } else if (e.key === '1') {
+        this.setLiveLayoutMode('solo');
+      } else if (e.key === '2') {
+        this.setLiveLayoutMode('invitado-1');
+      } else if (e.key === '3') {
+        this.setLiveLayoutMode('invitado-2');
+      } else if (e.key === '4') {
+        this.setLiveLayoutMode('full');
+      } else if (e.key === 'Escape') {
+        this.pinnedItem = null;
+        this.updateInspectorHUD(null);
       } else {
         this.resetInactivityTimer();
       }
@@ -509,6 +602,322 @@ class RelojAstrologicoEngine {
     this.updateZoomHUD();
   }
 
+  setLiveLayoutMode(mode) {
+    this.liveLayoutMode = mode;
+    this.container?.classList.remove('layout-solo', 'layout-invitado-1', 'layout-invitado-2', 'layout-full');
+    this.container?.classList.add(`layout-${mode}`);
+
+    document.querySelectorAll('.live-layout-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+    });
+
+    if (mode === 'invitado-1') {
+      document.getElementById('modal-invitado')?.classList.add('open');
+    }
+
+    try {
+      if (!this.syncChannel) {
+        this.syncChannel = new BroadcastChannel('astrolabio_sync');
+      }
+      this.syncChannel.postMessage({ layoutMode: mode });
+      localStorage.setItem('astro_live_layout', mode);
+    } catch(e) {}
+
+    this.updateInspectorHUD(this.hoveredItem || this.pinnedItem || null);
+  }
+
+  toggleInspectorOnScreen() {
+    const container = document.getElementById('astro-inspector-container');
+    if (container) {
+      const isHidden = container.style.display === 'none';
+      container.style.display = isHidden ? 'flex' : 'none';
+      const btn = document.getElementById('btn-toggle-hud');
+      if (btn) {
+        btn.classList.toggle('active', isHidden);
+      }
+    }
+  }
+
+  // ── Longitud Sideral Analítica del Sol (Kepleriana de Alta Precisión) ──────
+  getSunLongitude(date) {
+    const jd = this.getJulianDay(date);
+    const T = (jd - 2451545.0) / 36525.0;
+    const rad = Math.PI / 180;
+    const L0 = 280.46646 + 36000.76983 * T;
+    const M_sun = (357.52911 + 35999.05029 * T) * rad;
+    const C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun) + 0.019993 * Math.sin(2 * M_sun);
+    return ((L0 + C_sun) % 360 + 360) % 360;
+  }
+
+  // ── Cálculo de Revolución Solar (Retorno exacto del Sol al grado natal) ────
+  calculateSolarReturn(natalDate, targetYear, returnCity = "Buenos Aires, Argentina", returnLat = -34.6037, returnLon = -58.3816) {
+    try {
+      const natalSun = this.getSunLongitude(natalDate);
+      
+      // Fecha base de búsqueda: cumpleaños en el año de retorno
+      let t = new Date(targetYear, natalDate.getMonth(), natalDate.getDate(), natalDate.getHours(), natalDate.getMinutes());
+      
+      // Solver Newton-Raphson para converger a menos de 0.00001° de orbe
+      for (let i = 0; i < 6; i++) {
+        const curSun = this.getSunLongitude(t);
+        let diff = curSun - natalSun;
+        while (diff > 180) diff -= 360;
+        while (diff < -180) diff += 360;
+        const deltaDays = diff / 0.98564736;
+        t = new Date(t.getTime() - deltaDays * 86400000);
+      }
+
+      this.activeChartMode = 'solar_return';
+      this.timeState.isLive = false;
+      this.timeState.currentDate = t;
+      this.geo.lat = returnLat;
+      this.geo.lon = returnLon;
+      this.geo.ciudad = `Rev. Solar ${targetYear} (${returnCity})`;
+      
+      this.calculateAll();
+      this.updateLocationHUD();
+
+      const titleEl = document.querySelector('.brand-title');
+      const personName = this.activeNatalPerson ? this.activeNatalPerson.name.toUpperCase() : "CONSULTANTE";
+      if (titleEl) titleEl.innerText = `☀️ REV. SOLAR ${targetYear}: ${personName}`;
+      
+      const subEl = document.querySelector('.brand-subtitle');
+      const dStr = `${t.getDate()}/${t.getMonth()+1}/${t.getFullYear()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+      if (subEl) subEl.innerText = `Retorno Exacto: ${dStr} • ${returnCity}`;
+
+      const retBtn = document.getElementById('btn-return-live');
+      if (retBtn) retBtn.style.display = 'flex';
+
+      document.getElementById('modal-revolucion')?.classList.remove('open');
+      document.getElementById('live-consultantes-drawer')?.classList.remove('open');
+
+      // Actualizar Inspector con análisis de la Revolución Solar
+      const ascSign = ZODIAC_SIGNS[Math.floor(this.calculated.asc / 30)] || ZODIAC_SIGNS[0];
+      const ascDeg = Math.floor(this.calculated.asc % 30);
+      const sunP = this.calculated.planets['Sol'];
+      const sunCasa = sunP ? sunP.casa : 1;
+      const ascSignoDesc = SOLAR_RETURN_ASC_SIGNIFICADOS[ascSign.nombre] || '';
+
+      const hud = document.getElementById('astro-inspector-hud');
+      if (hud) {
+        hud.innerHTML = `
+          <div class="inspector-badge" style="background:#f6c445; color:#000;">☀️ REVOLUCIÓN SOLAR ${targetYear}</div>
+          <div class="inspector-title" style="color:#f6c445;">Ascendente Anual en ${ascSign.simbolo} ${ascSign.nombre} ${ascDeg}°</div>
+          <div class="inspector-meta">
+            <strong>Sol Anual en Casa ${sunCasa}:</strong> Foco de vitalidad y propósito del año.
+          </div>
+          <div class="inspector-psico">
+            <div style="font-size:11px; text-transform:uppercase; color:#f6c445; font-weight:700; margin-bottom:2px;">Clave del Año:</div>
+            ${ascSignoDesc}
+          </div>
+          <div class="inspector-cta">
+            🔮 Revolución calculada al segundo exacto para <strong>${returnCity}</strong>.
+          </div>
+        `;
+      }
+    } catch(e) {
+      console.error('Error calculando Revolución Solar:', e);
+    }
+  }
+
+  // ── Cargar Carta Natal de Consultante ─────────────────────────────────────
+  loadNatalChart(person) {
+    if (!person || !person.birth_date) return;
+    try {
+      this.activeNatalPerson = person;
+      this.activeChartMode = 'natal';
+
+      const parts = person.birth_date.split('-');
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]);
+      const day = parseInt(parts[2]);
+      let hours = 12, mins = 0;
+      if (person.birth_time) {
+        const timeParts = person.birth_time.split(':');
+        hours = parseInt(timeParts[0]) || 12;
+        mins = parseInt(timeParts[1]) || 0;
+      }
+
+      this.timeState.isLive = false;
+      this.timeState.currentDate = new Date(year, month - 1, day, hours, mins);
+      this.geo.ciudad = `${person.name} (${person.birth_city || 'Carta Natal'})`;
+      this.calculateAll();
+      this.updateLocationHUD();
+
+      const titleEl = document.querySelector('.brand-title');
+      if (titleEl) titleEl.innerText = `🔮 CARTA: ${person.name.toUpperCase()}`;
+      const subEl = document.querySelector('.brand-subtitle');
+      if (subEl) subEl.innerText = `${day}/${month}/${year} ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')} • ${person.birth_city || ''}`;
+
+      const retBtn = document.getElementById('btn-return-live');
+      if (retBtn) retBtn.style.display = 'flex';
+
+      // Actualizar modal de Revolución Solar con este consultante
+      const rsPersonEl = document.getElementById('rs-active-person');
+      if (rsPersonEl) rsPersonEl.innerText = `${person.name} (${day}/${month}/${year})`;
+
+      // Cerrar cajón
+      document.getElementById('live-consultantes-drawer')?.classList.remove('open');
+    } catch(e) {
+      console.error('Error cargando carta natal:', e);
+    }
+  }
+
+  returnToLiveSky() {
+    this.activeChartMode = 'live';
+    this.timeState.currentDate = new Date();
+    this.timeState.isLive = true;
+    this.timeState.timeMultiplier = 1.0;
+    this.geo.ciudad = "Coordenadas Detectadas (GPS)";
+    this.calculateAll();
+    this.updateLocationHUD();
+
+    const titleEl = document.querySelector('.brand-title');
+    if (titleEl) titleEl.innerText = "EL GLIFO MAESTRO";
+    const subEl = document.querySelector('.brand-subtitle');
+    if (subEl) subEl.innerText = "Reloj Cósmico en Tiempo Real";
+
+    const retBtn = document.getElementById('btn-return-live');
+    if (retBtn) retBtn.style.display = 'none';
+
+    this.updateInspectorHUD(null);
+  }
+
+  // ── Cambio Rápido de Ubicación Geográfica ─────────────────────────────────
+  changeLocation(lat, lon, cityName) {
+    this.geo.lat = lat;
+    this.geo.lon = lon;
+    this.geo.ciudad = cityName;
+    this.geo.esExacta = true;
+    localStorage.setItem('reloj_astro_geo', JSON.stringify(this.geo));
+    this.calculateAll();
+    this.updateLocationHUD();
+    document.getElementById('modal-ubicacion')?.classList.remove('open');
+    this.updateInspectorHUD(null);
+  }
+
+  applyCustomLocation() {
+    const city = document.getElementById('cust-city')?.value || "Ubicación Personalizada";
+    const lat = parseFloat(document.getElementById('cust-lat')?.value || "-34.60");
+    const lon = parseFloat(document.getElementById('cust-lon')?.value || "-58.38");
+    this.changeLocation(lat, lon, city);
+  }
+
+  // ── Inicialización Completa de la UI del Embudo Live ──────────────────────
+  initLiveFunnelUI() {
+    // 1. Botones de Apertura de Cajones y Modales
+    document.getElementById('btn-open-drawer')?.addEventListener('click', () => {
+      document.getElementById('live-consultantes-drawer')?.classList.toggle('open');
+    });
+    document.getElementById('btn-close-drawer')?.addEventListener('click', () => {
+      document.getElementById('live-consultantes-drawer')?.classList.remove('open');
+    });
+
+    document.getElementById('btn-open-location')?.addEventListener('click', () => {
+      document.getElementById('modal-ubicacion')?.classList.add('open');
+    });
+    document.getElementById('hud-location')?.addEventListener('click', () => {
+      document.getElementById('modal-ubicacion')?.classList.add('open');
+    });
+
+    document.getElementById('btn-open-solar')?.addEventListener('click', () => {
+      document.getElementById('modal-revolucion')?.classList.add('open');
+    });
+
+    document.getElementById('btn-open-camara')?.addEventListener('click', () => {
+      document.getElementById('modal-camara')?.classList.add('open');
+    });
+
+    // 2. Disparador de Revolución Solar
+    document.getElementById('btn-calc-solar-return')?.addEventListener('click', () => {
+      const year = parseInt(document.getElementById('rs-target-year')?.value || "2026");
+      const locName = document.getElementById('rs-location-name')?.value || "Buenos Aires, Argentina";
+      
+      let natalDate = new Date(1982, 3, 12, 2, 30); // Default Tomás
+      if (this.activeNatalPerson && this.activeNatalPerson.birth_date) {
+        const parts = this.activeNatalPerson.birth_date.split('-');
+        let h = 12, m = 0;
+        if (this.activeNatalPerson.birth_time) {
+          const tp = this.activeNatalPerson.birth_time.split(':');
+          h = parseInt(tp[0]) || 12;
+          m = parseInt(tp[1]) || 0;
+        }
+        natalDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]), h, m);
+      }
+
+      this.calculateSolarReturn(natalDate, year, locName, this.geo.lat, this.geo.lon);
+    });
+
+    // 3. Quick-Add desde el Chat
+    document.getElementById('qa-submit')?.addEventListener('click', async () => {
+      const name = document.getElementById('qa-name')?.value.trim();
+      const bDate = document.getElementById('qa-date')?.value;
+      const bTime = document.getElementById('qa-time')?.value || "12:00";
+      const bCity = document.getElementById('qa-city')?.value.trim() || "Buenos Aires";
+
+      if (!name || !bDate) {
+        alert("Ingresá al menos Nombre y Fecha de Nacimiento");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/live_subscribers?token=tomas_astro_live_777', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, birth_date: bDate, birth_time: bTime, birth_city: bCity })
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          this.loadNatalChart(data);
+          this.fetchSubs();
+        }
+      } catch(e) {
+        this.loadNatalChart({ name, birth_date: bDate, birth_time: bTime, birth_city: bCity });
+      }
+    });
+
+    // 4. Polling de Suscriptores Web
+    this.fetchSubs = async () => {
+      try {
+        const res = await fetch('/api/live_subscribers?token=tomas_astro_live_777');
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const countEl = document.getElementById('sub-count');
+        const drawerCountEl = document.getElementById('drawer-sub-count');
+        if (countEl) countEl.innerText = data.length;
+        if (drawerCountEl) drawerCountEl.innerText = data.length;
+
+        const listEl = document.getElementById('drawer-subscribers-list');
+        if (listEl) {
+          if (data.length === 0) {
+            listEl.innerHTML = '<div style="font-size:12px; color:#94a3b8; padding:8px;">No hay registros recientes aún.</div>';
+            return;
+          }
+          listEl.innerHTML = data.map(sub => `
+            <div class="sub-item" style="display:flex; align-items:center; justify-content:space-between; padding:8px 6px; border-bottom:1px solid rgba(246,196,69,0.15); gap: 6px;">
+              <div style="overflow:hidden; text-overflow:ellipsis; flex: 1;">
+                <strong style="color:#f6c445; font-size:13px;">${sub.name}</strong>
+                <div style="font-size:11px; color:#cbd5e1;">${sub.birth_date} ${sub.birth_time} • ${sub.birth_city}</div>
+              </div>
+              <div style="display:flex; gap:4px;">
+                <button style="background:#f6c445; color:#000; border:none; padding:5px 8px; border-radius:6px; font-weight:700; font-size:11px; cursor:pointer; white-space:nowrap;" onclick="window.relojAstroInstance.loadNatalChart(${JSON.stringify(sub).replace(/"/g, '&quot;')})">
+                  🔮 Natal
+                </button>
+                <button style="background:rgba(246,196,69,0.2); color:#fef08a; border:1px solid rgba(246,196,69,0.4); padding:5px 7px; border-radius:6px; font-weight:700; font-size:10px; cursor:pointer; white-space:nowrap;" onclick="window.relojAstroInstance.loadNatalChart(${JSON.stringify(sub).replace(/"/g, '&quot;')}); document.getElementById('modal-revolucion').classList.add('open');">
+                  ☀️ RS
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch(e) {}
+    };
+
+    this.fetchSubs();
+    setInterval(() => this.fetchSubs(), 12000);
+  }
+
   updateZoomHUD() {
     const btnReset = document.getElementById('btn-reset-zoom');
     if (btnReset) {
@@ -518,13 +927,22 @@ class RelojAstrologicoEngine {
   }
 
   // ── Hit-Testing & Proyección en Esquina (Nada tapa el Orbe) ─────────────────
+  
+  distToSegment(px, py, x1, y1, x2, y2) {
+    const l2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+    if (l2 === 0) return Math.hypot(px - x1, py - y1);
+    let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
+  }
+
   handlePointerMove(e) {
     this.resetInactivityTimer();
 
     const rect = this.canvas.getBoundingClientRect();
     const cx = this.width / 2;
     const cy = this.height / 2;
-    const baseScale = Math.min(this.width, this.height) / 1080;
+    const baseScale = (Math.min(this.width, this.height) * 0.94) / 1080;
     const currentScale = baseScale * this.camera.zoom;
 
     const mouseX = (e.clientX - rect.left - (cx + this.camera.panX)) / currentScale;
@@ -545,37 +963,75 @@ class RelojAstrologicoEngine {
       }
     }
 
-    // 2. Si no es planeta, detectar si está sobre un Signo Zodiacal
+
+    // 2. Si no es planeta, detectar si está sobre una Línea de Aspecto (Radio interior < 195)
+    if (!hit && this.calculated.aspects) {
+      const distC = Math.hypot(mouseX, mouseY);
+      if (distC < 195) {
+        const r = this.radii.aspects;
+        let closestAspect = null;
+        let minAspectDist = 999;
+        for (const asp of this.calculated.aspects) {
+          const p1 = this.calculated.planets[asp.p1];
+          const p2 = this.calculated.planets[asp.p2];
+          if (!p1 || !p2) continue;
+          const a1 = this.coordToAngle(p1.grado_absoluto);
+          const a2 = this.coordToAngle(p2.grado_absoluto);
+          const x1 = Math.cos(a1) * r;
+          const y1 = Math.sin(a1) * r;
+          const x2 = Math.cos(a2) * r;
+          const y2 = Math.sin(a2) * r;
+          const dist = this.distToSegment(mouseX, mouseY, x1, y1, x2, y2);
+          if (dist < minAspectDist) {
+            minAspectDist = dist;
+            closestAspect = asp;
+          }
+        }
+        if (closestAspect && minAspectDist < 25) {
+          hit = { tipo: 'aspecto', data: closestAspect };
+        }
+      }
+    }
+
+    // 3. Detectar Signo Zodiacal (Radio 335 a 445)
     if (!hit) {
       const distC = Math.hypot(mouseX, mouseY);
-      if (distC >= this.radii.zodiacInner && distC <= this.radii.zodiacOuter) {
-        let angle = Math.atan2(mouseY, mouseX);
-        let relDeg = ((Math.PI - angle) * 180 / Math.PI) % 360;
-        if (relDeg < 0) relDeg += 360;
-        let eclipticDeg = (relDeg + this.calculated.asc) % 360;
-        let signIdx = Math.floor(eclipticDeg / 30);
-        let signDeg = Math.floor(eclipticDeg % 30);
+      if (distC >= 335 && distC <= 445) {
+        const canvasDeg = (Math.atan2(mouseY, mouseX) * 180 / Math.PI + 360) % 360;
+        const eclipticDeg = (180 - canvasDeg + this.calculated.asc + 720) % 360;
+        const signIdx = Math.floor(eclipticDeg / 30);
+        const signDeg = Math.floor(eclipticDeg % 30);
         if (ZODIAC_SIGNS[signIdx]) {
           hit = { tipo: 'signo', data: ZODIAC_SIGNS[signIdx], grado: signDeg };
         }
       }
     }
 
-    // 3. Si no es signo, detectar Casa Astrológica
-    if (!hit) {
+    // 4. Detectar Casa Astrológica Placidus (Radio 150 a 335)
+    if (!hit && this.calculated.houses && this.calculated.houses.length === 12) {
       const distC = Math.hypot(mouseX, mouseY);
-      if (distC >= this.radii.housesInner && distC <= this.radii.housesOuter) {
-        let angle = Math.atan2(mouseY, mouseX);
-        let relDeg = ((Math.PI - angle) * 180 / Math.PI) % 360;
-        if (relDeg < 0) relDeg += 360;
-        let houseNum = Math.floor(relDeg / 30) + 1;
-        if (houseNum >= 1 && houseNum <= 12) {
-          hit = { tipo: 'casa', num: houseNum };
+      if (distC >= 150 && distC < 335) {
+        const canvasDeg = (Math.atan2(mouseY, mouseX) * 180 / Math.PI + 360) % 360;
+        const eclipticDeg = (180 - canvasDeg + this.calculated.asc + 720) % 360;
+
+        for (let h = 0; h < 12; h++) {
+          const cStart = this.calculated.houses[h];
+          const cEnd = this.calculated.houses[(h + 1) % 12];
+          let inHouse = false;
+          if (cStart < cEnd) {
+            inHouse = (eclipticDeg >= cStart && eclipticDeg < cEnd);
+          } else {
+            inHouse = (eclipticDeg >= cStart || eclipticDeg < cEnd);
+          }
+          if (inHouse) {
+            hit = { tipo: 'casa', num: h + 1 };
+            break;
+          }
         }
       }
     }
 
-    // 4. Si no es casa, detectar Carriles de Tiempo Exteriores (Horas 472, Minutos 494, Segundos 516)
+    // 5. Si no es casa, detectar Carriles de Tiempo Exteriores (Horas 472, Minutos 494, Segundos 516)
     if (!hit) {
       const distC = Math.hypot(mouseX, mouseY);
       const dNow = this.timeState.currentDate;
@@ -595,22 +1051,66 @@ class RelojAstrologicoEngine {
     this.updateInspectorHUD(hit);
   }
 
-  handleCanvasClick(e) {
-    if (this.hoveredItem) {
-      const p = this.hoveredItem.data;
-      if (this.hoveredItem.tipo === 'planeta') {
-        console.log(`[Glifo Maestro] Astro Seleccionado: ${p.nombre} en ${p.signo} ${p.grado}°${p.minutos}' (Casa ${p.casa})`);
+  broadcastSelection(item) {
+    try {
+      if (!this.syncChannel) {
+        this.syncChannel = new BroadcastChannel('astrolabio_sync');
       }
+      const payload = { item, ts: Date.now() };
+      this.syncChannel.postMessage(payload);
+      localStorage.setItem('astro_sync_payload', JSON.stringify(payload));
+      localStorage.setItem('astro_selected_item', JSON.stringify(item));
+      if (item && item.tipo === 'planeta') {
+        localStorage.setItem('astro_selected_planet', item.data.nombre + '_' + Date.now());
+      }
+    } catch(e) {}
+  }
+
+  handleCanvasClick(e) {
+    if (e) {
+      this.handlePointerMove(e);
+    }
+    if (this.hoveredItem) {
+      const same = this.pinnedItem && this.pinnedItem.tipo === this.hoveredItem.tipo &&
+                   ((this.hoveredItem.tipo === 'planeta' && this.pinnedItem.data && this.pinnedItem.data.nombre === this.hoveredItem.data.nombre) ||
+                    (this.hoveredItem.tipo === 'signo' && this.pinnedItem.data && this.pinnedItem.data.nombre === this.hoveredItem.data.nombre) ||
+                    (this.hoveredItem.tipo === 'casa' && this.pinnedItem.num === this.hoveredItem.num) ||
+                    (this.hoveredItem.tipo === 'aspecto' && this.pinnedItem.data && this.pinnedItem.data.p1 === this.hoveredItem.data.p1 && this.pinnedItem.data.p2 === this.hoveredItem.data.p2));
+
+      if (same) {
+        this.pinnedItem = null;
+        this.updateInspectorHUD(null);
+        this.broadcastSelection(null);
+      } else {
+        this.pinnedItem = this.hoveredItem;
+        this.updateInspectorHUD(this.pinnedItem);
+        this.broadcastSelection(this.pinnedItem);
+      }
+    } else {
+      this.pinnedItem = null;
+      this.updateInspectorHUD(null);
+      this.broadcastSelection(null);
     }
   }
 
   // ── Proyección al Inspector HUD (Esquina Inferior Izquierda Limpia) ────────
   updateInspectorHUD(hit) {
-    const hud = this.inspectorHUD || document.getElementById('astro-inspector-hud');
+    const hud = document.getElementById('astro-inspector-hud');
     if (!hud) return;
 
+    if (!hit && this.pinnedItem) {
+      hit = this.pinnedItem;
+    }
+
+    const isPinned = !!(this.pinnedItem && hit && this.pinnedItem === hit);
+    const pinBadge = isPinned 
+      ? `<div class="pin-badge-container">
+           <span style="background:#f6c445; color:#000; font-weight:800; padding:2px 8px; border-radius:6px; font-size:10px;">📌 FIJADO</span>
+           <button class="unpin-btn" onclick="window.relojAstroInstance.pinnedItem = null; window.relojAstroInstance.updateInspectorHUD(null);">✕ Soltar</button>
+         </div>`
+      : '';
+
     if (!hit) {
-      // Estado de reposo: Tránsito y Luminarias en vivo
       const ascSign = ZODIAC_SIGNS[Math.floor(this.calculated.asc / 30)] || ZODIAC_SIGNS[0];
       const ascDeg = Math.floor(this.calculated.asc % 30);
       const mcSign = ZODIAC_SIGNS[Math.floor(this.calculated.mc / 30)] || ZODIAC_SIGNS[9];
@@ -619,16 +1119,26 @@ class RelojAstrologicoEngine {
       const topAspect = this.calculated.aspects.find(a => a.p1 === 'Sol' || a.p2 === 'Sol') || this.calculated.aspects[0];
       const aspectStr = topAspect ? `${topAspect.p1} en ${topAspect.tipo} con ${topAspect.p2} (Orbe ${topAspect.orbe.toFixed(1)}°)` : 'Armonía celeste activa';
 
+      const modeTitle = this.activeChartMode === 'solar_return' 
+        ? '☀️ REVOLUCIÓN SOLAR EN VIVO'
+        : (this.activeChartMode === 'natal' ? '🔮 CARTA NATAL CONSULTANTE' : '🔭 CIELO EN VIVO');
+
       hud.innerHTML = `
-        <div class="inspector-badge">🔭 INSPECTOR CÓSMICO</div>
-        <div class="inspector-title" style="color: #f6c445;">Bóveda Celeste en Vivo</div>
-        <div class="inspector-grid">
-          <div><span>🌅 ASC:</span> <strong>${ascSign.simbolo} ${ascSign.nombre} ${ascDeg}°</strong></div>
-          <div><span>👑 MC:</span> <strong>${mcSign.simbolo} ${mcSign.nombre} ${mcDeg}°</strong></div>
-          <div><span>🌙 LUNA:</span> <strong>${this.calculated.moonPhase.name}</strong></div>
-          <div><span>⚡ TRÁNSITO:</span> <strong>${aspectStr}</strong></div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge">${modeTitle}</div>
         </div>
-        <div class="inspector-hint">Pasa el cursor sobre un planeta o casa para inspeccionar sin tapar el mandala.</div>
+        <div class="inspector-title" style="color: #f6c445;">Bóveda Celeste en Vivo</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; font-size: 13px;">
+          <div><span style="color:#94a3b8;">🌅 ASC:</span> <strong style="color:#fef08a;">${ascSign.simbolo} ${ascSign.nombre} ${ascDeg}°</strong></div>
+          <div><span style="color:#94a3b8;">👑 MC:</span> <strong style="color:#fef08a;">${mcSign.simbolo} ${mcSign.nombre} ${mcDeg}°</strong></div>
+          <div style="grid-column: span 2;"><span style="color:#94a3b8;">🌙 Luna:</span> <strong>${this.calculated.moonPhase.name}</strong></div>
+          <div style="grid-column: span 2; border-top: 1px solid rgba(246,196,69,0.2); padding-top: 4px;">
+            <span style="color:#94a3b8;">⚡ Aspecto Clave:</span> <strong style="color:#38bdf8;">${aspectStr}</strong>
+          </div>
+        </div>
+        <div style="font-size: 12.5px; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
+          👉 <em>Hacé clic en cualquier <strong>Planeta</strong>, <strong>Signo</strong>, <strong>Casa</strong> o <strong>Línea</strong> en el Astrolabio para fijar su interpretación y leerla en el vivo.</em>
+        </div>
       `;
       hud.classList.remove('active-hover');
       return;
@@ -639,74 +1149,152 @@ class RelojAstrologicoEngine {
     if (hit.tipo === 'planeta') {
       const p = hit.data;
       const glyph = GLYPHS[p.nombre] || '★';
-      const casaDesc = CASA_SIGNIFICADOS[p.casa] || `Casa ${p.casa}`;
+      const casaTitulo = CASA_TITULOS[p.casa] || `Casa ${p.casa}`;
+      const casaDesc = CASA_SIGNIFICADOS[p.casa] || '';
+      const psicoDesc = PLANETA_SIGNIFICADOS[p.nombre] || 'Influencia vital en la energía cósmica actual.';
 
-      // Filtrar aspectos activos del planeta
       const planetAspects = this.calculated.aspects.filter(a => a.p1 === p.nombre || a.p2 === p.nombre);
       let aspectsHtml = '';
       if (planetAspects.length > 0) {
         aspectsHtml = '<div class="inspector-aspects-list">' +
-          planetAspects.slice(0, 4).map(a => {
+          planetAspects.slice(0, 3).map(a => {
             const otro = a.p1 === p.nombre ? a.p2 : a.p1;
-            return `<div class="aspect-pill" style="border-left: 2px solid ${a.color};">
-              <span style="color:${a.color}">⚡ ${a.tipo}</span> con <strong>${GLYPHS[otro]||''} ${otro}</strong> (orbe ${a.orbe.toFixed(1)}°)
+            return `<div class="aspect-pill" style="border-left: 3px solid ${a.color};">
+              <span style="color:${a.color}">⚡ ${a.tipo}</span> con <strong>${GLYPHS[otro]||''} ${otro}</strong> (${a.orbe.toFixed(1)}°)
             </div>`;
           }).join('') + '</div>';
-      } else {
-        aspectsHtml = '<div style="color: #94a3b8; font-size: 10px; margin-top: 4px;">Sin aspectos mayores tensos en este orbe.</div>';
       }
 
       hud.innerHTML = `
-        <div class="inspector-badge" style="color:${p.color}; border-color:${p.color};">✦ PLANETA EN TRÁNSITO</div>
-        <div class="inspector-title">
-          <span style="font-size: 20px; color:${p.color}; margin-right: 6px;">${glyph}</span>
-          <strong>${p.nombre}</strong> en ${p.signo_simbolo} ${p.signo} ${p.grado}°${p.minutos}'
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge" style="color:${p.color}; border-color:${p.color};">✦ PLANETA EN EL MANDALA</div>
+          ${pinBadge}
+        </div>
+        <div class="inspector-title" style="color:${p.color};">
+          <span style="font-size: 22px; margin-right: 4px;">${glyph}</span>
+          ${p.nombre} en ${p.signo_simbolo} ${p.signo} ${p.grado}°${p.minutos}'
         </div>
         <div class="inspector-meta">
-          <div><strong>Emplazamiento:</strong> ${casaDesc}</div>
+          <strong>Emplazamiento:</strong> Casa ${p.casa} (${casaTitulo})
+        </div>
+        <div class="inspector-psico">
+          <div style="font-size:11px; text-transform:uppercase; color:#f6c445; font-weight:700; margin-bottom:2px;">Psicología & Evolución:</div>
+          ${psicoDesc}
         </div>
         ${aspectsHtml}
+        <div class="inspector-cta">
+          💬 Contá en el chat: ¿En qué casa o signo tenés a <strong>${p.nombre}</strong>?
+        </div>
       `;
     } else if (hit.tipo === 'signo') {
       const s = hit.data;
+      const desc = SIGNO_SIGNIFICADOS[s.nombre] || 'Sector zodiacal activo.';
+      
+      // Encontrar planetas en este signo
+      const planetsInSign = Object.values(this.calculated.planets)
+        .filter(p => p.signo === s.nombre)
+        .map(p => `${GLYPHS[p.nombre]||''} ${p.nombre} (${p.grado}°)`).join(', ');
+
       hud.innerHTML = `
-        <div class="inspector-badge" style="color:${s.color}; border-color:${s.color};">✦ SECTOR ZODIACAL</div>
-        <div class="inspector-title">
-          <span style="font-size: 20px; color:${s.color}; margin-right: 6px;">${s.simbolo}</span>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge" style="color:${s.color}; border-color:${s.color};">♈ SECTOR ZODIACAL • ${s.elemento.toUpperCase()}</div>
+          ${pinBadge}
+        </div>
+        <div class="inspector-title" style="color:${s.color};">
+          <span style="font-size: 22px; margin-right: 6px;">${s.simbolo}</span>
           Signo de ${s.nombre} (${hit.grado}°)
         </div>
         <div class="inspector-meta">
-          <div><strong>Elemento:</strong> ${s.elemento} • <strong>Planeta Regente:</strong> ${s.regente}</div>
+          <strong>Elemento:</strong> ${s.elemento} • <strong>Regente:</strong> ${s.regente}
+        </div>
+        <div class="inspector-psico">
+          <div style="font-size:11px; text-transform:uppercase; color:#f6c445; font-weight:700; margin-bottom:2px;">Esencia Arquetípica:</div>
+          ${desc}
+        </div>
+        <div style="font-size:13px; color:#cbd5e1; margin: 6px 0;">
+          <strong>Planetas presentes:</strong> ${planetsInSign || '<em style="color:#94a3b8;">Ninguno en tránsito directo</em>'}
+        </div>
+        <div class="inspector-cta">
+          💬 ¿Quién tiene Sol, Luna o Ascendente en <strong>${s.nombre}</strong>?
         </div>
       `;
     } else if (hit.tipo === 'casa') {
-      const casaDesc = CASA_SIGNIFICADOS[hit.num] || `Casa ${hit.num}`;
-      const partes = casaDesc.split(':');
+      const hNum = hit.num;
+      const romanos = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+      const titulo = CASA_TITULOS[hNum] || `Casa ${hNum}`;
+      const desc = CASA_SIGNIFICADOS[hNum] || '';
+      const cuspDeg = this.calculated.houses[hNum - 1] || 0;
+      const cuspSign = ZODIAC_SIGNS[Math.floor(cuspDeg / 30)] || ZODIAC_SIGNS[0];
+      const cuspGrado = Math.floor(cuspDeg % 30);
+
+      // Planetas en esta casa
+      const planetsInHouse = Object.values(this.calculated.planets)
+        .filter(p => p.casa === hNum)
+        .map(p => `${GLYPHS[p.nombre]||''} ${p.nombre}`).join(', ');
+
       hud.innerHTML = `
-        <div class="inspector-badge">🏛️ CASA ASTROLÓGICA</div>
-        <div class="inspector-title">${partes[0]}</div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge" style="color:#f6c445; border-color:#f6c445;">🏛️ CASA ASTROLÓGICA ${romanos[hNum - 1]}</div>
+          ${pinBadge}
+        </div>
+        <div class="inspector-title" style="color:#f6c445;">
+          Casa ${romanos[hNum - 1]}: ${titulo}
+        </div>
         <div class="inspector-meta">
-          <div>${partes[1] || ''}</div>
+          <strong>Cúspide:</strong> ${cuspSign.simbolo} ${cuspSign.nombre} a ${cuspGrado}°
+        </div>
+        <div class="inspector-psico">
+          <div style="font-size:11px; text-transform:uppercase; color:#f6c445; font-weight:700; margin-bottom:2px;">Territorio de Vida:</div>
+          ${desc}
+        </div>
+        <div style="font-size:13px; color:#cbd5e1; margin: 6px 0;">
+          <strong>Planetas habitando la casa:</strong> ${planetsInHouse || '<em style="color:#94a3b8;">Casa vacía (actúa por regencia de cúspide)</em>'}
+        </div>
+        <div class="inspector-cta">
+          💬 ¿Qué planetas tenés en <strong>Casa ${romanos[hNum - 1]}</strong>? Te respondo en vivo
+        </div>
+      `;
+    } else if (hit.tipo === 'aspecto') {
+      const asp = hit.data;
+      const desc = ASPECT_SIGNIFICADOS[asp.tipo] || 'Interacción angular entre dos fuerzas planetarias.';
+      const g1 = GLYPHS[asp.p1] || '';
+      const g2 = GLYPHS[asp.p2] || '';
+
+      hud.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge" style="color:${asp.color}; border-color:${asp.color};">⚡ ASPECTO CÓSMICO MAYOR</div>
+          ${pinBadge}
+        </div>
+        <div class="inspector-title" style="color:${asp.color};">
+          ${g1} ${asp.p1} en ${asp.tipo.toUpperCase()} con ${g2} ${asp.p2}
+        </div>
+        <div class="inspector-meta">
+          <strong>Orbe:</strong> ${asp.orbe.toFixed(1)}° (${asp.esExacto ? 'Exacto / Muy Intenso' : 'Activo'}) • <strong>Geometría:</strong> ${asp.angulo}°
+        </div>
+        <div class="inspector-psico">
+          <div style="font-size:11px; text-transform:uppercase; color:#f6c445; font-weight:700; margin-bottom:2px;">Alquimia del Aspecto:</div>
+          ${desc}
+        </div>
+        <div style="font-size:13px; color:#cbd5e1; margin: 6px 0;">
+          <strong>Dinámica:</strong> Sinergia dialéctica entre <em>${asp.p1}</em> (${PLANETA_SIGNIFICADOS[asp.p1]||''}) y <em>${asp.p2}</em> (${PLANETA_SIGNIFICADOS[asp.p2]||''}).
+        </div>
+        <div class="inspector-cta">
+          💬 Este aspecto está activo en el cielo hoy. ¿Sentís la energía?
         </div>
       `;
     } else if (hit.tipo === 'carril_tiempo') {
       const nom = hit.carril.toUpperCase();
       const valStr = String(hit.valor).padStart(2, '0');
-      let detalle = '';
-      if (hit.carril === 'horas') {
-        detalle = 'Ciclo diario de 24 horas (Aro Interior r=472px). Indica el avance diurno y la posición del Sol respecto al meridiano local.';
-      } else if (hit.carril === 'minutos') {
-        detalle = 'Ciclo de 60 minutos (Aro Intermedio r=494px). Micro-ritmo temporal sincronizado con la rotación celeste.';
-      } else {
-        detalle = 'Ciclo de 60 segundos (Aro Exterior r=516px). Barrido fluido continuo del pulso cósmico en tiempo real.';
-      }
       hud.innerHTML = `
-        <div class="inspector-badge" style="color:#f6c445; border-color:#f6c445;">⏳ CARRIL CRONOMÉTRICO HUD</div>
-        <div class="inspector-title" style="color: #ffffff;">
-          <strong>${nom}:</strong> <span style="font-family: monospace; font-size: 20px; color: #f6c445;">${valStr}</span>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="inspector-badge" style="color:#f6c445; border-color:#f6c445;">⏳ CARRIL CRONOMÉTRICO HUD</div>
+          ${pinBadge}
         </div>
-        <div class="inspector-meta" style="font-size: 11px; line-height: 1.4; color: #cbd5e1; margin-top: 4px;">
-          <div>${detalle}</div>
+        <div class="inspector-title" style="color: #ffffff;">
+          <strong>${nom}:</strong> <span style="font-family: monospace; font-size: 22px; color: #f6c445;">${valStr}</span>
+        </div>
+        <div class="inspector-meta" style="font-size: 13px; line-height: 1.4; color: #cbd5e1; margin-top: 4px;">
+          Barrido continuo sincronizado con la rotación celeste.
         </div>
       `;
     }
@@ -1100,7 +1688,7 @@ class RelojAstrologicoEngine {
     const cx = w / 2;
     const cy = h / 2;
     // Escala base: 1080 da el espacio perfecto para los 3 carriles exteriores y margen de respiración
-    const baseScale = Math.min(w, h) / 1080;
+    const baseScale = (Math.min(w, h) * 0.94) / 1080;
     const currentScale = baseScale * this.camera.zoom;
 
     ctx.save();
@@ -1509,8 +2097,8 @@ class RelojAstrologicoEngine {
       ctx.save();
       ctx.translate(Math.cos(aTick) * rOuterNums, Math.sin(aTick) * rOuterNums);
       ctx.rotate(aTick + Math.PI / 2);
-      ctx.fillStyle = isCard ? '#f6c445' : 'rgba(246, 196, 69, 0.5)';
-      ctx.font = isCard ? '700 8.5px "Cinzel", serif' : '600 7px "Cinzel", serif';
+      ctx.fillStyle = isCard ? '#f6c445' : 'rgba(246, 196, 69, 0.6)';
+      ctx.font = isCard ? '700 12px "Cinzel", serif' : '600 10px "Cinzel", serif';
       ctx.fillText(romText, 0, 0);
       ctx.restore();
 
@@ -1547,8 +2135,8 @@ class RelojAstrologicoEngine {
     for (const t of tracksZenith) {
       const isHovered = (this.hoveredItem && this.hoveredItem.tipo === 'carril_tiempo' && this.hoveredItem.carril === t.carril);
       const capScale = isHovered ? 1.25 : 1.0;
-      const capW = 28 * capScale;
-      const capH = 15 * capScale;
+      const capW = 34 * capScale;
+      const capH = 18 * capScale;
       const cyZenith = -t.r;
 
       ctx.save();
@@ -1575,7 +2163,7 @@ class RelojAstrologicoEngine {
 
       // Texto Digital
       ctx.fillStyle = isHovered ? '#ffffff' : t.baseColor;
-      ctx.font = isHovered ? '700 10.5px "Outfit", monospace' : '700 9.5px "Outfit", monospace';
+      ctx.font = isHovered ? '700 13px "Outfit", monospace' : '700 11.5px "Outfit", monospace';
       ctx.fillText(t.text, 0, 0.5);
 
       ctx.restore();
@@ -1666,17 +2254,28 @@ class RelojAstrologicoEngine {
       const aMid = this.coordToAngle(midDeg);
 
       // Fondo sutil del signo según su elemento
+      
+      const isSignSelected = (this.pinnedItem && this.pinnedItem.tipo === 'signo' && this.pinnedItem.data && this.pinnedItem.data.nombre === sign.nombre) ||
+                             (this.hoveredItem && this.hoveredItem.tipo === 'signo' && this.hoveredItem.data && this.hoveredItem.data.nombre === sign.nombre);
+
+      // Fondo del signo según su elemento
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(0, 0, rOut, aStart, aEnd, true); // arco inverso por orientación anti-horaria
+      ctx.arc(0, 0, rOut, aStart, aEnd, true);
       ctx.arc(0, 0, rIn, aEnd, aStart, false);
       ctx.closePath();
 
-      const alpha = (i % 2 === 0) ? 0.08 : 0.03;
+      const alpha = isSignSelected ? 0.38 : ((i % 2 === 0) ? 0.08 : 0.03);
       ctx.fillStyle = sign.elemento === 'Fuego' ? `rgba(239, 68, 68, ${alpha})` :
                       sign.elemento === 'Tierra' ? `rgba(16, 185, 129, ${alpha})` :
                       sign.elemento === 'Aire' ? `rgba(245, 158, 11, ${alpha})` :
                       `rgba(56, 189, 248, ${alpha})`;
+      if (isSignSelected) {
+        ctx.shadowColor = sign.color;
+        ctx.shadowBlur = 18;
+      }
       ctx.fill();
+      ctx.restore();
 
       // Línea divisoria entre signos
       ctx.strokeStyle = 'rgba(246, 196, 69, 0.35)';
@@ -1688,18 +2287,21 @@ class RelojAstrologicoEngine {
 
       // Glifo del Signo Zodiacal
       ctx.fillStyle = '#f6c445';
-      ctx.font = '700 24px "Cinzel", "Outfit", serif';
+      ctx.font = '700 26px "Cinzel", "Outfit", serif';
+      ctx.shadowColor = '#fde047';
+      ctx.shadowBlur = 4;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const gx = Math.cos(aMid) * rMid;
       const gy = Math.sin(aMid) * rMid;
       ctx.fillText(sign.simbolo, gx, gy);
+      ctx.shadowBlur = 0;
 
-      // Nombre del Signo en el perímetro exterior
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-      ctx.font = '500 9px "Outfit", sans-serif';
-      const nx = Math.cos(aMid) * (rOut - 14);
-      const ny = Math.sin(aMid) * (rOut - 14);
+      // Nombre del Signo en el perímetro exterior (Alta legibilidad para móvil)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.font = '700 13px "Outfit", sans-serif';
+      const nx = Math.cos(aMid) * (rOut - 16);
+      const ny = Math.sin(aMid) * (rOut - 16);
       ctx.fillText(sign.nombre.toUpperCase(), nx, ny);
     }
 
@@ -1747,13 +2349,21 @@ class RelojAstrologicoEngine {
       const aMid = this.coordToAngle((cuspDeg + 15) % 360);
       const isAngular = (h % 3 === 0); // Casas I, IV, VII, X
 
-      // Sombreado de fondo del sector de la casa (tenue tenebrista)
+      // Detección de selección / fijado de Casa
+      const isHouseSelected = (this.pinnedItem && this.pinnedItem.tipo === 'casa' && this.pinnedItem.num === h + 1) ||
+                              (this.hoveredItem && this.hoveredItem.tipo === 'casa' && this.hoveredItem.num === h + 1);
+
+      // Sombreado de fondo del sector de la casa (tenue tenebrista o iluminación dorada si está seleccionada)
       ctx.save();
       ctx.beginPath();
       ctx.arc(0, 0, rOut, aCusp, aNextCusp, true);
       ctx.arc(0, 0, rIn, aNextCusp, aCusp, false);
       ctx.closePath();
-      if (isAngular) {
+      if (isHouseSelected) {
+        ctx.fillStyle = 'rgba(246, 196, 69, 0.28)';
+        ctx.shadowColor = 'rgba(246, 196, 69, 0.8)';
+        ctx.shadowBlur = 15;
+      } else if (isAngular) {
         ctx.fillStyle = 'rgba(246, 196, 69, 0.045)';
       } else if (h % 2 === 0) {
         ctx.fillStyle = 'rgba(212, 175, 55, 0.02)';
@@ -1793,17 +2403,17 @@ class RelojAstrologicoEngine {
 
       ctx.save();
       // Medallón de fondo para máxima legibilidad
-      ctx.fillStyle = isAngular ? 'rgba(28, 19, 5, 0.75)' : 'rgba(5, 8, 16, 0.65)';
-      ctx.strokeStyle = isAngular ? 'rgba(246, 196, 69, 0.6)' : 'rgba(246, 196, 69, 0.25)';
-      ctx.lineWidth = isAngular ? 1.2 : 0.7;
+      ctx.fillStyle = isAngular ? 'rgba(28, 19, 5, 0.85)' : 'rgba(5, 8, 16, 0.75)';
+      ctx.strokeStyle = isAngular ? 'rgba(246, 196, 69, 0.75)' : 'rgba(246, 196, 69, 0.35)';
+      ctx.lineWidth = isAngular ? 1.4 : 0.8;
       ctx.beginPath();
-      ctx.arc(nx, ny, isAngular ? 11.5 : 10, 0, Math.PI * 2);
+      ctx.arc(nx, ny, isAngular ? 14 : 12, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
       // Número romano
       ctx.fillStyle = isAngular ? '#fef08a' : '#f6c445';
-      ctx.font = isAngular ? '700 10.5px "Cinzel", serif' : '600 9px "Cinzel", serif';
+      ctx.font = isAngular ? '700 13px "Cinzel", serif' : '600 11px "Cinzel", serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(romanos[h], nx, ny);
@@ -1886,18 +2496,23 @@ class RelojAstrologicoEngine {
       const x2 = Math.cos(a2) * r;
       const y2 = Math.sin(a2) * r;
 
-      const isHighlight = this.hoveredItem && this.hoveredItem.tipo === 'planeta' &&
-                          (this.hoveredItem.data.nombre === asp.p1 || this.hoveredItem.data.nombre === asp.p2);
+      const isDirectAspect = (this.pinnedItem && this.pinnedItem.tipo === 'aspecto' && this.pinnedItem.data && this.pinnedItem.data.p1 === asp.p1 && this.pinnedItem.data.p2 === asp.p2) ||
+                            (this.hoveredItem && this.hoveredItem.tipo === 'aspecto' && this.hoveredItem.data && this.hoveredItem.data.p1 === asp.p1 && this.hoveredItem.data.p2 === asp.p2);
+      const isPlanetAspect = (this.pinnedItem && this.pinnedItem.tipo === 'planeta' && (this.pinnedItem.data.nombre === asp.p1 || this.pinnedItem.data.nombre === asp.p2)) ||
+                            (this.hoveredItem && this.hoveredItem.tipo === 'planeta' && (this.hoveredItem.data.nombre === asp.p1 || this.hoveredItem.data.nombre === asp.p2));
+      const isHighlight = isDirectAspect || isPlanetAspect;
 
-      // Intensidad de la línea inversamente proporcional al orbe
       const baseAlpha = Math.max(0.2, 0.85 - (asp.orbe / 7.0));
       ctx.strokeStyle = asp.color;
-      ctx.globalAlpha = isHighlight ? 1.0 : (this.hoveredItem ? 0.15 : baseAlpha);
-      ctx.lineWidth = isHighlight ? 3.0 : ((asp.tipo === 'Conjunción' || asp.tipo === 'Oposición' || asp.tipo === 'Cuadratura') ? 1.8 : 1.2);
+      ctx.globalAlpha = isDirectAspect ? 1.0 : (isHighlight ? 0.95 : (this.hoveredItem || this.pinnedItem ? 0.12 : baseAlpha));
+      ctx.lineWidth = isDirectAspect ? 4.2 : (isHighlight ? 3.0 : 1.2);
 
-      if (isHighlight) {
+      if (isDirectAspect) {
         ctx.shadowColor = asp.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 18;
+      } else if (isHighlight) {
+        ctx.shadowColor = asp.color;
+        ctx.shadowBlur = 10;
       } else {
         ctx.shadowBlur = 0;
       }
@@ -1906,6 +2521,15 @@ class RelojAstrologicoEngine {
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
+
+      // Puntos de luz en los extremos si está seleccionado directamente
+      if (isDirectAspect) {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(x1, y1, 4.5, 0, Math.PI * 2);
+        ctx.arc(x2, y2, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     ctx.globalAlpha = 1.0;
@@ -2008,19 +2632,22 @@ class RelojAstrologicoEngine {
       // 4. Glifo del Planeta
       const glyph = GLYPHS[p.nombre] || '✦';
       ctx.fillStyle = '#ffffff';
-      ctx.font = '800 16px "Outfit", sans-serif';
+      ctx.font = '800 20px "Outfit", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 4;
+      ctx.shadowBlur = 6;
       ctx.fillText(glyph, px, py - 0.5);
       ctx.shadowBlur = 0;
 
       // 5. Etiqueta nítida (Nombre + Grado)
-      ctx.fillStyle = isHovered ? '#f6c445' : '#f1f5f9';
-      ctx.font = isHovered ? '700 10.5px "Outfit", sans-serif' : '600 9px "Outfit", sans-serif';
-      const labelY = py > 0 ? py + 24 : py - 24;
+      ctx.fillStyle = isHovered ? '#f6c445' : '#ffffff';
+      ctx.font = isHovered ? '700 13.5px "Outfit", sans-serif' : '700 12px "Outfit", sans-serif';
+      ctx.shadowColor = '#000000';
+      ctx.shadowBlur = 4;
+      const labelY = py > 0 ? py + 26 : py - 26;
       ctx.fillText(`${p.nombre.slice(0, 3)} ${p.grado}°`, px, labelY);
+      ctx.shadowBlur = 0;
     }
 
     ctx.restore();

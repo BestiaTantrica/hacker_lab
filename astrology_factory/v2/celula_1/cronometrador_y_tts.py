@@ -17,6 +17,8 @@ Uso:
 import argparse
 import json
 import os
+import random
+import re
 import subprocess
 import sys
 import tempfile
@@ -111,7 +113,7 @@ def correr_comando(cmd: list, descripcion: str = "", timeout: int = 120) -> tupl
 def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
                          voz: str, velocidad: str, tono: str) -> Path | None:
     """
-    Sintetiza una sola toma con edge-tts humanizado (troceado por comas/puntos con micro-pausas).
+    Sintetiza una sola toma con edge-tts humanizado (prosodia reflexiva, respiración y cadencia natural).
     Si falla, reintenta. Si vuelve a fallar, usa Piper TTS local.
     """
     if not texto.strip():
@@ -120,54 +122,59 @@ def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
 
     salida = tmp_dir / f"toma_{num_toma:02d}.mp3"
 
-    # Humanización: Le damos la toma entera a Edge-TTS para que mantenga la fluidez y pausas naturales
+    # Preparar texto para prosodia natural: ritmo conversacional fluido sin pausas de robot
+    texto_procesado = texto.strip()
+    texto_procesado = re.sub(r'\s*\.\.\.\s*', ', ', texto_procesado)
+    texto_procesado = re.sub(r'\s*—\s*', ' — ', texto_procesado)
+
     try:
         exito_toma = False
         salida_tts_pura = tmp_dir / f"toma_{num_toma:02d}_pura.mp3"
         
-        for intento in range(1, 4):  # Hasta 3 intentos
+        for intento in range(1, 5):  # 4 intentos con backoff
             cmd = [
                 str(FACTORY_ROOT / "venv" / "bin" / "edge-tts"),
                 "--voice", voz,
-                "--text", texto,
-                "--write-media", str(salida_tts_pura)
+                "--text", texto_procesado,
+                "--write-media", str(salida_tts_pura),
+                f"--rate={velocidad or '+6%'}",
+                f"--pitch={tono or '+0Hz'}"
             ]
-            
-            # Dinamismo sutil en velocidad para no sonar monótono
-            import random
-            rate_pct = random.choice(["+0%", "+2%", "+4%"])
-            pitch_hz = random.choice(["-1Hz", "+0Hz", "+1Hz"])
-            
-            cmd.append(f"--rate={rate_pct}")
-            cmd.append(f"--pitch={pitch_hz}")
 
-            exito, stderr = correr_comando(cmd, f"TTS toma {num_toma}", timeout=45)
+            exito, stderr = correr_comando(cmd, f"TTS toma {num_toma} (intento {intento})", timeout=25)
             if exito and salida_tts_pura.exists() and salida_tts_pura.stat().st_size > 1000:
                 exito_toma = True
                 break
             else:
-                import time
-                time.sleep(2)
+                warn(f"Reintento {intento}/4 para toma {num_toma}...")
+                time.sleep(1.0 * intento)
                 
         if not exito_toma:
-            raise Exception(f"Edge-TTS falló en la toma {num_toma}")
+            raise Exception(f"Edge-TTS falló en la toma {num_toma} tras 4 intentos")
         
-        # Agregamos solo una pequeña pausa al final para respirar entre tomas
-        pausa_ms = random.randint(200, 300)
-        cmd_silence = ["ffmpeg", "-y", "-i", str(salida_tts_pura), "-af", f"apad=pad_dur={pausa_ms/1000.0}", "-c:a", "libmp3lame", "-q:a", "2", str(salida)]
-        correr_comando(cmd_silence, "Agregando micro-silencio final", timeout=20)
+        # Pausa sutil de respiración natural entre tomas (80ms) para cambio de plano sin baches
+        pausa_s = 0.08
+        cmd_silence = [
+            "ffmpeg", "-y", "-i", str(salida_tts_pura),
+            "-af", f"apad=pad_dur={pausa_s}",
+            "-c:a", "libmp3lame", "-q:a", "2", str(salida)
+        ]
+        correr_comando(cmd_silence, "Agregando respiración natural entre tomas", timeout=20)
         
         if not salida.exists():
-            # Fallback
             import shutil
             shutil.copy(salida_tts_pura, salida)
             
-        info(f"Toma {num_toma}: sintetizada HUMANIZADA EXITOSAMENTE con Edge-TTS (fluida).")
+        info(f"Toma {num_toma}: sintetizada con es-AR-TomasNeural ({velocidad}) y respiración orgánica.")
         return salida
                 
     except Exception as e:
-        warn(f"Toma {num_toma}: edge-tts falló completamente ({e}). Intentando Piper TTS (Local)...")
-        # --- FALLBACK PIPER ---
+        err(f"Toma {num_toma}: Edge-TTS falló completamente ({e}).")
+        if "es-AR" in voz:
+            err(f"CRÍTICO: No se permite fallback a voz de España (es_ES) para Tomás (es-AR). Abortando para mantener identidad.")
+            return None
+        warn(f"Intentando Piper TTS (Local)...")
+        # --- FALLBACK PIPER (solo para voces no argentinas) ---
         try:
             piper_model = FACTORY_ROOT / "v2" / "modelos_piper" / "es_ES-davefx-medium.onnx"
             if not piper_model.exists():
@@ -236,7 +243,7 @@ def construir_timeline_huecos(tomas_con_duracion: list[dict]) -> dict:
             "fin_ms":      round(cursor_ms + dur_ms, 3),
             "duracion_ms": round(dur_ms, 3),
             "duracion_s":  round(dur_ms / 1000, 6),
-            "texto":       toma.get("texto", ""),
+            "texto":       toma.get("texto") or toma.get("locucion") or "",
             "etiqueta_visual": toma.get("etiqueta_visual")
         }
         timeline["tomas"].append(entry)
@@ -268,9 +275,9 @@ def opcion_1_tts_y_mapeo(guion_path: str = None):
         err("El guion no tiene tomas.")
         sys.exit(1)
 
-    voz       = VOZ_TTS["voz"]
-    velocidad = "+0%"
-    tono      = "+0Hz"
+    voz       = VOZ_TTS.get("voz", "es-AR-TomasNeural")
+    velocidad = VOZ_TTS.get("velocidad", "+4%")
+    tono      = VOZ_TTS.get("tono", "+0Hz")
 
     info(f"Tomas a sintetizar: {len(tomas)}")
     info(f"Voz: {voz}  Velocidad: {velocidad}  Tono: {tono}")
@@ -284,100 +291,36 @@ def opcion_1_tts_y_mapeo(guion_path: str = None):
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         
-        # 1. Preparar texto maestro (Inyectando vida y pausas esotéricas)
-        textos = []
-        for t in tomas:
-            txt = t.get("texto", "").strip()
-            # Truco de cadencia: Cambiamos el punto final por puntos suspensivos
-            # para que Edge-TTS baje el tono lentamente, sonando reflexivo/humano.
-            if txt.endswith('.') or txt.endswith(','):
-                txt = txt[:-1] + '...'
-            else:
-                txt += '...'
-            textos.append(txt)
-            
-        master_text = " ".join(textos)
-        vtt_path = tmp_path / "master.vtt"
-        mp3_pura = tmp_path / "master_pura.mp3"
-
         log(f"\n{'─'*50}", CYAN)
-        log(f"  FASE 1: Síntesis Holística Edge-TTS", CYAN)
+        log(f"  FASE 1: Síntesis Modular Humanizada (Tomas con Respiración)", CYAN)
         log(f"{'─'*50}", CYAN)
 
-        cmd = [
-            str(FACTORY_ROOT / "venv" / "bin" / "edge-tts"),
-            "--voice", voz,
-            "--text", master_text,
-            "--write-media", str(mp3_pura),
-            "--write-subtitles", str(vtt_path),
-            f"--rate={velocidad}",
-            f"--pitch={tono}"
-        ]
-        
-        exito, stderr = correr_comando(cmd, "Edge-TTS Master Synthesis", timeout=120)
-        
-        if not exito or not mp3_pura.exists() or not vtt_path.exists():
-            err(f"Fallo crítico en Edge-TTS: {stderr}")
-            sys.exit(1)
-            
-        info("Síntesis maestra completada exitosamente.")
-
-        # 2. Parsear VTT para mapear tomas
-        import re
-        
-        def time_to_ms(t_str):
-            h, m, s_ms = t_str.split(':')
-            s, ms = s_ms.split(',')
-            return int(h)*3600000 + int(m)*60000 + int(s)*1000 + int(ms)
-
-        with open(vtt_path, 'r', encoding='utf-8') as f:
-            lines = f.read().splitlines()
-            
-        subs = []
-        current_sub = {}
-        for line in lines:
-            if '-->' in line:
-                start, end = line.split(' --> ')
-                current_sub['start_ms'] = time_to_ms(start)
-                current_sub['end_ms'] = time_to_ms(end)
-            elif line.strip() and not line.strip().isdigit() and 'WEBVTT' not in line:
-                current_sub['text'] = line.strip()
-                subs.append(current_sub)
-                current_sub = {}
-                
         tomas_con_duracion = []
-        toma_idx = 0
-        toma_chars_needed = len(re.sub(r'\s+', '', tomas[toma_idx].get('texto', '')))
-        toma_chars_found = 0
-        
-        # El primer clip empieza en 0
-        toma_start_ms = 0
-        
-        for sub in subs:
-            sub_chars = len(re.sub(r'\s+', '', sub['text']))
-            toma_chars_found += sub_chars
-            
-            if toma_chars_found >= toma_chars_needed - 3: # Tolerancia de caracteres
-                dur_ms = sub['end_ms'] - toma_start_ms
-                tomas_con_duracion.append({
-                    "num": tomas[toma_idx]["num"],
-                    "rol": tomas[toma_idx].get("rol", f"toma_{tomas[toma_idx]['num']}"),
-                    "duracion_ms": dur_ms,
-                    "texto": tomas[toma_idx].get("texto", ""),
-                    "etiqueta_visual": tomas[toma_idx].get("etiqueta_visual")
-                })
-                toma_idx += 1
-                if toma_idx < len(tomas):
-                    toma_chars_needed = len(re.sub(r'\s+', '', tomas[toma_idx].get('texto', '')))
-                    toma_chars_found = 0
-                    toma_start_ms = sub['end_ms']
-                    
-        if toma_idx < len(tomas):
-            warn(f"No se pudieron mapear {len(tomas) - toma_idx} tomas usando el VTT.")
+        archivos_mp3 = []
 
-        # 3. Copiar el mp3 al destino final
-        import shutil
-        shutil.copy(mp3_pura, salida_mp3)
+        for t in tomas:
+            num = t["num"]
+            texto_t = (t.get("texto") or t.get("locucion") or "").strip()
+            info(f"Sintetizando Toma {num} ({t.get('rol', '')})...")
+            toma_file = sintetizar_toma_tts(texto_t, num, tmp_path, voz, velocidad, tono)
+            if not toma_file:
+                err(f"Fallo crítico al sintetizar toma {num}")
+                sys.exit(1)
+            dur_ms = get_duracion_ms(toma_file)
+            tomas_con_duracion.append({
+                "num": num,
+                "rol": t.get("rol", f"toma_{num}"),
+                "duracion_ms": dur_ms,
+                "texto": texto_t,
+                "etiqueta_visual": t.get("etiqueta_visual")
+            })
+            archivos_mp3.append(toma_file)
+
+        if not concatenar_audios(archivos_mp3, salida_mp3):
+            err("Fallo al concatenar audios modulares.")
+            sys.exit(1)
+
+        ok("Audio maestro ensamblado exitosamente.")
 
         log(f"\n{'─'*50}", CYAN)
         log(f"  FASE 2: Generación del Timeline de Huecos", CYAN)
@@ -649,12 +592,12 @@ def opcion_4_regenerar_timeline(guion_path: str = None):
     # Estrategia 2: Distribuir la duración total proporcionalmente por número de palabras
     if not tomas_con_duracion:
         warn("No hay MP3 de tomas. Distribuyendo duración proporcionalmente por palabras.")
-        total_palabras = sum(len(t.get("texto", "").split()) for t in tomas)
+        total_palabras = sum(len((t.get("texto") or t.get("locucion") or "").split()) for t in tomas)
         if total_palabras == 0:
             err("El guion no tiene texto.")
             sys.exit(1)
         for toma in tomas:
-            palabras = len(toma.get("texto", "").split())
+            palabras = len((toma.get("texto") or toma.get("locucion") or "").split())
             proporcion = palabras / total_palabras
             dur_ms = dur_total_ms * proporcion
             tomas_con_duracion.append({**toma, "duracion_ms": dur_ms})

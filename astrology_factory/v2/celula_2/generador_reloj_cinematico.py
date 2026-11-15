@@ -30,6 +30,7 @@ import os
 import sys
 import time
 import json
+import base64
 import shutil
 import argparse
 import subprocess
@@ -47,6 +48,13 @@ TEMP_RECORD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def iniciar_servidor(port: int = 8788):
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/reloj?cinematico=1", timeout=1) as resp:
+            if resp.status == 200:
+                return None
+    except Exception:
+        pass
+
     cmd = [
         sys.executable, "-m", "uvicorn", "main:app",
         "--host", "127.0.0.1", "--port", str(port),
@@ -80,6 +88,9 @@ def grabar_clip_reloj(
     aspecto_hud_titulo: str = "♀ VENUS SEXTIL JÚPITER · 24° ♎ ♌",
     aspecto_hud_sub: str = "✦ ASPECTO MAYOR ARMÓNICO · ORBE 0° 34' LATENTE",
     aspecto_hud_desc: str = "Diplomacia y generosidad: pactar con altura sin regalar tu valor.",
+    badge_aspecto_texto: str = "[ ASPECTO EXACTO ]",
+    badge_p1_sub: str = "Fuerza celeste activa",
+    badge_p2_sub: str = "Planeta en aspecto",
     planeta_foco: str = "Luna",
     planeta_intermedio: str = "Venus"
 ):
@@ -112,13 +123,14 @@ def grabar_clip_reloj(
             ]
         )
         context = browser.new_context(
-            record_video_dir=str(clip_rec_dir),
-            record_video_size={"width": 1080, "height": 1920},
-            viewport={"width": 1080, "height": 1920}
+            viewport={"width": 1080, "height": 1920},
+            device_scale_factor=1
         )
         page = context.new_page()
-        page.goto(f"http://127.0.0.1:{port}/reloj?cinematico=1", wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{port}/reloj?cinematico=1", wait_until="networkidle")
         page.wait_for_selector("#reloj-canvas", timeout=10000)
+        # Esperar a que las fuentes web (Cinzel, Outfit) estén 100% cargadas en el motor Chromium
+        page.evaluate("document.fonts.ready")
 
         # Serializar strings de forma segura para JavaScript
         j_header_fecha = json.dumps(header_fecha)
@@ -132,10 +144,17 @@ def grabar_clip_reloj(
         j_tarjeta2_titulo = json.dumps(tarjeta2_titulo)
         j_tarjeta2_badge = json.dumps(tarjeta2_badge)
         j_tarjeta2_body = json.dumps(tarjeta2_body)
+        j_badge_aspecto_texto = json.dumps(badge_aspecto_texto)
+        j_badge_p1_sub = json.dumps(badge_p1_sub)
+        j_badge_p2_sub = json.dumps(badge_p2_sub)
 
         # Inyectar motor cinemático de vanguardia
         setup_script = f"""
         (() => {{
+            // Eliminar tooltips y HUD web para no ensuciar la toma
+            const style = document.createElement('style');
+            style.innerHTML = '#reloj-tooltip, .corner-hud {{ display: none !important; }}';
+            document.head.appendChild(style);
             document.querySelectorAll('.corner-hud, #reloj-tooltip').forEach(el => el.style.display = 'none');
             
             if (window.relojEngine) {{
@@ -156,6 +175,9 @@ def grabar_clip_reloj(
                 window.__midnightMs = new Date('{date_str}T23:59:59.999').getTime();
                 window.__planetaFoco = '{planeta_foco}';
                 window.__planetaIntermedio = '{planeta_intermedio}';
+                window.__badgeAspectoTexto = {j_badge_aspecto_texto};
+                window.__badgeP1Sub = {j_badge_p1_sub};
+                window.__badgeP2Sub = {j_badge_p2_sub};
 
                 // ── Helper: Dibujar Aureola Sonar, Retícula y Badge HUD ──
                 function dibujarAureolaPlaneta(ctx, screenX, screenY, colorHex, glowColor, tMs, badgeTitulo, badgeDetalle, badgeSub, alinearLado) {{
@@ -201,73 +223,53 @@ def grabar_clip_reloj(
                         ctx.stroke();
                     }}
                     
-                    // 3. Floating HUD Badge ("Cartel Latente")
+                    // 3. Badge flotante compacto al lado de la retícula
                     if (badgeTitulo) {{
-                        ctx.shadowBlur = 0;
-                        ctx.globalAlpha = 0.98;
-                        
-                        const isDer = (alinearLado !== 'izq');
-                        const boxW = 260;
-                        const boxH = badgeSub ? 64 : 52;
-                        const boxX = isDer ? (screenX + 46) : (screenX - 46 - boxW);
-                        const boxY = screenY - boxH / 2;
-                        
-                        // Línea conectora fina
+                        ctx.save();
+                        ctx.font = 'bold 16px "Outfit", sans-serif';
+                        const textW = ctx.measureText(badgeTitulo).width;
+                        const bx = (alinearLado === 'izq') ? (screenX - rReticle - textW - 22) : (screenX + rReticle + 12);
+                        const by = screenY - 14;
+                        ctx.fillStyle = 'rgba(6, 9, 18, 0.90)';
                         ctx.strokeStyle = colorHex;
                         ctx.lineWidth = 1.4;
-                        ctx.beginPath();
-                        ctx.moveTo(isDer ? (screenX + rReticle) : (screenX - rReticle), screenY);
-                        ctx.lineTo(isDer ? (screenX + 44) : (screenX - 44), screenY);
-                        ctx.stroke();
-                        
-                        ctx.fillStyle = colorHex;
-                        ctx.beginPath();
-                        ctx.arc(isDer ? (screenX + 44) : (screenX - 44), screenY, 2.5, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Fondo Glassmorphism Oscuro
-                        ctx.fillStyle = 'rgba(6, 12, 22, 0.94)';
-                        ctx.strokeStyle = colorHex;
-                        ctx.lineWidth = 1.5;
                         ctx.shadowColor = glowColor;
-                        ctx.shadowBlur = 12;
+                        ctx.shadowBlur = 10;
                         ctx.beginPath();
-                        ctx.roundRect(boxX, boxY, boxW, boxH, 8);
+                        ctx.roundRect(bx - 6, by - 4, textW + 16, 26, 6);
                         ctx.fill();
                         ctx.stroke();
-                        
-                        // Textos dentro del cartel
+                        ctx.fillStyle = '#ffffff';
                         ctx.shadowBlur = 0;
                         ctx.textAlign = 'left';
-                        ctx.textBaseline = 'top';
-                        ctx.font = '700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                        ctx.fillStyle = colorHex;
-                        ctx.fillText(badgeTitulo, boxX + 12, boxY + 8);
-                        
-                        ctx.font = '700 15px "Cinzel", Georgia, serif';
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fillText(badgeDetalle || '', boxX + 12, boxY + 24);
-                        
-                        if (badgeSub) {{
-                            ctx.font = '500 11px -apple-system, sans-serif';
-                            ctx.fillStyle = '#94a3b8';
-                            ctx.fillText(badgeSub, boxX + 12, boxY + 44);
-                        }}
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(badgeTitulo, bx + 2, by + 9);
+                        ctx.restore();
                     }}
                     
                     ctx.restore();
                 }}
 
-                // ── Helper: Dibujar Cuerda con Fotón en Movimiento y Badge de Aspecto ──
+                // ── Helper: Dibujar Cuerda con Fotón en Movimiento ──
                 function dibujarAspectoFotones(ctx, x1, y1, x2, y2, colorHex, glowColor, tMs, badgeTexto) {{
                     ctx.save();
                     
                     // 1. Cuerda áurea con resplandor intenso
                     ctx.strokeStyle = colorHex;
                     ctx.shadowColor = glowColor;
-                    ctx.shadowBlur = 18;
-                    ctx.lineWidth = 3.5;
-                    ctx.globalAlpha = 0.95;
+                    ctx.shadowBlur = 24;
+                    ctx.lineWidth = 4.5;
+                    ctx.globalAlpha = 1.0;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+
+                    // Núcleo blanco brillante
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.8;
+                    ctx.shadowBlur = 10;
+                    ctx.globalAlpha = 0.85;
                     ctx.beginPath();
                     ctx.moveTo(x1, y1);
                     ctx.lineTo(x2, y2);
@@ -278,50 +280,54 @@ def grabar_clip_reloj(
                     const px = x1 + (x2 - x1) * tPhoton;
                     const py = y1 + (y2 - y1) * tPhoton;
                     
-                    const photonGrad = ctx.createRadialGradient(px, py, 2, px, py, 14);
+                    const photonGrad = ctx.createRadialGradient(px, py, 2, px, py, 16);
                     photonGrad.addColorStop(0, '#ffffff');
                     photonGrad.addColorStop(0.3, colorHex);
                     photonGrad.addColorStop(1, 'transparent');
                     ctx.fillStyle = photonGrad;
                     ctx.shadowColor = glowColor;
-                    ctx.shadowBlur = 22;
+                    ctx.shadowBlur = 24;
                     ctx.beginPath();
-                    ctx.arc(px, py, 14, 0, Math.PI * 2);
+                    ctx.arc(px, py, 16, 0, Math.PI * 2);
                     ctx.fill();
                     
                     // Destello de 4 puntas en el fotón
                     ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 1.4;
+                    ctx.lineWidth = 1.8;
                     ctx.beginPath();
-                    ctx.moveTo(px - 10, py); ctx.lineTo(px + 10, py);
-                    ctx.moveTo(px, py - 10); ctx.lineTo(px, py + 10);
+                    ctx.moveTo(px - 14, py); ctx.lineTo(px + 14, py);
+                    ctx.moveTo(px, py - 14); ctx.lineTo(px, py + 14);
                     ctx.stroke();
                     
-                    // 3. Badge en el Punto Medio del Aspecto
+                    // 3. Cartel central del aspecto en el punto medio de la cuerda
                     if (badgeTexto) {{
                         const mx = (x1 + x2) / 2;
                         const my = (y1 + y2) / 2;
-                        const bw = 270;
-                        const bh = 34;
+                        ctx.save();
+                        ctx.font = 'bold 16px "Outfit", sans-serif';
+                        const textW = ctx.measureText(badgeTexto).width;
+                        const padX = 14;
+                        const padY = 7;
                         
-                        ctx.fillStyle = 'rgba(8, 14, 26, 0.94)';
+                        ctx.fillStyle = 'rgba(7, 10, 19, 0.92)';
                         ctx.strokeStyle = colorHex;
-                        ctx.lineWidth = 1.5;
+                        ctx.lineWidth = 1.6;
                         ctx.shadowColor = glowColor;
-                        ctx.shadowBlur = 10;
+                        ctx.shadowBlur = 14;
+                        
                         ctx.beginPath();
-                        ctx.roundRect(mx - bw / 2, my - bh / 2, bw, bh, 6);
+                        ctx.roundRect(mx - textW/2 - padX, my - 14 - padY, textW + padX*2, 28 + padY, 6);
                         ctx.fill();
                         ctx.stroke();
                         
+                        ctx.fillStyle = '#ffffff';
                         ctx.shadowBlur = 0;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
-                        ctx.font = '700 12px "Courier New", monospace, sans-serif';
-                        ctx.fillStyle = colorHex;
                         ctx.fillText(badgeTexto, mx, my);
+                        ctx.restore();
                     }}
-                    
+
                     ctx.restore();
                 }}
 
@@ -344,16 +350,16 @@ def grabar_clip_reloj(
                         const y2 = Math.sin(a2) * r;
 
                         const esProtagonista = (
-                            (asp.p1 === 'Venus' && asp.p2 === 'Júpiter') ||
-                            (asp.p2 === 'Venus' && asp.p1 === 'Júpiter')
+                            (asp.p1 === window.__planetaFoco && asp.p2 === window.__planetaIntermedio) ||
+                            (asp.p2 === window.__planetaFoco && asp.p1 === window.__planetaIntermedio)
                         );
 
                         if (esProtagonista) {{
                             ctx.save();
                             ctx.strokeStyle = '#f6c445';
                             ctx.shadowColor = '#fde047';
-                            ctx.shadowBlur = 18;
-                            ctx.lineWidth = 3.5;
+                            ctx.shadowBlur = 24;
+                            ctx.lineWidth = 5.0;
                             ctx.globalAlpha = 1.0;
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
@@ -364,14 +370,16 @@ def grabar_clip_reloj(
                             const my = (y1 + y2) / 2;
                             ctx.fillStyle = '#ffffff';
                             ctx.beginPath();
-                            ctx.arc(mx, my, 4, 0, Math.PI * 2);
+                            ctx.arc(mx, my, 5, 0, Math.PI * 2);
                             ctx.fill();
                             ctx.restore();
                         }} else {{
+                            // Aspectos secundarios: nítidos y geométricamente visibles
                             ctx.strokeStyle = asp.color;
-                            ctx.globalAlpha = 0.04;
-                            ctx.lineWidth = 1.0;
-                            ctx.shadowBlur = 0;
+                            ctx.globalAlpha = 0.35;
+                            ctx.lineWidth = 1.8;
+                            ctx.shadowColor = asp.color;
+                            ctx.shadowBlur = 6;
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
                             ctx.lineTo(x2, y2);
@@ -425,27 +433,27 @@ def grabar_clip_reloj(
 
                     let focoClockX = 0, focoClockY = 0;
                     let interClockX = 0, interClockY = 0;
-                    let venusClockX = 0, venusClockY = 0;
-                    let jupiterClockX = 0, jupiterClockY = 0;
+                    let p1ClockX = 0, p1ClockY = 0;
+                    let p2ClockX = 0, p2ClockY = 0;
 
                     if (eng.calculated && eng.calculated.planets) {{
                         if (eng.calculated.planets[window.__planetaFoco]) {{
                             const a = eng.coordToAngle(eng.calculated.planets[window.__planetaFoco].grado_absoluto);
-                            focoClockX = Math.cos(a) * rPlanets;
-                            focoClockY = Math.sin(a) * rPlanets;
+                            p1ClockX = Math.cos(a) * rPlanets;
+                            p1ClockY = Math.sin(a) * rPlanets;
+                            focoClockX = p1ClockX;
+                            focoClockY = p1ClockY;
                         }}
-                        if (eng.calculated.planets['Venus']) {{
-                            const a = eng.coordToAngle(eng.calculated.planets['Venus'].grado_absoluto);
-                            venusClockX = Math.cos(a) * rPlanets;
-                            venusClockY = Math.sin(a) * rPlanets;
+                        if (eng.calculated.planets[window.__planetaIntermedio]) {{
+                            const a = eng.coordToAngle(eng.calculated.planets[window.__planetaIntermedio].grado_absoluto);
+                            p2ClockX = Math.cos(a) * rPlanets;
+                            p2ClockY = Math.sin(a) * rPlanets;
+                        }} else {{
+                            p2ClockX = p1ClockX;
+                            p2ClockY = p1ClockY;
                         }}
-                        if (eng.calculated.planets['Júpiter']) {{
-                            const a = eng.coordToAngle(eng.calculated.planets['Júpiter'].grado_absoluto);
-                            jupiterClockX = Math.cos(a) * rPlanets;
-                            jupiterClockY = Math.sin(a) * rPlanets;
-                        }}
-                        interClockX = (venusClockX + jupiterClockX) / 2;
-                        interClockY = (venusClockY + jupiterClockY) / 2;
+                        interClockX = (p1ClockX + p2ClockX) / 2;
+                        interClockY = (p1ClockY + p2ClockY) / 2;
                     }}
 
                     let targetZoom = 1.0;
@@ -495,13 +503,36 @@ def grabar_clip_reloj(
                             flashAlpha = ((rawElapsed - 6.30) / 0.70) * 0.35;
                         }}
                     }} else if (window.__cineMode === 'intermedio') {{
-                        // ¡INICIA Y SE MANTIENE 100% EN ZOOM 1.80x DURANTE TODO EL CLIP (8.25s)!
-                        targetZoom = 1.80 + Math.sin(progress * Math.PI) * 0.02;
-                        const s = targetZoom;
-                        targetPanX = -interClockX * s * 0.65;
-                        targetPanY = (targetScreenY - cy) - interClockY * s * 0.65;
+                        // Coreografía Cinemática: Vista General (0.4s) -> Zoom Dinámico Progresivo (2.2s) -> HOLD
+                        const pauseStart = 0.40;
+                        const zoomDur = 2.20;
+                        const zoomEnd = pauseStart + zoomDur;
+                        const sEnd = 1.56;
+                        const endPanX = -interClockX * sEnd * 0.55;
+                        const endPanY = (targetScreenY - cy) - interClockY * sEnd * 0.55;
+
+                        if (rawElapsed <= pauseStart) {{
+                            // 1. Dial general completo sereno (1.00x)
+                            targetZoom = 1.00;
+                            targetPanX = 0;
+                            targetPanY = -140;
+                            hudCardsAlpha = 0.85;
+                        }} else if (rawElapsed <= zoomEnd) {{
+                            // 2. Zoom cinematográfico progresivo y suave hacia el eje del aspecto
+                            const pZ = (rawElapsed - pauseStart) / zoomDur;
+                            const ease = pZ < 0.5 ? 4 * pZ * pZ * pZ : 1 - Math.pow(-2 * pZ + 2, 3) / 2;
+                            targetZoom = 1.00 + ease * 0.56; // 1.00x -> 1.56x
+                            targetPanX = 0 * (1 - ease) + endPanX * ease;
+                            targetPanY = -140 * (1 - ease) + endPanY * ease;
+                            hudCardsAlpha = 0.85 + ease * 0.15;
+                        }} else {{
+                            // 3. HOLD cinemático majestuoso y estable (CERO rebote, CERO oscilación)
+                            targetZoom = 1.56;
+                            targetPanX = endPanX;
+                            targetPanY = endPanY;
+                            hudCardsAlpha = 1.0;
+                        }}
                         mandalaAlpha = 1.0;
-                        hudCardsAlpha = 1.0;
                     }} else {{ // cierre
                         if (rawElapsed <= 1.20) {{
                             // Fase 1: Des-zoom suave de 1.45x a 1.04x
@@ -552,112 +583,94 @@ def grabar_clip_reloj(
 
                     // Proyectar coordenadas en pantalla exacta para Aureolas y Badges
                     const currentScale = baseScale * eng.camera.zoom;
-                    const planets = eng.calculated ? eng.calculated.planets : null;
 
-                    let lunaScreen = null;
-                    let venusScreen = null;
-                    let jupiterScreen = null;
-
-                    if (planets) {{
-                        if (planets['Luna']) {{
-                            const a = eng.coordToAngle(planets['Luna'].grado_absoluto);
-                            const px = Math.cos(a) * rPlanets;
-                            const py = Math.sin(a) * rPlanets;
-                            lunaScreen = {{
-                                screenX: (cx + eng.camera.panX) + px * currentScale,
-                                screenY: (cy + eng.camera.panY) + py * currentScale,
-                                deg: planets['Luna'].grado,
-                                min: planets['Luna'].minutos,
-                                signo: planets['Luna'].signo
-                            }};
-                        }}
-                        if (planets['Venus']) {{
-                            const a = eng.coordToAngle(planets['Venus'].grado_absoluto);
-                            const px = Math.cos(a) * rPlanets;
-                            const py = Math.sin(a) * rPlanets;
-                            venusScreen = {{
-                                screenX: (cx + eng.camera.panX) + px * currentScale,
-                                screenY: (cy + eng.camera.panY) + py * currentScale,
-                                deg: planets['Venus'].grado,
-                                min: planets['Venus'].minutos,
-                                signo: planets['Venus'].signo
-                            }};
-                        }}
-                        if (planets['Júpiter']) {{
-                            const a = eng.coordToAngle(planets['Júpiter'].grado_absoluto);
-                            const px = Math.cos(a) * rPlanets;
-                            const py = Math.sin(a) * rPlanets;
-                            jupiterScreen = {{
-                                screenX: (cx + eng.camera.panX) + px * currentScale,
-                                screenY: (cy + eng.camera.panY) + py * currentScale,
-                                deg: planets['Júpiter'].grado,
-                                min: planets['Júpiter'].minutos,
-                                signo: planets['Júpiter'].signo
-                            }};
-                        }}
+                    function getScreenPlanet(pName) {{
+                        if (!eng.calculated || !eng.calculated.planets || !eng.calculated.planets[pName]) return null;
+                        const p = eng.calculated.planets[pName];
+                        const a = eng.coordToAngle(p.grado_absoluto);
+                        const px = Math.cos(a) * rPlanets;
+                        const py = Math.sin(a) * rPlanets;
+                        return {{
+                            screenX: (cx + eng.camera.panX) + px * currentScale,
+                            screenY: (cy + eng.camera.panY) + py * currentScale,
+                            deg: p.grado,
+                            min: p.minutos,
+                            signo: p.signo
+                        }};
                     }}
 
+                    const focoScreen = getScreenPlanet(window.__planetaFoco);
+                    const interScreen = getScreenPlanet(window.__planetaIntermedio);
+
                     // ── RENDERIZADO DE AUREOLAS Y HUD LATENTE ──
-                    if (window.__cineMode === 'apertura' && lunaScreen && rawElapsed >= 1.6) {{
+                    if (window.__cineMode === 'apertura' && focoScreen && rawElapsed >= 1.6) {{
                         const aAureola = Math.min(1.0, (rawElapsed - 1.6) / 0.6);
                         ctx.save();
                         ctx.globalAlpha = aAureola;
-                        const alado = lunaScreen.screenX > 540 ? 'izq' : 'der';
+                        const alado = focoScreen.screenX > 540 ? 'izq' : 'der';
                         dibujarAureolaPlaneta(
                             ctx,
-                            lunaScreen.screenX,
-                            lunaScreen.screenY,
+                            focoScreen.screenX,
+                            focoScreen.screenY,
                             '#38bdf8',
                             '#00f2fe',
                             rawElapsed * 1000,
                             '✦ TRÁNSITO LATENTE',
-                            `☽ LUNA ${{lunaScreen.deg}}° ${{lunaScreen.min}}' ${{lunaScreen.signo.toUpperCase()}}`,
-                            'Ingreso zodiacal · Balance y templanza',
+                            `${{window.__planetaFoco.toUpperCase()}} ${{focoScreen.deg}}° ${{focoScreen.min}}' ${{focoScreen.signo.toUpperCase()}}`,
+                            window.__badgeP1Sub || 'Posición celeste activa',
                             alado
                         );
                         ctx.restore();
                     }}
 
-                    if (window.__cineMode === 'intermedio' && venusScreen && jupiterScreen) {{
+                    if (window.__cineMode === 'intermedio' && focoScreen && interScreen) {{
                         // 1. Cuerda con haz de fotones oscilantes y badge de orbe latente
                         dibujarAspectoFotones(
                             ctx,
-                            venusScreen.screenX,
-                            venusScreen.screenY,
-                            jupiterScreen.screenX,
-                            jupiterScreen.screenY,
+                            focoScreen.screenX,
+                            focoScreen.screenY,
+                            interScreen.screenX,
+                            interScreen.screenY,
                             '#f6c445',
                             '#fde047',
                             rawElapsed * 1000,
-                            "[ SEXTIL 60° · ORBE 0° 34' · LATENTE ]"
+                            window.__badgeAspectoTexto || "[ ASPECTO EXACTO ]"
                         );
 
-                        // 2. Aureola Venus
+                        // 2. Aureola Planeta Foco
+                        const aladoFoco = focoScreen.screenX > 540 ? 'izq' : 'der';
+                        const glifosMap = {{'Sol':'☉ ','Luna':'☽ ','Mercurio':'☿ ','Venus':'♀ ','Marte':'♂ ','Júpiter':'♃ ','Saturno':'♄ '}};
+                        const gFoco = glifosMap[window.__planetaFoco] || '';
+                        const gInter = glifosMap[window.__planetaIntermedio] || '';
+                        const labelFoco = `${{gFoco}}${{window.__planetaFoco.toUpperCase()}} ${{focoScreen.deg}}° ${{focoScreen.signo.toUpperCase()}}`;
+                        const labelInter = `${{gInter}}${{window.__planetaIntermedio.toUpperCase()}} ${{interScreen.deg}}° ${{interScreen.signo.toUpperCase()}}`;
+
                         dibujarAureolaPlaneta(
                             ctx,
-                            venusScreen.screenX,
-                            venusScreen.screenY,
+                            focoScreen.screenX,
+                            focoScreen.screenY,
+                            '#38bdf8',
+                            '#00f2fe',
+                            rawElapsed * 1000,
+                            labelFoco,
+                            `${{window.__planetaFoco.toUpperCase()}} ${{focoScreen.deg}}° ${{focoScreen.min}}' ${{focoScreen.signo.toUpperCase()}}`,
+                            window.__badgeP1Sub || 'Fuerza celeste protagonista',
+                            aladoFoco
+                        );
+
+                        // 3. Aureola Planeta Intermedio
+                        const aladoInter = interScreen.screenX > 540 ? 'izq' : 'der';
+                        dibujarAureolaPlaneta(
+                            ctx,
+                            interScreen.screenX,
+                            interScreen.screenY,
                             '#f6c445',
                             '#fde047',
-                            rawElapsed * 1000,
-                            '✦ TRÁNSITO LATENTE',
-                            `♀ VENUS ${{venusScreen.deg}}° ${{venusScreen.min}}' ${{venusScreen.signo.toUpperCase()}}`,
-                            'En rectoría · Diplomacia y valor',
-                            'der'
-                        );
-
-                        // 3. Aureola Júpiter
-                        dibujarAureolaPlaneta(
-                            ctx,
-                            jupiterScreen.screenX,
-                            jupiterScreen.screenY,
-                            '#f97316',
-                            '#fb923c',
                             (rawElapsed + 0.4) * 1000,
-                            '✦ PLANETA RECEPTOR',
-                            `♃ JÚPITER ${{jupiterScreen.deg}}° ${{jupiterScreen.min}}' ${{jupiterScreen.signo.toUpperCase()}}`,
-                            'Fuego magno · Generosidad',
-                            'izq'
+                            labelInter,
+                            `${{window.__planetaIntermedio.toUpperCase()}} ${{interScreen.deg}}° ${{interScreen.min}}' ${{interScreen.signo.toUpperCase()}}`,
+                            window.__badgeP2Sub || 'Resonancia armónica / tensión',
+                            aladoInter
                         );
                     }}
 
@@ -688,6 +701,8 @@ def grabar_clip_reloj(
                         ctx.shadowBlur = 6;
                         ctx.fillText({j_header_sub}, w / 2, 115);
 
+                        const pulseDestello = 0.5 + 0.5 * Math.sin(rawElapsed * 1000 * 0.005);
+
                         if (window.__cineMode === 'intermedio') {{
                             const pillX = w / 2 - 290;
                             const pillY = 1340;
@@ -696,82 +711,87 @@ def grabar_clip_reloj(
 
                             ctx.fillStyle = 'rgba(8, 14, 26, 0.94)';
                             ctx.strokeStyle = '#f6c445';
-                            ctx.lineWidth = 2.0;
+                            ctx.lineWidth = 1.8 + 1.4 * pulseDestello;
                             ctx.shadowColor = '#fde047';
-                            ctx.shadowBlur = 14;
+                            ctx.shadowBlur = 10 + 18 * pulseDestello;
 
                             ctx.beginPath();
                             ctx.roundRect(pillX, pillY, pillW, pillH, 16);
                             ctx.fill();
                             ctx.stroke();
 
-                            ctx.font = '700 21px "Cinzel", serif';
+                            ctx.font = '700 22px "Cinzel", serif';
                             ctx.textAlign = 'center';
                             ctx.fillStyle = '#fde047';
-                            ctx.shadowBlur = 4;
-                            ctx.fillText({j_aspecto_hud_titulo}, w / 2, pillY + 22);
+                            ctx.shadowBlur = 4 + 6 * pulseDestello;
+                            ctx.fillText({j_aspecto_hud_titulo}, w / 2, pillY + 32);
 
-                            ctx.font = '700 13px "Courier New", monospace, sans-serif';
+                            ctx.font = '700 14px "Outfit", sans-serif';
                             ctx.fillStyle = '#38bdf8';
                             ctx.shadowBlur = 0;
-                            ctx.fillText({j_aspecto_hud_sub}, w / 2, pillY + 62);
+                            ctx.fillText({j_aspecto_hud_sub}, w / 2, pillY + 68);
 
-                            ctx.font = '400 15px -apple-system, BlinkMacSystemFont, sans-serif';
+                            ctx.font = '500 15px "Outfit", sans-serif';
                             ctx.fillStyle = '#e2e8f0';
-                            ctx.fillText({j_aspecto_hud_desc}, w / 2, pillY + 98);
+                            ctx.fillText({j_aspecto_hud_desc}, w / 2, pillY + 104);
                         }} else {{
-                            // Tarjetas Inferiores Rediseñadas (cardH = 145px: Proporción Perfecta y Cero Vacíos)
+                            // Tarjetas Inferiores Rediseñadas con Destello Sincronizado
                             const cardY = 1360;
                             const cardH = 145;
 
                             // Tarjeta 1 (Izquierda)
                             ctx.fillStyle = 'rgba(8, 14, 24, 0.92)';
                             ctx.strokeStyle = '#38bdf8';
-                            ctx.lineWidth = 2.0;
+                            ctx.lineWidth = 1.8 + 1.2 * pulseDestello;
                             ctx.shadowColor = '#0284c7';
-                            ctx.shadowBlur = 12;
+                            ctx.shadowBlur = 10 + 16 * pulseDestello;
 
                             ctx.beginPath();
                             ctx.roundRect(40, cardY, 480, cardH, 14);
                             ctx.fill();
                             ctx.stroke();
 
-                            ctx.font = '700 20px "Cinzel", serif';
+                            ctx.font = '700 21px "Cinzel", serif';
                             ctx.textAlign = 'left';
                             ctx.fillStyle = '#38bdf8';
-                            ctx.fillText({j_tarjeta1_titulo}, 60, cardY + 22);
+                            ctx.shadowBlur = 2 + 4 * pulseDestello;
+                            ctx.fillText({j_tarjeta1_titulo}, 65, cardY + 34);
 
-                            ctx.font = '700 12px "Courier New", monospace, sans-serif';
+                            ctx.font = '700 13px "Outfit", sans-serif';
                             ctx.fillStyle = '#7dd3fc';
-                            ctx.fillText({j_tarjeta1_badge}, 60, cardY + 54);
+                            ctx.shadowBlur = 0;
+                            ctx.fillText({j_tarjeta1_badge}, 65, cardY + 68);
 
-                            ctx.font = '400 14px -apple-system, BlinkMacSystemFont, sans-serif';
+                            ctx.font = '500 14.5px "Outfit", sans-serif';
                             ctx.fillStyle = '#f8fafc';
-                            ctx.fillText({j_tarjeta1_body}, 60, cardY + 84);
+                            ctx.fillText({j_tarjeta1_body}, 65, cardY + 102);
 
                             // Tarjeta 2 (Derecha)
+                            const pulseDestello2 = 0.5 + 0.5 * Math.sin((rawElapsed * 1000 + 400) * 0.005);
                             ctx.fillStyle = 'rgba(18, 14, 8, 0.92)';
                             ctx.strokeStyle = '#f6c445';
-                            ctx.lineWidth = 2.0;
+                            ctx.lineWidth = 1.8 + 1.2 * pulseDestello2;
                             ctx.shadowColor = '#d97706';
-                            ctx.shadowBlur = 12;
+                            ctx.shadowBlur = 10 + 16 * pulseDestello2;
 
                             ctx.beginPath();
                             ctx.roundRect(560, cardY, 480, cardH, 14);
                             ctx.fill();
                             ctx.stroke();
 
-                            ctx.font = '700 20px "Cinzel", serif';
+                            ctx.font = '700 21px "Cinzel", serif';
                             ctx.fillStyle = '#f6c445';
-                            ctx.fillText({j_tarjeta2_titulo}, 580, cardY + 22);
+                            ctx.shadowBlur = 2 + 4 * pulseDestello2;
+                            ctx.fillText({j_tarjeta2_titulo}, 585, cardY + 34);
 
-                            ctx.font = '700 12px "Courier New", monospace, sans-serif';
+                            ctx.font = '700 13px "Outfit", sans-serif';
                             ctx.fillStyle = '#fde047';
-                            ctx.fillText({j_tarjeta2_badge}, 580, cardY + 54);
+                            ctx.shadowBlur = 0;
+                            ctx.fillText({j_tarjeta2_badge}, 585, cardY + 68);
 
-                            ctx.font = '400 14px -apple-system, BlinkMacSystemFont, sans-serif';
+                            ctx.font = '500 14.5px "Outfit", sans-serif';
                             ctx.fillStyle = '#fef08a';
-                            ctx.fillText({j_tarjeta2_body}, 580, cardY + 84);
+                            ctx.fillText({j_tarjeta2_body}, 585, cardY + 102);
                         }}
 
                         ctx.restore();
@@ -795,27 +815,69 @@ def grabar_clip_reloj(
         offset_seconds = round(t_setup_done - t_browser_start, 2)
         print(f"⏱️ Inicialización lista en {offset_seconds:.2f}s. Grabando slot {duracion_s:.2f}s...")
 
-        # Grabar la duración del slot
-        t_start_record = time.time()
-        while time.time() - t_start_record < (duracion_s + 0.3):
-            time.sleep(0.04)
+        record_script = f"""
+        () => new Promise((resolve, reject) => {{
+            try {{
+                const canvas = document.getElementById('reloj-canvas');
+                if (!canvas) {{
+                    reject("No se encontro #reloj-canvas");
+                    return;
+                }}
+                window.__cineStartTime = performance.now();
+                const stream = canvas.captureStream(30);
+                const chunks = [];
+                let mime = 'video/webm;codecs=vp9';
+                if (!MediaRecorder.isTypeSupported(mime)) {{
+                    mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp8') ? 'video/webm;codecs=vp8' : 'video/webm';
+                }}
+                const recorder = new MediaRecorder(stream, {{
+                    mimeType: mime,
+                    videoBitsPerSecond: 25000000
+                }});
+                recorder.ondataavailable = (e) => {{
+                    if (e.data && e.data.size > 0) chunks.push(e.data);
+                }};
+                recorder.onstop = () => {{
+                    const blob = new Blob(chunks, {{ type: mime }});
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                }};
+                recorder.start();
+                setTimeout(() => {{
+                    try {{
+                        recorder.stop();
+                    }} catch (err) {{
+                        reject(err.toString());
+                    }}
+                }}, Math.ceil({duracion_s} * 1000));
+            }} catch (err) {{
+                reject(err.toString());
+            }}
+        }})
+        """
+        print(f"🎥 Grabando canvas nativo a 25 Mbps ({duracion_s:.2f}s)...")
+        data_url = page.evaluate(record_script)
+        header, encoded = data_url.split(",", 1)
+        video_bytes = base64.b64decode(encoded)
+
+        recorded_webm = clip_rec_dir / f"{tipo}_{int(time.time()*1000)}.webm"
+        with open(recorded_webm, "wb") as f:
+            f.write(video_bytes)
 
         context.close()
         browser.close()
 
-    webm_files = list(clip_rec_dir.glob("*.webm"))
-    if not webm_files:
-        raise RuntimeError(f"No se encontró archivo WebM grabado en {clip_rec_dir}")
-    recorded_webm = max(webm_files, key=lambda f: f.stat().st_mtime)
-
-    # Transcodificar recortando EXACTAMENTE el tiempo de carga medido: 100% CERO GLITCH
-    cmd_ffmpeg = (
-        f"ffmpeg -y -i '{recorded_webm}' -ss {offset_seconds} -c:v libx264 -pix_fmt yuv420p "
-        f"-r 30 -crf 14 -preset slow -t {duracion_s} '{out_mp4}' >/dev/null 2>&1"
-    )
-    subprocess.run(cmd_ffmpeg, shell=True, check=True)
+    # Transcodificar con FFmpeg a master H.264 CRF 12 (sin pixelado, nitidez absoluta)
+    cmd_ffmpeg = [
+        "ffmpeg", "-y", "-i", str(recorded_webm),
+        "-c:v", "libx264", "-pix_fmt", "yuv420p",
+        "-r", "30", "-crf", "12", "-preset", "slow",
+        "-t", f"{duracion_s:.3f}", str(out_mp4)
+    ]
+    subprocess.run(cmd_ffmpeg, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     size_mb = out_mp4.stat().st_size / (1024 * 1024)
-    print(f"✅ Clip generado: {out_mp4.name} ({size_mb:.2f} MB, {duracion_s:.2f}s)")
+    print(f"✅ Clip generado: {out_mp4.name} ({size_mb:.2f} MB, {duracion_s:.2f}s) [Master CRF 12]")
     return out_mp4
 
 
@@ -869,11 +931,90 @@ def generar_clips_fecha(
         return [f_apertura, f_intermedio, f_cierre]
 
     finally:
-        server_proc.terminate()
-        try:
-            server_proc.wait(timeout=3)
-        except Exception:
-            server_proc.kill()
+        if server_proc:
+            server_proc.terminate()
+            try:
+                server_proc.wait(timeout=3)
+            except Exception:
+                server_proc.kill()
+
+
+def capturar_clip_reloj_cinematico(
+    fecha_str: str,
+    duracion_s: float = 6.0,
+    output_dir: Path = None,
+    forzar: bool = False,
+    port: int = 8788
+) -> Path:
+    """
+    Genera el clip cinemático del Reloj 2D (con zoom al aspecto, fotones y aureolas sonar)
+    para la toma intermedia (Toma 3 / Mecánica Celeste) del orquestador unificado V2.
+    """
+    if output_dir is None:
+        output_dir = DEFAULT_OUTPUT_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_mp4 = output_dir / f"reloj_2d_{fecha_str}.mp4"
+
+    # Si ya existe y no se fuerza la regeneración
+    if out_mp4.exists() and not forzar and out_mp4.stat().st_size > 1_500_000:
+        print(f"⚡ Clip Reloj 2D Cinemático reutilizado: {out_mp4.name} ({out_mp4.stat().st_size/(1024*1024):.2f} MB)")
+        return out_mp4
+
+    from datetime import datetime
+    adn_path = FACTORY_ROOT / "contexto_astrologico.json"
+    with open(adn_path, "r", encoding="utf-8") as f:
+        adn = json.load(f)
+
+    transito = adn.get("transito", {})
+    planeta_str = transito.get("planeta", "Luna y Mercurio")
+    partes = [p.strip() for p in planeta_str.replace(" y ", ",").split(",") if p.strip()]
+    planeta_foco = partes[0] if len(partes) > 0 else "Luna"
+    planeta_intermedio = partes[1] if len(partes) > 1 else ("Mercurio" if planeta_foco == "Luna" else "Luna")
+
+    signo = transito.get("signo_destino", "Escorpio")
+    tipo_asp = transito.get("tipo_aspecto", "Conjunción")
+    orbe_limpio = tipo_asp.split("(")[-1].replace(")", "") if "(" in tipo_asp else "orbe exacto"
+
+    dt = datetime.strptime(fecha_str, "%Y-%m-%d")
+    meses = ["", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"]
+    header_fecha = f"{dt.day} DE {meses[dt.month]} {dt.year}"
+    header_sub = f"✦ MECÁNICA CELESTE · {planeta_foco.upper()} Y {planeta_intermedio.upper()} ✦"
+    aspecto_hud_titulo = f"{planeta_foco.upper()} {tipo_asp.split()[0].upper()} {planeta_intermedio.upper()} · {signo.upper()}"
+    aspecto_hud_sub = f"✦ {tipo_asp.upper()} · TRÁNSITO ACTIVO ✦"
+    aspecto_hud_desc = transito.get("descripcion_breve", "Mecánica celeste exacta en el Astrolabio Sagrado.")[:85]
+    badge_aspecto_texto = f"✦ {tipo_asp.split()[0].upper()} · {planeta_foco.upper()} / {planeta_intermedio.upper()} ✦"
+
+    duracion_grabacion = round(duracion_s + 3.5, 2)
+    print(f"\n🌟 Generando Reloj 2D Cinemático ({duracion_grabacion:.2f}s [slot {duracion_s:.2f}s + margen]) para {fecha_str}...")
+    print(f"   Foco: {planeta_foco} · Intermedio: {planeta_intermedio} · Signo: {signo}")
+
+    server_proc = iniciar_servidor(port)
+    try:
+        grabar_clip_reloj(
+            tipo="intermedio",
+            duracion_s=duracion_grabacion,
+            out_mp4=out_mp4,
+            port=port,
+            date_str=fecha_str,
+            header_fecha=header_fecha,
+            header_sub=header_sub,
+            aspecto_hud_titulo=aspecto_hud_titulo,
+            aspecto_hud_sub=aspecto_hud_sub,
+            aspecto_hud_desc=aspecto_hud_desc,
+            badge_aspecto_texto=badge_aspecto_texto,
+            badge_p1_sub=f"Tránsito activo en {signo}",
+            badge_p2_sub=f"Resonancia celeste en {signo}",
+            planeta_foco=planeta_foco,
+            planeta_intermedio=planeta_intermedio
+        )
+        return out_mp4
+    finally:
+        if server_proc:
+            server_proc.terminate()
+            try:
+                server_proc.wait(timeout=3)
+            except Exception:
+                server_proc.kill()
 
 
 if __name__ == "__main__":

@@ -47,8 +47,8 @@ FORMATOS_IMG = {".jpg", ".jpeg", ".png", ".webp"}
 # ── Parámetros del Builder (no son rutas; las rutas viven en el ADN) ─────────
 XFADE_DUR_DEFAULT = 0.40   # se sobreescribe con ADN["render"]["xfade_duracion_s"] si existe
 SUPERSAMPLE       = 2      # las imágenes se amplían ×2 antes del zoompan (evita el "jitter" por redondeo)
-ZOOM_BASE         = 1.02   # zoom noble ultra sutil para no desvirtuar el arte
-ZOOM_ICONICA      = 1.03   # zoom noble ultra sutil para imágenes icónicas
+ZOOM_BASE         = 1.08   # Movimiento cinemático Ken Burns noble y perceptible (8% de desplazamiento)
+ZOOM_ICONICA      = 1.10   # Zoom cinemático profundo para imágenes icónicas y místicas (10%)
 MIN_FRAMES_IMG    = 2
 
 # Transiciones xfade que FFmpeg 7.x acepta. Cualquier otra → "fade".
@@ -223,6 +223,8 @@ def _planificar_slots(tomas: list[dict], dur_audio: float | None) -> list[dict] 
                     c.get("transicion_entrada") or (toma.get("transicion_entrada") if j == 0 else None)
                 ),
             })
+    if slots and len(slots) > 1 and slots[-1]["archivo"] == slots[0]["archivo"]:
+        slots[-1]["es_cierre_loop"] = True
     return slots
 
 
@@ -232,25 +234,27 @@ def _planificar_slots(tomas: list[dict], dur_audio: float | None) -> list[dict] 
 
 def _resolver_audio(cfg: dict, evento: str, aspecto: str, tomas: list[dict]) -> Path | None:
     """
-    Mejor audio ya mezclado por la Célula 3: _sfx > _binaural > _mix.
-    Si solo existe la narración cruda, se aplica el diseño sonoro legado (audio_mixer).
+    Mejor audio mezclado con frecuencias Solfeggio.
+    Si el archivo mezclado es anterior a la narración actual, se re-mezcla automáticamente.
     """
-    for sufijo in ("_sfx", "_binaural", "_mixed", "_mix"):
-        p = cfg["AUDIO_DIR"] / f"{evento}{sufijo}.mp3"
-        if p.exists():
-            print(f"🔊 Audio: {p.name}")
-            return p
-
     raw = cfg["AUDIO_DIR"] / f"{evento}.mp3"
     if not raw.exists():
         print(f"❌ No se encontró audio para '{evento}' en {cfg['AUDIO_DIR']}")
         return None
+
+    raw_mtime = raw.stat().st_mtime
+    for sufijo in ("_sfx", "_binaural", "_mixed", "_mix"):
+        p = cfg["AUDIO_DIR"] / f"{evento}{sufijo}.mp3"
+        if p.exists() and p.stat().st_mtime >= raw_mtime:
+            print(f"🔊 Audio con frecuencias verificado: {p.name}")
+            return p
 
     if str(CONTENT_FACTORY_DIR) not in sys.path:
         sys.path.append(str(CONTENT_FACTORY_DIR))
     from audio_mixer import mix_frequency_layer
     guion_text = " ".join(t.get("texto", "") for t in tomas).strip()
     words_json = str(raw).replace(".mp3", "_words.json")
+    print(f"🎵 Remezclando diseño sonoro con frecuencias Solfeggio para '{aspecto}'...")
     return Path(mix_frequency_layer(str(raw), guion_text, words_json, aspecto, []))
 
 
@@ -297,7 +301,13 @@ def _cadena_imagen(i: int, slot: dict, largo: float, cfg: dict, grading: str) ->
     sw, sh = W * SUPERSAMPLE, H * SUPERSAMPLE
     zmax = ZOOM_ICONICA if slot["es_iconica"] else ZOOM_BASE
     dz = zmax - 1.0
-    z = f"1+{dz:.4f}*on/{frames}" if i % 2 == 0 else f"{zmax:.4f}-{dz:.4f}*on/{frames}"
+    if slot.get("es_cierre_loop", False):
+        # Cierre de loop: zoom out progresivo que converge exactamente a 1.0000 para empalmar con el frame inicial
+        z = f"{zmax:.4f}-{dz:.4f}*on/{frames}"
+    elif i % 2 == 0:
+        z = f"1+{dz:.4f}*on/{frames}"
+    else:
+        z = f"{zmax:.4f}-{dz:.4f}*on/{frames}"
     return (
         f"[{i}:v]scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh},"
         f"setsar=1,format=yuv420p,"

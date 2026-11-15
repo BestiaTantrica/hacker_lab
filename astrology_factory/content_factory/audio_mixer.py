@@ -22,8 +22,8 @@ FREQ_MAP = {
 }
 
 DEFAULT_FREQ  = 528
-PAD_DB        = -18   # Cortina de seda, muy sutil
-ACCENT_DB     = -12   # Acentos tonales, emergen levemente sobre el pad
+PAD_DB        = -14   # Cortina de seda con presencia armónica real y envolvente
+ACCENT_DB     = -10   # Acentos tonales perceptibles en palabras clave
 FADE_SEC      = 2.0   # Fade in/out del pad base
 
 def detect_freq(text: str) -> int:
@@ -64,7 +64,8 @@ def mix_frequency_layer(
     else:
         palettes = {}
 
-    conf = palettes.get(aspect, {})
+    aspect_norm = str(aspect).lower().replace("ó", "o").replace("í", "i").replace("á", "a").replace("é", "e").replace("ú", "u").strip()
+    conf = palettes.get(aspect_norm, {})
     hz = conf.get("base_freq", detect_freq(guion_text))
     ratios = conf.get("pad_ratios", [1.0, 1.25, 1.5])
     
@@ -84,23 +85,50 @@ def mix_frequency_layer(
 
     fade_out_st = max(0, dur - FADE_SEC)
 
-    # Pad de seda
+    # Pad de seda con filtrado cálido
     fg_pad = (
-        f"[1:a]atrim=duration={dur:.2f},"
+        f"[1:a]atrim=duration={dur:.2f},lowpass=f=650,"
         f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
         f"volume={PAD_DB}dB[p1];"
-        f"[2:a]atrim=duration={dur:.2f},"
+        f"[2:a]atrim=duration={dur:.2f},lowpass=f=650,"
         f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
         f"volume={PAD_DB-4}dB[p2];"
-        f"[3:a]atrim=duration={dur:.2f},"
+        f"[3:a]atrim=duration={dur:.2f},lowpass=f=650,"
         f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
         f"volume={PAD_DB-8}dB[p3];"
         f"[p1][p2][p3]amix=inputs=3:normalize=0[pad];"
     )
 
+    ambient_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/ambient_space_biosphere_raw.mp3"
+    cuenco_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/cuenco_tibetano_largo_raw.mp3"
+    has_ambient = os.path.exists(ambient_path)
+    has_cuenco = os.path.exists(cuenco_path)
+    
+    current_idx = 4
+    fg_ambient = ""
+    if has_ambient:
+        inputs += ["-stream_loop", "-1", "-i", ambient_path]
+        fg_ambient += (
+            f"[{current_idx}:a]atrim=duration={dur:.2f},"
+            f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
+            f"volume=-21dB,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[amb];"
+        )
+        current_idx += 1
+
+    fg_cuenco = ""
+    if has_cuenco:
+        inputs += ["-stream_loop", "-1", "-i", cuenco_path]
+        fg_cuenco = (
+            f"[{current_idx}:a]atrim=duration={dur:.2f},"
+            f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
+            f"volume=-24dB,lowpass=f=2200,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[cuenco];"
+        )
+        current_idx += 1
+
     # Acentos empáticos por palabras clave
     accent_parts = []
     n_accents = 0
+    start_accent_idx = current_idx
     if words_json_path and os.path.exists(words_json_path):
         with open(words_json_path, "r", encoding="utf-8") as f:
             words_data = json.load(f)
@@ -114,13 +142,13 @@ def mix_frequency_layer(
                 accent_hz = FREQ_MAP[word]
                 delay_ms = int(start * 1000)
                 lbl = f"k{n_accents}"
-                idx = 4 + n_accents
+                idx = start_accent_idx + n_accents
                 inputs += [
                     "-f","lavfi","-i",
                     f"sine=frequency={accent_hz}:sample_rate=44100:duration=3.0"
                 ]
                 accent_parts.append(
-                    f"[{idx}:a]afade=t=in:d=1,afade=t=out:st=1:d=2,"
+                    f"[{idx}:a]lowpass=f=800,afade=t=in:d=1,afade=t=out:st=1:d=2,"
                     f"volume={ACCENT_DB}dB,adelay={delay_ms}|{delay_ms}[{lbl}];"
                 )
                 n_accents += 1
@@ -131,6 +159,12 @@ def mix_frequency_layer(
     
     total_mix_inputs = 2 # narr + pad
     mix_lbls = "[narr][pad]"
+    if has_ambient:
+        mix_lbls += "[amb]"
+        total_mix_inputs += 1
+    if has_cuenco:
+        mix_lbls += "[cuenco]"
+        total_mix_inputs += 1
     
     if n_accents > 0:
         accent_str = "".join(accent_parts)
@@ -148,7 +182,7 @@ def mix_frequency_layer(
     
     if n_accents > 0: print(f"   ✨ {n_accents} Acentos Empáticos generados a lo largo del guion")
 
-    filter_graph = fg_pad + fg_accents + fg_glitches + fg_final
+    filter_graph = fg_pad + fg_ambient + fg_cuenco + fg_accents + fg_glitches + fg_final
 
     cmd = (["ffmpeg","-y"] + inputs +
            ["-filter_complex", filter_graph,
