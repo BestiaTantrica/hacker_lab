@@ -287,6 +287,60 @@
       "youtube_video_id": "O8V1yuo_Tk0",
       "youtube_url": "https://www.youtube.com/watch?v=O8V1yuo_Tk0",
       "estado_youtube": "PROGRAMADO"
+    },
+    "2026-11-18": {
+      "evento_id": "2026-11-18_Luna_Trigono_Mercurio_Piscis",
+      "titulo": "2026-11-18 | Luna en Trígono con Mercurio en Piscis",
+      "fecha_publicacion": "2026-11-18",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-18_Luna_Trigono_Mercurio_Piscis.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+    },
+    "2026-11-19": {
+      "evento_id": "2026-11-19_Sol_Cuadratura_Marte_Escorpio",
+      "titulo": "2026-11-19 | Sol en Cuadratura con Marte en Escorpio",
+      "fecha_publicacion": "2026-11-19",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-19_Sol_Cuadratura_Marte_Escorpio.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+    },
+    "2026-11-20": {
+      "evento_id": "2026-11-20_Luna_Sextil_Urano_Aries",
+      "titulo": "2026-11-20 | Luna en Sextil con Urano en Aries",
+      "fecha_publicacion": "2026-11-20",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-20_Luna_Sextil_Urano_Aries.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+    },
+    "2026-11-21": {
+      "evento_id": "2026-11-21_Sol_Cuadratura_Marte_Escorpio",
+      "titulo": "2026-11-21 | Sol en Cuadratura con Marte en Escorpio",
+      "fecha_publicacion": "2026-11-21",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-21_Sol_Cuadratura_Marte_Escorpio.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+    },
+    "2026-11-22": {
+      "evento_id": "2026-11-22_Luna_Cuadratura_Pluton_Tauro",
+      "titulo": "2026-11-22 | Luna en Cuadratura con Plutón en Tauro",
+      "fecha_publicacion": "2026-11-22",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-22_Luna_Cuadratura_Pluton_Tauro.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+    },
+    "2026-11-23": {
+      "evento_id": "2026-11-23_Sol_Trigono_Neptuno_Sagitario",
+      "titulo": "2026-11-23 | Sol en Trígono con Neptuno en Sagitario",
+      "fecha_publicacion": "2026-11-23",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-23_Sol_Trigono_Neptuno_Sagitario.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
     }
   }
 }
