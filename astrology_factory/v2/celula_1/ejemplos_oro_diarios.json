@@ -109,33 +109,33 @@
     {
       "id": "ORO_CAN_04",
       "fecha": "2026-11-17",
-      "titulo": "Luna Virgo / Neptuno | Querer controlar lo que no se deja",
-      "transito": "Luna en Virgo oposición Neptuno",
+      "titulo": "Luna en Acuario / Marte | La necesidad de cortar el ruido",
+      "transito": "Luna en Acuario oposición Marte en Leo",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "17 de noviembre. Te despertás con una lista mental de todo lo que puede salir mal. Y recién arranca el día."
+          "locucion": "17 de noviembre. Hoy tenés la mecha corta, pero no por furia... por saturación mental."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "Querés tener todo bajo control porque hay algo difuso que no podés nombrar. Ordenás afuera lo que adentro está revuelto."
+          "locucion": "Sentís que te exigen presencia y reacción inmediata, y lo único que querés es poner la cabeza en silencio y que no te invadan."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "La Luna en Virgo se enfrenta a Neptuno: tu necesidad de certeza choca con una niebla que no se deja agarrar."
+          "locucion": "En el astrolabio sagrado, la Luna en Acuario se opone a Marte en Leo: el choque directo entre tu necesidad de aire y las demandas del ego ajeno."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "No todo se resuelve ordenando. Hay cosas que solo se aclaran si les bajás el ritmo y las dejás decantar."
+          "locucion": "No explotes ni te cierres en banda para que te dejen en paz. Poné el límite con firmeza y calma, sin pedir permiso ni culpa."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "¿Qué estás tratando de controlar hoy que en realidad no depende de vos? Pensalo un segundo."
+          "locucion": "¿Sos de explotar cuando te saturan o te desconectás en silencio? Contame abajo y descubrí en el link del perfil en qué casa te cae esta oposición."
         }
       ]
     },

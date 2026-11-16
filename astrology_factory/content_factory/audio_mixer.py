@@ -48,7 +48,10 @@ def mix_frequency_layer(
     glitch_timestamps: list[float] = None
 ) -> str:
     """
-    Mezcla capa de frecuencias (Pad Triádico + Acentos empáticos + Glitch SFX).
+    Mezcla un diseño sonoro hipnótico y envolvente:
+      - Cuenco tibetano acústico real (armónicos naturales y campanas).
+      - Biosfera espacial y mantras profundos de la Bóveda.
+      - Sub-drone armónico afinado a la frecuencia Solfeggio del aspecto (filtrado cálido, cero pitidos).
     """
     if not os.path.exists(mp3_path):
         return mp3_path
@@ -56,7 +59,7 @@ def mix_frequency_layer(
     if glitch_timestamps is None:
         glitch_timestamps = []
 
-    # Cargar paletas
+    # Cargar paletas de afinación astrológica
     db_path = os.path.join(os.path.dirname(__file__), "astrology_palettes.json")
     if os.path.exists(db_path):
         with open(db_path, "r", encoding="utf-8") as f:
@@ -67,131 +70,90 @@ def mix_frequency_layer(
     aspect_norm = str(aspect).lower().replace("ó", "o").replace("í", "i").replace("á", "a").replace("é", "e").replace("ú", "u").strip()
     conf = palettes.get(aspect_norm, {})
     hz = conf.get("base_freq", detect_freq(guion_text))
-    ratios = conf.get("pad_ratios", [1.0, 1.25, 1.5])
-    
-    hz1 = round(hz * ratios[0])
-    hz2 = round(hz * ratios[1])
-    hz3 = round(hz * ratios[2])
     
     dur  = _get_duration(mp3_path)
     out  = mp3_path.replace(".mp3", "_mixed.mp3")
 
-    print(f"🎵 Pad de Seda {hz}Hz + armónicos @ {PAD_DB}dB")
+    print(f"🎵 Atmósfera Hipnótica: Cuencos Tibetanos + Biosfera Cósmica + Sub-Drone Solfeggio {hz}Hz")
 
-    inputs = ["-i", mp3_path,
-              "-f","lavfi","-i",f"sine=frequency={hz1}:sample_rate=44100",
-              "-f","lavfi","-i",f"sine=frequency={hz2}:sample_rate=44100",
-              "-f","lavfi","-i",f"sine=frequency={hz3}:sample_rate=44100"]
+    # ── Capas Acústicas Reales (Bóveda Sagrada) ──
+    cuenco_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/cuenco_tibetano_largo_raw.mp3"
+    ambient_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/ambient_space_biosphere_raw.mp3"
+    om_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/Om_Mantra_Bowls.mp3"
+    
+    has_cuenco = os.path.exists(cuenco_path)
+    has_ambient = os.path.exists(ambient_path)
+    has_om = os.path.exists(om_path)
 
     fade_out_st = max(0, dur - FADE_SEC)
 
-    # Pad de seda con filtrado cálido
-    fg_pad = (
-        f"[1:a]atrim=duration={dur:.2f},lowpass=f=650,"
+    # Sub-drone cálido en la frecuencia Solfeggio (terciopelo grave, bajo filtrado, CERO silbido estridente)
+    inputs = [
+        "-i", mp3_path,
+        "-f", "lavfi", "-i", f"sine=frequency={hz}:sample_rate=44100"
+    ]
+
+    fg_subdrone = (
+        f"[1:a]atrim=duration={dur:.2f},lowpass=f=320,chorus=0.7:0.9:55:0.4:0.25:2,"
         f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
-        f"volume={PAD_DB}dB[p1];"
-        f"[2:a]atrim=duration={dur:.2f},lowpass=f=650,"
-        f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
-        f"volume={PAD_DB-4}dB[p2];"
-        f"[3:a]atrim=duration={dur:.2f},lowpass=f=650,"
-        f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
-        f"volume={PAD_DB-8}dB[p3];"
-        f"[p1][p2][p3]amix=inputs=3:normalize=0[pad];"
+        f"volume=-24dB,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[subdrone];"
     )
 
-    ambient_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/ambient_space_biosphere_raw.mp3"
-    cuenco_path = "/home/tomas2/Desktop/Boveda_Astrologia/Assets_Auditados/Audios/cuenco_tibetano_largo_raw.mp3"
-    has_ambient = os.path.exists(ambient_path)
-    has_cuenco = os.path.exists(cuenco_path)
-    
-    current_idx = 4
+    current_idx = 2
+    mix_lbls = "[narr][subdrone]"
+    total_mix_inputs = 2
+
+    fg_cuenco = ""
+    if has_cuenco:
+        inputs += ["-stream_loop", "-1", "-i", cuenco_path]
+        fg_cuenco = (
+            f"[{current_idx}:a]atrim=duration={dur:.2f},aecho=0.8:0.7:60:0.3,"
+            f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
+            f"volume=-14dB,lowpass=f=3500,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[cuenco];"
+        )
+        mix_lbls += "[cuenco]"
+        total_mix_inputs += 1
+        current_idx += 1
+
     fg_ambient = ""
     if has_ambient:
         inputs += ["-stream_loop", "-1", "-i", ambient_path]
         fg_ambient += (
             f"[{current_idx}:a]atrim=duration={dur:.2f},"
             f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
-            f"volume=-21dB,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[amb];"
+            f"volume=-17dB,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[amb];"
         )
-        current_idx += 1
-
-    fg_cuenco = ""
-    if has_cuenco:
-        inputs += ["-stream_loop", "-1", "-i", cuenco_path]
-        fg_cuenco = (
-            f"[{current_idx}:a]atrim=duration={dur:.2f},"
-            f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
-            f"volume=-24dB,lowpass=f=2200,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[cuenco];"
-        )
-        current_idx += 1
-
-    # Acentos empáticos por palabras clave
-    accent_parts = []
-    n_accents = 0
-    start_accent_idx = current_idx
-    if words_json_path and os.path.exists(words_json_path):
-        with open(words_json_path, "r", encoding="utf-8") as f:
-            words_data = json.load(f)
-        
-        # Filtrar palabras que disparan acentos
-        for w in words_data:
-            word = w.get("word", "")
-            start = w.get("start", 0)
-            if word in FREQ_MAP:
-                # Generamos un tono puro de 3 segundos con fade in de 1s y fade out de 2s
-                accent_hz = FREQ_MAP[word]
-                delay_ms = int(start * 1000)
-                lbl = f"k{n_accents}"
-                idx = start_accent_idx + n_accents
-                inputs += [
-                    "-f","lavfi","-i",
-                    f"sine=frequency={accent_hz}:sample_rate=44100:duration=3.0"
-                ]
-                accent_parts.append(
-                    f"[{idx}:a]lowpass=f=800,afade=t=in:d=1,afade=t=out:st=1:d=2,"
-                    f"volume={ACCENT_DB}dB,adelay={delay_ms}|{delay_ms}[{lbl}];"
-                )
-                n_accents += 1
-
-    # SFX de Glitches eliminados para mantener un flujo 100% orgánico
-    n_glitches = 0
-    fg_glitches = ""
-    
-    total_mix_inputs = 2 # narr + pad
-    mix_lbls = "[narr][pad]"
-    if has_ambient:
         mix_lbls += "[amb]"
         total_mix_inputs += 1
-    if has_cuenco:
-        mix_lbls += "[cuenco]"
+        current_idx += 1
+
+    fg_om = ""
+    if has_om:
+        inputs += ["-stream_loop", "-1", "-i", om_path]
+        fg_om = (
+            f"[{current_idx}:a]atrim=duration={dur:.2f},"
+            f"afade=t=in:d={FADE_SEC},afade=t=out:st={fade_out_st:.2f}:d={FADE_SEC},"
+            f"volume=-22dB,lowpass=f=1800,aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[om];"
+        )
+        mix_lbls += "[om]"
         total_mix_inputs += 1
-    
-    if n_accents > 0:
-        accent_str = "".join(accent_parts)
-        accent_lbls = "".join(f"[k{i}]" for i in range(n_accents))
-        fg_accents = accent_str + f"{accent_lbls}amix=inputs={n_accents}:normalize=0[accents];"
-        mix_lbls += "[accents]"
-        total_mix_inputs += 1
-    else:
-        fg_accents = ""
+        current_idx += 1
 
     fg_final = (
         f"[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[narr];"
         f"{mix_lbls}amix=inputs={total_mix_inputs}:duration=first:normalize=0[out]"
     )
-    
-    if n_accents > 0: print(f"   ✨ {n_accents} Acentos Empáticos generados a lo largo del guion")
 
-    filter_graph = fg_pad + fg_ambient + fg_cuenco + fg_accents + fg_glitches + fg_final
+    filter_graph = fg_subdrone + fg_cuenco + fg_ambient + fg_om + fg_final
 
-    cmd = (["ffmpeg","-y"] + inputs +
+    cmd = (["ffmpeg", "-y"] + inputs +
            ["-filter_complex", filter_graph,
-            "-map","[out]","-ac","2","-ar","44100","-q:a","2", out])
+            "-map", "[out]", "-ac", "2", "-ar", "44100", "-q:a", "2", out])
 
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         print(f"⚠️  audio_mixer falló: {r.stderr[-400:]}")
         return mp3_path
 
-    print(f"   ✅ Audio inteligente mezclado → {os.path.basename(out)}")
+    print(f"   ✅ Atmósfera sonora acústica hipnótica mezclada → {os.path.basename(out)}")
     return out

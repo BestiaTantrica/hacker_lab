@@ -110,8 +110,33 @@ def correr_comando(cmd: list, descripcion: str = "", timeout: int = 120) -> tupl
     except FileNotFoundError as e:
         return False, f"Comando no encontrado: {e}"
 
+def calcular_prosodia_toma(rol: str, num_toma: int, total_tomas: int = 5) -> tuple[str, str, float]:
+    """
+    Calcula velocidad, tono y respiración según el rol psicológico de la toma
+    para otorgar una prosodia orgánica humana con altibajos reales (cero robot plano).
+    Retorna: (velocidad_str, tono_str, pausa_respiracion_s)
+    """
+    rol_l = (rol or "").lower()
+    if "gancho" in rol_l or num_toma == 1:
+        # Gancho inicial: despierto, dinámico, enganche magnético
+        return "+4%", "+3Hz", 0.10
+    elif "psicolog" in rol_l or num_toma == 2:
+        # Mecánica psicológica: conversacional, cercano, tono medio
+        return "+2%", "+0Hz", 0.12
+    elif "reloj" in rol_l or "celeste" in rol_l or "astrolabio" in rol_l or num_toma == 3:
+        # Mecánica celeste: ritmo más pausado y solemne para asimilar el astrolabio
+        return "-2%", "-2Hz", 0.14
+    elif "brujula" in rol_l or "lucida" in rol_l or num_toma == 4:
+        # Brújula lúcida: asertivo, firme, directo
+        return "+3%", "+1Hz", 0.10
+    elif "cta" in rol_l or num_toma >= total_tomas:
+        # Cierre: íntimo, reflexivo, confesional hacia abajo
+        return "-3%", "-5Hz", 0.08
+    else:
+        return "+1%", "+0Hz", 0.10
+
 def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
-                         voz: str, velocidad: str, tono: str) -> Path | None:
+                         voz: str, velocidad: str, tono: str, pausa_s: float = 0.10) -> Path | None:
     """
     Sintetiza una sola toma con edge-tts humanizado (prosodia reflexiva, respiración y cadencia natural).
     Si falla, reintenta. Si vuelve a fallar, usa Piper TTS local.
@@ -137,7 +162,7 @@ def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
                 "--voice", voz,
                 "--text", texto_procesado,
                 "--write-media", str(salida_tts_pura),
-                f"--rate={velocidad or '+6%'}",
+                f"--rate={velocidad or '+4%'}",
                 f"--pitch={tono or '+0Hz'}"
             ]
 
@@ -152,11 +177,10 @@ def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
         if not exito_toma:
             raise Exception(f"Edge-TTS falló en la toma {num_toma} tras 4 intentos")
         
-        # Pausa sutil de respiración natural entre tomas (80ms) para cambio de plano sin baches
-        pausa_s = 0.08
+        # Pausa sutil de respiración natural entre tomas para cambio de plano sin baches
         cmd_silence = [
             "ffmpeg", "-y", "-i", str(salida_tts_pura),
-            "-af", f"apad=pad_dur={pausa_s}",
+            "-af", f"apad=pad_dur={pausa_s:.2f}",
             "-c:a", "libmp3lame", "-q:a", "2", str(salida)
         ]
         correr_comando(cmd_silence, "Agregando respiración natural entre tomas", timeout=20)
@@ -165,7 +189,7 @@ def sintetizar_toma_tts(texto: str, num_toma: int, tmp_dir: Path,
             import shutil
             shutil.copy(salida_tts_pura, salida)
             
-        info(f"Toma {num_toma}: sintetizada con es-AR-TomasNeural ({velocidad}) y respiración orgánica.")
+        info(f"Toma {num_toma}: sintetizada con es-AR-TomasNeural (Rate: {velocidad}, Pitch: {tono}) y respiración orgánica.")
         return salida
                 
     except Exception as e:
@@ -300,9 +324,11 @@ def opcion_1_tts_y_mapeo(guion_path: str = None):
 
         for t in tomas:
             num = t["num"]
+            rol = t.get("rol", f"toma_{num}")
             texto_t = (t.get("texto") or t.get("locucion") or "").strip()
-            info(f"Sintetizando Toma {num} ({t.get('rol', '')})...")
-            toma_file = sintetizar_toma_tts(texto_t, num, tmp_path, voz, velocidad, tono)
+            v_toma, p_toma, pausa_toma = calcular_prosodia_toma(rol, num, len(tomas))
+            info(f"Sintetizando Toma {num} ({rol}) [Rate: {v_toma}, Pitch: {p_toma}, Pausa: {pausa_toma}s]...")
+            toma_file = sintetizar_toma_tts(texto_t, num, tmp_path, voz, v_toma, p_toma, pausa_toma)
             if not toma_file:
                 err(f"Fallo crítico al sintetizar toma {num}")
                 sys.exit(1)
