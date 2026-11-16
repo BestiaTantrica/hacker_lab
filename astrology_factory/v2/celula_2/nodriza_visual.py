@@ -266,8 +266,11 @@ def calcular_score(toma: dict, asset_key: str, meta: dict, ultimos_usados: list,
         if familia and obtener_familia_asset(Path(u).name) == familia:
             return -99999.0
 
-    # Rotación de stock: penaliza uso histórico en videos anteriores
-    score -= len(meta.get("stats_uso", [])) * 10.0
+    # Rotación estricta de stock (Anti-repetición 30 días):
+    # Si un asset ya fue usado en videos anteriores, se penaliza de forma masiva (-500.0)
+    # para garantizar variedad absoluta y forzar la selección de assets vírgenes del catálogo.
+    if meta.get("stats_uso"):
+        score -= 500.0 * len(meta["stats_uso"])
 
     # Estética: bloquea personas/familia/etc.
     if meta["_bloqueado"]:
