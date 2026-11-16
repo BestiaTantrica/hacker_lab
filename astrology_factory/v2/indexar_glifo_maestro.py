@@ -43,7 +43,14 @@ DICCIONARIO_SEMANTICO = {
     "sextil": ["sextil", "oportunidad", "afinidad", "talento", "estrella"],
     "quincuncio": ["quincuncio", "ajuste", "calibracion", "torsion", "incomodidad"],
     "reloj": ["reloj", "astrolabio", "tiempo", "mecanismo", "horas", "efemerides"],
-    "mandala": ["mandala", "rueda", "cosmologia", "zodiaco", "totalidad"]
+    "mandala": ["mandala", "rueda", "cosmologia", "zodiaco", "totalidad"],
+    "espacio": ["espacio", "galaxia", "nebulosa", "cosmos", "estrellas", "abismo", "paisaje", "universo"],
+    "humano": ["figura_humana", "humano", "persona", "retrato", "emocion", "arquetipo", "rostro", "mirada"],
+    "emocion": ["figura_humana", "humano", "persona", "emocion", "retrato", "expresion", "arquetipo"],
+    "secuencia": ["figura_humana", "humano", "metamorfosis", "arquetipo", "narrativa", "personaje"],
+    "soberano": ["figura_humana", "rey", "soberano", "trono", "autoridad", "arquetipo"],
+    "sabio": ["figura_humana", "sabio", "maestro", "alquimista", "filosofo", "arquetipo"],
+    "guerrero": ["figura_humana", "guerrero", "combate", "fuerza", "marte", "arquetipo"]
 }
 
 def init_db():

@@ -184,6 +184,8 @@ def main():
         
     titulo = meta_data.get("titulo_youtube", "Tránsito Astrológico")
     descripcion = meta_data.get("descripcion", "")
+    hashtags = " ".join(meta_data.get("tags_cortos", []))
+    desc_completa = f"{descripcion}\n\n{hashtags}" if hashtags else descripcion
     
     # Subir video temporalmente a OCI
     public_url = subir_video_a_oci_temporal(video_path)
@@ -194,12 +196,12 @@ def main():
     try:
         # Publicar en Instagram
         if not args.solo_facebook:
-            caption_ig = f"{titulo}\n\n{descripcion}"
+            caption_ig = f"{titulo}\n\n{desc_completa}"
             ig_id = publicar_instagram_reel(cfg, public_url, caption_ig)
             
         # Publicar en Facebook
         if not args.solo_instagram:
-            fb_id = publicar_facebook_reel(cfg, public_url, titulo, descripcion)
+            fb_id = publicar_facebook_reel(cfg, public_url, titulo, desc_completa)
             
         # Actualizar registro maestro si corresponde
         if REGISTRO_PATH.exists() and (ig_id or fb_id):

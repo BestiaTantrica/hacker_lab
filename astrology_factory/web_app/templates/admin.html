@@ -901,6 +901,40 @@
             </div>
         </div>
 
+        <!-- Card Producción Diaria V2 en 1 Clic -->
+        <div class="kpi-card" style="margin-bottom: 24px; padding: 22px; border: 1px solid rgba(0, 242, 254, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(0, 242, 254, 0.05)); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h3 style="margin: 0; color: var(--cyan-accent); font-family: 'Cinzel', serif; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                        <span>🚀</span> Fábrica de Contenido V2 — Producción en 1 Clic
+                    </h3>
+                    <p style="margin: 6px 0 0 0; color: var(--text-dim); font-size: 0.85rem; max-width: 650px;">
+                        Gobernado por <code>AGENTS.md</code> (Zero Scripts Ad-Hoc). Dispara el pipeline canónico completo: Efemérides exactas &rarr; Guion ORO Tomás &rarr; Célula 1 Locución Neural (+6%) y Subtítulos Karaoke &rarr; Célula 2 Nodriza Visual (30 días anti-repetición) &rarr; FFmpeg Single-Pass.
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div>
+                        <label style="font-size: 0.72rem; color: var(--text-dim); display: block; margin-bottom: 3px; font-weight: 600;">FECHA DEL TRÁNSITO</label>
+                        <input type="date" id="inputFechaProduccionV2" style="padding: 8px 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 242, 254, 0.4); color: #fff; border-radius: 6px; font-size: 0.9rem;" value="2026-11-08">
+                    </div>
+                    <div style="align-self: flex-end;">
+                        <button id="btnLanzarProduccionV2" onclick="lanzarProduccionV2()" class="btn btn-cyan" style="font-weight: 700; padding: 10px 20px; font-size: 0.95rem; cursor: pointer;">
+                            🎬 PRODUCIR VIDEO V2
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Log y Telemetría en Vivo -->
+            <div id="panelLogProduccion" style="display: none; margin-top: 18px; padding: 14px; background: rgba(5, 5, 10, 0.9); border-radius: 8px; border: 1px solid rgba(0, 242, 254, 0.25); font-family: 'Courier New', monospace; font-size: 0.82rem; color: #a5f3fc;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;">
+                    <span style="font-weight: bold; color: var(--cyan-accent);" id="tituloEstadoProduccion">⚡ Pipeline V2 en Ejecución...</span>
+                    <span id="badgeEstadoProduccion" style="background: rgba(0, 242, 254, 0.2); color: #00f2fe; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">EN_PROCESO</span>
+                </div>
+                <pre id="textoLogProduccion" style="margin: 0; white-space: pre-wrap; word-break: break-all; max-height: 220px; overflow-y: auto; line-height: 1.4;">Iniciando orquestador...</pre>
+            </div>
+        </div>
+
         <!-- Grid 2 Columns -->
         <div class="grid-2">
             <!-- Left: Publications Radar -->
@@ -1742,6 +1776,95 @@
             } finally {
                 btn.disabled = false;
                 btn.innerText = '💾 Guardar en Registro';
+            }
+        }
+
+        let pollingProduccionInterval = null;
+
+        async function lanzarProduccionV2() {
+            const fechaInput = document.getElementById('inputFechaProduccionV2');
+            const fecha = fechaInput ? fechaInput.value : '';
+            const btn = document.getElementById('btnLanzarProduccionV2');
+            const panel = document.getElementById('panelLogProduccion');
+            const textoLog = document.getElementById('textoLogProduccion');
+            const badge = document.getElementById('badgeEstadoProduccion');
+            const titulo = document.getElementById('tituloEstadoProduccion');
+
+            if (!fecha) {
+                alert('Por favor selecciona una fecha válida (AAAA-MM-DD)');
+                return;
+            }
+
+            if (!confirm(`¿Iniciar la producción 100% canónica del video para el ${fecha}?`)) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = '⏳ Procesando Pipeline...';
+            panel.style.display = 'block';
+            textoLog.innerText = `Enviando orden de producción para ${fecha}...`;
+            badge.innerText = 'EN_PROCESO';
+            badge.style.background = 'rgba(0, 242, 254, 0.2)';
+            badge.style.color = '#00f2fe';
+            titulo.innerText = `⚡ Produciendo Video V2 (${fecha})...`;
+
+            try {
+                const res = await fetch('/api/admin/producir-dia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fecha: fecha })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    if (pollingProduccionInterval) clearInterval(pollingProduccionInterval);
+                    pollingProduccionInterval = setInterval(() => consultarEstadoProduccion(fecha), 3000);
+                } else {
+                    alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    btn.innerText = '🎬 PRODUCIR VIDEO V2';
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error al comunicar con el servidor.');
+                btn.disabled = false;
+                btn.innerText = '🎬 PRODUCIR VIDEO V2';
+            }
+        }
+
+        async function consultarEstadoProduccion(fecha) {
+            try {
+                const res = await fetch(`/api/admin/estado-produccion?fecha=${fecha}`);
+                const data = await res.json();
+                const textoLog = document.getElementById('textoLogProduccion');
+                const badge = document.getElementById('badgeEstadoProduccion');
+                const btn = document.getElementById('btnLanzarProduccionV2');
+                const titulo = document.getElementById('tituloEstadoProduccion');
+
+                if (data.log) {
+                    textoLog.innerText = data.log;
+                    textoLog.scrollTop = textoLog.scrollHeight;
+                }
+
+                if (data.status === 'COMPLETADO') {
+                    badge.innerText = '✅ COMPLETADO';
+                    badge.style.background = 'rgba(34, 197, 94, 0.2)';
+                    badge.style.color = '#4ade80';
+                    titulo.innerText = `🎉 ¡Video del ${fecha} Producido con Éxito!`;
+                    btn.disabled = false;
+                    btn.innerText = '🎬 PRODUCIR OTRO DÍA';
+                    if (pollingProduccionInterval) clearInterval(pollingProduccionInterval);
+                    setTimeout(() => window.location.reload(), 4000);
+                } else if (data.status === 'ERROR') {
+                    badge.innerText = '❌ ERROR';
+                    badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                    badge.style.color = '#f87171';
+                    titulo.innerText = `⚠️ Falló la producción del ${fecha}`;
+                    btn.disabled = false;
+                    btn.innerText = '🎬 REINTENTAR PRODUCCIÓN';
+                    if (pollingProduccionInterval) clearInterval(pollingProduccionInterval);
+                }
+            } catch (e) {
+                console.error('Error consultando estado:', e);
             }
         }
     </script>

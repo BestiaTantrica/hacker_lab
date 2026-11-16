@@ -58,12 +58,43 @@ def iniciar_servidor(port: int = 8788):
     return proc
 
 
+CONFIGS_FECHA = {
+    "2026-11-06": {
+        "subtitulo": "6 DE NOVIEMBRE 2026 · EL PULSO DEL CIELO",
+        "p1_hold1": "Luna",
+        "p2_hold1": "Saturno",
+        "card1_titulo": "✦ EJE DE TENSIÓN: EL LÍMITE Y LA REALIDAD ✦",
+        "card1_aspecto": "☽ LUNA 11° LIBRA  ·  OPOSICIÓN 180°  ·  ♄ SATURNO 9° ARIES",
+        "card1_desc": "El otro pone un freno o una frialdad: no mendigues aprobación ni te aisles con rencor.",
+        "p1_hold2": "Venus",
+        "p2_hold2": "Júpiter",
+        "card2_titulo": "✦ APERTURA ARMÓNICA: PACTAR CON SOBERANÍA ✦",
+        "card2_aspecto": "♀ VENUS 24° LIBRA  ·  SEXTIL 60°  ·  ♃ JÚPITER 25° LEO (Y MARTE 21°)",
+        "card2_desc": "Diplomacia y fuego: defendé tu postura con calma y encanto, sin regalar tu valor.",
+    },
+    "2026-11-07": {
+        "subtitulo": "7 DE NOVIEMBRE 2026 · EL PULSO DEL CIELO",
+        "p1_hold1": "Luna",
+        "p2_hold1": "Venus",
+        "card1_titulo": "✦ CONJUNCIÓN SAGRADA: EL PACTO SOBERANO ✦",
+        "card1_aspecto": "☽ LUNA 24° LIBRA  ·  CONJUNCIÓN 0°  ·  ♀ VENUS 24° LIBRA",
+        "card1_desc": "El deseo y la necesidad se alinean: acuerdo entre pares que no te pide agachar la cabeza.",
+        "p1_hold2": "Venus",
+        "p2_hold2": "Júpiter",
+        "card2_titulo": "✦ APERTURA Y FUEGO: SEXTILES ARMÓNICOS ✦",
+        "card2_aspecto": "♀ VENUS Y ☽ LUNA 24° LIBRA  ·  SEXTIL 60°  ·  ♂ MARTE 22° Y ♃ JÚPITER 25° LEO",
+        "card2_desc": "Dignidad y fuego soberano: acordar sin achicarse para encajar.",
+    }
+}
+
+
 def generar_astrolabio_continuo_40s(
     fecha: str = "2026-11-06",
     duracion_s: float = 40.0,
     out_mp4: Path = None,
     port: int = 8788
 ):
+    cfg = CONFIGS_FECHA.get(fecha, CONFIGS_FECHA["2026-11-06"])
     if out_mp4 is None:
         out_mp4 = DEFAULT_OUTPUT_DIR / f"astrolabio_continuo_{fecha}_40s.mp4"
 
@@ -307,7 +338,11 @@ def generar_astrolabio_continuo_40s(
                                 (asp.p1 === 'Luna' && asp.p2 === 'Saturno') ||
                                 (asp.p2 === 'Luna' && asp.p1 === 'Saturno') ||
                                 (asp.p1 === 'Venus' && asp.p2 === 'Júpiter') ||
-                                (asp.p2 === 'Venus' && asp.p1 === 'Júpiter')
+                                (asp.p2 === 'Venus' && asp.p1 === 'Júpiter') ||
+                                (asp.p1 === 'Luna' && asp.p2 === 'Venus') ||
+                                (asp.p2 === 'Luna' && asp.p1 === 'Venus') ||
+                                (asp.p1 === 'Venus' && asp.p2 === 'Marte') ||
+                                (asp.p2 === 'Venus' && asp.p1 === 'Marte')
                             );
 
                             if (esProtagonista) {{
@@ -484,13 +519,14 @@ def generar_astrolabio_continuo_40s(
                         const targetScreenY = 780;
 
                         // Paneo inteligente según la fase
+                        const isNov7 = '{fecha}' === '2026-11-07';
                         if (faseActual === 'ZOOM_IN_OPOSICION' || faseActual === 'HOLD_OPOSICION') {{
-                            // Enfocar hacia el cuadrante de la Luna y Saturno
-                            const midX = (lunaClockX + saturnoClockX) / 2;
-                            const midY = (lunaClockY + saturnoClockY) / 2;
+                            // Enfocar hacia el tránsito clave del mediodía
+                            const midX = isNov7 ? (lunaClockX + venusClockX) / 2 : (lunaClockX + saturnoClockX) / 2;
+                            const midY = isNov7 ? (lunaClockY + venusClockY) / 2 : (lunaClockY + saturnoClockY) / 2;
                             const s = targetZoom;
-                            const finalPanX = -midX * s * 0.40;
-                            const finalPanY = (targetScreenY - cy) - midY * s * 0.40;
+                            const finalPanX = -midX * s * (isNov7 ? 0.60 : 0.40);
+                            const finalPanY = (targetScreenY - cy) - midY * s * (isNov7 ? 0.60 : 0.40);
                             
                             if (faseActual === 'ZOOM_IN_OPOSICION') {{
                                 const pEase = (elapsed - 3.5) / 2.5;
@@ -723,7 +759,7 @@ def generar_astrolabio_continuo_40s(
                         ctx.font = '600 20px "Cinzel", serif';
                         ctx.fillStyle = '#f1f5f9';
                         ctx.shadowBlur = 6;
-                        ctx.fillText("6 DE NOVIEMBRE 2026 · EL PULSO DEL CIELO", w / 2, 105);
+                        ctx.fillText("{cfg['subtitulo']}", w / 2, 105);
 
                         // Tarjeta Inferior Reubicada (Y = 1450: Despeja totalmente el aro del astrolabio)
                         const cardY = 1450;
@@ -747,28 +783,28 @@ def generar_astrolabio_continuo_40s(
 
                         if (faseActual === 'ZOOM_IN_OPOSICION' || faseActual === 'HOLD_OPOSICION') {{
                             ctx.font = '700 21px "Cinzel", serif';
-                            ctx.fillStyle = '#f87171';
-                            ctx.fillText("✦ EJE DE TENSIÓN: EL LÍMITE Y LA REALIDAD ✦", w / 2, cardY + 22);
+                            ctx.fillStyle = '{'#38bdf8' if fecha == '2026-11-07' else '#f87171'}';
+                            ctx.fillText("{cfg['card1_titulo']}", w / 2, cardY + 22);
 
                             ctx.font = '700 13px "Courier New", monospace';
                             ctx.fillStyle = '#38bdf8';
-                            ctx.fillText("☽ LUNA 11° LIBRA  ·  OPOSICIÓN 180°  ·  ♄ SATURNO 9° ARIES", w / 2, cardY + 58);
+                            ctx.fillText("{cfg['card1_aspecto']}", w / 2, cardY + 58);
 
                             ctx.font = '400 15px -apple-system, BlinkMacSystemFont, sans-serif';
                             ctx.fillStyle = '#e2e8f0';
-                            ctx.fillText("El otro pone un freno o una frialdad: no mendigues aprobación ni te aisles con rencor.", w / 2, cardY + 92);
+                            ctx.fillText("{cfg['card1_desc']}", w / 2, cardY + 92);
                         }} else if (faseActual === 'ZOOM_IN_SEXTIL' || faseActual === 'HOLD_SEXTIL') {{
                             ctx.font = '700 21px "Cinzel", serif';
                             ctx.fillStyle = '#fde047';
-                            ctx.fillText("✦ APERTURA ARMÓNICA: PACTAR CON SOBERANÍA ✦", w / 2, cardY + 22);
+                            ctx.fillText("{cfg['card2_titulo']}", w / 2, cardY + 22);
 
                             ctx.font = '700 13px "Courier New", monospace';
                             ctx.fillStyle = '#38bdf8';
-                            ctx.fillText("♀ VENUS 24° LIBRA  ·  SEXTIL 60°  ·  ♃ JÚPITER 25° LEO (Y MARTE 21°)", w / 2, cardY + 58);
+                            ctx.fillText("{cfg['card2_aspecto']}", w / 2, cardY + 58);
 
                             ctx.font = '400 15px -apple-system, BlinkMacSystemFont, sans-serif';
                             ctx.fillStyle = '#e2e8f0';
-                            ctx.fillText("Diplomacia y fuego: defendé tu postura con calma y encanto, sin regalar tu valor.", w / 2, cardY + 92);
+                            ctx.fillText("{cfg['card2_desc']}", w / 2, cardY + 92);
                         }} else if (faseActual === 'HOLD_24HS') {{
                             ctx.font = '700 22px "Cinzel", serif';
                             ctx.fillStyle = '#fde047';

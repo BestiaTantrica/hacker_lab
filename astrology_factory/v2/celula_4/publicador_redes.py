@@ -35,7 +35,10 @@ METADATA_DIR = Path(ADN["assets"]["boveda_base"]) / "Metadata_Redes"
 VIDEOS_FINALES = Path(ADN["assets"]["paths"]["videos_finales"])
 
 TOKEN_FILE = Path(__file__).parent / "token.json"
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl"
+]
 
 RESET = "\033[0m"; VERDE = "\033[92m"; ROJO = "\033[91m"; CYAN = "\033[96m"; MAGENTA = "\033[95m"; AMARILLO = "\033[93m"
 
@@ -50,10 +53,18 @@ def get_youtube_client():
         creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
         if not creds.valid:
             if creds.expired and creds.refresh_token:
+                import time
                 from google.auth.transport.requests import Request
-                creds.refresh(Request())
-                with open(TOKEN_FILE, 'w') as token:
-                    token.write(creds.to_json())
+                for intento in range(3):
+                    try:
+                        creds.refresh(Request())
+                        with open(TOKEN_FILE, 'w') as token:
+                            token.write(creds.to_json())
+                        break
+                    except Exception as err:
+                        if intento == 2:
+                            raise err
+                        time.sleep(2)
             else:
                 log("❌ El token de YouTube es inválido o ha expirado.", ROJO)
                 log("💡 Ejecuta python v2/celula_4/configurador_oauth.py para reautenticar.", AMARILLO)

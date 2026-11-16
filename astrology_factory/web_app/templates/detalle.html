@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspector Cósmico — Detalle en Vivo Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-primary: #f6c445;
+      --gold-glow: rgba(246, 196, 69, 0.6);
+      --border-gold: rgba(246, 196, 69, 0.45);
+      --bg-dark: #05070e;
+      --bg-card: rgba(9, 13, 24, 0.98);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --cyan-glow: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Marco Principal de Transmisión */
+    #detalle-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px;
+      background: radial-gradient(circle at 50% 15%, #141e34 0%, #060911 80%);
+      border: 2px solid var(--border-gold);
+      box-shadow: inset 0 0 40px rgba(246, 196, 69, 0.12), 0 10px 40px rgba(0,0,0,0.95);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* Esquinas doradas de precisión */
+    .corner-dec {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--gold-primary);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .corner-tl { top: 8px; left: 8px; border-width: 3px 0 0 3px; }
+    .corner-tr { top: 8px; right: 8px; border-width: 3px 3px 0 0; }
+    .corner-bl { bottom: 8px; left: 8px; border-width: 0 0 3px 3px; }
+    .corner-br { bottom: 8px; right: 8px; border-width: 0 3px 3px 0; }
+
+    /* Barra Superior de Categorías */
+    .category-tabs-bar {
+      display: flex;
+      gap: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1.5px solid rgba(246, 196, 69, 0.25);
+      margin-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .cat-tab {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(246, 196, 69, 0.3);
+      color: #cbd5e1;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .cat-tab:hover, .cat-tab.active {
+      background: #f6c445;
+      color: #000;
+      border-color: #f6c445;
+      box-shadow: 0 0 12px rgba(246, 196, 69, 0.5);
+    }
+
+    /* Barra de Ítems (Planetas, Signos, Casas, Aspectos) */
+    .items-selector-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .item-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(246, 196, 69, 0.25);
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .item-pill:hover, .item-pill.active {
+      background: linear-gradient(135deg, rgba(246, 196, 69, 0.35), rgba(180, 83, 9, 0.35));
+      border-color: var(--gold-primary);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(246, 196, 69, 0.4);
+    }
+
+    /* Contenido de la Tarjeta */
+    .card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+      gap: 8px;
+    }
+
+    .card-header-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .main-glyph {
+      font-size: 58px;
+      line-height: 1;
+      text-shadow: 0 0 25px var(--gold-glow);
+    }
+
+    .main-title-text {
+      font-family: 'Cinzel', serif;
+      font-size: 38px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1.5px;
+      line-height: 1.1;
+    }
+
+    .main-degrees {
+      font-size: 26px;
+      color: var(--cyan-glow);
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .meta-box {
+      font-size: 22px;
+      color: #e2e8f0;
+      line-height: 1.45;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 4px solid var(--cyan-glow);
+      margin-bottom: 8px;
+    }
+
+    .psico-box {
+      font-size: 24px;
+      color: #f8fafc;
+      line-height: 1.5;
+      background: rgba(246, 196, 69, 0.08);
+      border-left: 4px solid var(--gold-primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 8px;
+    }
+
+    .psico-box strong {
+      color: var(--gold-primary);
+    }
+
+    /* Lista de Aspectos Mayores */
+    .aspects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .aspect-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      border-left: 3px solid var(--cyan-glow);
+    }
+
+    .aspect-row strong {
+      color: #fff;
+    }
+
+    /* Pie de Tarjeta / Call To Action */
+    .card-footer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1.5px solid rgba(246, 196, 69, 0.3);
+      padding-top: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fef08a;
+    }
+
+    .cta-highlight {
+      background: rgba(246, 196, 69, 0.15);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-primary);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* Modo 1 Invitado: Formato Compacto Horizontal */
+    body.mode-invitado #detalle-frame {
+      padding: 10px 14px;
+      border-width: 1.5px;
+    }
+    body.mode-invitado .category-tabs-bar {
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+    }
+    body.mode-invitado .items-selector-bar {
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+    }
+    body.mode-invitado .main-glyph {
+      font-size: 38px;
+    }
+    body.mode-invitado .main-title-text {
+      font-size: 26px;
+    }
+    body.mode-invitado .main-degrees {
+      font-size: 18px;
+    }
+    body.mode-invitado .meta-box {
+      font-size: 16px;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+    body.mode-invitado .psico-box {
+      font-size: 17px;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+    body.mode-invitado .card-footer-cta {
+      font-size: 14px;
+      padding-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="detalle-frame">
+    <div class="corner-dec corner-tl"></div>
+    <div class="corner-dec corner-tr"></div>
+    <div class="corner-dec corner-bl"></div>
+    <div class="corner-dec corner-br"></div>
+
+    <!-- 1. Pestañas de Categoría -->
+    <div class="category-tabs-bar">
+      <button class="cat-tab active" data-cat="planetas" onclick="setCategoryTab('planetas')">🪐 Planetas</button>
+      <button class="cat-tab" data-cat="signos" onclick="setCategoryTab('signos')">♈ Signos</button>
+      <button class="cat-tab" data-cat="casas" onclick="setCategoryTab('casas')">🏛️ Casas</button>
+      <button class="cat-tab" data-cat="aspectos" onclick="setCategoryTab('aspectos')">⚡ Aspectos</button>
+    </div>
+
+    <!-- 2. Barra de Ítems según Categoría -->
+    <div class="items-selector-bar" id="items-buttons"></div>
+
+    <!-- 3. Contenido de la Tarjeta Seleccionada (Ultra Legible Broadcast) -->
+    <div class="card-content">
+      <div>
+        <div class="card-header-badge">
+          <span id="badge-type">✦ CIELO EN VIVO</span>
+          <span style="font-size: 14px; color: #94a3b8;" id="clock-live">--:--</span>
+        </div>
+
+        <div class="title-row">
+          <span class="main-glyph" id="card-glyph">☉</span>
+          <div>
+            <span class="main-title-text" id="card-name">SOL</span>
+            <span class="main-degrees" id="card-degrees">en Escorpio 22°</span>
+          </div>
+        </div>
+
+        <div class="meta-box" id="card-house">
+          <strong>Emplazamiento:</strong> Casa VII • El espejo del otro, compromisos y vínculos contractuales.
+        </div>
+
+        <div class="psico-box" id="card-psico">
+          <strong>Psicología & Evolución:</strong> Consciencia despierta, necesidad de autenticidad y caída de máscaras en las relaciones.
+        </div>
+
+        <div class="aspects-list" id="card-aspects"></div>
+      </div>
+
+      <div class="card-footer-cta">
+        <span id="card-cta">💬 ¿En qué casa tenés a Escorpio? Te leo en el chat</span>
+        <span class="cta-highlight">portaltarotmistico.com</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GLYPHS = {
+      'Sol': '☉', 'Luna': '☽', 'Mercurio': '☿', 'Venus': '♀', 'Marte': '♂',
+      'Júpiter': '♃', 'Saturno': '♄', 'Urano': '♅', 'Neptuno': '♆', 'Plutón': '♇',
+      'Quirón': '⚷', 'Nodo Norte': '☊'
+    };
+
+    const PLANET_COLORS = {
+      'Sol': '#f6c445', 'Luna': '#e2e8f0', 'Mercurio': '#94a3b8', 'Venus': '#ec4899',
+      'Marte': '#ef4444', 'Júpiter': '#f97316', 'Saturno': '#d97706', 'Urano': '#06b6d4',
+      'Neptuno': '#3b82f6', 'Plutón': '#a855f7', 'Quirón': '#10b981', 'Nodo Norte': '#10b981'
+    };
+
+    const PLANETA_SIGNIFICADOS = {
+      'Sol': 'Identidad consciente, vitalidad radiante, propósito evolutivo y soberanía personal.',
+      'Luna': 'Mundo emocional interior, instinto, seguridad somática y memorias del inconsciente.',
+      'Mercurio': 'Mente analítica, comunicación, agilidad de pensamiento y puentes relacionales.',
+      'Venus': 'Magnetismo, valores, equilibrio afectivo, goce estético y apertura al encuentro.',
+      'Marte': 'Fuerza de acción, valentía asertiva, conquista, pasión y límites firmes.',
+      'Júpiter': 'Expansión de consciencia, cosmovisión superior, fe, sabiduría y oportunidades.',
+      'Saturno': 'Madurez, estructura sólida, tiempo sagrado, disciplina y leyes de realidad.',
+      'Urano': 'Revolución mental, despertar súbito, innovación radical y quiebre de viejos moldes.',
+      'Neptuno': 'Sensibilidad oceánica, intuición mística, arte trascendente y compasión universal.',
+      'Plutón': 'Metamorfosis alquímica, caída de máscaras, transmutación de sombras y renacimiento.',
+      'Quirón': 'La herida sagrada que se transmuta en medicina y sabiduría curativa.',
+      'Nodo Norte': 'El vector de evolución del alma, hacia dónde expandir la consciencia en esta vida.'
+    };
+
+    const CASA_DESC = {
+      1: "Casa I (Ascendente): Identidad, presencia física, impulso vital y máscara exterior.",
+      2: "Casa II: Recursos propios, economía personal, valores y seguridad material.",
+      3: "Casa III: Mente concreta, comunicación inmediata, hermanos y entorno cercano.",
+      4: "Casa IV (Fondo de Cielo): Raíces, hogar, linaje familiar y mundo íntimo subterráneo.",
+      5: "Casa V: Creatividad pura, pasiones, autoexpresión, romances e hijos.",
+      6: "Casa VI: Salud somática, disciplina cotidiana, trabajo y orden del cuerpo.",
+      7: "Casa VII (Descendente): El espejo del otro, compromisos, socios y vínculos contractuales.",
+      8: "Casa VIII: Transformación radical, sexualidad alquímica, crisis y recursos compartidos.",
+      9: "Casa IX: Filosofía, viajes lejanos, cosmovisión superior y búsqueda de sentido.",
+      10: "Casa X (Medio Cielo): Vocación, destino público, reputación y maestría en el mundo.",
+      11: "Casa XI: Redes humanas, proyectos colectivos, ideales comunitarios y futuro.",
+      12: "Casa XII: Inconsciente colectivo, lo no resuelto, retiro espiritual y disolución del ego."
+    };
+
+    const SIGNO_DESC = {
+      'Aries': 'Fuego Cardinal. Inicio valiente, impulso pionero, acción directa y soberanía del deseo. Arquetipo del Guerrero.',
+      'Tauro': 'Tierra Fija. Enraizamiento material, estabilidad somática, placer sensorial y acumulación fértil. Arquetipo del Creador.',
+      'Géminis': 'Aire Mutable. Curiosidad insaciable, agilidad mental, puentes dialécticos y juego de perspectivas. Arquetipo del Mensajero.',
+      'Cáncer': 'Agua Cardinal. Nutrición emocional, memoria del linaje, protección del santuario íntimo y ternura visceral. Arquetipo de la Madre.',
+      'Leo': 'Fuego Fijo. Fuego del corazón, irradiación magnética, dignidad soberana y autenticidad creadora. Arquetipo del Rey / Artista.',
+      'Virgo': 'Tierra Mutable. Alquimia del detalle, discernimiento sagrado, devoción por el servicio y purificación. Arquetipo del Sanador.',
+      'Libra': 'Aire Cardinal. Armonía vincular, diplomacia estética, justicia distributiva y la danza del espejo ajeno. Arquetipo del Mediador.',
+      'Escorpio': 'Agua Fija. Profundidad psicológica, regeneración plutoniana, muerte del ego y transmutación de sombras. Arquetipo del Chamán.',
+      'Sagitario': 'Fuego Mutable. Flecha hacia el horizonte, sabiduría filosófica, fe inquebrantable y expansión de fronteras. Arquetipo del Explorador.',
+      'Capricornio': 'Tierra Cardinal. Arquitectura del tiempo, maestría pragmática, perseverancia solitaria y legado perdurable. Arquetipo del Sabio / Constructor.',
+      'Acuario': 'Aire Fijo. Visión futurista, red colaborativa, rebelión iluminadora y libertad mental radical. Arquetipo del Revolucionario.',
+      'Piscis': 'Agua Mutable. Misticismo trascendente, compasión oceánica, disolución de fronteras y comunión cósmica. Arquetipo del Místico.'
+    };
+
+    const SIGNO_GLYPHS = {
+      'Aries': '♈', 'Tauro': '♉', 'Géminis': '♊', 'Cáncer': '♋', 'Leo': '♌', 'Virgo': '♍',
+      'Libra': '♎', 'Escorpio': '♏', 'Sagitario': '♐', 'Capricornio': '♑', 'Acuario': '♒', 'Piscis': '♓'
+    };
+
+    const ASPECT_DESC = {
+      'Conjunción': 'Fusión cuántica de energías. Las dos fuerzas arquetípicas operan como una sola entidad indivisible, marcando un potente nuevo ciclo evolutivo.',
+      'Oposición': 'Tensión polar y dialéctica. Desafío de integrar dos fuerzas opuestas a través de los vínculos y la conciencia reflexiva frente al espejo del otro.',
+      'Trígono': 'Fluidez armónica natural. Talentos innatos, dones celestes y puertas de manifestación que se abren sin fricción ni esfuerzo.',
+      'Cuadratura': 'Fricción dinámica y fuego de crisis. Tensión motora indispensable que exige decisiones firmes, maduración y quiebre de la pasividad.',
+      'Sextil': 'Oportunidad creadora y puente de entendimiento. Estímulo intelectual que requiere intención consciente y acción para manifestarse.',
+      'Quincuncio': 'Reajuste alquímico constante. Tensión entre dos mundos que no hablan el mismo idioma y obligan a afinar la percepción.'
+    };
+
+    const ROMANOS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+
+    const planets = [
+      { nombre: 'Sol', signo: 'Escorpio', grado: 22, minutos: 14, casa: 7 },
+      { nombre: 'Luna', signo: 'Capricornio', grado: 19, minutos: 40, casa: 9 },
+      { nombre: 'Mercurio', signo: 'Sagitario', grado: 3, minutos: 12, casa: 8 },
+      { nombre: 'Venus', signo: 'Capricornio', grado: 2, minutos: 45, casa: 9 },
+      { nombre: 'Marte', signo: 'Leo', grado: 4, minutos: 18, casa: 4 },
+      { nombre: 'Júpiter', signo: 'Cáncer', grado: 18, minutos: 50, casa: 3 },
+      { nombre: 'Saturno', signo: 'Piscis', grado: 12, minutos: 30, casa: 11 },
+      { nombre: 'Urano', signo: 'Géminis', grado: 3, minutos: 46, casa: 2 },
+      { nombre: 'Neptuno', signo: 'Piscis', grado: 27, minutos: 10, casa: 11 },
+      { nombre: 'Plutón', signo: 'Acuario', grado: 0, minutos: 55, casa: 10 }
+    ];
+
+    let currentCategory = 'planetas';
+    let currentItemKey = 'Sol';
+
+    // ── GESTIÓN DE PESTAÑAS Y SELECTORES ─────────────────────────────────
+    function setCategoryTab(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-tab').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+      });
+      renderItemsBar();
+    }
+
+    function renderItemsBar() {
+      const bar = document.getElementById('items-buttons');
+      let html = '';
+
+      if (currentCategory === 'planetas') {
+        html = planets.map(p => `
+          <button class="item-pill ${currentItemKey === p.nombre ? 'active' : ''}" onclick="selectPlanetByName('${p.nombre}')">
+            <span style="color:${PLANET_COLORS[p.nombre]}">${GLYPHS[p.nombre]}</span> ${p.nombre}
+          </button>
+        `).join('');
+      } else if (currentCategory === 'signos') {
+        const signosList = Object.keys(SIGNO_DESC);
+        html = signosList.map(s => `
+          <button class="item-pill ${currentItemKey === s ? 'active' : ''}" onclick="selectSignByName('${s}')">
+            <span style="color:#f6c445">${SIGNO_GLYPHS[s] || '♈'}</span> ${s}
+          </button>
+        `).join('');
+      } else if (currentCategory === 'casas') {
+        html = ROMANOS.map((rom, idx) => `
+          <button class="item-pill ${currentItemKey === String(idx + 1) ? 'active' : ''}" onclick="selectHouseByNum(${idx + 1})">
+            <span style="color:#f6c445">🏛️</span> Casa ${rom}
+          </button>
+        `).join('');
+      } else if (currentCategory === 'aspectos') {
+        const aspList = Object.keys(ASPECT_DESC);
+        html = aspList.map(asp => `
+          <button class="item-pill ${currentItemKey === asp ? 'active' : ''}" onclick="selectAspectByName('${asp}')">
+            <span style="color:#38bdf8">⚡</span> ${asp}
+          </button>
+        `).join('');
+      }
+
+      bar.innerHTML = html;
+    }
+
+    function selectPlanetByName(name) {
+      currentCategory = 'planetas';
+      currentItemKey = name;
+      setCategoryTab('planetas');
+      const p = planets.find(x => x.nombre.toLowerCase() === name.toLowerCase()) || { nombre: name, signo: 'Escorpio', grado: 22, casa: 7 };
+      renderPlanetCard(p);
+    }
+
+    function selectSignByName(name) {
+      currentCategory = 'signos';
+      currentItemKey = name;
+      setCategoryTab('signos');
+      handleSyncItem({
+        tipo: 'signo',
+        data: { nombre: name, simbolo: SIGNO_GLYPHS[name] || '♈', elemento: 'Activo', regente: 'Cosmos', color: '#f6c445' },
+        grado: 15
+      });
+    }
+
+    function selectHouseByNum(num) {
+      currentCategory = 'casas';
+      currentItemKey = String(num);
+      setCategoryTab('casas');
+      handleSyncItem({
+        tipo: 'casa',
+        num: num
+      });
+    }
+
+    function selectAspectByName(aspName) {
+      currentCategory = 'aspectos';
+      currentItemKey = aspName;
+      setCategoryTab('aspectos');
+      handleSyncItem({
+        tipo: 'aspecto',
+        data: { tipo: aspName, p1: 'Sol', p2: 'Plutón', angulo: aspName === 'Oposición' ? 180 : (aspName === 'Trígono' ? 120 : (aspName === 'Cuadratura' ? 90 : 0)), orbe: 1.2, esExacto: true, color: '#38bdf8' }
+      });
+    }
+
+    function renderPlanetCard(p) {
+      const color = PLANET_COLORS[p.nombre] || '#f6c445';
+      const glyph = GLYPHS[p.nombre] || '★';
+      const psico = PLANETA_SIGNIFICADOS[p.nombre] || 'Influencia viva en el cielo actual.';
+
+      document.getElementById('badge-type').innerText = '✦ PLANETA EN EL MANDALA';
+      document.getElementById('card-glyph').innerText = glyph;
+      document.getElementById('card-glyph').style.color = color;
+      document.getElementById('card-name').innerText = p.nombre.toUpperCase();
+      document.getElementById('card-degrees').innerText = `en ${p.signo} ${p.grado}°${p.minutos||0}'`;
+      document.getElementById('card-degrees').style.color = color;
+
+      document.getElementById('card-house').innerHTML = `
+        <strong>Emplazamiento:</strong> ${CASA_DESC[p.casa] || `Casa ${p.casa}`}
+      `;
+
+      document.getElementById('card-psico').innerHTML = `
+        <strong>Psicología & Evolución:</strong> ${psico}
+      `;
+
+      document.getElementById('card-aspects').innerHTML = '';
+      document.getElementById('card-cta').innerHTML = `
+        💬 ¿En qué casa tenés a <strong>${p.nombre}</strong>? Te leo en el chat
+      `;
+    }
+
+    // ── GESTIÓN DE ITEMS EN TIEMPO REAL DESDE EL ASTROLABIO ───────────────
+    function handleSyncItem(item) {
+      if (!item) return;
+
+      if (item.tipo === 'planeta' && item.data) {
+        const p = item.data;
+        currentCategory = 'planetas';
+        currentItemKey = p.nombre;
+        setCategoryTab('planetas');
+
+        const color = PLANET_COLORS[p.nombre] || '#f6c445';
+        const glyph = GLYPHS[p.nombre] || '★';
+        const psico = PLANETA_SIGNIFICADOS[p.nombre] || 'Influencia viva en el cielo actual.';
+
+        document.getElementById('badge-type').innerText = '✦ PLANETA EN EL MANDALA';
+        document.getElementById('card-glyph').innerText = glyph;
+        document.getElementById('card-glyph').style.color = color;
+        document.getElementById('card-name').innerText = p.nombre.toUpperCase();
+        document.getElementById('card-degrees').innerText = `en ${p.signo} ${p.grado}°${p.minutos||0}'`;
+        document.getElementById('card-degrees').style.color = color;
+
+        document.getElementById('card-house').innerHTML = `
+          <strong>Emplazamiento:</strong> ${CASA_DESC[p.casa] || `Casa ${p.casa}`}
+        `;
+
+        document.getElementById('card-psico').innerHTML = `
+          <strong>Psicología & Evolución:</strong> ${psico}
+        `;
+
+        document.getElementById('card-aspects').innerHTML = '';
+        document.getElementById('card-cta').innerHTML = `
+          💬 ¿En qué casa tenés a <strong>${p.nombre}</strong>? Te leo en el chat
+        `;
+      } else if (item.tipo === 'signo' && item.data) {
+        const s = item.data;
+        currentCategory = 'signos';
+        currentItemKey = s.nombre;
+        setCategoryTab('signos');
+
+        const desc = SIGNO_DESC[s.nombre] || 'Sector zodiacal activo.';
+
+        document.getElementById('badge-type').innerText = `♈ SECTOR ZODIACAL • ${s.elemento ? s.elemento.toUpperCase() : 'ZODÍACO'}`;
+        document.getElementById('card-glyph').innerText = s.simbolo || SIGNO_GLYPHS[s.nombre] || '♈';
+        document.getElementById('card-glyph').style.color = s.color || '#f6c445';
+        document.getElementById('card-name').innerText = `SIGNO DE ${s.nombre.toUpperCase()}`;
+        document.getElementById('card-degrees').innerText = `(${item.grado || 0}°)`;
+        document.getElementById('card-degrees').style.color = s.color || '#f6c445';
+
+        document.getElementById('card-house').innerHTML = `
+          <strong>Elemento:</strong> ${s.elemento || 'Activo'} • <strong>Regente:</strong> ${s.regente || 'Cosmos'}
+        `;
+
+        document.getElementById('card-psico').innerHTML = `
+          <strong>Esencia Arquetípica:</strong> ${desc}
+        `;
+
+        document.getElementById('card-aspects').innerHTML = '';
+        document.getElementById('card-cta').innerHTML = `
+          💬 ¿Quién tiene el Sol, la Luna o el Ascendente en <strong>${s.nombre}</strong>?
+        `;
+      } else if (item.tipo === 'casa') {
+        const hNum = item.num;
+        currentCategory = 'casas';
+        currentItemKey = String(hNum);
+        setCategoryTab('casas');
+
+        const rom = ROMANOS[hNum - 1] || String(hNum);
+        const desc = CASA_DESC[hNum] || `Casa ${hNum}`;
+
+        document.getElementById('badge-type').innerText = `🏛️ CASA ASTROLÓGICA ${rom}`;
+        document.getElementById('card-glyph').innerText = rom;
+        document.getElementById('card-glyph').style.color = '#f6c445';
+        document.getElementById('card-name').innerText = `CASA ${rom}`;
+        document.getElementById('card-degrees').innerText = `Territorio de Vida`;
+        document.getElementById('card-degrees').style.color = '#f6c445';
+
+        document.getElementById('card-house').innerHTML = `
+          <strong>Territorio:</strong> ${desc.split(':')[0]}
+        `;
+
+        document.getElementById('card-psico').innerHTML = `
+          <strong>Significado Profundo:</strong> ${desc.split(':')[1] || desc}
+        `;
+
+        document.getElementById('card-aspects').innerHTML = '';
+        document.getElementById('card-cta').innerHTML = `
+          💬 ¿Qué planetas tenés en <strong>Casa ${rom}</strong>? Te respondo en vivo
+        `;
+      } else if (item.tipo === 'aspecto' && item.data) {
+        const a = item.data;
+        currentCategory = 'aspectos';
+        currentItemKey = a.tipo;
+        setCategoryTab('aspectos');
+
+        const desc = ASPECT_DESC[a.tipo] || 'Interacción angular entre fuerzas celestes.';
+
+        document.getElementById('badge-type').innerText = `⚡ ASPECTO CÓSMICO MAYOR`;
+        document.getElementById('card-glyph').innerText = '⚡';
+        document.getElementById('card-glyph').style.color = a.color || '#38bdf8';
+        document.getElementById('card-name').innerText = `${a.p1 ? a.p1.toUpperCase() : 'PLANETA 1'} Y ${a.p2 ? a.p2.toUpperCase() : 'PLANETA 2'}`;
+        document.getElementById('card-degrees').innerText = `${a.tipo.toUpperCase()} (${a.orbe ? a.orbe.toFixed(1) : '1.0'}°)`;
+        document.getElementById('card-degrees').style.color = a.color || '#38bdf8';
+
+        document.getElementById('card-house').innerHTML = `
+          <strong>Geometría:</strong> ${a.angulo || 0}° • ${a.esExacto ? 'Exacto / Muy Intenso' : 'Vigente'}
+        `;
+
+        document.getElementById('card-psico').innerHTML = `
+          <strong>Alquimia del Aspecto:</strong> ${desc}
+        `;
+
+        document.getElementById('card-aspects').innerHTML = '';
+        document.getElementById('card-cta').innerHTML = `
+          💬 Este aspecto está activo en el cielo. ¿Sentís la energía?
+        `;
+      }
+    }
+
+    // ── CANAL DE SINCRONIZACIÓN EN TIEMPO REAL ───────────────────────────
+    function onSyncPayload(payload) {
+      if (!payload) return;
+      if (payload.layoutMode) {
+        document.body.classList.toggle('mode-invitado', payload.layoutMode === 'invitado-1');
+      }
+      if (payload.item) {
+        handleSyncItem(payload.item);
+      } else if (payload.planet) {
+        selectPlanetByName(payload.planet);
+      }
+    }
+
+    try {
+      const channel = new BroadcastChannel('astrolabio_sync');
+      channel.onmessage = (event) => {
+        if (!event.data) return;
+        onSyncPayload(event.data);
+      };
+    } catch(e) {
+      console.warn('BroadcastChannel no disponible');
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'astro_sync_payload' && e.newValue) {
+        try { onSyncPayload(JSON.parse(e.newValue)); } catch(err) {}
+      } else if (e.key === 'astro_selected_item' && e.newValue) {
+        try { handleSyncItem(JSON.parse(e.newValue)); } catch(err) {}
+      } else if (e.key === 'astro_selected_planet' && e.newValue) {
+        const pName = e.newValue.split('_')[0];
+        selectPlanetByName(pName);
+      } else if (e.key === 'astro_live_layout' && e.newValue) {
+        document.body.classList.toggle('mode-invitado', e.newValue === 'invitado-1');
+      }
+    });
+
+    // Polling ultraligero de sincronización cruzada (250ms)
+    let lastSyncTs = 0;
+    setInterval(() => {
+      try {
+        const raw = localStorage.getItem('astro_sync_payload');
+        if (raw) {
+          const p = JSON.parse(raw);
+          if (p.ts && p.ts > lastSyncTs) {
+            lastSyncTs = p.ts;
+            onSyncPayload(p);
+          }
+        }
+      } catch(e) {}
+    }, 250);
+
+    // Reloj digital en vivo
+    setInterval(() => {
+      const d = new Date();
+      document.getElementById('clock-live').innerText = d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }, 1000);
+
+    // Inicializar
+    setCategoryTab('planetas');
+    renderPlanetCard(planets[0]);
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import sys
 import sqlite3
 import os
 import json
+import time
 import urllib.parse
 import httpx
 from pathlib import Path
@@ -105,6 +106,91 @@ async def read_terms(request: Request):
 @app.get("/reloj", response_class=HTMLResponse)
 async def read_reloj(request: Request):
     return templates.TemplateResponse(request=request, name="reloj.html")
+
+@app.get("/detalle", response_class=HTMLResponse)
+async def read_detalle(request: Request):
+    return templates.TemplateResponse(request=request, name="detalle.html")
+
+@app.get("/camara")
+async def redirect_camara():
+    """Redirección directa para conectar la cámara del celular de Tomás sin configurar nada"""
+    return RedirectResponse("https://vdo.ninja/?room=tomaslive&push=tomas&webcam&autostart")
+
+@app.get("/invitado")
+async def redirect_invitado():
+    """Enlace corto para invitar a cualquier persona a salir en vivo en pantalla dividida"""
+    return RedirectResponse("https://vdo.ninja/?room=tomaslive&push=invitado&webcam")
+
+STUDIO_AUTH_TOKEN = "tomas_astro_live_777"
+
+@app.get("/api/live_subscribers")
+async def get_live_subscribers(request: Request):
+    # Proteger estrictamente los datos de consultantes: solo Tomás en su estudio
+    token = request.query_params.get("token") or request.headers.get("X-Studio-Token")
+    if token != STUDIO_AUTH_TOKEN:
+        return []
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, name, birth_date, birth_time, birth_city 
+            FROM subscribers 
+            WHERE birth_date IS NOT NULL AND birth_date != ''
+            ORDER BY id DESC LIMIT 15
+        """)
+        rows = cursor.fetchall()
+        conn.close()
+        return [
+            {
+                "id": r[0],
+                "name": r[1] or "Consultante",
+                "birth_date": r[2] or "",
+                "birth_time": r[3] or "12:00",
+                "birth_city": r[4] or "Buenos Aires, Argentina"
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        return []
+
+@app.post("/api/live_subscribers")
+async def add_live_subscriber(request: Request):
+    token = request.query_params.get("token") or request.headers.get("X-Studio-Token")
+    if token != STUDIO_AUTH_TOKEN:
+        return {"status": "unauthorized"}
+
+    try:
+        data = await request.json()
+        name = data.get("name", "Consultante Live").strip()
+        birth_date = data.get("birth_date", "").strip()
+        birth_time = data.get("birth_time", "12:00").strip()
+        birth_city = data.get("birth_city", "Buenos Aires").strip()
+        email = data.get("email", f"live_{int(time.time())}@portaltarotmistico.com").strip()
+
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO subscribers (name, email, birth_date, birth_time, birth_city, wants_weekly)
+            VALUES (?, ?, ?, ?, ?, 1)
+        """, (name, email, birth_date, birth_time, birth_city))
+        conn.commit()
+        new_id = cursor.lastrowid
+        conn.close()
+        return {
+            "status": "ok",
+            "id": new_id,
+            "name": name,
+            "birth_date": birth_date,
+            "birth_time": birth_time,
+            "birth_city": birth_city
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.get("/live", response_class=HTMLResponse)
+async def read_live(request: Request):
+    return templates.TemplateResponse(request=request, name="live.html")
 
 @app.get("/privacy", response_class=HTMLResponse)
 async def read_privacy(request: Request):
@@ -311,6 +397,61 @@ async def obtener_astronomia_fecha(fecha: str):
             "resumen_astronomico": cielo,
             "cadena_ayer": cadena_ayer,
             "cadena_manana": cadena_manana
+        })
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.post("/api/admin/producir-dia")
+async def producir_dia(request: Request):
+    """Lanza la producción del video diario V2 con produccion_diaria.py."""
+    try:
+        data = await request.json()
+        fecha = data.get("fecha")
+        if not fecha:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "Fecha requerida (AAAA-MM-DD)"})
+        
+        script_path = os.path.join(PROJECT_DIR, "produccion_diaria.py")
+        python_exec = os.path.join(PROJECT_DIR, "venv", "bin", "python")
+        log_dir = os.path.join(PROJECT_DIR, "logs")
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, f"produccion_{fecha}.log")
+        
+        # Ejecutar en segundo plano desacoplado
+        cmd = f"nohup {python_exec} {script_path} --fecha {fecha} > {log_file} 2>&1 &"
+        os.system(cmd)
+        
+        return JSONResponse({
+            "status": "success",
+            "message": f"Producción V2 lanzada para {fecha}",
+            "log_file": log_file
+        })
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.get("/api/admin/estado-produccion")
+async def estado_produccion(fecha: str):
+    """Consulta el estado y últimas líneas del log de producción para una fecha."""
+    try:
+        log_path = os.path.join(PROJECT_DIR, "logs", f"produccion_{fecha}.log")
+        if not os.path.exists(log_path):
+            return JSONResponse({"status": "no_iniciado", "log": ""})
+            
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        ultimo_log = "".join(lines[-35:])
+        completado = any("PRODUCCIÓN EXITOSA" in line for line in lines)
+        fallido = any("Fallo en" in line or "Fallo crítico" in line or "Traceback" in line for line in lines)
+        
+        estado = "EN_PROCESO"
+        if completado:
+            estado = "COMPLETADO"
+        elif fallido and not completado:
+            estado = "ERROR"
+            
+        return JSONResponse({
+            "status": estado,
+            "log": ultimo_log
         })
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})

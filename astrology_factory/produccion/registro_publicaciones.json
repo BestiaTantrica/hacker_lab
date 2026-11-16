@@ -265,7 +265,28 @@
       "video_generado": true,
       "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-16_Marte_Conjuncion_Jupiter_Leo.mp4",
       "estado_render": "COMPLETADO",
-      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)"
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)",
+      "youtube_video_id": "yrta2iGwUz4",
+      "youtube_url": "https://www.youtube.com/watch?v=yrta2iGwUz4",
+      "estado_youtube": "PUBLICADO",
+      "instagram_media_id": "17979859548155722",
+      "instagram_url": "https://www.instagram.com/p/17979859548155722/",
+      "estado_instagram": "PUBLICADO",
+      "facebook_video_id": "1176275591416431",
+      "facebook_url": "https://www.facebook.com/watch/?v=1176275591416431",
+      "estado_facebook": "PUBLICADO"
+    },
+    "2026-11-17": {
+      "evento_id": "2026-11-17_Luna_Oposicion_Marte_Acuario",
+      "titulo": "2026-11-17 | Luna en Oposición con Marte en Acuario",
+      "fecha_publicacion": "2026-11-17",
+      "video_generado": true,
+      "path_video": "/home/LAB/astrology_factory/produccion/semana_02nov_08nov/FINAL_2026-11-17_Luna_Oposicion_Marte_Acuario.mp4",
+      "estado_render": "COMPLETADO",
+      "notas": "Producido automáticamente por produccion_diaria.py (Pipeline V2)",
+      "youtube_video_id": "O8V1yuo_Tk0",
+      "youtube_url": "https://www.youtube.com/watch?v=O8V1yuo_Tk0",
+      "estado_youtube": "PROGRAMADO"
     }
   }
 }

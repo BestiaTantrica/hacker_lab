@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Tarot Místico — Estudio Live Vertical</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-primary: #f6c445;
+      --gold-glow: rgba(246, 196, 69, 0.45);
+      --border-gold: rgba(246, 196, 69, 0.35);
+      --bg-dark: #05070c;
+      --bg-card: rgba(12, 17, 29, 0.85);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --cyan-glow: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Contenedor Vertical 9:16 (Lienzo Celular / TikTok Live) */
+    #live-layout {
+      position: relative;
+      width: 100vw;
+      max-width: 540px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 30%, #101626 0%, #05070c 75%, #000000 100%);
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
+      border-left: 1px solid rgba(246, 196, 69, 0.15);
+      border-right: 1px solid rgba(246, 196, 69, 0.15);
+      overflow: hidden;
+    }
+
+    /* ── 1. HEADER SUPERIOR ─────────────────────────────────────── */
+    .live-header {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border-gold);
+      background: rgba(5, 7, 12, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 20;
+    }
+
+    .brand-live {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f6c445, #b45309);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .brand-text h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      color: var(--gold-primary);
+      text-shadow: 0 0 8px var(--gold-glow);
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .live-pill {
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: pulse-live 1.8s infinite;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.96); }
+    }
+
+    /* ── 2. SECCIÓN SUPERIOR: EL ASTROLABIO SAGRADO (45% ALTURA) ── */
+    #reloj-container {
+      position: relative;
+      width: 100%;
+      height: 44%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
+      opacity: 0.35;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #reloj-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* HUD flotante en el reloj */
+    .reloj-mini-hud {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 0.7rem;
+      color: var(--gold-primary);
+      background: rgba(0,0,0,0.6);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-gold);
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+
+    /* ── 3. SECCIÓN MEDIA: MACHETE & EXPLICACIONES EN VIVO (23% ALTURA) ── */
+    .live-machete-section {
+      height: 24%;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(180deg, rgba(8, 12, 22, 0.95) 0%, rgba(12, 17, 29, 0.98) 100%);
+      border-top: 1px solid var(--border-gold);
+      border-bottom: 1px solid var(--border-gold);
+      z-index: 15;
+    }
+
+    .machete-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .machete-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .transit-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 10px var(--gold-glow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .transit-degrees {
+      font-size: 0.72rem;
+      color: var(--cyan-glow);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .transit-meaning-box {
+      background: rgba(246, 196, 69, 0.06);
+      border-left: 3px solid var(--gold-primary);
+      padding: 6px 10px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.78rem;
+      color: #e2e8f0;
+      line-height: 1.35;
+      margin: 4px 0;
+    }
+
+    .transit-meaning-box strong {
+      color: var(--gold-primary);
+    }
+
+    .machete-footer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(246, 196, 69, 0.2);
+      padding-top: 4px;
+    }
+
+    .machete-footer-cta .cta-highlight {
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    /* ── 4. SECCIÓN INFERIOR: MARCO PARA TU CÁMARA (32% ALTURA) ── */
+    .live-camera-frame {
+      position: relative;
+      flex: 1;
+      margin: 8px 12px 10px 12px;
+      border: 2px solid var(--border-gold);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.75);
+      box-shadow: inset 0 0 25px rgba(246, 196, 69, 0.15);
+      z-index: 10;
+    }
+
+    /* Esquinas decorativas doradas al estilo alquímico */
+    .corner-dec {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--gold-primary);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .corner-tl { top: 4px; left: 4px; border-width: 2px 0 0 2px; }
+    .corner-tr { top: 4px; right: 4px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: 4px; left: 4px; border-width: 0 0 2px 2px; }
+    .corner-br { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+
+    .camera-placeholder-text {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .camera-placeholder-text .cam-icon {
+      font-size: 1.8rem;
+      color: var(--gold-primary);
+      text-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .camera-placeholder-text small {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Video embebido en caso de activar cámara en el navegador */
+    #local-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .btn-cam-toggle {
+      position: absolute;
+      bottom: 8px;
+      background: rgba(0,0,0,0.8);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+      font-size: 0.7rem;
+      padding: 4px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .btn-cam-toggle:hover {
+      background: var(--gold-primary);
+      color: #000;
+    }
+
+    /* Tooltip oculto para el motor */
+    #reloj-tooltip { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div id="live-layout">
+    <!-- 1. BARRA SUPERIOR BRANDING -->
+    <header class="live-header">
+      <div class="brand-live">
+        <div class="brand-badge">☉</div>
+        <div class="brand-text">
+          <h1>PORTAL TAROT MÍSTICO</h1>
+          <span>Astrología Evolutiva & Precisión</span>
+        </div>
+      </div>
+      <div class="live-pill">
+        <div class="live-dot"></div> EN VIVO
+      </div>
+    </header>
+
+    <!-- 2. EL ASTROLABIO EN VIVO (MANDALA CÓSMICO) -->
+    <div id="reloj-container">
+      <video id="video-bg" loop muted playsinline>
+        <source src="/videos_fondo/07_espacio_galaxias_deep_space_galaxy_pex_v_15562120.mp4" type="video/mp4">
+      </video>
+      <canvas id="reloj-canvas"></canvas>
+      <div class="reloj-mini-hud" id="live-time-display">EFEMÉRIDES SUIZAS EN VIVO</div>
+    </div>
+
+    <!-- 3. MACHETE Y EXPLICACIONES EN VIVO (EL RELATO EDITORIAL) -->
+    <section class="live-machete-section">
+      <div class="machete-header">
+        <div class="machete-badge">
+          <span>✦</span> ASPECTO MAESTRO ACTIVO
+        </div>
+        <div class="transit-degrees" id="machete-orbe">Sol 22° Esc — Luna 20° Cap</div>
+      </div>
+
+      <div class="transit-title" id="machete-title">
+        <span>☉</span> Sol en Sextil con Luna <span>☽</span>
+      </div>
+
+      <div class="transit-meaning-box" id="machete-text">
+        <strong>Fuerza de Concreción y Sobriedad:</strong> La intensidad emocional y los secretos de Escorpio bajan a tierra con la firmeza de Capricornio. Momento de ver la realidad sin autoengaños.
+      </div>
+
+      <div class="machete-footer-cta">
+        <span>💬 <em>¿En qué casa tenés a Escorpio? Te leo abajo</em></span>
+        <span class="cta-highlight">portaltarotmistico.com</span>
+      </div>
+    </section>
+
+    <!-- 4. MARCO DEDICADO PARA TU CÁMARA (OBS O NAVEGADOR) -->
+    <div class="live-camera-frame" id="camera-slot">
+      <div class="corner-dec corner-tl"></div>
+      <div class="corner-dec corner-tr"></div>
+      <div class="corner-dec corner-bl"></div>
+      <div class="corner-dec corner-br"></div>
+
+      <video id="local-video" autoplay playsinline muted></video>
+
+      <div class="camera-placeholder-text" id="cam-hint">
+        <div class="cam-icon">📹</div>
+        <strong>ESPACIO DE TU CÁMARA EN VIVO</strong>
+        <small>En OBS: colocá tu cámara dentro de este recuadro dorado</small>
+      </div>
+
+      <button class="btn-cam-toggle" id="btn-toggle-cam" onclick="activarCamaraWeb()">
+        ✦ Activar Cámara Directa
+      </button>
+    </div>
+  </div>
+
+  <div id="reloj-tooltip"></div>
+
+  <!-- Motor astronómico del reloj -->
+  <script src="/static/js/reloj_engine.js?v=9"></script>
+
+  <script>
+    // Reloj digital en vivo para el HUD
+    setInterval(() => {
+      const d = new Date();
+      const timeStr = d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const el = document.getElementById('live-time-display');
+      if (el) el.innerText = `⏱ ${timeStr} • SUIZA UT`;
+    }, 1000);
+
+    // Función opcional para embeber la cámara directo en la página sin capas en OBS
+    async function activarCamaraWeb() {
+      const v = document.getElementById('local-video');
+      const hint = document.getElementById('cam-hint');
+      const btn = document.getElementById('btn-toggle-cam');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        v.srcObject = stream;
+        v.style.display = 'block';
+        hint.style.display = 'none';
+        btn.innerText = '✕ Desactivar Cámara';
+        btn.onclick = () => {
+          stream.getTracks().forEach(t => t.stop());
+          v.style.display = 'none';
+          hint.style.display = 'flex';
+          btn.innerText = '✦ Activar Cámara Directa';
+          btn.onclick = activarCamaraWeb;
+        };
+      } catch (e) {
+        alert("Para activar la cámara directa dale permiso en el navegador, o usá tu capa de cámara en OBS.");
+      }
+    }
+  </script>
+</body>
+</html>
+

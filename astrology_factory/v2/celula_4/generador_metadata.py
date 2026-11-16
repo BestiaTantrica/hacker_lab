@@ -68,21 +68,74 @@ def main():
     }}
     """
     
-    if not GEMINI_API_KEY:
-        log("❌ GEMINI_API_KEY_TEXT no está configurada.", ROJO)
-        sys.exit(1)
-        
+    CANDIDATE_MODELS = [
+        "gemini-3-flash-preview",
+        "gemini-3.1-flash-lite-preview",
+        "gemini-flash-latest"
+    ]
+    
     try:
+        from v2 import cuota
+        usar_cuota = True
+    except ImportError:
+        usar_cuota = False
+
+    texto_raw = None
+    if usar_cuota:
+        for intento in range(4):
+            elegida = cuota.elegir_key()
+            if not elegida:
+                break
+            nombre, key = elegida
+            cuota.esperar_ritmo()
+            try:
+                import google.genai as genai
+                client = genai.Client(api_key=key)
+            except Exception as e:
+                log(f"⚠️ Error inicializando cliente con {nombre}: {e}", AMARILLO)
+                continue
+            for model_name in CANDIDATE_MODELS:
+                try:
+                    log(f"🧠 Consultando Gemini ({model_name}) con {nombre}...", CYAN)
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt
+                    )
+                    texto_raw = response.text.strip()
+                    cuota.registrar_uso(nombre)
+                    break
+                except Exception as e:
+                    tipo = cuota.registrar_error(nombre, e)
+                    log(f"⚠️ Error con {model_name} en {nombre}: {e}", AMARILLO)
+                    if tipo != "otro":
+                        break
+            if texto_raw:
+                break
+
+    if not texto_raw:
+        if not GEMINI_API_KEY:
+            log("❌ No hay llaves disponibles para Gemini.", ROJO)
+            sys.exit(1)
         import google.genai as genai
         client = genai.Client(api_key=GEMINI_API_KEY)
-        
-        log("🧠 Consultando a Gemini para redactar metadata...", CYAN)
-        response = client.models.generate_content(
-            model=ADN.get("gemini_text", {}).get("modelo", "gemini-3.6-flash"),
-            contents=prompt
-        )
-        
-        texto_raw = response.text.strip()
+        for model_name in CANDIDATE_MODELS:
+            try:
+                log(f"🧠 Consultando a Gemini ({model_name}) para redactar metadata...", CYAN)
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
+                texto_raw = response.text.strip()
+                if texto_raw:
+                    break
+            except Exception as e:
+                log(f"⚠️ Falló modelo {model_name}: {e}", AMARILLO)
+
+    if not texto_raw:
+        log("❌ No se pudo generar metadata con ningún modelo ni llave.", ROJO)
+        sys.exit(1)
+
+    try:
         import re
         texto_limpio = re.sub(r'^```(?:json)?\s*', '', texto_raw, flags=re.MULTILINE)
         texto_limpio = re.sub(r'\s*```$', '', texto_limpio, flags=re.MULTILINE).strip()
@@ -99,7 +152,7 @@ def main():
         print(json.dumps(metadata, indent=2, ensure_ascii=False))
         
     except Exception as e:
-        log(f"❌ Error generando metadata: {e}", ROJO)
+        log(f"❌ Error procesando metadata generada: {e}", ROJO)
 
 if __name__ == "__main__":
     main()
