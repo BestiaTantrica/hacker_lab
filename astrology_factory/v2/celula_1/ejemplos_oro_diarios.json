@@ -142,198 +142,198 @@
     {
       "id": "ORO_CAN_05",
       "fecha": "2026-11-18",
-      "titulo": "Luna Acuario / Plutón | Las ganas de desaparecer un rato",
-      "transito": "Luna en Acuario tensión Plutón",
+      "titulo": "Luna en Piscis / Mercurio | La intuición que no falla",
+      "transito": "Luna en Piscis trígono Mercurio en Escorpio",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "18 de noviembre. Tenés ganas de desaparecer un rato. De que nadie te pida nada ni te pregunte cómo estás."
+          "locucion": "18 de noviembre. Hoy vas a sentir algo antes de que te lo digan. Una certeza callada en la boca del estómago."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "No es tristeza, es saturación. Venís dando explicaciones que nadie te pidió y el cuerpo te está pidiendo distancia."
+          "locucion": "No intentes justificarlo con la lógica. La mente llega tarde cuando el cuerpo ya captó la verdad entera de la situación."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "La Luna en Acuario toca a Plutón: un impulso frío de cortar por lo sano y reinventarte desde cero."
+          "locucion": "En el astrolabio, la Luna en Piscis conecta en trígono con Mercurio en Escorpio: agua con agua, percepción profunda y silenciosa."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "Tomate el espacio, pero no lo confundas con escaparte. Aislarte un día es higiene; aislarte un mes, trinchera."
+          "locucion": "Hacete caso. Si sentís que por ahí no es, no pidas tres opiniones más para convencerte de lo contrario."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "Comentá tu Luna si alguna vez necesitaste desaparecer para volver a encontrarte."
+          "locucion": "¿Sos de confiar en tu instinto o te lo boicoteás? Contame abajo, o comentá CASA y te mando tu mapa al privado."
         }
       ]
     },
     {
       "id": "ORO_CAN_06",
       "fecha": "2026-11-19",
-      "titulo": "Luna Cáncer / Saturno | El no que viene con culpa",
-      "transito": "Luna en Cáncer cuadratura Saturno",
+      "titulo": "Cuadratura Partil Sol-Marte | La pulseada que no vas a ganar por la fuerza",
+      "transito": "Sol en Escorpio cuadratura partil Marte en Leo (0.07°)",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "19 de noviembre. Alguien te va a pedir algo hoy y vos ya sabés que querés decir que no."
+          "locucion": "19 de noviembre. Vas a sentir que alguien te desafía, que te tocan el orgullo o que te quieren imponer un ritmo."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "El problema no es el no. Es la culpa que viene después, como si cuidarte fuera traicionar a alguien."
+          "locucion": "La reacción inmediata es trabarte y apretar la mandíbula. Creés que ceder un milímetro es perderte el respeto."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "La Luna en Cáncer se cuadra con Saturno: lo afectivo pide estructura, y eso al principio aprieta un poco."
+          "locucion": "El astrolabio marca una cuadratura partil exacta a cero grados entre el Sol en Escorpio y Marte en Leo: tensión pura de voluntades."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "Poner un límite no te hace frío. Te hace alguien que dejó de abandonarse para quedar bien con todos."
+          "locucion": "Elegí tus batallas. Tener razón no siempre vale la energía que te drena demostrarlo a los gritos."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "¿A quién te cuesta decirle que no? No hace falta nombrarlo, pero reconocelo adentro."
+          "locucion": "¿Sos de los que van al choque o te lo guardás? Contame abajo, o comentá CASA para ver tu mapa gratis."
         }
       ]
     },
     {
       "id": "ORO_CAN_07",
       "fecha": "2026-11-20",
-      "titulo": "Luna Leo / Júpiter | Brillar para vos o para que te aplaudan",
-      "transito": "Luna en Leo trígono Júpiter",
+      "titulo": "Luna en Aries / Urano | El corte con lo que te venía frenando",
+      "transito": "Luna en Aries sextil Urano en Géminis",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "20 de noviembre. Hoy tenés ganas de que te vean, de que reconozcan lo que hacés. Y no está mal."
+          "locucion": "20 de noviembre. Hoy se te cae la paciencia con las vueltas ajenas. Tenés ganas de resolver, de arrancar y punto."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "Lo que duele no es querer brillar. Es depender de que otro te aplauda para sentir que valés."
+          "locucion": "Ese fastidio en realidad es alivio: es la confirmación de que esperar que otros cambien ya no es una opción."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "La Luna en Leo se abre con Júpiter: ganas de más, de grande, de mostrarte sin achicarte."
+          "locucion": "La Luna en Aries conecta con Urano en Géminis: un sextil de aire y fuego que destraba ideas y activa el movimiento."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "Mostrate, sí. Pero fijate si lo hacés desde el gusto genuino o desde el hambre de aprobación ajena."
+          "locucion": "Aprovechá la lucidez para mover una ficha concreta. Sin drama, sin anuncio previo, hacé lo tuyo."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "¿Vos brillás para vos o para que te aplaudan? Pregunta incómoda; respondela abajo."
+          "locucion": "¿Qué decisión venís postergando por comodidad? Dejamela abajo, o comentá CASA y te mando tu mandala directo."
         }
       ]
     },
     {
       "id": "ORO_CAN_08",
       "fecha": "2026-11-21",
-      "titulo": "Trígono Sol-Marte | El envión que venías postergando",
-      "transito": "Sol trígono Marte",
+      "titulo": "Clímax Sol-Marte | Desactivar la trampa del orgullo",
+      "transito": "Sol en Escorpio cuadratura Marte en Leo",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "21 de noviembre. Eso que venís postergando hace semanas hoy tiene vía libre. Lo sabés, lo sentís en las manos."
+          "locucion": "21 de noviembre. La tensión de los últimos días decanta hoy. Ya no hay lugar para hacerse el desentendido."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "No hay nudo hoy, hay empuje. El riesgo es distinto: dejar pasar el envión por miedo a que salga bien."
+          "locucion": "Te das cuenta de que seguir esperando una disculpa ajena te mantiene atado al mismo lugar de siempre."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "El Sol en trígono con Marte: la voluntad y la energía alineadas, sin fricción, remando para el mismo lado."
+          "locucion": "Mirá el astrolabio: el Sol y Marte cierran su ángulo más filoso. Es el clímax de la tensión fija entre Escorpio y Leo."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "No esperes sentirte cien por ciento listo. Ese día no llega. Dá el primer paso concreto, chico, hoy."
+          "locucion": "Madurar es entender que soltar una pelea inútil no es debilidad; es recuperar tu propio poder personal."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "Guardá este video y volvé mañana a contarme qué hiciste con el envión."
+          "locucion": "¿Alguna vez ganaste la discusión y perdiste la paz? Contame abajo, o comentá CASA y te mandamos tu mapa al privado."
         }
       ]
     },
     {
       "id": "ORO_CAN_09",
       "fecha": "2026-11-22",
-      "titulo": "Mercurio en tensión | La respuesta filosa en la punta de la lengua",
-      "transito": "Mercurio en aspecto duro (velocidad mental)",
+      "titulo": "Luna en Tauro / Plutón | Soltar el control para no romperte",
+      "transito": "Luna en Tauro cuadratura Plutón en Acuario",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "22 de noviembre. Vas a tener la respuesta filosa en la punta de la lengua. Rápida, exacta, lista para herir."
+          "locucion": "22 de noviembre. Hoy te cuesta soltar. Te aferrás a un plan, a una expectativa, a una forma fija de que sean las cosas."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "El tema no es si tenés razón. Es el precio de decirla como un bisturí cuando podías decirla distinto."
+          "locucion": "La incomodidad aparece cuando la realidad no encaja en tu libreto. El control te calma diez minutos, pero te desgasta el día entero."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "Mercurio viene tensionado hoy: la mente va más rápido que el filtro, y la palabra sale antes de pensarla."
+          "locucion": "La Luna en Tauro se cuadra con Plutón en Acuario: la resistencia del cuerpo frente a la transformación que ya empezó."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "Antes de mandar ese mensaje o soltar esa frase, contá hasta tres. Lo filoso se dice, no se dispara."
+          "locucion": "Aflojá los hombros. Permití que el día tome su propio ritmo; lo esencial no se rompe por cambiar de forma."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "¿Alguna vez ganaste la discusión y perdiste el vínculo? Contame cómo fue."
+          "locucion": "¿A qué te estás aferrando que ya cumplió su ciclo? Dejámelo abajo, o comentá CASA para calcular tu mapa al privado."
         }
       ]
     },
     {
       "id": "ORO_CAN_10",
       "fecha": "2026-11-23",
-      "titulo": "Quirón / Luna | La vocecita que dice que no alcanzás",
-      "transito": "Luna conjunción Quirón",
+      "titulo": "Ingreso Solar a Sagitario / Neptuno | Abrir el horizonte y confiar",
+      "transito": "Sol ingresa a Sagitario trígono Neptuno en Aries",
       "tomas": [
         {
           "num": 1,
           "rol": "gancho_fecha_continuidad",
-          "locucion": "23 de noviembre. Esa vocecita que te dice que no alcanzás, que no sos suficiente, hoy habla más fuerte."
+          "locucion": "23 de noviembre. El aire cambia por completo hoy. Se siente más liviano, con más espacio para respirar hacia adelante."
         },
         {
           "num": 2,
           "rol": "mecanica_psicologica",
-          "locucion": "No es verdad lo que dice, pero duele igual. Es una herida vieja, no un diagnóstico de quién sos."
+          "locucion": "Salís de la intensidad escorpiana de las últimas semanas y empezás a ver el sentido de todo lo que atravesaste."
         },
         {
           "num": 3,
           "rol": "mecanica_celeste_reloj2d",
-          "locucion": "La Luna toca a Quirón: lo que creías cerrado se reabre, no para hundirte, sino para que lo mires de frente."
+          "locucion": "El astrolabio ilumina el ingreso del Sol en Sagitario en trígono con Neptuno: fuego visionario, fe lúcida y expansión."
         },
         {
           "num": 4,
           "rol": "brujula_lucida",
-          "locucion": "No te hagas la víctima ni te hagas el fuerte. Mostrá la grieta sin dramatizarla. Ahí está tu humanidad."
+          "locucion": "No mires más hacia atrás buscando explicaciones. Levantá la cabeza y dale dirección a tu deseo más honesto."
         },
         {
           "num": 5,
           "rol": "cta",
-          "locucion": "Si esto te tocó, dejá un corazón. No hace falta decir nada más."
+          "locucion": "¿Hacia dónde necesitás expandirte hoy? Contame abajo, o comentá CASA si querés que te mandemos tu mapa natal al privado."
         }
       ]
     }

@@ -58,11 +58,14 @@ def main():
     "{guion_completo}"
     
     TAREA:
-    Genera la metadata SEO hiper-optimizada y "ganchera" para este video.
+    Genera la metadata SEO hiper-optimizada y "ganchera" para este video (YouTube Shorts, Instagram Reels, Facebook Reels y TikTok).
+    IMPORTANTE: La descripción DEBE terminar siempre con esta llamada a la acción para activar la automatización de ManyChat:
+    "👇 Comentá la palabra CASA acá abajo y te enviamos tu mandala natal y tránsitos gratis por mensaje privado 🪐\nReloj astrológico en vivo: portaltarotmistico.com"
+    
     Devuelve ÚNICAMENTE un JSON con esta estructura exacta (sin markdown):
     {{
-      "titulo_youtube": "Título corto y magnético (máximo 60 caracteres)",
-      "descripcion": "Descripción intrigante de 3 líneas",
+      "titulo_youtube": "Título magnético con la fecha o aspecto (máximo 60 caracteres)",
+      "descripcion": "Descripción psicológica intrigante de 3 líneas cerrando con el llamado a comentar CASA",
       "tags_cortos": ["#Hashtag1", "#Hashtag2", "#Hashtag3"],
       "tags_largos": ["frase clave SEO 1", "frase clave SEO 2"]
     }}

@@ -392,11 +392,11 @@ Tono del guion: Educador empático, brújula lúcida, psicológico, cercano.
 4. TOMA 4 [brujula_lucida] (16-20 palabras):
    El anclaje lúcido y maduro para transitar la energía sin desgaste reactivo ni autoengaño. Sé conciso y sobrio.
 5. TOMA 5 [cta / cierre humano] (12-16 palabras):
-   Cierre dúctil que genera conversación genuina o pausa reflexiva:
-   - Pregunta directa al pecho para comentar ("¿Con quién estás peleando en serio hoy? Dejámelo abajo.")
-   - Anclaje para guardar el video ("Guardate esto para cuando baje la espuma.")
-   - Diagnóstico cercano de carta ("Fijate en qué casa tenés este signo o dejame tu signo y lo vemos.")
-   PROHIBIDO rotundamente decir "andá a mi link", "link en bio" o sonar a vendedor barato.
+   Cierre dúctil que genera conversación visceral y dispara la palabra clave CASA para ManyChat:
+   - "Contá en qué casa te cae en comentarios, o comentá CASA para que te mandemos tu mapa natal al privado."
+   - "¿En qué área sentís la tensión? Respondeme abajo o comentá CASA y te mando tu mandala directo."
+   - Regla: Debe incluir naturalmente la palabra clave CASA para la automatización multicanal de DMs/Messenger.
+   PROHIBIDO sonar a vendedor barato o usar frases vacías de marketing.
 
 === FORMATO ESTRICTO ===
 - Voseo rioplatense impecable ("mirá", "fijate", "registralo", "decidilo", "soltá", "bancate", "sentís").

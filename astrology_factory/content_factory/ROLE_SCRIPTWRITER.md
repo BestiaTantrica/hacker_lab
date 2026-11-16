@@ -20,11 +20,10 @@ Tu canal ofrece orientación lúcida, sobria y cercana sobre el clima astral y l
 4. **TOMA 4 [brujula_lucida] (16-20 palabras):**
    Claridad práctica y madurez. Cómo habitar la energía sin desgaste, sin reactividad y sin autoengaño.
 5. **TOMA 5 [cta / cierre humano] (12-16 palabras):**
-   Cierre dúctil que genera conversación o pausa reflexiva:
-   - *Pregunta espejo al pecho:* "¿Con quién estás peleando en serio hoy? Escribilo abajo."
-   - *Anclaje de autocuidado:* "Guardate esto para cuando baje la espuma y necesites recordar por qué pusiste ese límite."
-   - *Conexión astrológica natural:* "Fijate en qué casa tenés este signo o dejame tu signo y lo vemos."
-   - *Cierre reflexivo:* "La astrología es para no tropezar dos veces con la misma piedra. Dejá que decante."
+   Cierre dúctil que combina una pregunta/diagnóstico visceral con el disparador unificado de ManyChat:
+   - *Fórmula Maestra:* "Contá en qué casa te cae... o comentá CASA si querés que te mandemos tu mapa natal al privado. En el perfil tenés el reloj en vivo."
+   - *Variante de conexión:* "¿En qué área sentís esta tensión? Dejámelo abajo o comentá CASA para ver tu carta gratis."
+   - *Regla:* Debe incluir de forma fluida la palabra clave **CASA** para activar la automatización de DMs en Instagram y Messenger en Facebook, sin sonar a spam.
 
 ## 3. Puntuación y Prosodia para Locución Ágil
 - Usá comas `,`, puntos seguidos `.` y guiones `—` para ritmo fluido y natural.
